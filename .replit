@@ -1,0 +1,26 @@
+entrypoint="index.html"
+hidden=[".config"]
+modules = ["web:v2-20230623-0b7a606", "bash"]
+
+[nix]
+channel = "stable-23_11"
+
+[deployment]
+publicDir = "/"
+deploymentTarget = "static"
+
+[[ports]]
+localPort = 7700
+externalPort = 8080
+
+[workflows]
+runButton = "Run"
+
+[[workflows.workflow]]
+name = "Run"
+author = 35388242
+mode = "sequential"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "python -m http.server 8080"
