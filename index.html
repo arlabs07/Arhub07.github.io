@@ -1,0 +1,192 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Code Editor</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/monaco-editor@0.40.0/min/vs/editor/editor.main.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/xterm/3.14.5/xterm.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <div class="sidebar">
+            <div class="file-manager">
+                <div class="file-manager-header">
+                    <h3>Files</h3>
+                    <button class="btn" id="new-file-btn"><i class="fa-solid fa-plus"></i></button>
+                </div>
+                <div id="file-tree"></div>
+            </div>
+        </div>
+        <div class="content">
+            <div class="editor-section" id="editor">
+                <div class="editor-header">
+                    <h2 class="editor-title">Editor - index.html</h2>
+                    <div class="button-group">
+                        <button class="btn" id="run-btn"><i class="fa-solid fa-play"></i> Run</button>
+                        <button class="btn" id="download-btn"><i class="fa-solid fa-download"></i></button>
+                        <button class="btn" id="code-bot-btn"><i class="fa-solid fa-robot"></i></button>
+                        <button class="btn" id="settings-btn"><i class="fa-solid fa-gear"></i></button>
+                    </div>
+                </div>
+                <div id="monaco-editor"></div>
+            </div>
+            <div class="editor-section" id="preview" style="display: none;">
+                <div class="editor-header">
+                    <h2 class="editor-title">Preview</h2>
+                    <button class="btn" id="refresh-preview"><i class="fa-solid fa-sync"></i></button>
+                </div>
+                <iframe id="preview-iframe" srcdoc=""></iframe>
+            </div>
+            <div class="editor-section" id="console" style="display: none;">
+                <div class="editor-header">
+                    <h2 class="editor-title">DevTools</h2>
+                    <div class="devtools-tabs">
+                        <button class="devtool-tab active" data-tool="console">Console</button>
+                        <button class="devtool-tab" data-tool="network">Network</button>
+                        <button class="devtool-tab" data-tool="bash">Bash</button>
+                    </div>
+                    <button class="btn" id="clear-console"><i class="fa-solid fa-trash"></i></button>
+                </div>
+                <div id="console-output"></div>
+            </div>
+        </div>
+        <nav class="nav">
+            <ul>
+                <li class="nav-item active" data-target="editor"><i class="fa-solid fa-code"></i></li>
+                <li class="nav-item" data-target="preview"><i class="fa-solid fa-eye"></i></li>
+                <li class="nav-item" data-target="console"><i class="fa-solid fa-wrench"></i></li>
+            </ul>
+        </nav>
+    </div>
+
+    <div id="code-bot-modal" class="modal">
+        <div class="modal-content">
+            <h3>Code Bot</h3>
+            <textarea id="code-prompt" placeholder="Describe what code you need..."></textarea>
+            <button id="generate-code" class="btn"><i class="fa-solid fa-wand-magic-sparkles"></i> Generate</button>
+            <pre id="generated-code"></pre>
+            <button id="copy-code" class="btn"><i class="fa-regular fa-copy"></i> Copy</button>
+            <button id="close-modal" class="btn"><i class="fa-solid fa-times"></i></button>
+        </div>
+    </div>
+
+    <div id="new-file-modal" class="modal">
+        <div class="modal-content">
+            <h3>New File</h3>
+            <input type="text" id="new-file-name" placeholder="File name (with extension)">
+            <button id="create-file" class="btn">Create</button>
+            <button id="close-new-file-modal" class="btn"><i class="fa-solid fa-times"></i></button>
+        </div>
+    </div>
+
+    <div id="settings-modal" class="modal">
+        <div class="modal-content settings-content">
+            <h3><i class="fa-solid fa-gear"></i> Settings</h3>
+            <div class="settings-container">
+                <div class="settings-section">
+                    <h4>Theme</h4>
+                    <div class="setting-row">
+                        <label for="editor-theme">Editor Theme</label>
+                        <select id="editor-theme" class="setting-select">
+                            <option value="vs-dark">Dark (Default)</option>
+                            <option value="vs">Light</option>
+                            <option value="hc-black">High Contrast Dark</option>
+                            <option value="hc-light">High Contrast Light</option>
+                        </select>
+                    </div>
+                    <div class="setting-row">
+                        <label for="accent-color">Accent Color</label>
+                        <div class="color-options">
+                            <span class="color-option" data-color="#0066cc" style="background-color: #0066cc"></span>
+                            <span class="color-option" data-color="#4CAF50" style="background-color: #4CAF50"></span>
+                            <span class="color-option" data-color="#9c27b0" style="background-color: #9c27b0"></span>
+                            <span class="color-option" data-color="#ff9800" style="background-color: #ff9800"></span>
+                            <span class="color-option" data-color="#e91e63" style="background-color: #e91e63"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="settings-section">
+                    <h4>Editor</h4>
+                    <div class="setting-row">
+                        <label for="font-size">Font Size</label>
+                        <select id="font-size" class="setting-select">
+                            <option value="12">12px</option>
+                            <option value="14" selected>14px</option>
+                            <option value="16">16px</option>
+                            <option value="18">18px</option>
+                            <option value="20">20px</option>
+                        </select>
+                    </div>
+                    <div class="setting-row">
+                        <label for="tab-size">Tab Size</label>
+                        <select id="tab-size" class="setting-select">
+                            <option value="2" selected>2 spaces</option>
+                            <option value="4">4 spaces</option>
+                            <option value="8">8 spaces</option>
+                        </select>
+                    </div>
+                    <div class="setting-row">
+                        <label for="auto-save">Auto Save</label>
+                        <label class="switch">
+                            <input type="checkbox" id="auto-save" checked>
+                            <span class="slider round"></span>
+                        </label>
+                    </div>
+                    <div class="setting-row">
+                        <label for="word-wrap">Word Wrap</label>
+                        <label class="switch">
+                            <input type="checkbox" id="word-wrap">
+                            <span class="slider round"></span>
+                        </label>
+                    </div>
+                    <div class="setting-row">
+                        <label for="minimap">Minimap</label>
+                        <label class="switch">
+                            <input type="checkbox" id="minimap">
+                            <span class="slider round"></span>
+                        </label>
+                    </div>
+                </div>
+                <div class="settings-section">
+                    <h4>Extensions</h4>
+                    <div class="setting-row">
+                        <label for="linter">Code Linting</label>
+                        <label class="switch">
+                            <input type="checkbox" id="linter" checked>
+                            <span class="slider round"></span>
+                        </label>
+                    </div>
+                    <div class="setting-row">
+                        <label for="autocomplete">IntelliSense</label>
+                        <label class="switch">
+                            <input type="checkbox" id="autocomplete" checked>
+                            <span class="slider round"></span>
+                        </label>
+                    </div>
+                    <div class="setting-row">
+                        <label for="emmet">Emmet Support</label>
+                        <label class="switch">
+                            <input type="checkbox" id="emmet" checked>
+                            <span class="slider round"></span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div class="settings-footer">
+                <button id="reset-settings" class="btn btn-secondary"><i class="fa-solid fa-rotate-left"></i> Reset to Default</button>
+                <button id="save-settings" class="btn"><i class="fa-solid fa-save"></i> Save Settings</button>
+            </div>
+            <button id="close-settings-modal" class="btn close-modal-btn"><i class="fa-solid fa-times"></i></button>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.7.1/jszip.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/monaco-editor@0.40.0/min/vs/loader.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xterm/3.14.5/xterm.min.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
