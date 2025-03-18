@@ -82,7 +82,6 @@
     <link rel="stylesheet" href="testimonial.css">
     <link rel="stylesheet" href="footer.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/atom-one-dark.min.css">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/languages/javascript.min.js"></script>
@@ -1224,22 +1223,22 @@ document.addEventListener('DOMContentLoaded', function() {
     setTimeout(() => {
         // Start typing animation
         startTyping();
-    }, 0000);
+    }, -4000);
     
     setTimeout(() => {
         // Show subtitle
         subtitle.classList.add('visible');
-    }, 2000);
+    }, 1000);
     
     setTimeout(() => {
         // Show buttons
         buttons.classList.add('visible');
-    }, 3000);
+    }, 1500);
     
     setTimeout(() => {
         // Show code container
         codeContainer.classList.add('visible');
-    }, 5000);
+    }, 3000);
     
     function startTyping() {
         const titleText = "Welcome to ARhub";
