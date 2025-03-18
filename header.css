@@ -1,154 +1,32 @@
-
-/* Add blur effect to the menu background */
-.menu {
-    background: rgba(0, 0, 0, 0.8);
-    backdrop-filter: blur(10px);
+.menu{background:rgba(0,0,0,.8);backdrop-filter:blur(10px)}
+.header.shrink{height:50px;background:rgba(0,0,0,.8);backdrop-filter:blur(5px)}
+.back-btn,.menu-btn{transition:transform .2s ease}
+.back-btn:active,.menu-btn:active{transform:scale(.95)}
+.header{position:fixed;top:0;left:0;width:100%;height:60px;background:#000;display:flex;justify-content:space-between;align-items:center;padding:0 20px;z-index:1000;transition:transform .4s ease}
+.hide-header{transform:translateY(-100%)}
+.back-btn,.menu-btn{font-size:22px;cursor:pointer;background:0 0;border:none;color:#fff;transition:transform .4s ease}
+.menu-btn.rotate{transform:rotate(90deg)}
+.headtitle{font-size:22px;color:#fff;font-weight:700;transition:color .3s ease}
+.title:hover{color:rgba(255,165,0,.4)}
+.desktop-menu{display:flex;gap:20px}
+.desktop-menu a{color:#fff;text-decoration:none;font-size:18px;font-weight:700;padding:10px;transition:color .3s}
+.desktop-menu a:hover{color:rgba(255,165,0,.4)}
+.menu{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.8);transform:translateY(-100%);transition:transform .6s ease-in-out;z-index:999;display:flex;flex-direction:column;align-items:flex-start;padding:20px}
+.menu.show{transform:translateY(0)}
+.menu .menu-btn{align-self:flex-start;font-size:28px}
+.menu-container{display:grid;grid-template-columns:1fr;gap:10px;margin-top:20px;width:100%}
+.menu a{text-align:left;color:#fff;text-decoration:none;font-size:20px;font-weight:700;padding:10px;transition:color .3s}
+.menu a:hover{color:rgba(232,143,84,.9)}
+@media (min-width:768px){
+.menu-container{grid-template-columns:repeat(4,1fr)}
+.desktop-menu{display:flex}
+.back-btn{order:-1}
+.menu-btn{display:none}
+.header{justify-content:space-between}
 }
-
-/* Shrink header instead of hiding it */
-.header.shrink {
-    height: 50px;
-    background: rgba(0, 0, 0, 0.8);
-    backdrop-filter: blur(5px);
+@media (max-width:767px){
+.menu-container{grid-template-columns:1fr}
+.desktop-menu{display:none}
+.menu-btn{display:block}
+.header{justify-content:space-between}
 }
-
-/* Button tap effect */
-.menu-btn, .back-btn {
-    transition: transform 0.2s ease;
-}
-.menu-btn:active, .back-btn:active {
-    transform: scale(0.95);
-}
-
-        /* Header Styling */
-        .header {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 60px;
-            background: black;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 0 20px;
-            z-index: 1000;
-            transition: transform 0.4s ease;
-        }
-
-        .hide-header { transform: translateY(-100%); }
-
-        /* Header Buttons */
-        .menu-btn, .back-btn {
-            font-size: 22px;
-            cursor: pointer;
-            background: none;
-            border: none;
-            color: white;
-            transition: transform 0.4s ease;
-        }
-
-        .menu-btn.rotate { transform: rotate(90deg); }
-
-        /* Title */
-        .headtitle {
-            font-size: 22px;
-            color: white;
-            font-weight: bold;
-            transition: color 0.3s ease;
-        }
-
-        .title:hover {
-            color: rgba(255, 165, 0, 0.4);
-        }
-
-        /* Desktop Menu */
-        .desktop-menu {
-            display: flex;
-            gap: 20px;
-        }
-
-        .desktop-menu a {
-            color: white;
-            text-decoration: none;
-            font-size: 18px;
-            font-weight: bold;
-            padding: 10px;
-            transition: color 0.3s;
-        }
-
-        .desktop-menu a:hover { color: rgba(255, 165, 0, 0.4); }
-
-        /* Mobile Fullscreen Menu */
-        .menu {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.8);
-            transform: translateY(-100%);
-            transition: transform 0.6s ease-in-out;
-            z-index: 999;
-            display: flex;
-            flex-direction: column;
-            align-items: flex-start;
-            padding: 20px;
-        }
-
-        .menu.show { transform: translateY(0); }
-
-        /* Close Button in Menu */
-        .menu .menu-btn {
-            align-self: flex-start;
-            font-size: 28px;
-        }
-
-        /* Grid Menu Items */
-        .menu-container {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 10px;
-            margin-top: 20px;
-            width: 100%;
-        }
-
-        .menu a {
-            text-align: left;
-            color: white;
-            text-decoration: none;
-            font-size: 20px;
-            font-weight: bold;
-            padding: 10px;
-            transition: color 0.3s;
-        }
-
-        .menu a:hover {
-            color: rgba(232, 143, 84,0.9);
-        }
-
-        /* Media Queries for Responsiveness */
-        @media (min-width: 768px) {
-            .menu-container {
-                grid-template-columns: repeat(4, 1fr);
-            }
-            .desktop-menu { display: flex; }
-            .back-btn { order: -1; }
-            .menu-btn { display: none; }
-            .header {
-                justify-content: space-between;
-            }
-        }
-
-        @media (max-width: 767px) {
-            .menu-container {
-                grid-template-columns: 1fr;
-            }
-            .desktop-menu { display: none; }
-            .menu-btn { display: block; }
-            .header {
-                justify-content: space-between;
-            }
-        }
-
-        
