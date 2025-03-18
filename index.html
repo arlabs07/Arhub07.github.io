@@ -686,9 +686,11 @@
         <h2 class="ttitle">My Projects</h2>
 
         <div class="showcase-wrapper">
-            <div class="projects-container">
-                <button class="slider-btn left-btn" onclick="scrollProjects(-1)">
-                    <i class="fas fa-chevron-left"></i>
+            <div class="projects-container"><!-- Left Button -->
+<button class="slider-btn left-btn" onclick="scrollProjects(-1)" aria-label="Scroll left">
+    ◀
+</button>
+
                 </button>
                 <div class="projects-wrapper">
                     <div class="project-card" onclick="showButton(this)" data-url="https://example.com/project1">
@@ -742,8 +744,9 @@
                         <div class="view-button" onclick="openProject(event, this)">View Project</div>
                     </div>
                 </div>
-                <button class="slider-btn right-btn" onclick="scrollProjects(1)">
-                    <i class="fas fa-chevron-right"></i>
+<button class="slider-btn right-btn" onclick="scrollProjects(1)" aria-label="Scroll right">
+    ▶
+</button>
                 </button>
             </div>
             <div class="dots"></div>
