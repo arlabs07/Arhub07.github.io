@@ -44,7 +44,7 @@
         }
 
         .hero-section {
-           top:30px;
+            top:50px;
             position: relative;
             width: 100%;
             min-height: 100vh;
@@ -1162,17 +1162,17 @@ document.addEventListener('DOMContentLoaded', function() {
     setTimeout(() => {
         // Start typing animation
         startTyping();
-    }, 1000);
+    }, 0000);
     
     setTimeout(() => {
         // Show subtitle
         subtitle.classList.add('visible');
-    }, 3000);
+    }, 2000);
     
     setTimeout(() => {
         // Show buttons
         buttons.classList.add('visible');
-    }, 4000);
+    }, 3000);
     
     setTimeout(() => {
         // Show code container
@@ -1263,7 +1263,7 @@ window.addEventListener('orientationchange', adjustLayoutForOrientation);
                     const techLogos = [
                         "html5", "css3", "javascript", "python", "cplusplus", "react",
                         "nodejs", "mongodb", "git", "github", "mysql", "java",
-                        "csharp", "flutter", "php", "typescript", "vuejs", "kotlin"
+                        "csharp", "flutter", "php", "typescript"
                     ];
                     const wrapper = document.getElementById('tech-stack');
 
@@ -1283,7 +1283,7 @@ window.addEventListener('orientationchange', adjustLayoutForOrientation);
                                 }
                             });
                         }
-                        wrapper.style.animation = "techScroll 30s linear infinite";
+                        wrapper.style.animation = "techScroll 31s linear infinite";
                     }
 
                     addLogos();
