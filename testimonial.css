@@ -1,0 +1,233 @@
+
+    .bodyy {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background-color: #f5f5f7;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 80vh;
+    }
+    
+    .testimonial-container {
+      overflow-x: auto;
+      padding: 60px 20px;
+      width: 100%;
+      max-width: 1200px;
+    }
+
+    .testimonial-wrapper {
+      display: flex;
+      gap: 24px;
+      min-width: max-content;
+      padding: 0 20px;
+    }
+
+    .testimonial-card {
+      width: 280px;
+      position: relative;
+      animation: float 8s ease-in-out infinite;
+      transition: all 0.5s cubic-bezier(0.25, 0.8, 0.25, 1);
+    }
+
+    .testimonial-card:nth-child(even) {
+      margin-top: 40px;
+    }
+
+    .testimonial-card:nth-child(odd) {
+      margin-top: -40px;
+    }
+
+    .message-box {
+      background: rgba(30, 30, 40, 0.8);
+      backdrop-filter: blur(10px);
+      border-radius: 12px;
+      padding: 24px;
+      position: relative;
+      color: white;
+      transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+      box-shadow: 
+        0 4px 15px rgba(0, 0, 0, 0.1),
+        0 10px 20px rgba(0, 0, 0, 0.08),
+        0 0 0 1px rgba(255, 255, 255, 0.05) inset;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      overflow: hidden;
+      background-image: 
+        radial-gradient(
+          circle at 70% 150%, 
+          rgba(255, 120, 0, 0.5) 0%, 
+          rgba(255, 100, 0, 0.2) 30%, 
+          transparent 70%
+        );
+    }
+
+    .message-box::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, 
+        rgba(255,255,255,0) 0%, 
+        rgba(255,255,255,0.2) 50%, 
+        rgba(255,255,255,0) 100%);
+    }
+
+    .message-box::after {
+      content: '';
+      position: absolute;
+      bottom: -15px;
+      right: 30px;
+      width: 30px;
+      height: 30px;
+      background: rgba(30, 30, 40, 0.8);
+      background-image: 
+        radial-gradient(
+          circle at 70% 150%, 
+          rgba(255, 120, 0, 0.5) 0%, 
+          rgba(255, 100, 0, 0.2) 30%, 
+          transparent 70%
+        );
+      transform: rotate(45deg);
+      z-index: -1;
+      box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .message-box:hover {
+      transform: translateY(-5px);
+      box-shadow: 
+        0 8px 25px rgba(0, 0, 0, 0.15),
+        0 15px 30px rgba(0, 0, 0, 0.1),
+        0 0 0 1px rgba(255, 255, 255, 0.07) inset;
+    }
+
+    .glow {
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(
+        circle at center,
+        rgba(var(--glow-color), 0.3) 0%,
+        rgba(var(--glow-color), 0) 70%
+      );
+      opacity: 0;
+      transition: opacity 0.6s ease;
+      pointer-events: none;
+      transform: translate3d(0, 0, 0);
+    }
+
+    .message-box:hover .glow {
+      opacity: 0.7;
+      animation: pulse 2s infinite;
+    }
+
+    .hheader {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+
+    .name {
+      font-weight: bold;
+      font-size: 1.1em;
+    }
+
+    .rating {
+      color: #ffd700;
+    }
+
+    .message {
+      line-height: 1.5;
+      margin: 0;
+      opacity: 0.9;
+    }
+
+    .button-container {
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      margin: 40px 0 60px;
+    }
+
+    .rate-us-button {
+      padding: 15px 40px;
+      font-size: 1.1em;
+      font-weight: bold;
+      border: none;
+      border-radius: 12px;
+      background: rgba(30, 30, 40, 0.8);
+      backdrop-filter: blur(10px);
+      color: white;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+      text-decoration: none;
+      box-shadow: 
+        0 4px 15px rgba(0, 0, 0, 0.1),
+        0 0 0 1px rgba(255, 255, 255, 0.05) inset;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      position: relative;
+      overflow: hidden;
+      background-image: 
+        radial-gradient(
+          circle at 70% 150%, 
+          rgba(255, 120, 0, 0.5) 0%, 
+          rgba(255, 100, 0, 0.2) 30%, 
+          transparent 70%
+        );
+    }
+
+    .rate-us-button:hover {
+      transform: translateY(-3px);
+      box-shadow: 
+        0 8px 25px rgba(0, 0, 0, 0.15),
+        0 0 0 1px rgba(255, 255, 255, 0.07) inset;
+    }
+
+    .rate-us-button::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, 
+        rgba(255,255,255,0) 0%, 
+        rgba(255,255,255,0.2) 50%, 
+        rgba(255,255,255,0) 100%);
+    }
+
+    .rate-us-button:active {
+      transform: translateY(-1px);
+    }
+
+    @keyframes float {
+      0%, 100% {
+        transform: translateY(0);
+      }
+      50% {
+        transform: translateY(-15px);
+      }
+    }
+
+    @keyframes pulse {
+      0%, 100% {
+        opacity: 0.5;
+      }
+      50% {
+        opacity: 0.8;
+      }
+    }
+
+    /* Custom delay for each card */
+    .testimonial-card:nth-child(1) { animation-delay: 0s; --glow-color: 79, 70, 229; }
+    .testimonial-card:nth-child(2) { animation-delay: 1.5s; --glow-color: 147, 51, 234; }
+    .testimonial-card:nth-child(3) { animation-delay: 1s; --glow-color: 16, 185, 129; }
+    .testimonial-card:nth-child(4) { animation-delay: 0.5s; --glow-color: 244, 63, 94; }
+    .testimonial-card:nth-child(5) { animation-delay: 2s; --glow-color: 234, 179, 8; }
+  

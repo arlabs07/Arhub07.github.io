@@ -1,0 +1,1403 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="header.css">
+    <link rel="stylesheet" href="appdoc.css">
+    <link rel="stylesheet" href="about.css">
+    <link rel="stylesheet" href="code.css">
+    <link rel="stylesheet" href="subscribe.css">
+    <link rel="stylesheet" href="testimonial.css">
+    <link rel="stylesheet" href="footer.css">
+    <!-- Highlight.js for syntax highlighting -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/atom-one-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
+    <!-- Add JavaScript language support -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/languages/javascript.min.js"></script>
+    <title>Welcome to ARhub</title>
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+          <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+              <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/js/all.min.js" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js" crossorigin="anonymous"></script>
+  <style>
+    .loader-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.95);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.5s ease-out;
+        }
+
+        .advanced-loader {
+            width: 80px;
+            height: 80px;
+            position: relative;
+            margin-bottom: 20px;
+        }
+
+        .advanced-loader div {
+            position: absolute;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, #ff00ff, #00ffff);
+            animation: loader 1.2s linear infinite;
+        }
+
+        .advanced-loader div:nth-child(1) {
+            top: 8px;
+            left: 8px;
+            animation-delay: 0s;
+        }
+
+        .advanced-loader div:nth-child(2) {
+            top: 8px;
+            right: 8px;
+            animation-delay: 0.4s;
+        }
+
+        .advanced-loader div:nth-child(3) {
+            bottom: 8px;
+            right: 8px;
+            animation-delay: 0.8s;
+        }
+
+        .advanced-loader div:nth-child(4) {
+            bottom: 8px;
+            left: 8px;
+            animation-delay: 1.2s;
+        }
+
+        @keyframes loader {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.5); }
+            100% { transform: scale(1); }
+        }
+
+        .loading-text {
+            color: #fff;
+            font-size: 24px;
+            letter-spacing: 3px;
+            margin-top: 20px;
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 0.5; }
+            50% { opacity: 1; }
+            100% { opacity: 0.5; }
+        }
+
+        .fade-out {
+            opacity: 0;
+            pointer-events: none;
+        }
+  </style>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            
+        }
+
+        body {
+            background: #000;
+            color: #fff;
+            display: ;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            width: 100%;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        .hero-section {
+           top:30px;
+            position: relative;
+            width: 100%;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            background: black;
+        }
+
+        .matrix-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            opacity: 0.3;
+        }
+
+        .particles-js {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            opacity: 0.3;
+        }
+
+        .content {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            justify-content: flex-start;
+            text-align: left;
+            padding: 20px;
+            width: 100%;
+            max-width: 1200px;
+            overflow-y: auto;
+        }
+
+        .ray-container {
+            position: absolute;
+            right: 0;
+            top: 0;
+            height: 100%;
+            overflow: hidden;
+            z-index: 0;
+        }
+
+        .ray {
+            position: absolute;
+            width: 2px;
+            right: 30%;
+            top: 0;
+            height: 100%;
+            background: linear-gradient(to bottom, rgba(255,255,255,0) 0%, rgba(255,140,40,0.3) 50%, rgba(255,140,40,0.7) 80%, rgba(255,255,255,1) 100%);
+            animation: rayGlow 3s infinite;
+            box-shadow: 0 0 20px 5px rgba(255,140,40,0.7);
+            z-index: 0;
+        }
+
+        .ray::after {
+            content: '';
+            position: absolute;
+            top: 80%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 200px;
+            height: 200px;
+            background: radial-gradient(circle, rgba(255,140,40,0.7) 0%, rgba(255,140,40,0) 70%);
+            border-radius: 50%;
+        }
+
+        @keyframes rayGlow {
+            0% { opacity: 0.5; }
+            50% { opacity: 1; }
+            100% { opacity: 0.5; }
+        }
+
+        .title-container {
+            min-height: 3.5rem;
+            margin-bottom: 20px;
+        }
+
+        .title {
+            font-size: 3.5rem;
+            font-weight: bold;
+            white-space: nowrap;
+            overflow: hidden;
+            display: inline-block;
+            visibility: hidden;
+            color: #fff;
+        }
+
+        .cursor {
+            display: inline-block;
+            width: 3px;
+            height: 1.5em;
+            background-color: #ff8c00;
+            margin-left: 5px;
+            animation: blink 0.7s infinite;
+            vertical-align: text-bottom;
+            visibility: hidden;
+        }
+
+        @keyframes blink {
+            50% { opacity: 0; }
+        }
+
+        .subtitle {
+            font-size: 1.5rem;
+            margin-top: 15px;
+            opacity: 0;
+            transition: opacity 1s ease-out, transform 1s ease-out;
+            transform: translateY(10px);
+            color: #fff;
+        }
+
+        .subtitle.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .buttons {
+            margin-top: 30px;
+            opacity: 0;
+            transition: opacity 1s ease-out, transform 1s ease-out;
+            transform: translateY(10px);
+            display: flex;
+            justify-content: flex-start;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .buttons.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 12px 30px;
+            font-size: 1.1rem;
+            color: #000;
+            background: #fff;
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: bold;
+            transition: all 0.3s ease-out;
+            position: relative;
+            overflow: hidden;
+            border: none;
+            box-shadow: 10px 0 20px -10px #ff8c00;
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+        }
+
+        .floating {
+            animation: float 4s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-8px); }
+            100% { transform: translateY(0px); }
+        }
+
+        .code-container {
+            margin-top: 50px;
+            width: 100%;
+            max-width: 800px;
+            
+            position: relative;
+            opacity: 0;
+            transition: opacity 1.5s ease-out;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 0 20px rgba(255, 140, 0, 0.3);
+            background: #000;
+            overflow-x: scroll;
+        }
+
+        .code-container.visible {
+            opacity: 1;
+        }
+
+        .code-header {
+            background: #000;
+            padding: 10px 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #333;
+        }
+
+        .code-dots {
+            display: flex;
+            gap: 5px;
+        }
+
+        .code-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+
+        .code-dot.red { background-color: #ff5f56; }
+        .code-dot.yellow { background-color: #ffbd2e; }
+        .code-dot.green { background-color: #27c93f; }
+
+        .code-title {
+            color: #fff;
+            font-size: 0.9rem;
+        }
+
+        .code-content {
+            background: #000;
+            color: #fff;
+            padding: 15px;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            font-size: 14px;
+            line-height: 1.5;
+            overflow-x: auto;
+            height: 300px;
+            position: relative;
+        }
+
+        .code-line {
+            margin: 0;
+            white-space: pre;
+            display: flex;
+        }
+
+        .line-number {
+            color: rgba(255, 255, 255, 0.5);
+            margin-right: 15px;
+            user-select: none;
+            text-align: right;
+            min-width: 30px;
+        }
+
+        .typing-animation {
+            overflow: hidden;
+            white-space: nowrap;
+            margin: 0;
+            animation: typing 3.5s steps(40, end);
+        }
+
+        .keyword { color: #569CD6; }
+        .string { color: #CE9178; }
+        .comment { color: #6A9955; }
+        .function { color: #DCDCAA; }
+        .variable { color: #9CDCFE; }
+        .number { color: rgba(255, 255, 255, 0.5); }
+        .operator { color: #D4D4D4; }
+        .property { color: #4EC9B0; }
+
+        @keyframes typing {
+            from { width: 0 }
+            to { width: 100% }
+        }
+        /* Updated styling for the content section */
+.content-section {
+    width: 100%;
+    padding: 60px 20px;
+    background-color: #fff; /* White background */
+    color: #000; /* Black text */
+    position: relative; /* Ensure it's positioned independently */
+    z-index: 5; /* Above the hero elements */
+    margin-top: 0;
+    box-sizing: border-box;
+}
+
+.content-section-container {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.content-section h2 {
+    font-size: 2.5rem;
+    margin-bottom: 30px;
+    color: #000; /* Black heading */
+}
+
+.content-section p {
+    font-size: 1.1rem;
+    line-height: 1.6;
+    margin-bottom: 20px;
+    color: #333; /* Slightly softer black for text */
+}
+
+.content-section .highlight {
+    color: #ff8c00; /* Keep highlight color */
+    font-weight: bold;
+}
+
+/* Fix for hero section to ensure it doesn't affect the content section */
+.hero-section {
+    position: relative;
+    width: 100%;
+    height: 100vh;
+    overflow: hidden;
+    margin-bottom: 0;
+    padding-bottom: 0;
+}
+
+/* Ensure the hero's content doesn't affect the following section */
+.hero-section .content {
+    position: relative;
+    z-index: 1;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+/* Make sure this spans full width regardless of screen size */
+@media (max-width: 768px), (min-width: 769px) {
+    .content-section {
+        width: 100%;
+        left: 0;
+        right: 0;
+    }
+}
+
+        @media (max-width: 768px) {
+            .content {
+                align-items: center;
+                text-align: center;
+            }
+            
+            .buttons {
+                justify-content: center;
+            }
+            
+            .title { font-size: 2.5rem; }
+            .subtitle { font-size: 1.2rem; }
+            .btn { font-size: 1rem; padding: 10px 25px; }
+            .code-container { max-width: 90%; margin-top: 0px; }
+            
+            .ray-container {
+                position: relative;
+                height: 80px;
+                width: 100%;
+                margin: 5px 0;
+            }
+            
+            .ray {
+                right: 50%;
+                height: 80px;
+            }
+        }
+
+        @media (min-width: 769px) {
+            .content {
+                flex-direction: row;
+                flex-wrap: wrap;
+            }
+            
+            .text-content {
+                max-width: 50%;
+            }
+            
+            .ray-container {
+                position: relative;
+                width: 50%;
+                right: 0;
+                top: 0;
+                height: 40%;
+            }
+            
+            .code-container {
+              
+                margin-top: 40px 0;
+                width: 100%;
+                
+                
+            }
+        }
+
+        @media (max-width: 480px) {
+            .title { font-size: 2rem; }
+            .subtitle { font-size: 1rem; }
+            .btn { font-size: 0.9rem; padding: 8px 20px; }
+            .buttons { flex-direction: column; align-items: center; }
+            .code-content { font-size: 12px; }
+            .code-container{
+              height: 40vh;
+            }
+        }
+        /* Add these fixes to your existing CSS */
+
+/* Fix mobile landscape issues */
+@media (max-height: 500px) and (orientation: landscape) {
+  .hero-section {
+    height: auto;
+    min-height: 100vh;
+  }
+  
+  .code-container {
+    height: auto;
+    max-height: 300px;
+    margin: 20px 0;
+    overflow-y: auto;
+  }
+  
+  .code-content {
+    height: auto;
+    min-height: 300px;
+  }
+  
+  .ray-container {
+    display: block;
+    position: relative;
+    height: 100px;
+    width: 100%;
+  }
+  
+  .ray {
+    right: 50%;
+    height: 100px;
+  }
+}
+
+/* Fix desktop layout for code container and ray */
+@media (min-width: 769px) {
+  .content {
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+  
+  .text-content {
+    width: 45%;
+    max-width: 45%;
+  }
+  
+  .ray-container {
+    position: relative;
+    width: 55%;
+    height: 300px;
+    order: 1;
+  }
+  
+  .code-container {
+    width: 75%;
+    margin-top: 20px;
+    margin-left: auto;
+    order: 2;
+  }
+}
+
+    </style>
+    <style>
+      .section{
+        background:black;
+      }
+      .ctainer{
+        background: black;
+      }
+    </style>
+</head>
+<body>
+
+      <div class="loader-container" id="loader">
+        <div class="advanced-loader">
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
+        <div class="loading-text">Loading...</div>
+    </div>
+    <!-- Header -->
+    <header class="header">
+        <!-- For Desktop: Back Button, Title, Menu Options on the Right -->
+        <button class="back-btn" id="backBtn">◀</button>
+        <div class="headtitle">ARhub</div>
+        <nav class="desktop-menu">
+            <a href="index.html">Home</a>
+            <a href="about.html">About</a>
+            <a href="services.html">Services</a>
+            <a href="contact.html">Contact</a>
+        </nav>
+        <button class="menu-btn" onclick="toggleMenu()">☰</button>
+    </header>
+
+    <!-- Fullscreen Mobile Menu -->
+    <nav class="menu" id="menu">
+        <button class="menu-btn" onclick="toggleMenu()">✖</button>
+        <div class="menu-container">
+            <a href="index.html">Home</a>
+            <a href="about.html">About</a>
+            <a href="services.html">Services</a>
+            <a href="contact.html">Contact</a>
+        </div>
+    </nav>
+
+    <div class="hero-section">
+        <canvas class="matrix-canvas"></canvas>
+        <div id="particles-js" class="particles-js"></div>
+        <div class="content">
+            <div class="text-content">
+                <div class="title-container">
+                    <span class="title"></span>
+                    <span class="cursor"></span>
+                </div>
+                <p class="subtitle">Learn | Code | Build</p>
+                <div class="buttons">
+                    <a href="#" class="btn">Explore Projects</a>
+                    <a href="#" class="btn">View Blogs</a>
+                </div>
+            </div>
+            
+            <div class="ray-container">
+                <div class="ray"></div>
+            </div>
+            
+            <div class="code-container">
+                <div class="code-header">
+                    <div class="code-dots">
+                        <div class="code-dot red"></div>
+                        <div class="code-dot yellow"></div>
+                        <div class="code-dot green"></div>
+                    </div>
+                    <div class="code-title">appreciation.jsx</div>
+                </div>
+                <div class="code-content">
+                    <!-- Code will be generated dynamically -->
+                </div>
+            </div>
+        </div>
+    </div>
+<section class="content-section">
+  <div class="content-section-container">
+
+    <div class="container" id="about-section">
+
+    <div class="container" id="about-section">
+        <div class="about-container">
+            <div class="about-left">
+                <h1>About Me</h1>
+                <p>Hi, I'm <b>AR</b>, a passionate coder and YouTuber focused on making coding simple and fun. I love building projects and sharing knowledge.</p>
+            </div>
+
+            <div class="about-right">
+                <h2 class="skills-title">Skills</h2>
+                <div class="skills">
+                    <div class="skill">
+                        <div class="skill-name">HTML & CSS</div>
+                        <div class="skill-bar"><div class="skill-fill" data-width="90%"></div></div>
+                    </div>
+                    <div class="skill">
+                        <div class="skill-name">JavaScript</div>
+                        <div class="skill-bar"><div class="skill-fill" data-width="85%"></div></div>
+                    </div>
+                    <div class="skill">
+                        <div class="skill-name">Python</div>
+                        <div class="skill-bar"><div class="skill-fill" data-width="80%"></div></div>
+                    </div>
+                    <div class="skill">
+                        <div class="skill-name">C++</div>
+                        <div class="skill-bar"><div class="skill-fill" data-width="75%"></div></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="tech-stack-container">
+            <div class="tech-stack-wrapper" id="tech-stack">
+                <!-- Duplicate logos for infinite effect -->
+            </div>
+        </div>
+    </div>
+</section>
+<div class="section">
+    <div class="ctainer">
+        <h2 class="ttitle">My Projects</h2>
+
+        <div class="showcase-wrapper">
+            <div class="projects-container">
+                <button class="slider-btn left-btn" onclick="scrollProjects(-1)">
+                    <i class="fas fa-chevron-left"></i>
+                </button>
+                <div class="projects-wrapper">
+                    <div class="project-card" onclick="showButton(this)" data-url="https://example.com/project1">
+                        <i class="fas fa-code project-icon"></i>
+                        <h3 class="project-title">Web Development</h3>
+                        <div class="view-button" onclick="openProject(event, this)">View Project</div>
+                    </div>
+                    <div class="project-card" onclick="showButton(this)" data-url="https://example.com/project2">
+                        <i class="fas fa-mobile-alt project-icon"></i>
+                        <h3 class="project-title">App Design</h3>
+                        <div class="view-button" onclick="openProject(event, this)">View Project</div>
+                    </div>
+                    <div class="project-card" onclick="showButton(this)" data-url="https://example.com/project3">
+                        <i class="fas fa-robot project-icon"></i>
+                        <h3 class="project-title">AI Integration</h3>
+                        <div class="view-button" onclick="openProject(event, this)">View Project</div>
+                    </div>
+                    <div class="project-card" onclick="showButton(this)" data-url="https://example.com/project4">
+                        <i class="fas fa-chart-line project-icon"></i>
+                        <h3 class="project-title">Data Analytics</h3>
+                        <div class="view-button" onclick="openProject(event, this)">View Project</div>
+                    </div>
+                    <div class="project-card" onclick="showButton(this)" data-url="https://example.com/project5">
+                        <i class="fas fa-gamepad project-icon"></i>
+                        <h3 class="project-title">Game Development</h3>
+                        <div class="view-button" onclick="openProject(event, this)">View Project</div>
+                    </div>
+                    <div class="project-card" onclick="showButton(this)" data-url="https://example.com/project6">
+                        <i class="fas fa-cloud project-icon"></i>
+                        <h3 class="project-title">Cloud Services</h3>
+                        <div class="view-button" onclick="openProject(event, this)">View Project</div>
+                    </div>
+                    <div class="project-card" onclick="showButton(this)" data-url="https://example.com/project7">
+                        <i class="fas fa-shield-alt project-icon"></i>
+                        <h3 class="project-title">Cybersecurity</h3>
+                        <div class="view-button" onclick="openProject(event, this)">View Project</div>
+                    </div>
+                    <div class="project-card" onclick="showButton(this)" data-url="https://example.com/project8">
+                        <i class="fas fa-vr-cardboard project-icon"></i>
+                        <h3 class="project-title">VR Experience</h3>
+                        <div class="view-button" onclick="openProject(event, this)">View Project</div>
+                    </div>
+                    <div class="project-card" onclick="showButton(this)" data-url="https://example.com/project9">
+                        <i class="fas fa-database project-icon"></i>
+                        <h3 class="project-title">Database Design</h3>
+                        <div class="view-button" onclick="openProject(event, this)">View Project</div>
+                    </div>
+                    <div class="project-card" onclick="showButton(this)" data-url="https://example.com/project10">
+                        <i class="fas fa-camera project-icon"></i>
+                        <h3 class="project-title">Photography</h3>
+                        <div class="view-button" onclick="openProject(event, this)">View Project</div>
+                    </div>
+                </div>
+                <button class="slider-btn right-btn" onclick="scrollProjects(1)">
+                    <i class="fas fa-chevron-right"></i>
+                </button>
+            </div>
+            <div class="dots"></div>
+        </div>
+    </div>
+    
+    </div>
+    
+    
+<section class="content-section">
+  <div class="content-section-container">
+    
+<div class="productivity-heading">
+  <h2 class="unmatch-title">Live Code Editor</h2>
+  <p class="platform-desc">An interactive development environment that showcases real-time code execution and preview. Watch as HTML and JavaScript come to life simultaneously, helping developers visualize their project components and task management systems before implementation.</p>
+</div>
+
+    <div class="editors-container">
+        <!-- HTML Editor Container -->
+        <div class="editor-container">
+            <div class="navbar">
+                <div class="editor-title">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
+                    HTML
+                </div>
+                <div class="tab-buttons">
+                    <button class="nav-btn active" onclick="toggleSection('html-code')">Code</button>
+                    <button class="nav-btn" onclick="toggleSection('html-preview')">Preview</button>
+                </div>
+            </div>
+
+            <div class="code-box code-visible" id="html-code-box">
+                <pre class="code-editor"><code class="html" id="htmlCodeContent"></code></pre>
+            </div>
+
+            <div class="preview-box" id="html-preview-box">
+                <div class="preview-content" id="htmlPreviewDisplay"></div>
+            </div>
+        </div>
+
+        <!-- JavaScript Editor Container -->
+        <div class="editor-container">
+            <div class="navbar">
+                <div class="editor-title">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                    </svg>
+                    JavaScript
+                </div>
+                <div class="tab-buttons">
+                    <button class="nav-btn active" onclick="toggleSection('js-code')">Code</button>
+                    <button class="nav-btn" onclick="toggleSection('js-preview')">Console</button>
+                </div>
+            </div>
+
+            <div class="code-box code-visible" id="js-code-box">
+                <pre class="code-editor"><code class="javascript" id="jsCodeContent"></code></pre>
+            </div>
+
+            <div class="preview-box" id="js-preview-box">
+                <div class="console-output" id="jsPreviewDisplay"></div>
+            </div>
+        </div>
+    </div>
+  </div>
+</section>
+<div class="subscribe-container">
+  <div class="subscribe-wrapper">
+    <h1 class="subscribe-title">Haven't Subscribed Yet?</h1>
+    <div class="subscribe-controls">
+      <div class="subscribe-area">
+        <button id="subscribeBtn" class="subscribe-btn">
+          <i class="fab fa-youtube"></i> Subscribe Now
+        </button>
+        
+        <div class="animation-container">
+          <i class="fas fa-hand-pointer hand-pointer" id="handPointer"></i>
+          <i class="fas fa-bell bell-icon" id="bellIcon"></i>
+          
+          <div class="bell-options" id="bellOptions">
+            <div class="bell-option" data-option="none">
+              <i class="fas fa-bell-slash"></i>
+            </div>
+            <div class="bell-option" data-option="personalized">
+              <i class="fas fa-bell"></i>
+            </div>
+            <div class="bell-option all" data-option="all">
+              <i class="fas fa-bell"></i>
+              <i class="fas fa-check" style="position: absolute; font-size: 0.7rem; top: 8px; right: 8px;"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="success-message" id="successMessage">
+      <i class="fas fa-check-circle"></i> All notifications enabled!
+    </div>
+  </div>
+</div>
+
+<div class="particles" id="particles"></div>
+<div class="tooltip" id="tooltip"></div>
+<!-- Continue with the rest of your page content -->
+
+  <div class="bodyy">
+  <div class="testimonial-container">
+    <div class="testimonial-wrapper">
+      <!-- Testimonial cards hard-coded instead of using JavaScript -->
+      <div class="testimonial-card" style="--glow-color: 79, 70, 229;">
+        <div class="message-box">
+          <div class="glow"></div>
+          <div class="hheader">
+            <span class="name">Sarah Johnson</span>
+            <span class="rating">★★★★★</span>
+          </div>
+          <p class="message">Absolutely love this platform! The user interface is intuitive and the features are exactly what I needed. Customer support has been exceptional.</p>
+        </div>
+      </div>
+      
+      <div class="testimonial-card" style="--glow-color: 147, 51, 234;">
+        <div class="message-box">
+          <div class="glow"></div>
+          <div class="hheader">
+            <span class="name">Michael Chen</span>
+            <span class="rating">★★★★★</span>
+          </div>
+          <p class="message">This platform has transformed how I work. The attention to detail and constant updates show they really care about user experience.</p>
+        </div>
+      </div>
+      
+      <div class="testimonial-card" style="--glow-color: 16, 185, 129;">
+        <div class="message-box">
+          <div class="glow"></div>
+          <div class="hheader">
+            <span class="name">Emma Williams</span>
+            <span class="rating">★★★★☆</span>
+          </div>
+          <p class="message">Great value for money! The tools provided have helped streamline my workflow significantly. Would highly recommend to anyone.</p>
+        </div>
+      </div>
+      
+      <div class="testimonial-card" style="--glow-color: 244, 63, 94;">
+        <div class="message-box">
+          <div class="glow"></div>
+          <div class="hheader">
+            <span class="name">David Martinez</span>
+            <span class="rating">★★★★★</span>
+          </div>
+          <p class="message">Been using this for 6 months now and I'm impressed with how reliable and feature-rich it is. The recent updates have made it even better.</p>
+        </div>
+      </div>
+      
+      <div class="testimonial-card" style="--glow-color: 234, 179, 8;">
+        <div class="message-box">
+          <div class="glow"></div>
+          <div class="hheader">
+            <span class="name">Alex Thompson</span>
+            <span class="rating">★★★★★</span>
+          </div>
+          <p class="message">The collaboration features are fantastic. Our team productivity has increased by 40% since we started using it. Worth every penny.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <div class="button-container">
+    <a href="testimonial.html" class="rate-us-button">Rate Us</a>
+  </div>
+  </div>
+  
+  <div class="footerwrapper">
+    <div class="footer-container">
+        <div class="movement-text">
+            <h1>Join the<br>Movement</h1>
+            <p>Unlock the future of productivity with ARhub.</p>
+            <p>Remember, this journey is just getting started.</p>
+        </div>
+        
+        <div class="button-container">
+            <a href="index.html" class="start-button">START NOW</a>
+        </div>
+        
+        <div class="social-links">
+            <a href="#" aria-label="Twitter/X"><i class="fab fa-x-twitter"></i></a>
+            <a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin"></i></a>
+            <a href="#" aria-label="GitHub"><i class="fab fa-github"></i></a>
+            <a href="#" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
+            <a href="#" aria-label="Discord"><i class="fab fa-discord"></i></a>
+            <a href="#" aria-label="Website"><i class="fas fa-globe"></i></a>
+        </div>
+        
+        <div class="legal-links">
+            <a href="#">Terms of Service</a>
+            <a href="#">Privacy Policy</a>
+        </div>
+        
+        <div class="copyright">
+            Copyright © 2025 ARhub Labs. All rights reserved.
+        </div>
+        
+        <div class="made-with">
+            <div class="heart-container">
+                <div class="heart-icon"></div>
+            </div>
+            <div class="made-with-text">
+                <span>Made with</span> <span>passion and AR</span>
+            </div>
+        </div>
+    </div>
+  </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/particles.js/2.0.0/particles.min.js"></script>
+    
+    <script>
+      // Matrix Effect
+const canvas = document.querySelector('.matrix-canvas');
+const ctx = canvas.getContext('2d');
+
+function resizeCanvas() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+}
+
+window.addEventListener('resize', resizeCanvas);
+resizeCanvas();
+
+const letters = "0123456789ABCDEF";
+const matrix = letters.split("");
+const fontSize = 14;
+let columns = Math.floor(canvas.width / fontSize);
+let drops = Array(columns).fill(1);
+
+function drawMatrix() {
+    ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    
+    // White with 50% opacity as requested
+    ctx.fillStyle = "rgba(255, 255, 255, 0.5)";
+    ctx.font = fontSize + "px Courier New";
+
+    drops.forEach((y, i) => {
+        const text = matrix[Math.floor(Math.random() * matrix.length)];
+        const x = i * fontSize;
+        ctx.fillText(text, x, y * fontSize);
+
+        if (y * fontSize > canvas.height && Math.random() > 0.975) {
+            drops[i] = 0;
+        }
+        drops[i]++;
+    });
+
+    requestAnimationFrame(drawMatrix);
+}
+
+drawMatrix();
+
+// Initialize particles.js
+particlesJS('particles-js', {
+    "particles": {
+        "number": {
+            "value": 80,
+            "density": {
+                "enable": true,
+                "value_area": 800
+            }
+        },
+        "color": {
+            "value": "#ff8c00"
+        },
+        "shape": {
+            "type": "circle",
+            "stroke": {
+                "width": 0,
+                "color": "#000000"
+            },
+            "polygon": {
+                "nb_sides": 5
+            }
+        },
+        "opacity": {
+            "value": 0.3,
+            "random": false,
+            "anim": {
+                "enable": false,
+                "speed": 1,
+                "opacity_min": 0.1,
+                "sync": false
+            }
+        },
+        "size": {
+            "value": 3,
+            "random": true,
+            "anim": {
+                "enable": false,
+                "speed": 40,
+                "size_min": 0.1,
+                "sync": false
+            }
+        },
+        "line_linked": {
+            "enable": true,
+            "distance": 150,
+            "color": "#ffffff",
+            "opacity": 0.3,
+            "width": 1
+        },
+        "move": {
+            "enable": true,
+            "speed": 2,
+            "direction": "none",
+            "random": false,
+            "straight": false,
+            "out_mode": "out",
+            "bounce": false,
+            "attract": {
+                "enable": false,
+                "rotateX": 600,
+                "rotateY": 1200
+            }
+        }
+    },
+    "interactivity": {
+        "detect_on": "canvas",
+        "events": {
+            "onhover": {
+                "enable": true,
+                "mode": "grab"
+            },
+            "onclick": {
+                "enable": true,
+                "mode": "push"
+            },
+            "resize": true
+        },
+        "modes": {
+            "grab": {
+                "distance": 140,
+                "line_linked": {
+                    "opacity": 1
+                }
+            },
+            "bubble": {
+                "distance": 400,
+                "size": 40,
+                "duration": 2,
+                "opacity": 8,
+                "speed": 3
+            },
+            "repulse": {
+                "distance": 200,
+                "duration": 0.4
+            },
+            "push": {
+                "particles_nb": 4
+            },
+            "remove": {
+                "particles_nb": 2
+            }
+        }
+    },
+    "retina_detect": true
+});
+
+// Add mouse follow effect with parallax
+document.addEventListener('mousemove', function(e) {
+    const contentElement = document.querySelector('.content');
+    const xAxis = (window.innerWidth / 2 - e.pageX) / 30;
+    const yAxis = (window.innerHeight / 2 - e.pageY) / 30;
+    
+    contentElement.style.transform = `translateX(${xAxis}px) translateY(${yAxis}px)`;
+});
+
+// Reset position when mouse leaves
+document.addEventListener('mouseleave', function() {
+    const contentElement = document.querySelector('.content');
+    contentElement.style.transform = 'translateX(0px) translateY(0px)';
+});
+
+// Generate code content with syntax highlighting
+function generateCodeContent() {
+    const codeContent = document.querySelector('.code-content');
+    
+    const codeLines = [
+        { num: 1, code: 'import React, { useState, useEffect } from "react";', classes: ['keyword', 'variable', 'string'] },
+        { num: 2, code: 'import axios from "axios";', classes: ['keyword', 'variable'] },
+        { num: 3, code: '', classes: [] },
+        { num: 4, code: '// Project component with cool animations', classes: ['comment'] },
+        { num: 5, code: 'const ProjectShowcase = () => {', classes: ['keyword', 'variable', 'function'] },
+        { num: 6, code: '  const [projects, setProjects] = useState([]);', classes: ['keyword', 'variable', 'function'] },
+        { num: 7, code: '  const [loading, setLoading] = useState(true);', classes: ['keyword', 'variable', 'function'] },
+        { num: 8, code: '', classes: [] },
+        { num: 9, code: '  useEffect(() => {', classes: ['function'] },
+        { num: 10, code: '    const fetchProjects = async () => {', classes: ['keyword', 'variable', 'function'] },
+        { num: 11, code: '      try {', classes: ['keyword'] },
+        { num: 12, code: '        setLoading(true);', classes: ['variable', 'function'] },
+        { num: 13, code: '        const response = await axios.get("/api/projects");', classes: ['keyword', 'variable', 'function'] },
+        { num: 14, code: '        setProjects(response.data);', classes: ['variable', 'property', 'function'] },
+        { num: 15, code: '      } catch (error) {', classes: ['keyword', 'variable'] },
+        { num: 16, code: '        console.error("Error fetching projects:", error);', classes: ['variable', 'function', 'string'] },
+        { num: 17, code: '      } finally {', classes: ['keyword'] },
+        { num: 18, code: '        setLoading(false);', classes: ['variable', 'function'] },
+        { num: 19, code: '      }', classes: [] },
+        { num: 20, code: '    };', classes: [] },
+        { num: 21, code: '', classes: [] },
+        { num: 22, code: '    fetchProjects();', classes: ['function'] },
+        { num: 23, code: '  }, []);', classes: ['operator'] },
+        { num: 24, code: '', classes: [] },
+        { num: 25, code: '  // Calculate project statistics', classes: ['comment'] },
+        { num: 26, code: '  const totalLikes = projects.reduce((sum, proj) => sum + proj.likes, 0);', classes: ['keyword', 'variable', 'function', 'property'] },
+        { num: 27, code: '  const avgRating = (', classes: ['keyword', 'variable'] },
+        { num: 28, code: '    projects.reduce((sum, proj) => sum + proj.rating, 0) / projects.length', classes: ['variable', 'function', 'property', 'operator'] },
+        { num: 29, code: '  ).toFixed(1);', classes: ['function'] },
+        { num: 30, code: '', classes: [] },
+        { num: 31, code: '  return (', classes: ['keyword'] },
+        { num: 32, code: '    <div className="project-showcase">', classes: ['variable', 'string'] },
+        { num: 33, code: '      <h2>Featured Projects</h2>', classes: [] },
+        { num: 34, code: '      {loading ? (', classes: ['variable'] },
+        { num: 35, code: '        <div className="loader">Loading amazing projects...</div>', classes: ['variable', 'string'] },
+        { num: 36, code: '      ) : (', classes: [] },
+        { num: 37, code: '        <div className="projects-grid">', classes: ['variable', 'string'] },
+        { num: 38, code: '          {projects.map((project) => (', classes: ['variable', 'function'] },
+        { num: 39, code: '            <ProjectCard key={project.id} project={project} />', classes: ['variable', 'property'] },
+        { num: 40, code: '          ))}', classes: [] },
+        { num: 41, code: '        </div>', classes: [] },
+        { num: 42, code: '      )}', classes: [] },
+        { num: 43, code: '    </div>', classes: [] },
+        { num: 44, code: '  );', classes: [] },
+        { num: 45, code: '};', classes: [] },
+        { num: 46, code: '', classes: [] },
+        { num: 47, code: 'export default ProjectShowcase;', classes: ['keyword', 'variable'] }
+    ];
+
+    codeContent.innerHTML = '';
+    
+    codeLines.forEach((line, index) => {
+        const lineDiv = document.createElement('div');
+        lineDiv.className = 'code-line';
+        
+        const lineNumber = document.createElement('span');
+        lineNumber.className = 'line-number';
+        lineNumber.textContent = line.num;
+        
+        const codePart = document.createElement('pre');
+        codePart.className = index < 5 ? 'typing-animation' : '';
+        
+        // Process the code to apply syntax highlighting
+        let codeHTML = line.code;
+        
+        // Apply syntax highlighting classes
+        if (line.classes.includes('keyword')) {
+            codeHTML = codeHTML.replace(/(import|from|const|let|var|function|return|if|else|try|catch|finally|async|await|export|default|useState|useEffect)/g, '<span class="keyword">$1</span>');
+        }
+        if (line.classes.includes('string')) {
+            codeHTML = codeHTML.replace(/"([^"]*)"/g, '<span class="string">"$1"</span>');
+        }
+        if (line.classes.includes('comment')) {
+            codeHTML = codeHTML.replace(/(\/\/.*)$/g, '<span class="comment">$1</span>');
+        }
+        if (line.classes.includes('function')) {
+            codeHTML = codeHTML.replace(/(\.|\b)(map|reduce|useState|useEffect|get|toFixed|error|log)(\(|\.)/g, '$1<span class="function">$2</span>$3');
+        }
+        if (line.classes.includes('variable')) {
+            codeHTML = codeHTML.replace(/\b(ProjectShowcase|projects|setProjects|loading|setLoading|fetchProjects|response|error|sum|proj|avgRating|totalLikes|className|key|project)\b(?!\()/g, '<span class="variable">$1</span>');
+        }
+        if (line.classes.includes('property')) {
+            codeHTML = codeHTML.replace(/\.(data|likes|rating|length|id)/g, '.<span class="property">$1</span>');
+        }
+        
+        codePart.innerHTML = codeHTML;
+        
+        lineDiv.appendChild(lineNumber);
+        lineDiv.appendChild(codePart);
+        codeContent.appendChild(lineDiv);
+    });
+}
+
+// Animation sequence
+document.addEventListener('DOMContentLoaded', function() {
+    const title = document.querySelector('.title');
+    const cursor = document.querySelector('.cursor');
+    const subtitle = document.querySelector('.subtitle');
+    const buttons = document.querySelector('.buttons');
+    const codeContainer = document.querySelector('.code-container');
+    
+    // Generate the code
+    generateCodeContent();
+    
+    // Animation sequence timing
+    setTimeout(() => {
+        // Start typing animation
+        startTyping();
+    }, 1000);
+    
+    setTimeout(() => {
+        // Show subtitle
+        subtitle.classList.add('visible');
+    }, 3000);
+    
+    setTimeout(() => {
+        // Show buttons
+        buttons.classList.add('visible');
+    }, 4000);
+    
+    setTimeout(() => {
+        // Show code container
+        codeContainer.classList.add('visible');
+    }, 5000);
+    
+    function startTyping() {
+        const titleText = "Welcome to ARhub";
+        title.style.visibility = 'visible';
+        cursor.style.visibility = 'visible';
+        
+        let i = 0;
+        function typeCharacter() {
+            if (i < titleText.length) {
+                title.textContent += titleText.charAt(i);
+                i++;
+                setTimeout(typeCharacter, 100);
+            }
+        }
+        typeCharacter();
+    }
+});
+// Add this function to your existing JavaScript to handle layout adjustments
+
+function adjustLayoutForOrientation() {
+  const isLandscape = window.innerWidth > window.innerHeight;
+  const isMobile = window.innerWidth < 768;
+  const codeContainer = document.querySelector('.code-container');
+  const rayContainer = document.querySelector('.ray-container');
+  
+  if (isMobile && isLandscape) {
+    // Fix for mobile landscape mode
+    document.body.classList.add('landscape-mobile');
+    
+    // Ensure code container is fully visible
+    if (codeContainer) {
+      codeContainer.style.height = 'auto';
+      const codeContent = codeContainer.querySelector('.code-content');
+      if (codeContent) {
+        codeContent.style.height = 'auto';
+        codeContent.style.maxHeight = '80vh';
+      }
+    }
+    
+    // Adjust ray visibility
+    if (rayContainer) {
+      rayContainer.style.height = '80px';
+      const ray = rayContainer.querySelector('.ray');
+      if (ray) {
+        ray.style.height = '80px';
+      }
+    }
+  } else {
+    document.body.classList.remove('landscape-mobile');
+    
+    // Reset code container
+    if (codeContainer && isMobile) {
+      codeContainer.style.height = '';
+      const codeContent = codeContainer.querySelector('.code-content');
+      if (codeContent) {
+        codeContent.style.height = '300px';
+      }
+    }
+    
+    // Reset ray container for desktop
+    if (rayContainer && !isMobile) {
+      rayContainer.style.height = '300px';
+      const ray = rayContainer.querySelector('.ray');
+      if (ray) {
+        ray.style.height = '100%';
+      }
+    }
+  }
+}
+
+// Call the function initially and on resize
+window.addEventListener('load', adjustLayoutForOrientation);
+window.addEventListener('resize', adjustLayoutForOrientation);
+window.addEventListener('orientationchange', adjustLayoutForOrientation);
+    </script>
+    <script src="header.js"></script>
+<script src="about.js"></script>
+<script src="appdoc.js"></script>
+<script src="code.js"></script>
+<script src="subscribe.js"></script>
+<script src="testimonial.js"></script>
+<script>
+      // Loader
+    window.addEventListener('load', function() {
+      setTimeout(function() {
+        const loader = document.getElementById('loader');
+        if (loader) {
+          loader.classList.add('fade-out');
+          setTimeout(function() {
+            loader.style.display = 'none';
+          }, 500);
+        }
+      }, 2000);
+    });
+</script>
+                <script>
+                    const techLogos = [
+                        "html5", "css3", "javascript", "python", "cplusplus", "react",
+                        "nodejs", "mongodb", "git", "github", "mysql", "java",
+                        "csharp", "flutter", "php", "typescript", "vuejs", "kotlin"
+                    ];
+                    const wrapper = document.getElementById('tech-stack');
+
+                    function addLogos() {
+                        wrapper.innerHTML = "";
+                        for (let i = 0; i < 5; i++) {
+                            techLogos.forEach((tech, index) => {
+                                let img = document.createElement('img');
+                                img.src = `https://cdn.jsdelivr.net/gh/devicons/devicon/icons/${tech}/${tech}-original.svg`;
+                                img.alt = tech;
+                                let separator = document.createElement('span');
+                                separator.className = "separator";
+                                separator.textContent = "|";
+                                wrapper.appendChild(img);
+                                if (index < techLogos.length - 1) {
+                                    wrapper.appendChild(separator);
+                                }
+                            });
+                        }
+                        wrapper.style.animation = "techScroll 30s linear infinite";
+                    }
+
+                    addLogos();
+                </script>
+    </body>
+    </html> 
