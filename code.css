@@ -1,327 +1,45 @@
-
-
-.page-title {
-    font-size: 3rem;
-    font-weight: 800;
-    margin-bottom: 0.5em;
-    color: #111;
+.page-title{font-size:3rem;font-weight:800;margin-bottom:.5em;color:#111}
+.page-subtitle{font-size:1.2rem;max-width:800px;margin:0 auto 3rem;color:#555;line-height:1.6}
+.editors-container{display:flex;flex-direction:column;gap:40px;max-width:1200px;margin:0 auto}
+@media (min-width:720px){
+.editors-container{flex-direction:row;align-items:stretch;justify-content:space-between}
+.editor-container{width:48%;max-width:580px}
 }
-
-.page-subtitle {
-    font-size: 1.2rem;
-    max-width: 800px;
-    margin: 0 auto 3rem;
-    color: #555;
-    line-height: 1.6;
+.editor-container{flex:1;background:#111;border-radius:12px;padding:20px;position:relative;overflow:hidden;z-index:1}
+.editor-container::before{content:'';position:absolute;top:0;left:0;right:0;bottom:0;background:#111;border-radius:0;box-shadow:0 0 15px 2px rgba(255,140,0,.5),0 0 30px 5px rgba(255,165,0,.3),0 0 60px 8px rgba(255,215,0,.2);z-index:-1}
+.editor-container::after{content:'';position:absolute;top:-5px;left:-5px;right:-5px;bottom:-5px;background:radial-gradient(ellipse at 70% 30%,rgba(255,165,0,.4) 0,rgba(255,140,0,.2) 50%,rgba(255,215,0,.1) 70%,transparent 100%);border-radius:16px;z-index:-2;opacity:.6;filter:blur(8px)}
+.navbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:15px;padding:0 5px}
+.editor-title{color:#fff;font-size:1rem;font-weight:600;display:flex;align-items:center;gap:8px}
+.editor-title svg{width:18px;height:18px;opacity:.7}
+.tab-buttons{display:flex;gap:10px}
+.nav-btn{padding:6px 14px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.1);color:#fff;cursor:pointer;border-radius:6px;transition:all .2s;font-size:.8rem;font-weight:500}
+.nav-btn:hover{background:rgba(255,255,255,.2);border-color:rgba(255,255,255,.2)}
+.nav-btn.active{background:rgba(255,255,255,.2);border-color:rgba(255,255,255,.3);box-shadow:0 0 0 1px rgba(255,255,255,.1)}
+.code-box,.preview-box{display:none;width:100%;background:#1a1a1a;border-radius:8px;height:300px;overflow:auto;box-shadow:inset 0 1px 3px rgba(0,0,0,.3);text-align:left;border:1px solid rgba(255,255,255,.1)}
+.preview-box{background:#fff;color:#000;padding:10px}
+.preview-content{width:100%;max-width:500px;margin:0 auto;overflow:auto;height:100%}
+.code-visible{display:block}
+.code-editor{background:#1a1a1a;color:#fff;padding:15px 0;border-radius:8px;font-size:.85rem;line-height:1.5;overflow:auto;height:100%;position:relative;counter-reset:line-number}
+.code-editor code{padding-left:60px;display:block;position:relative;font-family:'Fira Code',Menlo,Monaco,'Courier New',monospace}
+.code-editor{background:#1a1a1a;color:#fff;padding:15px 0;border-radius:8px;font-size:.85rem;line-height:1.5;overflow:auto;height:100%;position:relative;counter-reset:line-number}
+.code-editor code{padding-left:60px;display:block;position:relative;font-family:'Fira Code',Menlo,Monaco,'Courier New',monospace}
+.code-editor code::before{content:counter(line-number);counter-increment:line-number;display:inline-block;width:30px;text-align:right;position:absolute;left:15px;color:#636363;user-select:none}
+.code-editor code::before{content:counter(line-number);counter-increment:line-number;display:inline-block;width:30px;text-align:right;position:absolute;left:15px;color:#636363;user-select:none}
+.code-editor::-webkit-scrollbar{width:8px;height:8px}
+.code-editor::-webkit-scrollbar-track{background:#1a1a1a}
+.code-editor::-webkit-scrollbar-thumb{background:#444;border-radius:4px}
+.code-editor::-webkit-scrollbar-thumb:hover{background:#555}
+.console-output{font-family:'Fira Code',monospace;color:#4caf50;background:#121212;padding:12px;font-size:.75rem;border-radius:8px;height:100%;overflow:auto;line-height:1.6}
+.console-line{display:flex;margin-bottom:8px}
+.console-prompt{color:#777;margin-right:8px}
+.console-time{color:#999;font-size:.7rem;margin-left:auto;padding-left:10px}
+.productivity-heading{text-align:left;max-width:1200px;margin:0 auto 60px}
+.unmatch-title{font-size:3.5rem;font-weight:800;line-height:1.1;margin-bottom:20px}
+.platform-desc{font-size:1.2rem;line-height:1.6;color:#555;max-width:700px}
+.editor-container{box-shadow:0 0 0 1px rgba(255,140,0,.3),0 0 0 2px rgba(255,165,0,.2),0 0 20px 0 rgba(255,215,0,.15),inset 0 0 0 1px rgba(255,255,255,.05)}
+@keyframes glowPulse{
+0%{opacity:.5}
+50%{opacity:.8}
+100%{opacity:.5}
 }
-
-/* Container layout and spacing */
-.editors-container {
-    display: flex;
-    flex-direction: column;
-    gap: 40px;
-    max-width: 1200px;
-    margin: 0 auto;
-}
-
-/* Desktop layout - containers in one line with appropriate spacing */
-@media (min-width: 720px) {
-    .editors-container {
-        flex-direction: row;
-        align-items: stretch;
-        justify-content: space-between;
-    }
-    
-    .editor-container {
-        width: 48%; /* Ensure they don't take full width */
-        max-width: 580px; /* Limit maximum width */
-    }
-}
-
-/* Editor container with shadow effect */
-.editor-container {
-    flex: 1;
-    background: #111;
-    border-radius: 12px;
-    padding: 20px;
-    position: relative;
-    overflow: hidden;
-    z-index: 1;
-}
-
-/* Orange-yellow shadow effect similar to the image */
-.editor-container::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: #111; /* Keep the container black */
-    border-radius: 0px;
-    box-shadow: 
-        0 0 15px 2px rgba(255, 140, 0, 0.5),
-        0 0 30px 5px rgba(255, 165, 0, 0.3),
-        0 0 60px 8px rgba(255, 215, 0, 0.2);
-    z-index: -1;
-}
-
-/* Uneven glow effect for the edges */
-.editor-container::after {
-    content: '';
-    position: absolute;
-    top: -5px;
-    left: -5px;
-    right: -5px;
-    bottom: -5px;
-    background: radial-gradient(
-        ellipse at 70% 30%,
-        rgba(255, 165, 0, 0.4) 0%,
-        rgba(255, 140, 0, 0.2) 50%,
-        rgba(255, 215, 0, 0.1) 70%,
-        transparent 100%
-    );
-    border-radius: 16px;
-    z-index: -2;
-    opacity: 0.6;
-    filter: blur(8px);
-}
-
-.navbar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 15px;
-    padding: 0 5px;
-}
-
-.editor-title {
-    color: white;
-    font-size: 1rem;
-    font-weight: 600;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-}
-
-.editor-title svg {
-    width: 18px;
-    height: 18px;
-    opacity: 0.7;
-}
-
-.tab-buttons {
-    display: flex;
-    gap: 10px;
-}
-
-.nav-btn {
-    padding: 6px 14px;
-    background: rgba(255, 255, 255, 0.1);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    color: white;
-    cursor: pointer;
-    border-radius: 6px;
-    transition: all 0.2s;
-    font-size: 0.8rem;
-    font-weight: 500;
-}
-
-.nav-btn:hover {
-    background: rgba(255, 255, 255, 0.2);
-    border-color: rgba(255, 255, 255, 0.2);
-}
-
-.nav-btn.active {
-    background: rgba(255, 255, 255, 0.2);
-    border-color: rgba(255, 255, 255, 0.3);
-    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.1);
-}
-
-.code-box, .preview-box {
-    display: none;
-    width: 100%;
-    background: #1a1a1a;
-    border-radius: 8px;
-    height: 300px;
-    overflow: auto;
-    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.3);
-    text-align: left;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.preview-box {
-    background: #fff;
-    color: black;
-    padding: 10px;
-}
-
-.preview-content {
-    width: 100%;
-    max-width: 500px;
-    margin: 0 auto;
-    overflow: auto;
-    height: 100%;
-}
-
-.code-visible {
-    display: block;
-}
-
-/* Code Editor Styling */
-.code-editor {
-    background: #1a1a1a;
-    color: white;
-    padding: 15px 0;
-    border-radius: 8px;
-    font-size: 0.85rem;
-    line-height: 1.5;
-    overflow: auto;
-    height: 100%;
-    position: relative;
-    counter-reset: line-number;
-}
-
-.code-editor code {
-    padding-left: 60px;
-    display: block;
-    position: relative;
-    font-family: 'Fira Code', 'Menlo', 'Monaco', 'Courier New', monospace;
-}
-
-/* Code Editor Styling */
-.code-editor {
-    background: #1a1a1a;
-    color: white;
-    padding: 15px 0;
-    border-radius: 8px;
-    font-size: 0.85rem;
-    line-height: 1.5;
-    overflow: auto;
-    height: 100%;
-    position: relative;
-    counter-reset: line-number;
-}
-
-.code-editor code {
-    padding-left: 60px;
-    display: block;
-    position: relative;
-    font-family: 'Fira Code', 'Menlo', 'Monaco', 'Courier New', monospace;
-}
-
-/* Line Number Styling */
-.code-editor code::before {
-    content: counter(line-number);
-    counter-increment: line-number;
-    display: inline-block;
-    width: 30px;
-    text-align: right;
-    position: absolute;
-    left: 15px;
-    color: #636363;
-    user-select: none;
-}
-
-/* Line Number and Syntax Styling - Dark Theme */
-.code-editor code::before {
-    content: counter(line-number);
-    counter-increment: line-number;
-    display: inline-block;
-    width: 30px;
-    text-align: right;
-    position: absolute;
-    left: 15px;
-    color: #636363;
-    user-select: none;
-}
-
-/* Custom scrollbar for code editors */
-.code-editor::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
-}
-
-.code-editor::-webkit-scrollbar-track {
-    background: #1a1a1a;
-}
-
-.code-editor::-webkit-scrollbar-thumb {
-    background: #444;
-    border-radius: 4px;
-}
-
-.code-editor::-webkit-scrollbar-thumb:hover {
-    background: #555;
-}
-
-/* Console styling */
-.console-output {
-    font-family: 'Fira Code', monospace;
-    color: #4CAF50;
-    background: #121212;
-    padding: 12px;
-    font-size: 0.75rem;
-    border-radius: 8px;
-    height: 100%;
-    overflow: auto;
-    line-height: 1.6;
-}
-
-.console-line {
-    display: flex;
-    margin-bottom: 8px;
-}
-
-.console-prompt {
-    color: #777;
-    margin-right: 8px;
-}
-
-.console-time {
-    color: #999;
-    font-size: 0.7rem;
-    margin-left: auto;
-    padding-left: 10px;
-}
-
-.productivity-heading {
-    text-align: left;
-    max-width: 1200px;
-    margin: 0 auto 60px;
-}
-
-.unmatch-title {
-    font-size: 3.5rem;
-    font-weight: 800;
-    line-height: 1.1;
-    margin-bottom: 20px;
-}
-
-.platform-desc {
-    font-size: 1.2rem;
-    line-height: 1.6;
-    color: #555;
-    max-width: 700px;
-}
-
-/* Additional orange glow effect to match the image */
-.editor-container {
-    /* Additional shadows to enhance the glow effect */
-    box-shadow: 
-        0 0 0 1px rgba(255, 140, 0, 0.3),
-        0 0 0 2px rgba(255, 165, 0, 0.2),
-        0 0 20px 0 rgba(255, 215, 0, 0.15),
-        inset 0 0 0 1px rgba(255, 255, 255, 0.05);
-}
-
-/* Create a pulsing effect similar to the image */
-@keyframes glowPulse {
-    0% { opacity: 0.5; }
-    50% { opacity: 0.8; }
-    100% { opacity: 0.5; }
-}
-
-.editor-container::after {
-    animation: glowPulse 4s infinite ease-in-out;
-}
+.editor-container::after{animation:glowPulse 4s infinite ease-in-out}
