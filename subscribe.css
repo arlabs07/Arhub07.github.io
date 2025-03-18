@@ -1,5 +1,5 @@
 .sub{
-    min-height: 80vh;
+    min-height: 50vh;
     background: black;
     color: white;
 }
@@ -34,7 +34,7 @@
     gap: 20px;
   }
 
-  .subscribe-container .title {
+  .subscribe-container .title .h3 {
     font-size: 2rem;
     font-weight: 700;
     text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
