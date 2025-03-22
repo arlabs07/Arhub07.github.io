@@ -70,6 +70,7 @@
     <link rel="stylesheet" href="code.css">
     <link rel="stylesheet" href="testimonial.css">
     <link rel="stylesheet" href="footer.css">
+    <link rel="manifest" href="/manifest.json">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/atom-one-dark.min.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
       <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
@@ -1328,5 +1329,36 @@ window.addEventListener('orientationchange', adjustLayoutForOrientation);
 
                     addLogos();
                 </script>
+        <script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('/service-worker.js')
+        .then(reg => console.log("Service Worker Registered"))
+        .catch(err => console.log("Service Worker Registration Failed", err));
+    });
+  }
+</script>
+        <script>
+  let deferredPrompt;
+  window.addEventListener("beforeinstallprompt", (e) => {
+    e.preventDefault();
+    deferredPrompt = e;
+    const installBtn = document.createElement("button");
+    installBtn.innerText = "Install ARhub";
+    installBtn.style.position = "fixed";
+    installBtn.style.bottom = "10px";
+    installBtn.style.right = "10px";
+    document.body.appendChild(installBtn);
+
+    installBtn.addEventListener("click", () => {
+      deferredPrompt.prompt();
+      deferredPrompt.userChoice.then(choice => {
+        if (choice.outcome === "accepted") {
+          installBtn.remove();
+        }
+      });
+    });
+  });
+</script>
     </body>
     </html> 
