@@ -592,7 +592,7 @@
         <div class="headtitle">ARhub</div>
         <nav class="desktop-menu">
             <a href="index.html">Home</a>
-            <a href="about.html">About</a>
+            <a href="app1.html">About</a>
             <a href="services.html">Services</a>
             <a href="contact.html">Contact</a>
         </nav>
@@ -1301,12 +1301,7 @@ window.addEventListener('load', adjustLayoutForOrientation);
 window.addEventListener('resize', adjustLayoutForOrientation);
 window.addEventListener('orientationchange', adjustLayoutForOrientation);
     </script>
-    <script src="header.js"></script>
-<script src="about.js"></script>
-<script src="appdoc.js"></script>
-<script src="code.js"></script>
-<script src="testimonial.js"></script>
-      
+        
                 <script>
                     const techLogos = [
                         "html5", "css3", "javascript", "python",  "react",
@@ -1335,46 +1330,12 @@ window.addEventListener('orientationchange', adjustLayoutForOrientation);
 
                     addLogos();
                 </script>
-       <script>
-        // Register the service worker
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker
-                    .register('service-worker.js')
-                    .then(reg => console.log('Service Worker Registered', reg))
-                    .catch(err => console.log('Service Worker Registration Failed', err));
-            });
-        }
-    </script>
-        <script>
-  let deferredPrompt;
-  window.addEventListener("beforeinstallprompt", (e) => {
-    e.preventDefault();
-    deferredPrompt = e;
-    const installBtn = document.createElement("button");
-    installBtn.innerText = "Install ARhub";
-    installBtn.style.position = "fixed";
-    installBtn.style.bottom = "10px";
-    installBtn.style.right = "10px";
-    document.body.appendChild(installBtn);
-
-    installBtn.addEventListener("click", () => {
-      deferredPrompt.prompt();
-      deferredPrompt.userChoice.then(choice => {
-        if (choice.outcome === "accepted") {
-          installBtn.remove();
-        }
-      });
-    });
-  });
-</script>
-        <script>
-            // Function to open the project
-        function openProject(event, element) {
-            event.stopPropagation();
-            const url = element.closest('.project-card').getAttribute('data-url');
-            window.location.href = url;
-        }
-        </script>
+        <script src="header.js"></script>
+<script src="about.js"></script>
+<script src="appdoc.js"></script>
+<script src="code.js"></script>
+<script src="testimonial.js"></script>
+      
+       
     </body>
     </html> 
