@@ -1368,5 +1368,13 @@ window.addEventListener('orientationchange', adjustLayoutForOrientation);
     });
   });
 </script>
+        <script>
+            // Function to open the project
+        function openProject(event, element) {
+            event.stopPropagation();
+            const url = element.closest('.project-card').getAttribute('data-url');
+            window.location.href = url;
+        }
+        </script>
     </body>
     </html> 
