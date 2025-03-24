@@ -1,7 +1,9 @@
+
 {
   "name": "ARhub",
   "short_name": "ARhub",
-  "start_url": "/index.html",
+  "description": "ARhub is a dynamic platform dedicated to simplifying coding and fostering creativity. Spearheaded by AR, a passionate coder and YouTuber, the site offers a wealth of resources, including expert tutorials and insightful blogs on languages like JavaScript and Python. Users can explore a diverse portfolio of projects spanning web development, Al integration, game development, and more. A standout feature is the interactive Live Code Editor, enabling real-time code execution and preview, empowering developers to visualize their projects instantly. With an intuitive interface and a commitment to user experience, ARhub is a valuable resource for both beginners and seasoned programmers eager to learn, code, and build.",
+  "start_url": "index.html",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#000000",
