@@ -5,6 +5,59 @@
 <meta name=viewport content="width=device-width,initial-scale=1">
 <title>OptiFit</title>
 <style>:root{--primary:#8a2be2;--glow:rgba(138, 43, 226, 0.8);--text:#e0e0e0}*{margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif}body{background-color:#121212;color:var(--text);min-height:100vh;padding:20px}.container{max-width:800px;margin:0 auto}header{text-align:center;margin-bottom:30px;padding:20px 0;border-bottom:1px solid #333}h1{font-size:2.5rem;margin-bottom:10px;background:linear-gradient(90deg,var(--primary),#ff6b6b);-webkit-background-clip:text;background-clip:text;color:transparent}.tabs{display:flex;margin-bottom:20px;border-radius:8px;overflow:hidden;background-color:#1e1e1e}.tab{flex:1;padding:12px;text-align:center;cursor:pointer;transition:all .3s ease;border:none;background-color:#1e1e1e;color:var(--text)}.tab.active{background-color:#2d2d2d;color:var(--primary);font-weight:700}.calculator{background-color:#1e1e1e;padding:25px;border-radius:10px;box-shadow:0 4px 15px rgba(0,0,0,.5);margin-bottom:20px}.form-group{margin-bottom:20px}label{display:block;margin-bottom:8px;font-weight:500}input,select{width:100%;padding:12px;border-radius:6px;border:1px solid #333;background-color:#2d2d2d;color:var(--text);font-size:1rem}input:focus,select:focus{outline:0;border-color:var(--primary);box-shadow:0 0 5px var(--glow)}.row{display:flex;gap:15px}.col{flex:1}.glow-button{display:inline-block;padding:14px 30px;background:linear-gradient(to right,#333,#555);color:var(--text);border:none;border-radius:50px;cursor:pointer;font-size:1rem;font-weight:700;text-align:center;transition:all .3s ease;width:100%;position:relative;overflow:hidden;box-shadow:0 0 10px rgba(0,0,0,.5)}.glow-button:after{content:"→";position:absolute;right:25px;transition:all .3s ease}.glow-button:hover{box-shadow:0 0 15px var(--glow);background:linear-gradient(to right,#444,#777)}.glow-button:hover:after{right:20px}.result{padding:20px;border-radius:8px;text-align:center;margin-top:20px;background-color:#2d2d2d;display:none}.result h3{font-size:1.8rem;margin-bottom:10px}.result-value{font-size:2.5rem;font-weight:700;margin:15px 0;color:var(--primary)}.result-category{font-size:1.2rem;margin-bottom:15px}.bmi-scale{display:flex;justify-content:space-between;margin:20px 0;position:relative;height:8px;background:linear-gradient(to right,#3498db,#2ecc71,#f1c40f,#e67e22,#e74c3c);border-radius:4px}.bmi-marker{position:absolute;width:10px;height:15px;background-color:#fff;top:-5px;transform:translateX(-50%)}.bmi-labels{display:flex;justify-content:space-between;font-size:.8rem;color:#aaa;margin-top:10px}.recommendations{margin-top:20px;padding:15px;border-left:3px solid var(--primary);background-color:rgba(138,43,226,.1)}.units-toggle{display:flex;margin-bottom:20px;background-color:#2d2d2d;border-radius:50px;padding:3px;width:fit-content}.unit-option{padding:8px 15px;cursor:pointer;border-radius:50px;transition:all .3s ease}.unit-option.active{background-color:var(--primary);color:#fff}.tab-content{display:none}.tab-content.active{display:block}.history-item{padding:15px;margin-bottom:10px;background-color:#2d2d2d;border-radius:8px;display:flex;justify-content:space-between;align-items:center}.history-date{color:#aaa;font-size:.9rem}#history-list{max-height:400px;overflow-y:auto}.clear-history{background-color:#333;color:#ddd;border:none;padding:10px 15px;border-radius:5px;cursor:pointer;margin-top:10px}footer{text-align:center;margin-top:30px;color:#666;font-size:.9rem}</style>
+ <meta name="description" content="Easily calculate your BMI, body fat percentage, and ideal weight with OptiFit. Track progress, get insights, and improve your health with personalized recommendations.">
+    <meta name="keywords" content="BMI calculator, body fat calculator, ideal weight calculator, fitness tracker, health tracker, weight management, fitness goals, personal health insights, calculate BMI online">
+    <meta name="author" content="AR">
+    <meta name="robots" content="index, follow">
+    <meta name="googlebot" content="index, follow">
+    
+    <!-- Open Graph (Facebook, LinkedIn) -->
+    <meta property="og:title" content="OptiFit | Smart BMI, Body Fat & Ideal Weight Calculator">
+    <meta property="og:description" content="Calculate your BMI, body fat percentage, and ideal weight with OptiFit. Track your progress and get health insights.">
+    <meta property="og:image" content="https://ar-lab-7.github.io/Arhub.github.io/logo.avif">
+    <meta property="og:url" content="https://ar-lab-7.github.io/Arhub.github.io/App/app1.html">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="OptiFit">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="OptiFit | Smart BMI, Body Fat & Ideal Weight Calculator">
+    <meta name="twitter:description" content="Easily calculate your BMI and body fat percentage with OptiFit. Get insights and track your fitness goals!">
+    <meta name="twitter:image" content="https://ar-lab-7.github.io/Arhub.github.io/logo.avif">
+    <meta name="twitter:site" content="@yourtwitterhandle">
+
+    <!-- Canonical URL -->
+    <link rel="canonical" href="https://ar-lab-7.github.io/Arhub.github.io/App/app1.html">
+
+    <!-- Favicon -->
+    <link rel="icon" href="https://ar-lab-7.github.io/Arhub.github.io/logo.avif" type="image/x-icon">
+
+    <!-- Schema Markup for Health Calculators -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "name": "OptiFit",
+        "url": "https://ar-lab-7.github.io/Arhub.github.io/App/app1.html",
+        "description": "Easily calculate your BMI, body fat percentage, and ideal weight with OptiFit. Get insights and track progress.",
+        "image": "https://ar-lab-7.github.io/Arhub.github.io/logo.avif",
+        "operatingSystem": "All",
+        "applicationCategory": "HealthApplication",
+        "publisher": {
+            "@type": "Person",
+            "name": "AR",
+            "url": "https://ar-lab-7.github.io/Arhub.github.io/App/app1.html"
+        }
+    }
+    </script>
+
+    <!-- Performance & Security -->
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src * data:; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://apis.google.com;">
+    
+    <!-- Mobile & UX Optimization -->
+    <meta name="theme-color" content="#6a0dad">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 </head>
 <body>
 <div class=container>
