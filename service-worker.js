@@ -1,23 +1,22 @@
 const CACHE_NAME = "arhub-cache-v3";
 const urlsToCache = [
-  "/",
-  "/index.html",
-  "/about.css",
-  "/about.js",
-  "/appdoc.css",
-  "/appdoc.js",
-  "/code.css",
-  "/code.js",
-  "/footer.css",
-  "/header.css",
-  "/header.js",
-  "/testimonial.css",
-  "/testimonial.js",
-  "/logo.avif",
-  "/logo-192.png",
-  "/logo-512.png",
-  "/google2234add1ffaf6569.html",
-  "/google9f153d279b746567.html"
+  "index.html",
+  "about.css",
+  "about.js",
+  "appdoc.css",
+  "appdoc.js",
+  "code.css",
+  "code.js",
+  "footer.css",
+  "header.css",
+  "header.js",
+  "testimonial.css",
+  "testimonial.js",
+  "logo.avif",
+  "logo-192.png",
+  "logo-512.png",
+  "google2234add1ffaf6569.html",
+  "google9f153d279b746567.html"
 ];
 
 // Install Service Worker & Cache Files
@@ -128,8 +127,8 @@ self.addEventListener('push', event => {
   const data = event.data.json();
   const options = {
     body: data.body,
-    icon: '/logo-192.png',
-    badge: '/logo-192.png'
+    icon: 'logo-192.png',
+    badge: 'logo-192.png'
   };
   event.waitUntil(
     self.registration.showNotification(data.title, options)
