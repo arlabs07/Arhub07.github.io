@@ -1334,15 +1334,16 @@ window.addEventListener('orientationchange', adjustLayoutForOrientation);
                     addLogos();
                 </script>
        <script>
-  if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-      navigator.serviceWorker
-        .register('service-worker.js')
-        .then(reg => console.log('Service Worker Registered'))
-        .catch(err => console.log(`Service Worker: Error: ${err}`));
-    });
-  }
-</script>
+        // Register the service worker
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker
+                    .register('service-worker.js')
+                    .then(reg => console.log('Service Worker Registered', reg))
+                    .catch(err => console.log('Service Worker Registration Failed', err));
+            });
+        }
+    </script>
         <script>
   let deferredPrompt;
   window.addEventListener("beforeinstallprompt", (e) => {
