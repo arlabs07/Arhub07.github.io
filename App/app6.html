@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Favicon & Icons -->
+<link rel="icon" href="https://ar-lab-7.github.io/Arhub07.github.io/logo.avif" type="image/avif">
+<link rel="shortcut icon" href="https://ar-lab-7.github.io/Arhub07.github.io/logo.avif" type="image/avif">
+<link rel="apple-touch-icon" href="https://ar-lab-7.github.io/Arhub07.github.io/logo.avif">
+<link rel="apple-touch-icon-precomposed" href="https://ar-lab-7.github.io/Arhub07.github.io/logo.avif">
+
+<!-- Windows & Android Icons -->
+<meta name="msapplication-TileImage" content="https://ar-lab-7.github.io/Arhub07.github.io/logo.avif">
+<meta name="msapplication-TileColor" content="#0a0a1a">
+<meta name="theme-color" content="#0a0a1a">
+<meta name="author" content="AR">
+<meta name="application-name" content="Quantum Cipher Nexus">
+<meta name="apple-mobile-web-app-title" content="Quantum Cipher Nexus">
+<meta name="description" content="Quantum Cipher Nexus provides cutting-edge AES-256 encryption for secure and private communications.">
+
+<!-- SEO & Indexing -->
+<meta name="robots" content="index, follow">
+<meta name="googlebot" content="index, follow">
+<meta name="bingbot" content="index, follow">
+<meta name="geo.region" content="IN">
+<meta name="geo.placename" content="India">
+<meta name="language" content="English">
+<meta name="coverage" content="Worldwide">
+<meta name="distribution" content="Global">
+<meta name="target" content="all">
+
+<!-- Open Graph (Facebook, LinkedIn) -->
+<meta property="og:title" content="Quantum Cipher Nexus - Unbreakable Encryption">
+<meta property="og:description" content="Secure your data with next-gen AES-256 encryption using Quantum Cipher Nexus. No storage, full privacy.">
+<meta property="og:image" content="https://ar-lab-7.github.io/Arhub07.github.io/logo.avif">
+<meta property="og:url" content="https://ar-lab-7.github.io/Arhub07.github.io/App/app6.html">
+<meta property="og:site_name" content="Quantum Cipher Nexus">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="en_IN">
+
+<!-- Twitter Cards -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Quantum Cipher Nexus - Unbreakable Encryption">
+<meta name="twitter:description" content="Secure your data with next-gen AES-256 encryption using Quantum Cipher Nexus. No storage, full privacy.">
+<meta name="twitter:image" content="https://ar-lab-7.github.io/Arhub07.github.io/logo.avif">
+<meta name="twitter:site" content="@yourTwitterHandle">
+
+<!-- WhatsApp & Messenger Sharing -->
+<meta property="og:image:alt" content="Quantum Cipher Nexus Logo">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:type" content="image/avif">
+
+<!-- Apple iOS & Safari -->
+<meta name="apple-mobile-web-app-capable" content="no">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="mobileoptimized" content="width">
+
+<!-- JSON-LD for Rich Snippets -->
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "Quantum Cipher Nexus",
+    "url": "https://ar-lab-7.github.io/Arhub07.github.io/App/app6.html",
+    "image": "https://ar-lab-7.github.io/Arhub07.github.io/logo.avif",
+    "description": "Quantum Cipher Nexus provides cutting-edge AES-256 encryption for secure and private communications.",
+    "author": {
+        "@type": "Person",
+        "name": "AR"
+    }
+}
+</script>
+    <title>Quantum Cipher Nexus</title>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <style>
+        /* Root Variables */
+        :root {
+            --bg-primary: #0a0a1a;
+            --bg-secondary: #0c0c22;
+            --text-primary: #00ffff;
+            --text-secondary: #ff00ff;
+            --accent-color: #ff00ff;
+            --glow-color: rgba(0, 255, 255, 0.5);
+            --glass-bg: rgba(255, 255, 255, 0.1);
+            --glass-border: rgba(255, 255, 255, 0.2);
+        }
+
+        /* Reset & Global Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            transition: all 0.3s ease;
+        }
+
+        body {
+            font-family: 'Orbitron', 'Arial', sans-serif;
+            background: linear-gradient(135deg, var(--bg-primary), var(--bg-secondary));
+            color: var(--text-primary);
+            min-height: 100vh;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Page Layout */
+        .page {
+            display: none;
+            min-height: 100vh;
+            padding: 2rem;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.5s, transform 0.5s;
+        }
+
+        .page.active {
+            display: block;
+            opacity: 1;
+            transform: translateY(0);
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Landing Page Styles */
+        #landingPage {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+
+        .landing-title {
+            font-size: 3.5rem;
+            background: linear-gradient(145deg, var(--text-primary), var(--text-secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 1rem;
+        }
+
+        .landing-subtitle {
+            font-size: 1.2rem;
+            color: var(--text-primary);
+            opacity: 0.8;
+            margin-bottom: 2rem;
+        }
+
+        /* Feature Sections */
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .feature {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            padding: 2rem;
+            border-radius: 15px;
+            text-align: center;
+            backdrop-filter: blur(10px);
+            transition: transform 0.4s ease, box-shadow 0.4s ease;
+        }
+
+        .feature:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 20px var(--glow-color);
+        }
+
+        .feature-icon {
+            font-size: 3rem;
+            color: var(--text-secondary);
+            margin-bottom: 1rem;
+        }
+
+        .feature-title {
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+            color: var(--text-primary);
+        }
+
+        .feature-description {
+            font-size: 0.9rem;
+            opacity: 0.7;
+        }
+
+        /* Buttons */
+        .btn {
+            background: linear-gradient(145deg, var(--accent-color), var(--text-primary));
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            cursor: pointer;
+            font-weight: bold;
+            text-transform: uppercase;
+            border-radius: 10px;
+            box-shadow: 0 0 10px var(--glow-color);
+            margin-top: 2rem;
+        }
+
+        .btn:hover {
+            box-shadow: 0 0 20px var(--glow-color);
+            transform: scale(1.05);
+        }
+
+        /* Navigation */
+        .nav-buttons {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 10px;
+            z-index: 1000;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .feature-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .landing-title {
+                font-size: 2.5rem;
+            }
+        }
+
+        /* Additional Existing Styles (Encryption/Decryption Pages) remain the same */
+        /* Textarea, Copy Button, etc. styles from previous implementation */
+        textarea {
+            width: 100%;
+            padding: 12px;
+            margin-top: 10px;
+            background: var(--glass-bg);
+            border: 2px solid var(--glass-border);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-size: 16px;
+            resize: none;
+            backdrop-filter: blur(10px);
+        }
+
+        .output-container {
+            margin-top: 20px;
+            padding: 15px;
+            background: var(--glass-bg);
+            border-radius: 10px;
+            box-shadow: 0 0 15px var(--glow-color);
+            backdrop-filter: blur(10px);
+        }
+
+        .copy-btn {
+            background: var(--accent-color);
+            border: none;
+            color: white;
+            padding: 6px 12px;
+            margin-top: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Landing Page -->
+    <div id="landingPage" class="page active">
+        <h1 class="landing-title">Quantum Cipher Nexus</h1>
+        <p class="landing-subtitle">Secure & Unbreakable Encryption System</p>
+        
+        <div class="feature-grid">
+            <div class="feature">
+                <div class="feature-icon">
+                    <i class="fas fa-lock"></i>
+                </div>
+                <h3 class="feature-title">Advanced Encryption</h3>
+                <p class="feature-description">Cutting-edge AES-256 encryption technology ensuring maximum security</p>
+            </div>
+            
+            <div class="feature">
+                <div class="feature-icon">
+                    <i class="fas fa-globe"></i>
+                </div>
+                <h3 class="feature-title">Web-Based Security</h3>
+                <p class="feature-description">Secure encryption directly in your browser with no data storage</p>
+            </div>
+            
+            <div class="feature">
+                <div class="feature-icon">
+                    <i class="fas fa-shield-alt"></i>
+                </div>
+                <h3 class="feature-title">Privacy Focused</h3>
+                <p class="feature-description">Complete anonymity with end-to-end encryption protocols</p>
+            </div>
+        </div>
+        
+        <button onclick="showPage('encryptPage')" class="btn">
+            <i class="fas fa-key"></i> Start Encrypting
+        </button>
+    </div>
+
+    <!-- Encryption Page -->
+    <div id="encryptPage" class="page">
+        <h2>Encryption Terminal</h2>
+        <textarea id="encryptInput" placeholder="Enter text to encrypt"></textarea>
+        <button onclick="performEncryption()" class="btn">
+            <i class="fas fa-lock"></i> Encrypt
+        </button>
+        
+        <div class="output-container">
+            <h3>Encrypted Data</h3>
+            <textarea id="encryptedText" readonly></textarea>
+            <button onclick="copyToClipboard('encryptedText')" class="copy-btn">
+                <i class="fas fa-copy"></i> Copy
+            </button>
+        </div>
+
+        <div class="output-container">
+            <h3>Decryption Key</h3>
+            <textarea id="decryptionKey" readonly></textarea>
+            <button onclick="copyToClipboard('decryptionKey')" class="copy-btn">
+                <i class="fas fa-key"></i> Copy
+            </button>
+        </div>
+    </div>
+
+    <!-- Decryption Page -->
+    <div id="decryptPage" class="page">
+        <h2>Decryption Terminal</h2>
+        <textarea id="encryptedInput" placeholder="Paste encrypted data"></textarea>
+        <textarea id="keyInput" placeholder="Enter decryption key"></textarea>
+        <button onclick="performDecryption()" class="btn">
+            <i class="fas fa-unlock"></i> Decrypt
+        </button>
+        
+        <div class="output-container"> 
+            <h3>Decrypted Message</h3>
+            <textarea id="decryptedText" readonly></textarea>
+            <button onclick="copyToClipboard('decryptedText')" class="copy-btn">
+                <i class="fas fa-copy"></i> Copy
+            </button>
+        </div>
+    </div>
+
+    <!-- Navigation -->
+    <div class="nav-buttons">
+        <button onclick="showPage('landingPage')" class="btn">
+            <i class="fas fa-home"></i> Home
+        </button>
+        <button onclick="showPage('encryptPage')" class="btn">
+            <i class="fas fa-lock"></i> Encrypt
+        </button>
+        <button onclick="showPage('decryptPage')" class="btn">
+            <i class="fas fa-unlock"></i> Decrypt
+        </button>
+    </div>
+
+    <script>
+        function showPage(pageId) {
+            // Hide all pages
+            document.querySelectorAll('.page').forEach(page => {
+                page.classList.remove('active');
+                page.style.display = 'none';
+            });
+            
+            // Show selected page
+            const targetPage = document.getElementById(pageId);
+            targetPage.classList.add('active');
+            targetPage.style.display = 'block';
+        }
+
+        function copyToClipboard(id) {
+            const textarea = document.getElementById(id);
+            textarea.select();
+            
+            try {
+                const successful = document.execCommand('copy');
+                const msg = successful ? 'Copied!' : 'Copy failed';
+                
+                // Temporary feedback
+                const originalText = textarea.value;
+                textarea.value = msg;
+                setTimeout(() => {
+                    textarea.value = originalText;
+                }, 1000);
+            } catch (err) {
+                console.error('Copy error', err);
+            }
+        }
+
+        async function performEncryption() {
+            const inputText = document.getElementById('encryptInput').value;
+            if (!inputText) {
+                alert("Enter text to encrypt!");
+                return;
+            }
+
+            try {
+                const key = await window.crypto.subtle.generateKey(
+                    { name: "AES-GCM", length: 256 },
+                    true,
+                    ["encrypt", "decrypt"]
+                );
+
+                const rawKey = await window.crypto.subtle.exportKey("raw", key);
+                const keyString = btoa(String.fromCharCode(...new Uint8Array(rawKey)));
+
+                const iv = window.crypto.getRandomValues(new Uint8Array(12));
+                const encodedText = new TextEncoder().encode(inputText);
+                const encryptedContent = await window.crypto.subtle.encrypt(
+                    { name: "AES-GCM", iv: iv },
+                    key,
+                    encodedText
+                );
+
+                const encryptedBuffer = new Uint8Array(iv.length + encryptedContent.byteLength);
+                encryptedBuffer.set(iv);
+                encryptedBuffer.set(new Uint8Array(encryptedContent), iv.length);
+
+                document.getElementById('encryptedText').value = btoa(String.fromCharCode(...encryptedBuffer));
+                document.getElementById('decryptionKey').value = keyString;
+            } catch (error) {
+                console.error('Encryption error:', error);
+                alert('Encryption failed. Please try again.');
+            }
+        }
+
+        async function performDecryption() {
+            try {
+                const encryptedText = document.getElementById('encryptedInput').value;
+                const keyText = document.getElementById('keyInput').value;
+                
+                if (!encryptedText || !keyText) {
+                    alert("Enter encrypted data and key!");
+                    return;
+                }
+
+                const encryptedBuffer = new Uint8Array(atob(encryptedText).split("").map(c => c.charCodeAt(0)));
+                const keyBuffer = new Uint8Array(atob(keyText).split("").map(c => c.charCodeAt(0)));
+
+                const iv = encryptedBuffer.slice(0, 12);
+                const encryptedContent = encryptedBuffer.slice(12);
+
+                const key = await window.crypto.subtle.importKey(
+                    "raw", 
+                    keyBuffer, 
+                    { name: "AES-GCM" }, 
+                    true, 
+                    ["decrypt"]
+                );
+
+                const decryptedContent = await window.crypto.subtle.decrypt(
+                    { name: "AES-GCM", iv: iv }, 
+                    key, 
+                    encryptedContent
+                );
+
+                document.getElementById('decryptedText').value = new TextDecoder().decode(decryptedContent);
+            } catch {
+                alert("Decryption Failed! Check your encrypted data and key.");
+            }
+        }
+    </script>
+</body>
+</html>
