@@ -1,442 +1,105 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="manifest" href="Manifest/manifest1.json">
-    <title>Data Unit Converter</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+<!doctype html> <html lang=en> 
+    <!-- Basic Meta -->
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="author" content="AR">
+<meta name="application-name" content="DataConvertx">
+<meta name="description" content="Convert data units easily with DataConvertx, a fast and accurate data unit converter.">
+<meta name="keywords" content="Data Converter, Unit Converter, DataConvertx, Bit to Byte, KB to MB, GB to TB, Data Conversion Tool">
+<meta name="robots" content="index, follow">
+<meta name="googlebot" content="index, follow">
+<meta name="theme-color" content="#1e1e3f">
+<meta name="color-scheme" content="dark">
+<meta name="msapplication-TileColor" content="#1e1e3f">
+<meta name="msapplication-config" content="none">
 
-        body {
-            font-family: 'Arial', sans-serif;
-            background: linear-gradient(135deg, #121212 0%, #1e1e3f 100%);
-            color: #e0e0e0;
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-            line-height: 1.6;
-        }
+<!-- Open Graph (Facebook, LinkedIn) -->
+<meta property="og:title" content="DataConvertx - Data Unit Converter">
+<meta property="og:description" content="Easily convert data units with precision using DataConvertx.">
+<meta property="og:image" content="https://ar-lab-7.github.io/Arhub07.github.io/logo.avif">
+<meta property="og:url" content="https://ar-lab-7.github.io/Arhub07.github.io/App/app2.html">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="en_IN">
+<meta property="og:site_name" content="DataConvertx">
 
-        .converter {
-            width: 100%;
-            max-width: 600px;
-            background: transparent;
-            padding: 20px;
-        }
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="DataConvertx - Data Unit Converter">
+<meta name="twitter:description" content="Easily convert data units with precision using DataConvertx.">
+<meta name="twitter:image" content="https://ar-lab-7.github.io/Arhub07.github.io/logo.avif">
+<meta name="twitter:site" content="@yourtwitterhandle">
+<meta name="twitter:creator" content="@yourtwitterhandle">
 
-        .title {
-            text-align: center;
-            margin-bottom: 30px;
-            font-size: 2.5rem;
-            color: #ffffff;
-            text-shadow: 0 0 10px rgba(93,63,211,0.5);
-        }
+<!-- Apple Specific -->
+<meta name="apple-mobile-web-app-title" content="DataConvertx">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="format-detection" content="telephone=no">
+<link rel="apple-touch-icon" href="https://ar-lab-7.github.io/Arhub07.github.io/logo.avif">
 
-        .input-group {
-            margin-bottom: 20px;
-        }
+<!-- Canonical -->
+<link rel="canonical" href="https://ar-lab-7.github.io/Arhub07.github.io/App/app2.html">
 
-        .input-group label {
-            display: block;
-            margin-bottom: 10px;
-            color: #a0a0c0;
-            font-weight: 600;
-        }
+<!-- Security -->
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data: https://ar-lab-7.github.io;">
+<meta http-equiv="X-Frame-Options" content="DENY">
+<meta http-equiv="X-XSS-Protection" content="1; mode=block">
+<meta http-equiv="X-Content-Type-Options" content="nosniff">
+<meta name="referrer" content="no-referrer">
+<meta http-equiv="Permissions-Policy" content="geolocation=(), microphone=(), camera=()">
 
-        .input-wrapper {
-            position: relative;
-        }
+<!-- Performance -->
+<meta http-equiv="Cache-Control" content="max-age=3600, must-revalidate">
+<meta http-equiv="Expires" content="Wed, 1 Jan 2030 00:00:00 GMT">
+<meta http-equiv="Pragma" content="cache">
+<meta http-equiv="Accept-CH" content="DPR, Width, Viewport-Width">
 
-        .input-field {
-            width: 100%;
-            padding: 12px 15px;
-            background: rgba(42, 42, 64, 0.8);
-            border: 2px solid rgba(93, 63, 211, 0.3);
-            border-radius: 10px;
-            color: #ffffff;
-            font-size: 16px;
-            transition: all 0.3s ease;
-        }
+<!-- Accessibility -->
+<meta name="accessibility" content="WCAG 2.1 AA">
+<meta name="handheldfriendly" content="true">
+<meta name="mobileoptimized" content="width">
 
-        .input-field:focus {
-            outline: none;
-            border-color: #5d3fd3;
-            box-shadow: 0 0 0 3px rgba(93, 63, 211, 0.2);
-        }
+<!-- Internationalization -->
+<meta name="language" content="English">
+<meta name="geo.region" content="IN">
+<meta name="geo.placename" content="India">
+<meta name="geo.position" content="20.5937;78.9629">
+<meta name="ICBM" content="20.5937, 78.9629">
 
-        .dropdown {
-            position: relative;
-            width: 100%;
-        }
+<!-- Additional SEO Tags -->
+<meta name="page-topic" content="Data Unit Conversion">
+<meta name="page-type" content="tool">
+<meta name="audience" content="all">
+<meta name="coverage" content="worldwide">
+<meta name="revisit-after" content="7 days">
+<meta name="distribution" content="global">
+<meta name="rating" content="general">
+<meta name="google" content="notranslate">
+<meta name="google-site-verification" content="your-google-verification-code">
+<meta name="yandex-verification" content="your-yandex-verification-code">
+<meta name="msvalidate.01" content="your-bing-verification-code">
 
-        .dropdown-header {
-            width: 100%;
-            padding: 12px 15px;
-            background: rgba(42, 42, 64, 0.8);
-            border: 2px solid rgba(93, 63, 211, 0.3);
-            border-radius: 10px;
-            color: #ffffff;
-            cursor: pointer;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            transition: all 0.3s ease;
-        }
-
-        .dropdown-header:hover {
-            border-color: #5d3fd3;
-        }
-
-        .dropdown-list {
-            display: none;
-            position: absolute;
-            top: 100%;
-            left: 0;
-            width: 100%;
-            max-height: 300px;
-            overflow-y: auto;
-            background: rgba(42, 42, 64, 0.9);
-            border: 2px solid #5d3fd3;
-            border-radius: 10px;
-            margin-top: 5px;
-            z-index: 1000;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
-        }
-
-        .dropdown-list.show {
-            display: block;
-        }
-
-        .dropdown-search {
-            width: 100%;
-            padding: 10px;
-            background: rgba(30, 30, 50, 0.9);
-            border: none;
-            border-bottom: 1px solid #5d3fd3;
-            color: #ffffff;
-        }
-
-        .dropdown-item {
-            padding: 10px 15px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .dropdown-item:hover {
-            background: rgba(93, 63, 211, 0.2);
-        }
-
-        .convert-btn {
-            width: 100%;
-            padding: 15px;
-            background: #5d3fd3;
-            color: white;
-            border: none;
-            border-radius: 10px;
-            cursor: pointer;
-            font-weight: 600;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-            transition: all 0.3s ease;
-        }
-
-        .convert-btn:hover {
-            background: #7b5fec;
-            transform: scale(1.02);
-        }
-
-        .result {
-            margin-top: 25px;
-            padding: 20px;
-            background: rgba(42, 42, 64, 0.8);
-            border-radius: 10px;
-            text-align: center;
-            border: 2px solid rgba(93, 63, 211, 0.3);
-            color: #e0e0e0;
-        }
-
-        .result-value {
-            color: #4de6d9;
-            font-weight: bold;
-            font-size: 1.2em;
-        }
-
-        .formula-section {
-            margin-top: 20px;
-            background: rgba(30, 30, 50, 0.9);
-            padding: 15px;
-            border-radius: 10px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .formula-text {
-            flex-grow: 1;
-            margin-right: 10px;
-            word-break: break-all;
-        }
-
-        .copy-btn {
-            background: #5d3fd3;
-            color: white;
-            border: none;
-            padding: 8px 15px;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: background 0.3s ease;
-        }
-
-        .copy-btn:hover {
-            background: #7b5fec;
-        }
-
-        .error {
-            color: #ff6b6b;
-            animation: shake 0.5s;
-        }
-
-        @keyframes shake {
-            0%, 100% { transform: translateX(0); }
-            10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
-            20%, 40%, 60%, 80% { transform: translateX(5px); }
-        }
-
-        /* Scrollbar Styling */
-        .dropdown-list::-webkit-scrollbar {
-            width: 10px;
-        }
-
-        .dropdown-list::-webkit-scrollbar-track {
-            background: rgba(30, 30, 50, 0.9);
-        }
-
-        .dropdown-list::-webkit-scrollbar-thumb {
-            background: #5d3fd3;
-            border-radius: 5px;
-        }
-    </style>
-</head>
-<body>
-    <div class="converter">
-        <h1 class="title">Data Unit Converter</h1>
-        
-        <div class="input-group">
-            <label for="value">Value</label>
-            <input type="text" id="value" class="input-field" placeholder="Enter numeric value">
-        </div>
-        
-        <div class="input-group">
-            <label>From Unit</label>
-            <div class="dropdown" id="from-dropdown">
-                <div class="dropdown-header">Select From Unit</div>
-                <div class="dropdown-list">
-                    <input type="text" class="dropdown-search" placeholder="Search units...">
-                    <div class="dropdown-content"></div>
-                </div>
-            </div>
-        </div>
-        
-        <div class="input-group">
-            <label>To Unit</label>
-            <div class="dropdown" id="to-dropdown">
-                <div class="dropdown-header">Select To Unit</div>
-                <div class="dropdown-list">
-                    <input type="text" class="dropdown-search" placeholder="Search units...">
-                    <div class="dropdown-content"></div>
-                </div>
-            </div>
-        </div>
-        
-        <button class="convert-btn">Convert</button>
-        
-        <div id="result" class="result"></div>
-        
-        <div id="formula-area" class="formula-section" style="display: none;">
-            <div id="formula-text" class="formula-text"></div>
-            <button id="copy-formula-btn" class="copy-btn">Copy Formula</button>
-        </div>
-    </div>
-
-    <script>
-        // Detailed conversion units with full names
-        const CONVERSION_FACTORS = {
-            // Smallest units
-            'b (Bit)': 1/8,
-            'Nibble (4 Bits)': 1/2,
-            
-            // Decimal units (base 10)
-            'B (Byte)': 1,
-            'KB (Kilobyte)': 1000,
-            'MB (Megabyte)': 1000000,
-            'GB (Gigabyte)': 1000000000,
-            'TB (Terabyte)': 1000000000000,
-            'PB (Petabyte)': 1000000000000000,
-            'EB (Exabyte)': 1000000000000000000,
-            'ZB (Zettabyte)': 1000000000000000000000,
-            'YB (Yottabyte)': 1000000000000000000000000,
-            
-            // Binary units (base 2)
-            'KiB (Kibibyte)': 1024,
-            'MiB (Mebibyte)': 1048576,
-            'GiB (Gibibyte)': 1073741824,
-            'TiB (Tebibyte)': 1099511627776,
-            'PiB (Pebibyte)': 1125899906842624,
-            'EiB (Exbibyte)': 1152921504606846976,
-            'ZiB (Zebibyte)': 1180591620717411303424,
-            'YiB (Yobibyte)': 1208925819614629174706176
-        };
-
-        // Custom Dropdown Class
-        class CustomDropdown {
-            constructor(element) {
-                this.dropdown = element;
-                this.header = this.dropdown.querySelector('.dropdown-header');
-                this.list = this.dropdown.querySelector('.dropdown-list');
-                this.searchInput = this.dropdown.querySelector('.dropdown-search');
-                this.content = this.dropdown.querySelector('.dropdown-content');
-                
-                this.units = Object.keys(CONVERSION_FACTORS);
-                this.initDropdown();
-            }
-
-            initDropdown() {
-                // Populate dropdown items
-                this.units.forEach(unit => {
-                    const item = document.createElement('div');
-                    item.classList.add('dropdown-item');
-                    item.textContent = unit;
-                    item.addEventListener('click', () => this.selectItem(unit));
-                    this.content.appendChild(item);
-                });
-
-                // Toggle dropdown
-                this.header.addEventListener('click', () => this.toggleDropdown());
-
-                // Search functionality
-                this.searchInput.addEventListener('input', (e) => this.filterUnits(e.target.value));
-            }
-
-            toggleDropdown() {
-                this.list.classList.toggle('show');
-                this.searchInput.value = '';
-                this.filterUnits('');
-            }
-
-            selectItem(unit) {
-                this.header.textContent = unit;
-                this.list.classList.remove('show');
-            }
-
-            filterUnits(search) {
-                const items = this.content.querySelectorAll('.dropdown-item');
-                items.forEach(item => {
-                    const text = item.textContent.toLowerCase();
-                    const match = text.includes(search.toLowerCase());
-                    item.style.display = match ? 'block' : 'none';
-                });
-            }
-        }
-
-        // Initialize dropdowns
-        const fromDropdown = new CustomDropdown(document.getElementById('from-dropdown'));
-        const toDropdown = new CustomDropdown(document.getElementById('to-dropdown'));
-
-        // Convert button functionality
-        document.querySelector('.convert-btn').addEventListener('click', convertUnits);
-
-        // Copy formula button
-        document.getElementById('copy-formula-btn').addEventListener('click', () => {
-            const formulaText = document.getElementById('formula-text');
-            navigator.clipboard.writeText(formulaText.textContent).then(() => {
-                alert('Formula copied to clipboard!');
-            });
-        });
-
-        function convertUnits() {
-            const valueInput = document.getElementById('value');
-            const resultDiv = document.getElementById('result');
-            const formulaArea = document.getElementById('formula-area');
-            const formulaText = document.getElementById('formula-text');
-
-            // Reset previous errors
-            resultDiv.classList.remove('error');
-            formulaArea.style.display = 'none';
-
-            // Validate input
-            const inputValue = valueInput.value.trim();
-            const fromUnit = fromDropdown.header.textContent;
-            const toUnit = toDropdown.header.textContent;
-
-            // Comprehensive input validation
-            if (inputValue === '') {
-                resultDiv.innerHTML = 'Please enter a value to convert.';
-                resultDiv.classList.add('error');
-                return;
-            }
-
-            // Check if input is a valid number
-            const numericValue = parseFloat(inputValue);
-            if (isNaN(numericValue)) {
-                resultDiv.innerHTML = 'Invalid input. Please enter a numeric value.';
-                resultDiv.classList.add('error');
-                return;
-            }
-
-            // Check for negative numbers
-            if (numericValue < 0) {
-                resultDiv.innerHTML = 'Please enter a non-negative value.';
-                resultDiv.classList.add('error');
-                return;
-            }
-
-            try {
-                // First convert to bytes
-                const bytes = numericValue * CONVERSION_FACTORS[fromUnit];
-                
-                // Then convert from bytes to target unit
-                const convertedValue = bytes / CONVERSION_FACTORS[toUnit];
-                
-                // Create a conversion formula
-                const formula = `${inputValue} ${fromUnit} → Bytes: ${inputValue} × ${CONVERSION_FACTORS[fromUnit]} = ${bytes} Bytes → ${toUnit}: ${bytes} ÷ ${CONVERSION_FACTORS[toUnit]} = ${convertedValue}`;
-                
-                // Format the result with full precision
-                const formattedResult = convertedValue.toString();
-
-                // Create a friendly message
-                resultDiv.innerHTML = `
-                    <strong>Conversion Result:</strong><br>
-                    ${inputValue} ${fromUnit} is equal to<br>
-                    <span class="result-value">${formattedResult} ${toUnit}</span>
-                `;
-
-                // Show and populate formula area
-                formulaArea.style.display = 'flex';
-                formulaText.textContent = formula;
-            } catch (error) {
-                resultDiv.innerHTML = 'An unexpected error occurred during conversion.';
-                resultDiv.classList.add('error');
-                console.error(error);
-            }
-        }
-    </script>
-    <script>
-if ("serviceWorker" in navigator) {
-  window.addEventListener("load", () => {
-    navigator.serviceWorker.register("SW/sw1.js").then(() => {
-      console.log("Service Worker Registered");
-    }).catch((error) => {
-      console.error("Service Worker Registration Failed:", error);
-    });
-  });
+<!-- JSON-LD Structured Data -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "DataConvertx",
+  "url": "https://ar-lab-7.github.io/Arhub07.github.io/App/app2.html",
+  "author": {
+    "@type": "Person",
+    "name": "AR"
+  },
+  "description": "Convert data units easily with DataConvertx, a fast and accurate data unit converter.",
+  "image": "https://ar-lab-7.github.io/Arhub07.github.io/logo.avif",
+  "operatingSystem": "Any",
+  "applicationCategory": "Utility"
 }
 </script>
-</body>
-</html>
+
+<!-- Favicons -->
+<link rel="icon" href="https://ar-lab-7.github.io/Arhub07.github.io/logo.avif" type="image/avif">
+<link rel="icon" type="image/png" sizes="32x32" href="https://ar-lab-7.github.io/Arhub07.github.io/logo.avif">
+<link rel="icon" type="image/png" sizes="16x16" href="https://ar-lab-7.github.io/Arhub07.github.io/logo.avif">
+<link rel="shortcut icon" href="https://ar-lab-7.github.io/Arhub07.github.io/logo.avif">
+    <title>Data Unit Converter</title> <style>{margin:0;padding:0;box-sizing:border-box}body{font-family:Arial,sans-serif;background:linear-gradient(135deg,#121212 0,#1e1e3f 100%);color:#e0e0e0;min-height:100vh;display:flex;justify-content:center;align-items:center;padding:20px;line-height:1.6}.converter{width:100%;max-width:600px;background:0 0;padding:20px}.title{text-align:center;margin-bottom:30px;font-size:2.5rem;color:#fff;text-shadow:0 0 10px rgba(93,63,211,.5)}.input-group{margin-bottom:20px}.input-group label{display:block;margin-bottom:10px;color:#a0a0c0;font-weight:600}.input-wrapper{position:relative}.input-field{width:100%;padding:12px 15px;background:rgba(42,42,64,.8);border:2px solid rgba(93,63,211,.3);border-radius:10px;color:#fff;font-size:16px;transition:all .3s ease}.input-field:focus{outline:0;border-color:#5d3fd3;box-shadow:0 0 0 3px rgba(93,63,211,.2)}.dropdown{position:relative;width:100%}.dropdown-header{width:100%;padding:12px 15px;background:rgba(42,42,64,.8);border:2px solid rgba(93,63,211,.3);border-radius:10px;color:#fff;cursor:pointer;display:flex;justify-content:space-between;align-items:center;transition:all .3s ease}.dropdown-header:hover{border-color:#5d3fd3}.dropdown-list{display:none;position:absolute;top:100%;left:0;width:100%;max-height:300px;overflow-y:auto;background:rgba(42,42,64,.9);border:2px solid #5d3fd3;border-radius:10px;margin-top:5px;z-index:1000;box-shadow:0 10px 20px rgba(0,0,0,.3)}.dropdown-list.show{display:block}.dropdown-search{width:100%;padding:10px;background:rgba(30,30,50,.9);border:none;border-bottom:1px solid #5d3fd3;color:#fff}.dropdown-item{padding:10px 15px;cursor:pointer;transition:all .3s ease}.dropdown-item:hover{background:rgba(93,63,211,.2)}.convert-btn{width:100%;padding:15px;background:#5d3fd3;color:#fff;border:none;border-radius:10px;cursor:pointer;font-weight:600;letter-spacing:1px;text-transform:uppercase;transition:all .3s ease}.convert-btn:hover{background:#7b5fec;transform:scale(1.02)}.result{margin-top:25px;padding:20px;background:rgba(42,42,64,.8);border-radius:10px;text-align:center;border:2px solid rgba(93,63,211,.3);color:#e0e0e0}.result-value{color:#4de6d9;font-weight:700;font-size:1.2em}.formula-section{margin-top:20px;background:rgba(30,30,50,.9);padding:15px;border-radius:10px;display:flex;justify-content:space-between;align-items:center}.formula-text{flex-grow:1;margin-right:10px;word-break:break-all}.copy-btn{background:#5d3fd3;color:#fff;border:none;padding:8px 15px;border-radius:5px;cursor:pointer;transition:background .3s ease}.copy-btn:hover{background:#7b5fec}.error{color:#ff6b6b;animation:shake .5s}@keyframes shake{0%,100%{transform:translateX(0)}10%,30%,50%,70%,90%{transform:translateX(-5px)}20%,40%,60%,80%{transform:translateX(5px)}}.dropdown-list::-webkit-scrollbar{width:10px}.dropdown-list::-webkit-scrollbar-track{background:rgba(30,30,50,.9)}.dropdown-list::-webkit-scrollbar-thumb{background:#5d3fd3;border-radius:5px}</style> </head> <body> <div class=converter> <h1 class=title>Data Unit Converter</h1> <div class=input-group> <label for=value>Value</label> <input id=value class=input-field placeholder="Enter numeric value"> </div> <div class=input-group> <label>From Unit</label> <div class=dropdown id=from-dropdown> <div class=dropdown-header>Select From Unit</div> <div class=dropdown-list> <input class=dropdown-search placeholder="Search units..."> <div class=dropdown-content></div> </div> </div> </div> <div class=input-group> <label>To Unit</label> <div class=dropdown id=to-dropdown> <div class=dropdown-header>Select To Unit</div> <div class=dropdown-list> <input class=dropdown-search placeholder="Search units..."> <div class=dropdown-content></div> </div> </div> </div> <button class=convert-btn>Convert</button> <div id=result class=result></div> <div id=formula-area class=formula-section style=display:none> <div id=formula-text class=formula-text></div> <button id=copy-formula-btn class=copy-btn>Copy Formula</button> </div> </div> <script>const CONVERSION_FACTORS={"b (Bit)":1/8,"Nibble (4 Bits)":.5,"B (Byte)":1,"KB (Kilobyte)":1e3,"MB (Megabyte)":1e6,"GB (Gigabyte)":1e9,"TB (Terabyte)":1e12,"PB (Petabyte)":1e15,"EB (Exabyte)":1e18,"ZB (Zettabyte)":1e21,"YB (Yottabyte)":1e24,"KiB (Kibibyte)":1024,"MiB (Mebibyte)":1048576,"GiB (Gibibyte)":1073741824,"TiB (Tebibyte)":1099511627776,"PiB (Pebibyte)":0x4000000000000,"EiB (Exbibyte)":0x1000000000000000,"ZiB (Zebibyte)":11805916207174113e5,"YiB (Yobibyte)":12089258196146292e8};class CustomDropdown{constructor(e){this.dropdown=e,this.header=this.dropdown.querySelector(".dropdown-header"),this.list=this.dropdown.querySelector(".dropdown-list"),this.searchInput=this.dropdown.querySelector(".dropdown-search"),this.content=this.dropdown.querySelector(".dropdown-content"),this.units=Object.keys(CONVERSION_FACTORS),this.initDropdown()}initDropdown(){this.units.forEach((e=>{const t=document.createElement("div");t.classList.add("dropdown-item"),t.textContent=e,t.addEventListener("click",(()=>this.selectItem(e))),this.content.appendChild(t)})),this.header.addEventListener("click",(()=>this.toggleDropdown())),this.searchInput.addEventListener("input",(e=>this.filterUnits(e.target.value)))}toggleDropdown(){this.list.classList.toggle("show"),this.searchInput.value="",this.filterUnits("")}selectItem(e){this.header.textContent=e,this.list.classList.remove("show")}filterUnits(e){this.content.querySelectorAll(".dropdown-item").forEach((t=>{const n=t.textContent.toLowerCase().includes(e.toLowerCase());t.style.display=n?"block":"none"}))}}const fromDropdown=new CustomDropdown(document.getElementById("from-dropdown")),toDropdown=new CustomDropdown(document.getElementById("to-dropdown"));function convertUnits(){const e=document.getElementById("value"),t=document.getElementById("result"),n=document.getElementById("formula-area"),o=document.getElementById("formula-text");t.classList.remove("error"),n.style.display="none";const r=e.value.trim(),i=fromDropdown.header.textContent,s=toDropdown.header.textContent;if(""===r)return t.innerHTML="Please enter a value to convert.",void t.classList.add("error");const d=parseFloat(r);if(isNaN(d))return t.innerHTML="Invalid input. Please enter a numeric value.",void t.classList.add("error");if(d<0)return t.innerHTML="Please enter a non-negative value.",void t.classList.add("error");try{const e=dCONVERSION_FACTORS[i],a=e/CONVERSION_FACTORS[s],l=${r} ${i} → Bytes: ${r} × ${CONVERSION_FACTORS[i]} = ${e} Bytes → ${s}: ${e} ÷ ${CONVERSION_FACTORS[s]} = ${a},c=a.toString();t.innerHTML=\n                    <strong>Conversion Result:</strong><br>\n                    ${r} ${i} is equal to<br>\n                    <span class="result-value">${c} ${s}</span>\n                ,n.style.display="flex",o.textContent=l}catch(e){t.innerHTML="An unexpected error occurred during conversion.",t.classList.add("error"),console.error(e)}}document.querySelector(".convert-btn").addEventListener("click",convertUnits),document.getElementById("copy-formula-btn").addEventListener("click",(()=>{const e=document.getElementById("formula-text");navigator.clipboard.writeText(e.textContent).then((()=>{alert("Formula copied to clipboard!")}))}))</script> </body> </html>
+
