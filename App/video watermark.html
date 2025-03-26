@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang=en>
+<head>
+<meta charset=UTF-8>
+<meta name=viewport content="width=device-width,initial-scale=1">
+<title>Advanced Video Watermark Tool</title>
+<style>:root{--primary-color:#6c5ce7;--secondary-color:#181818;--accent-color:#8c7ae6;--border-color:#333333;--text-color:#f5f5f5;--panel-bg:#242424;--input-bg:#333333;--input-text:#f5f5f5;--hover-color:#a29bfe}body{font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;margin:0;padding:0;background-color:var(--secondary-color);color:var(--text-color)}.container{max-width:1200px;margin:0 auto;padding:20px}header{background-color:var(--primary-color);color:#fff;padding:20px 0;text-align:center;margin-bottom:30px;border-radius:0 0 10px 10px;box-shadow:0 2px 10px rgba(0,0,0,.3)}h1{margin:0;font-size:2.2rem}.app-description{margin-top:10px;font-size:1.1rem;opacity:.9}.main-content{display:flex;flex-direction:column;gap:30px}@media (min-width:992px){.main-content{flex-direction:row}.controls{width:35%}.preview-container{width:65%}}.panel{background:var(--panel-bg);border-radius:8px;padding:20px;box-shadow:0 2px 10px rgba(0,0,0,.2)}.controls{display:flex;flex-direction:column;gap:20px}.control-group{margin-bottom:15px}.control-group label{display:block;margin-bottom:8px;font-weight:500}button,input[type=color],input[type=file],input[type=number],input[type=range],input[type=text],select{width:100%;padding:10px;border-radius:5px;border:1px solid var(--border-color);margin-bottom:5px;box-sizing:border-box;background-color:var(--input-bg);color:var(--input-text)}input[type=range]{cursor:pointer;accent-color:var(--primary-color)}button{background-color:var(--primary-color);color:#fff;border:none;padding:12px;cursor:pointer;font-weight:600;transition:background-color .2s;margin-top:10px}button:hover{background-color:var(--hover-color)}button:disabled{background-color:#555;cursor:not-allowed}.preview-container{display:flex;flex-direction:column;align-items:center}#videoPreview{max-width:100%;border-radius:5px;margin-bottom:20px;background-color:#000;box-shadow:0 4px 15px rgba(0,0,0,.2)}canvas{display:none}.loading{display:none;text-align:center;margin:20px 0}.loading-spinner{border:5px solid #333;border-top:5px solid var(--primary-color);border-radius:50%;width:40px;height:40px;animation:spin 1s linear infinite;margin:10px auto}@keyframes spin{0%{transform:rotate(0)}100%{transform:rotate(360deg)}}.preview-actions{display:flex;gap:10px;width:100%}.preview-actions button{flex:1}.section-title{margin-top:0;border-bottom:1px solid var(--border-color);padding-bottom:10px;margin-bottom:20px;color:var(--primary-color)}.radio-group{display:flex;gap:15px;margin-bottom:10px}.radio-option{display:flex;align-items:center;gap:5px}.notice{background-color:#2d2d42;padding:10px;border-radius:5px;margin-top:10px;border-left:4px solid var(--primary-color);font-size:.9rem}.collapsible{background-color:var(--input-bg);color:var(--text-color);cursor:pointer;padding:10px;width:100%;border:none;text-align:left;outline:0;font-weight:600;border-radius:5px;margin-bottom:5px;position:relative}.collapsible:after{content:'+';font-weight:700;float:right}.active:after{content:'-'}.collapsible-content{padding:0 10px;max-height:0;overflow:hidden;transition:max-height .2s ease-out;background-color:var(--panel-bg)}.active+.collapsible-content{max-height:500px}.tab-container{margin-bottom:20px}.tab-buttons{display:flex;border-bottom:1px solid var(--border-color)}.tab-button{padding:10px 15px;background-color:transparent;color:var(--text-color);border:none;border-bottom:2px solid transparent;cursor:pointer;transition:all .3s;margin-right:10px;font-weight:500}.tab-button.active{color:var(--primary-color);border-bottom:2px solid var(--primary-color);background-color:transparent}.tab-content{display:none;padding:15px 0}.tab-content.active{display:block}.progress-bar{width:100%;height:10px;background-color:var(--input-bg);border-radius:5px;margin-top:10px;overflow:hidden}.progress-bar-inner{height:100%;width:0;background-color:var(--primary-color);transition:width 0.3s ease-out}.time-estimate{font-size:0.9rem;margin-top:5px;text-align:center;color:#aaa}</style>
+</head>
+<body>
+<header>
+<div class=container>
+<h1>Advanced Video Watermark Tool</h1>
+<p class=app-description>Add custom text watermarks to your videos with professional effects</p>
+</div>
+</header>
+<div class=container>
+<div class=main-content>
+<div class="controls panel">
+<h2 class=section-title>Watermark Settings</h2>
+<div class=tab-container>
+<div class=tab-buttons>
+<button class="tab-button active" data-tab=upload-tab>Upload</button>
+<button class=tab-button data-tab=watermark-tab>Watermark</button>
+<button class=tab-button data-tab=effects-tab>Effects</button>
+<button class=tab-button data-tab=performance-tab>Performance</button>
+</div>
+<div id=upload-tab class="tab-content active">
+<div class=control-group>
+<label for=videoFile>Upload Video:</label>
+<input type=file id=videoFile accept=video/*>
+<div id=videoInfo class=notice style="display:none">
+<p id=videoDuration>Duration: --:--</p>
+<p id=videoResolution>Resolution: -- x --</p>
+<p id=videoEstimate>Estimated processing time: --:--</p>
+</div>
+</div>
+</div>
+<div id=watermark-tab class=tab-content>
+<div class=control-group>
+<label for=watermarkText>Watermark Text:</label>
+<input id=watermarkText placeholder="Enter watermark text..." value=Watermark>
+</div>
+<div class=control-group>
+<label>Watermark Type:</label>
+<div class=radio-group>
+<div class=radio-option>
+<input type=radio id=staticWatermark name=watermarkType value=static>
+<label for=staticWatermark>Static</label>
+</div>
+<div class=radio-option>
+<input type=radio id=movingWatermark name=watermarkType value=moving>
+<label for=movingWatermark>Moving</label>
+</div>
+<div class=radio-option>
+<input type=radio id=runningWatermark name=watermarkType value=running checked>
+<label for=runningWatermark>Running Line</label>
+</div>
+</div>
+</div>
+<div class=control-group>
+<label for=watermarkColor>Text Color:</label>
+<input type=color id=watermarkColor value=#ffffff>
+</div>
+<div class=control-group>
+<label for=watermarkSize>Font Size: <span id=sizeValue>36</span>px</label>
+<input type=range id=watermarkSize min=12 max=72 value=36>
+</div>
+<div class=control-group>
+<label for=watermarkOpacity>Opacity: <span id=opacityValue>0.7</span></label>
+<input type=range id=watermarkOpacity min=0.1 max=1 step=0.1 value=0.7>
+</div>
+<div id=watermarkPositionContainer class=control-group style=display:none>
+<label for=watermarkPosition>Position (Static Only):</label>
+<select id=watermarkPosition>
+<option value=top-left>Top Left</option>
+<option value=top-right>Top Right</option>
+<option value=bottom-left>Bottom Left</option>
+<option value=bottom-right selected>Bottom Right</option>
+<option value=center>Center</option>
+</select>
+</div>
+<div id=movementSpeedContainer class=control-group style=display:none>
+<label for=movementSpeed>Movement Speed: <span id=speedValue>1</span></label>
+<input type=range id=movementSpeed min=0.5 max=3 step=0.5 value=1>
+</div>
+<div id=runningLineContainer class=control-group>
+<label for=numberOfWatermarks>Number of Watermarks: <span id=numberValue>3</span></label>
+<input type=range id=numberOfWatermarks min=1 max=5 step=1 value=3>
+<label for=runningLine>Running Line Position: <span id=lineValue>50</span>%</label>
+<input type=range id=runningLine min=10 max=90 step=5 value=50>
+<label for=runningSpeed>Running Speed: <span id=runSpeedValue>1</span></label>
+<input type=range id=runningSpeed min=0.5 max=3 step=0.5 value=1>
+</div>
+</div>
+<div id=effects-tab class=tab-content>
+<div class=control-group>
+<label for=blurBackground>Blur Behind Text: <span id=blurValue>0</span>px</label>
+<input type=range id=blurBackground min=0 max=20 step=1 value=0>
+</div>
+<div class=control-group>
+<label for=blurSize>Blur Area Size: <span id=blurSizeValue>120</span>%</label>
+<input type=range id=blurSize min=100 max=200 step=10 value=120>
+</div>
+<div class=control-group>
+<label for=textShadow>Text Shadow: <span id=shadowValue>0</span>px</label>
+<input type=range id=textShadow min=0 max=5 step=1 value=0>
+</div>
+</div>
+<div id=performance-tab class=tab-content>
+<div class=control-group>
+<label for=videoFPS>Output FPS:</label>
+<select id=videoFPS>
+<option value=30>30 FPS (Standard)</option>
+<option value=60>60 FPS (Smooth)</option>
+<option value=90>90 FPS (Very Smooth)</option>
+<option value=120>120 FPS (Ultra Smooth)</option>
+</select>
+<div class=notice>
+<p>Higher FPS results in smoother video but longer processing time.</p>
+</div>
+</div>
+<div class=control-group>
+<label for=videoBitrate>Video Quality:</label>
+<select id=videoBitrate>
+<option value=5000>Standard (5 Mbps)</option>
+<option value=10000 selected>High (10 Mbps)</option>
+<option value=20000>Ultra (20 Mbps)</option>
+</select>
+</div>
+<div class=control-group>
+<label for=hardwareAccel>Hardware Acceleration:</label>
+<div class=radio-group>
+<div class=radio-option>
+<input type=checkbox id=hardwareAccel checked>
+<label for=hardwareAccel>Enable if available</label>
+</div>
+</div>
+<div class=notice>
+<p>Hardware acceleration may significantly improve processing speed.</p>
+</div>
+</div>
+</div>
+</div>
+<button id=applyWatermark disabled>Apply Watermark</button>
+<p class=notice>Processing happens in your browser - no files are uploaded to any server.</p>
+</div>
+<div class="preview-container panel">
+<h2 class=section-title>Video Preview</h2>
+<video id=videoPreview controls>
+Your browser doesn't support HTML5 video.
+</video>
+<div class=loading id=processingIndicator>
+<div class=loading-spinner></div>
+<p>Processing video... <span id=processingStatus>Initializing...</span></p>
+<div class=progress-bar>
+<div class=progress-bar-inner id=progressBar></div>
+</div>
+<p class=time-estimate id=timeRemaining>Estimated time remaining: calculating...</p>
+</div>
+<div class=preview-actions>
+<button id=downloadBtn disabled>Download Watermarked Video</button>
+</div>
+</div>
+</div>
+</div>
+<canvas id=canvas style=display:none></canvas>
+<canvas id=blurCanvas style=display:none></canvas>
+<script src=https://cdnjs.cloudflare.com/ajax/libs/ffmpeg.js/0.2.0/ffmpeg.min.js></script>
+<script>document.addEventListener("DOMContentLoaded",(function(){const e=document.getElementById("videoFile"),t=document.getElementById("videoPreview"),n=document.getElementById("canvas"),a=document.getElementById("blurCanvas"),d=n.getContext("2d"),i=a.getContext("2d"),l=document.getElementById("applyWatermark"),o=document.getElementById("downloadBtn"),c=document.getElementById("processingIndicator"),r=document.getElementById("processingStatus"),s=document.getElementById("progressBar"),m=document.getElementById("timeRemaining"),h=document.getElementById("videoInfo"),g=document.getElementById("videoDuration"),v=document.getElementById("videoResolution"),y=document.getElementById("videoEstimate"),p=document.getElementById("watermarkText"),E=document.getElementById("watermarkColor"),f=document.getElementById("watermarkSize"),b=document.getElementById("watermarkOpacity"),I=document.getElementById("watermarkPosition"),B=document.getElementsByName("watermarkType"),w=document.getElementById("movementSpeed"),x=document.getElementById("movementSpeedContainer"),L=document.getElementById("watermarkPositionContainer"),k=document.getElementById("runningLineContainer"),C=document.getElementById("numberOfWatermarks"),S=document.getElementById("runningLine"),V=document.getElementById("runningSpeed"),A=document.getElementById("blurBackground"),T=document.getElementById("blurSize"),W=document.getElementById("textShadow"),R=document.getElementById("sizeValue"),z=document.getElementById("opacityValue"),M=document.getElementById("speedValue"),O=document.getElementById("numberValue"),F=document.getElementById("lineValue"),H=document.getElementById("runSpeedValue"),q=document.getElementById("blurValue"),D=document.getElementById("blurSizeValue"),P=document.getElementById("shadowValue"),N=document.getElementById("videoFPS"),U=document.getElementById("videoBitrate"),j=document.getElementById("hardwareAccel");let G=null,K=null,Q=0,X=0,Y=0,Z={};function _(){const e=N.value,t=parseFloat(t.duration)||0,n=t.videoWidth||0,a=t.videoHeight||0,d=n*a/(1920*1080),i=parseInt(e),l=d*t*(i/30),o=Math.ceil(l);return{duration:t,width:n,height:a,resolutionFactor:d,fps:i,processingTimeRatio:l,estimatedProcessingTime:o}}function J(e){const t=Math.floor(e/60),n=Math.floor(e%60);return`${t}:${n<10?"0":""}${n}`}function $(e){g.textContent=`Duration: ${J(e.duration)}`,v.textContent=`Resolution: ${e.width} x ${e.height}`,y.textContent=`Estimated processing time: ${J(e.estimatedProcessingTime)}`,h.style.display="block"}function ee(){const e=N.value,t=parseFloat(w.value),n=parseFloat(V.value);return{fps:parseInt(e),movementSpeedFactor:e/30,staticSpeedMultiplier:1,movingSpeedMultiplier:t*(e/30),runningSpeedMultiplier:n*(e/30)}}function te(){l.disabled=!0,o.disabled=!0,c.style.display="block",r.textContent="Initializing...",s.style.width="0%",Z=_(),Q=0,X=performance.now(),m.textContent=`Estimated time remaining: ${J(Z.estimatedProcessingTime)}`;const e=p.value||"Watermark",h=E.value,g=parseInt(f.value),v=parseFloat(b.value),y=I.value,k=document.querySelector('input[name="watermarkType"]:checked').value,x=parseFloat(w.value),L=parseInt(C.value),M=parseInt(S.value),O=parseFloat(V.value),F=parseInt(A.value),H=parseInt(T.value)/100,q=parseInt(W.value),D=parseInt(N.value),P=parseInt(U.value),G=j.checked,te=ee();n.width=t.videoWidth,n.height=t.videoHeight,a.width=t.videoWidth,a.height=t.videoHeight;const ne=n.captureStream(D),ae=new MediaRecorder(ne,{mimeType:"video/webm; codecs=vp9",videoBitsPerSecond:1e3*P});let de=[];ae.ondataavailable=function(e){de.push(e.data)},ae.onstop=function(){const e=new Blob(de,{type:"video/webm"});K=URL.createObjectURL(e),t.src=K,c.style.display="none",l.disabled=!1,o.disabled=!1};let ie=50,le=50,oe=1,ce=1;const re=[];for(let e=0;e<L;e++)re.push({x:-e*n.width/L,speed:O*te.runningSpeedMultiplier});function se(){if(t.paused||t.ended)return void ae.stop();const a=performance.now();Q+=1;const l=Q/(t.duration*D),o=Math.min(100,Math.round(100*l));if(s.style.width=`${o}%`,r.textContent=`Processing frame ${Q} of ${Math.round(t.duration*D)}`,o>0&&X>0){const e=performance.now()-X,t=e/l*(1-l)/1e3;m.textContent=`Estimated time remaining: ${J(Math.ceil(t))}`}d.drawImage(t,0,0,n.width,n.height),d.font=`${g}px Arial`;const c=d.measureText(e).width,h=g;if("static"===k){let t,n;switch(y){case"top-left":t=20,n=h+20;break;case"top-right":t=canvas.width-c-20,n=h+20;break;case"bottom-left":t=20,n=canvas.height-20;break;case"bottom-right":t=canvas.width-c-20,n=canvas.height-20;break;case"center":t=(canvas.width-c)/2,n=(canvas.height+h)/2}me(t,n,e)}else if("moving"===k){me(ie/100*(n.width-c),le/100*(n.height-h)+h,e),ie+=.5*x*oe*te.movingSpeedMultiplier,le+=.3*x*ce*te.movingSpeedMultiplier,(ie>95||ie<5)&&(oe*=-1),(le>95||le<5)&&(ce*=-1)}else if("running"===k){const t=n.height*M/100;re.forEach(((a,d)=>{if(me(a.x,t,e),a.x+=5*a.speed,a.x>n.width){let e={x:1/0};re.forEach((t=>{t.x<e.x&&(e=t)})),a.x=e.x-c-20}}))}if(performance.now()-a<1e3/D-10)requestAnimationFrame(se);else{const e=setTimeout(se,0);G&&(clearTimeout(G),G=null),G=e}}function me(l,o,c){if(F>0){i.clearRect(0,0,a.width,a.height),i.drawImage(t,0,0,a.width,a.height);const e=c.length*g*H,r=g*1.5*H,s=l-(e-c.length*g)/2,m=o-g-(r-g)/2;i.filter=`blur(${F}px)`,i.globalCompositeOperation="source-in",d.fillStyle="rgba(0, 0, 0, 0.5)",d.fillRect(s,m,e,r),i.filter="none"}if(q>0){d.fillStyle="rgba(0, 0, 0, 0.7)",d.globalAlpha=.7*v;for(let e=1;e<=q;e++)d.fillText(c,l+e,o+e)}d.fillStyle=h,d.globalAlpha=v,d.fillText(c,l,o),d.globalAlpha=1}ae.start(),t.currentTime=0,t.muted=!0,t.addEventListener("play",se,{once:!0}),t.play()}let ne=!1;e.addEventListener("change",(function(e){const n=e.target.files[0];if(n){const e=URL.createObjectURL(n);t.src=e,G=e,t.onloadedmetadata=function(){const e=_();$(e),l.disabled=!1,ne=!0}}})),N.addEventListener("change",(function(){ne&&$(_(t))})),f.addEventListener("input",(function(){R.textContent=this.value})),b.addEventListener("input",(function(){z.textContent=this.value})),w.addEventListener("input",(function(){M.textContent=this.value})),C.addEventListener("input",(function(){O.textContent=this.value})),S.addEventListener("input",(function(){F.textContent=this.value})),V.addEventListener("input",(function(){H.textContent=this.value})),A.addEventListener("input",(function(){q.textContent=this.value})),T.addEventListener("input",(function(){D.textContent=this.value})),W.addEventListener("input",(function(){P.textContent=this.value})),B.forEach((e=>{e.addEventListener("change",(function(){x.style.display="none",L.style.display="none",k.style.display="none","moving"===this.value?x.style.display="block":"static"===this.value?L.style.display="block":"running"===this.value&&(k.style.display="block")}))})),l.addEventListener("click",te),o.addEventListener("click",(function(){if(K){const e=document.createElement("a");e.href=K,e.download="watermarked-video.mp4",document.body.appendChild(e),e.click(),document.body.removeChild(e)}})),document.getElementById("runningWatermark").dispatchEvent(new Event("change"));const ae=document.querySelectorAll(".tab-button"),de=document.querySelectorAll(".tab-content");ae.forEach((e=>{e.addEventListener("click",(()=>{ae.forEach((e=>e.classList.remove("active"))),de.forEach((e=>e.classList.remove("active"))),e.classList.add("active");const t=e.getAttribute("data-tab");document.getElementById(t).classList.add("active")}))}))}))
+</script>
+</body>
+</html>

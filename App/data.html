@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Data Unit Converter</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #121212 0%, #1e1e3f 100%);
+            color: #e0e0e0;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .converter {
+            width: 100%;
+            max-width: 600px;
+            background: transparent;
+            padding: 20px;
+        }
+
+        .title {
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5rem;
+            color: #ffffff;
+            text-shadow: 0 0 10px rgba(93,63,211,0.5);
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 10px;
+            color: #a0a0c0;
+            font-weight: 600;
+        }
+
+        .input-wrapper {
+            position: relative;
+        }
+
+        .input-field {
+            width: 100%;
+            padding: 12px 15px;
+            background: rgba(42, 42, 64, 0.8);
+            border: 2px solid rgba(93, 63, 211, 0.3);
+            border-radius: 10px;
+            color: #ffffff;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .input-field:focus {
+            outline: none;
+            border-color: #5d3fd3;
+            box-shadow: 0 0 0 3px rgba(93, 63, 211, 0.2);
+        }
+
+        .dropdown {
+            position: relative;
+            width: 100%;
+        }
+
+        .dropdown-header {
+            width: 100%;
+            padding: 12px 15px;
+            background: rgba(42, 42, 64, 0.8);
+            border: 2px solid rgba(93, 63, 211, 0.3);
+            border-radius: 10px;
+            color: #ffffff;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s ease;
+        }
+
+        .dropdown-header:hover {
+            border-color: #5d3fd3;
+        }
+
+        .dropdown-list {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            width: 100%;
+            max-height: 300px;
+            overflow-y: auto;
+            background: rgba(42, 42, 64, 0.9);
+            border: 2px solid #5d3fd3;
+            border-radius: 10px;
+            margin-top: 5px;
+            z-index: 1000;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+        }
+
+        .dropdown-list.show {
+            display: block;
+        }
+
+        .dropdown-search {
+            width: 100%;
+            padding: 10px;
+            background: rgba(30, 30, 50, 0.9);
+            border: none;
+            border-bottom: 1px solid #5d3fd3;
+            color: #ffffff;
+        }
+
+        .dropdown-item {
+            padding: 10px 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .dropdown-item:hover {
+            background: rgba(93, 63, 211, 0.2);
+        }
+
+        .convert-btn {
+            width: 100%;
+            padding: 15px;
+            background: #5d3fd3;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            transition: all 0.3s ease;
+        }
+
+        .convert-btn:hover {
+            background: #7b5fec;
+            transform: scale(1.02);
+        }
+
+        .result {
+            margin-top: 25px;
+            padding: 20px;
+            background: rgba(42, 42, 64, 0.8);
+            border-radius: 10px;
+            text-align: center;
+            border: 2px solid rgba(93, 63, 211, 0.3);
+            color: #e0e0e0;
+        }
+
+        .result-value {
+            color: #4de6d9;
+            font-weight: bold;
+            font-size: 1.2em;
+        }
+
+        .formula-section {
+            margin-top: 20px;
+            background: rgba(30, 30, 50, 0.9);
+            padding: 15px;
+            border-radius: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .formula-text {
+            flex-grow: 1;
+            margin-right: 10px;
+            word-break: break-all;
+        }
+
+        .copy-btn {
+            background: #5d3fd3;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .copy-btn:hover {
+            background: #7b5fec;
+        }
+
+        .error {
+            color: #ff6b6b;
+            animation: shake 0.5s;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+            20%, 40%, 60%, 80% { transform: translateX(5px); }
+        }
+
+        /* Scrollbar Styling */
+        .dropdown-list::-webkit-scrollbar {
+            width: 10px;
+        }
+
+        .dropdown-list::-webkit-scrollbar-track {
+            background: rgba(30, 30, 50, 0.9);
+        }
+
+        .dropdown-list::-webkit-scrollbar-thumb {
+            background: #5d3fd3;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="converter">
+        <h1 class="title">Data Unit Converter</h1>
+        
+        <div class="input-group">
+            <label for="value">Value</label>
+            <input type="text" id="value" class="input-field" placeholder="Enter numeric value">
+        </div>
+        
+        <div class="input-group">
+            <label>From Unit</label>
+            <div class="dropdown" id="from-dropdown">
+                <div class="dropdown-header">Select From Unit</div>
+                <div class="dropdown-list">
+                    <input type="text" class="dropdown-search" placeholder="Search units...">
+                    <div class="dropdown-content"></div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="input-group">
+            <label>To Unit</label>
+            <div class="dropdown" id="to-dropdown">
+                <div class="dropdown-header">Select To Unit</div>
+                <div class="dropdown-list">
+                    <input type="text" class="dropdown-search" placeholder="Search units...">
+                    <div class="dropdown-content"></div>
+                </div>
+            </div>
+        </div>
+        
+        <button class="convert-btn">Convert</button>
+        
+        <div id="result" class="result"></div>
+        
+        <div id="formula-area" class="formula-section" style="display: none;">
+            <div id="formula-text" class="formula-text"></div>
+            <button id="copy-formula-btn" class="copy-btn">Copy Formula</button>
+        </div>
+    </div>
+
+    <script>
+        // Detailed conversion units with full names
+        const CONVERSION_FACTORS = {
+            // Smallest units
+            'b (Bit)': 1/8,
+            'Nibble (4 Bits)': 1/2,
+            
+            // Decimal units (base 10)
+            'B (Byte)': 1,
+            'KB (Kilobyte)': 1000,
+            'MB (Megabyte)': 1000000,
+            'GB (Gigabyte)': 1000000000,
+            'TB (Terabyte)': 1000000000000,
+            'PB (Petabyte)': 1000000000000000,
+            'EB (Exabyte)': 1000000000000000000,
+            'ZB (Zettabyte)': 1000000000000000000000,
+            'YB (Yottabyte)': 1000000000000000000000000,
+            
+            // Binary units (base 2)
+            'KiB (Kibibyte)': 1024,
+            'MiB (Mebibyte)': 1048576,
+            'GiB (Gibibyte)': 1073741824,
+            'TiB (Tebibyte)': 1099511627776,
+            'PiB (Pebibyte)': 1125899906842624,
+            'EiB (Exbibyte)': 1152921504606846976,
+            'ZiB (Zebibyte)': 1180591620717411303424,
+            'YiB (Yobibyte)': 1208925819614629174706176
+        };
+
+        // Custom Dropdown Class
+        class CustomDropdown {
+            constructor(element) {
+                this.dropdown = element;
+                this.header = this.dropdown.querySelector('.dropdown-header');
+                this.list = this.dropdown.querySelector('.dropdown-list');
+                this.searchInput = this.dropdown.querySelector('.dropdown-search');
+                this.content = this.dropdown.querySelector('.dropdown-content');
+                
+                this.units = Object.keys(CONVERSION_FACTORS);
+                this.initDropdown();
+            }
+
+            initDropdown() {
+                // Populate dropdown items
+                this.units.forEach(unit => {
+                    const item = document.createElement('div');
+                    item.classList.add('dropdown-item');
+                    item.textContent = unit;
+                    item.addEventListener('click', () => this.selectItem(unit));
+                    this.content.appendChild(item);
+                });
+
+                // Toggle dropdown
+                this.header.addEventListener('click', () => this.toggleDropdown());
+
+                // Search functionality
+                this.searchInput.addEventListener('input', (e) => this.filterUnits(e.target.value));
+            }
+
+            toggleDropdown() {
+                this.list.classList.toggle('show');
+                this.searchInput.value = '';
+                this.filterUnits('');
+            }
+
+            selectItem(unit) {
+                this.header.textContent = unit;
+                this.list.classList.remove('show');
+            }
+
+            filterUnits(search) {
+                const items = this.content.querySelectorAll('.dropdown-item');
+                items.forEach(item => {
+                    const text = item.textContent.toLowerCase();
+                    const match = text.includes(search.toLowerCase());
+                    item.style.display = match ? 'block' : 'none';
+                });
+            }
+        }
+
+        // Initialize dropdowns
+        const fromDropdown = new CustomDropdown(document.getElementById('from-dropdown'));
+        const toDropdown = new CustomDropdown(document.getElementById('to-dropdown'));
+
+        // Convert button functionality
+        document.querySelector('.convert-btn').addEventListener('click', convertUnits);
+
+        // Copy formula button
+        document.getElementById('copy-formula-btn').addEventListener('click', () => {
+            const formulaText = document.getElementById('formula-text');
+            navigator.clipboard.writeText(formulaText.textContent).then(() => {
+                alert('Formula copied to clipboard!');
+            });
+        });
+
+        function convertUnits() {
+            const valueInput = document.getElementById('value');
+            const resultDiv = document.getElementById('result');
+            const formulaArea = document.getElementById('formula-area');
+            const formulaText = document.getElementById('formula-text');
+
+            // Reset previous errors
+            resultDiv.classList.remove('error');
+            formulaArea.style.display = 'none';
+
+            // Validate input
+            const inputValue = valueInput.value.trim();
+            const fromUnit = fromDropdown.header.textContent;
+            const toUnit = toDropdown.header.textContent;
+
+            // Comprehensive input validation
+            if (inputValue === '') {
+                resultDiv.innerHTML = 'Please enter a value to convert.';
+                resultDiv.classList.add('error');
+                return;
+            }
+
+            // Check if input is a valid number
+            const numericValue = parseFloat(inputValue);
+            if (isNaN(numericValue)) {
+                resultDiv.innerHTML = 'Invalid input. Please enter a numeric value.';
+                resultDiv.classList.add('error');
+                return;
+            }
+
+            // Check for negative numbers
+            if (numericValue < 0) {
+                resultDiv.innerHTML = 'Please enter a non-negative value.';
+                resultDiv.classList.add('error');
+                return;
+            }
+
+            try {
+                // First convert to bytes
+                const bytes = numericValue * CONVERSION_FACTORS[fromUnit];
+                
+                // Then convert from bytes to target unit
+                const convertedValue = bytes / CONVERSION_FACTORS[toUnit];
+                
+                // Create a conversion formula
+                const formula = `${inputValue} ${fromUnit} → Bytes: ${inputValue} × ${CONVERSION_FACTORS[fromUnit]} = ${bytes} Bytes → ${toUnit}: ${bytes} ÷ ${CONVERSION_FACTORS[toUnit]} = ${convertedValue}`;
+                
+                // Format the result with full precision
+                const formattedResult = convertedValue.toString();
+
+                // Create a friendly message
+                resultDiv.innerHTML = `
+                    <strong>Conversion Result:</strong><br>
+                    ${inputValue} ${fromUnit} is equal to<br>
+                    <span class="result-value">${formattedResult} ${toUnit}</span>
+                `;
+
+                // Show and populate formula area
+                formulaArea.style.display = 'flex';
+                formulaText.textContent = formula;
+            } catch (error) {
+                resultDiv.innerHTML = 'An unexpected error occurred during conversion.';
+                resultDiv.classList.add('error');
+                console.error(error);
+            }
+        }
+    </script>
+</body>
+</html>

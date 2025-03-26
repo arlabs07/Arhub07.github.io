@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quantum Cipher Nexus</title>
+    <style>
+        /* Root Variables */
+        :root {
+            --bg-primary: #0a0a1a;
+            --text-primary: #00ffff;
+            --accent-color: #ff00ff;
+            --glow-color: rgba(0, 255, 255, 0.5);
+            --glass-bg: rgba(255, 255, 255, 0.1);
+            --glass-border: rgba(255, 255, 255, 0.2);
+        }
+
+        /* Reset */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            transition: all 0.3s ease;
+        }
+
+        /* Body Styling */
+        body {
+            font-family: 'Orbitron', 'Arial', sans-serif;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            text-align: center;
+            overflow-x: hidden;
+        }
+
+        /* Page Styling */
+        .page {
+            display: none;
+            min-height: 100vh;
+            padding: 2rem;
+        }
+
+        .page.active {
+            display: block;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        /* Button Styling */
+        .btn {
+            background: linear-gradient(145deg, #ff00ff, #00ffff);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            cursor: pointer;
+            font-weight: bold;
+            text-transform: uppercase;
+            border-radius: 10px;
+            box-shadow: 0 0 10px var(--glow-color);
+        }
+
+        .btn:hover {
+            box-shadow: 0 0 20px var(--glow-color);
+        }
+
+        /* Textarea Styling */
+        textarea {
+            width: 100%;
+            padding: 12px;
+            margin-top: 10px;
+            background: var(--glass-bg);
+            border: 2px solid var(--glass-border);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-size: 16px;
+            resize: none;
+            backdrop-filter: blur(10px);
+        }
+
+        /* Output Container */
+        .output-container {
+            margin-top: 20px;
+            padding: 15px;
+            background: var(--glass-bg);
+            border-radius: 10px;
+            box-shadow: 0 0 15px var(--glow-color);
+            backdrop-filter: blur(10px);
+        }
+
+        /* Copy Button */
+        .copy-btn {
+            background: var(--accent-color);
+            border: none;
+            color: white;
+            padding: 6px 12px;
+            margin-top: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            border-radius: 5px;
+        }
+
+        /* Navigation Buttons */
+        .nav-buttons {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 10px;
+        }
+
+        /* Glitch Effect */
+        @keyframes glitch {
+            0% { transform: translate(0, 0); }
+            25% { transform: translate(-1px, 1px); }
+            50% { transform: translate(1px, -1px); }
+            75% { transform: translate(-1px, -1px); }
+            100% { transform: translate(1px, 1px); }
+        }
+
+        .glitch {
+            animation: glitch 0.3s infinite alternate;
+        }
+    </style>
+</head>
+<body>
+    <!-- Pages -->
+    <div id="landingPage" class="page active">
+        <h1 class="glitch">Quantum Cipher Nexus</h1>
+        <p>Secure & Unbreakable Encryption System</p>
+    </div>
+
+    <div id="encryptPage" class="page">
+        <h2>Encryption Terminal</h2>
+        <textarea id="encryptInput" placeholder="Enter text to encrypt"></textarea>
+        <button onclick="performEncryption()" class="btn">Encrypt</button>
+        
+        <div class="output-container">
+            <h3>Encrypted Data</h3>
+            <textarea id="encryptedText" readonly></textarea>
+            <button onclick="copyToClipboard('encryptedText')" class="copy-btn">Copy</button>
+        </div>
+
+        <div class="output-container">
+            <h3>Decryption Key</h3>
+            <textarea id="decryptionKey" readonly></textarea>
+            <button onclick="copyToClipboard('decryptionKey')" class="copy-btn">Copy</button>
+        </div>
+    </div>
+
+    <div id="decryptPage" class="page">
+        <h2>Decryption Terminal</h2>
+        <textarea id="encryptedInput" placeholder="Paste encrypted data"></textarea>
+        <textarea id="keyInput" placeholder="Enter decryption key"></textarea>
+        <button onclick="performDecryption()" class="btn">Decrypt</button>
+        
+        <div class="output-container"> 
+            <h3>Decrypted Message</h3>
+            <textarea id="decryptedText" readonly></textarea>
+            <button onclick="copyToClipboard('decryptedText')" class="copy-btn">Copy</button>
+        </div>
+    </div>
+
+    <!-- Navigation -->
+    <div class="nav-buttons">
+        <button onclick="showPage('landingPage')" class="btn">Home</button>
+        <button onclick="showPage('encryptPage')" class="btn">Encrypt</button>
+        <button onclick="showPage('decryptPage')" class="btn">Decrypt</button>
+    </div>
+
+    <script>
+        function showPage(pageId) {
+            document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
+            document.getElementById(pageId).classList.add('active');
+        }
+
+        function copyToClipboard(id) {
+            let textarea = document.getElementById(id);
+            textarea.select();
+            document.execCommand("copy");
+        }
+
+        async function performEncryption() {
+            const inputText = document.getElementById('encryptInput').value;
+            if (!inputText) return alert("Enter text to encrypt!");
+
+            const key = await window.crypto.subtle.generateKey(
+                { name: "AES-GCM", length: 256 },
+                true,
+                ["encrypt", "decrypt"]
+            );
+
+            const rawKey = await window.crypto.subtle.exportKey("raw", key);
+            const keyString = btoa(String.fromCharCode(...new Uint8Array(rawKey)));
+
+            const iv = window.crypto.getRandomValues(new Uint8Array(12));
+            const encodedText = new TextEncoder().encode(inputText);
+            const encryptedContent = await window.crypto.subtle.encrypt(
+                { name: "AES-GCM", iv: iv },
+                key,
+                encodedText
+            );
+
+            const encryptedBuffer = new Uint8Array(iv.length + encryptedContent.byteLength);
+            encryptedBuffer.set(iv);
+            encryptedBuffer.set(new Uint8Array(encryptedContent), iv.length);
+
+            document.getElementById('encryptedText').value = btoa(String.fromCharCode(...encryptedBuffer));
+            document.getElementById('decryptionKey').value = keyString;
+        }
+
+        async function performDecryption() {
+            try {
+                const encryptedText = document.getElementById('encryptedInput').value;
+                const keyText = document.getElementById('keyInput').value;
+                if (!encryptedText || !keyText) return alert("Enter encrypted data and key!");
+
+                const encryptedBuffer = new Uint8Array(atob(encryptedText).split("").map(c => c.charCodeAt(0)));
+                const keyBuffer = new Uint8Array(atob(keyText).split("").map(c => c.charCodeAt(0)));
+
+                const iv = encryptedBuffer.slice(0, 12);
+                const encryptedContent = encryptedBuffer.slice(12);
+
+                const key = await window.crypto.subtle.importKey("raw", keyBuffer, { name: "AES-GCM" }, true, ["decrypt"]);
+                const decryptedContent = await window.crypto.subtle.decrypt({ name: "AES-GCM", iv: iv }, key, encryptedContent);
+
+                document.getElementById('decryptedText').value = new TextDecoder().decode(decryptedContent);
+            } catch {
+                alert("Decryption Failed!");
+            }
+        }
+    </script>
+</body>
+</html>

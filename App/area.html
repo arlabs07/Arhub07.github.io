@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Area Unit Converter</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #121212 0%, #1e1e3f 100%);
+            color: #e0e0e0;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .converter {
+            width: 100%;
+            max-width: 600px;
+            background: transparent;
+            padding: 20px;
+        }
+
+        .title {
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5rem;
+            color: #ffffff;
+            text-shadow: 0 0 10px rgba(93,63,211,0.5);
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 10px;
+            color: #a0a0c0;
+            font-weight: 600;
+        }
+
+        .input-field {
+            width: 100%;
+            padding: 12px 15px;
+            background: rgba(42, 42, 64, 0.8);
+            border: 2px solid rgba(93, 63, 211, 0.3);
+            border-radius: 10px;
+            color: #ffffff;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .input-field:focus {
+            outline: none;
+            border-color: #5d3fd3;
+            box-shadow: 0 0 0 3px rgba(93, 63, 211, 0.2);
+        }
+
+        .dropdown {
+            position: relative;
+            width: 100%;
+        }
+
+        .dropdown-header {
+            width: 100%;
+            padding: 12px 15px;
+            background: rgba(42, 42, 64, 0.8);
+            border: 2px solid rgba(93, 63, 211, 0.3);
+            border-radius: 10px;
+            color: #ffffff;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s ease;
+        }
+
+        .dropdown-header:hover {
+            border-color: #5d3fd3;
+        }
+
+        .dropdown-list {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            width: 100%;
+            max-height: 300px;
+            overflow-y: auto;
+            background: rgba(42, 42, 64, 0.9);
+            border: 2px solid #5d3fd3;
+            border-radius: 10px;
+            margin-top: 5px;
+            z-index: 1000;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+        }
+
+        .dropdown-list.show {
+            display: block;
+        }
+
+        .dropdown-search {
+            width: 100%;
+            padding: 10px;
+            background: rgba(30, 30, 50, 0.9);
+            border: none;
+            border-bottom: 1px solid #5d3fd3;
+            color: #ffffff;
+        }
+
+        .dropdown-item {
+            padding: 10px 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .dropdown-item:hover {
+            background: rgba(93, 63, 211, 0.2);
+        }
+
+        .convert-btn {
+            width: 100%;
+            padding: 15px;
+            background: #5d3fd3;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            transition: all 0.3s ease;
+        }
+
+        .convert-btn:hover {
+            background: #7b5fec;
+            transform: scale(1.02);
+        }
+
+        .result {
+            margin-top: 25px;
+            padding: 20px;
+            background: rgba(42, 42, 64, 0.8);
+            border-radius: 10px;
+            text-align: center;
+            border: 2px solid rgba(93, 63, 211, 0.3);
+            color: #e0e0e0;
+        }
+
+        .result-value {
+            color: #4de6d9;
+            font-weight: bold;
+            font-size: 1.2em;
+        }
+
+        .formula-section {
+            margin-top: 20px;
+            background: rgba(30, 30, 50, 0.9);
+            padding: 15px;
+            border-radius: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .formula-text {
+            flex-grow: 1;
+            margin-right: 10px;
+            word-break: break-all;
+        }
+
+        .copy-btn {
+            background: #5d3fd3;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .copy-btn:hover {
+            background: #7b5fec;
+        }
+
+        .error {
+            color: #ff6b6b;
+            animation: shake 0.5s;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+            20%, 40%, 60%, 80% { transform: translateX(5px); }
+        }
+
+        /* Scrollbar Styling */
+        .dropdown-list::-webkit-scrollbar {
+            width: 10px;
+        }
+
+        .dropdown-list::-webkit-scrollbar-track {
+            background: rgba(30, 30, 50, 0.9);
+        }
+
+        .dropdown-list::-webkit-scrollbar-thumb {
+            background: #5d3fd3;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="converter">
+        <h1 class="title">Area Unit Converter</h1>
+        
+        <div class="input-group">
+            <label for="value">Value</label>
+            <input type="text" id="value" class="input-field" placeholder="Enter numeric value">
+        </div>
+        
+        <div class="input-group">
+            <label>From Unit</label>
+            <div class="dropdown" id="from-dropdown">
+                <div class="dropdown-header">Select From Unit</div>
+                <div class="dropdown-list">
+                    <input type="text" class="dropdown-search" placeholder="Search units...">
+                    <div class="dropdown-content"></div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="input-group">
+            <label>To Unit</label>
+            <div class="dropdown" id="to-dropdown">
+                <div class="dropdown-header">Select To Unit</div>
+                <div class="dropdown-list">
+                    <input type="text" class="dropdown-search" placeholder="Search units...">
+                    <div class="dropdown-content"></div>
+                </div>
+            </div>
+        </div>
+        
+        <button class="convert-btn">Convert</button>
+        
+        <div id="result" class="result"></div>
+        
+        <div id="formula-area" class="formula-section" style="display: none;">
+            <div id="formula-text" class="formula-text"></div>
+            <button id="copy-formula-btn" class="copy-btn">Copy Formula</button>
+        </div>
+    </div>
+
+    <script>
+        // Detailed conversion factors (in square meters)
+        const CONVERSION_FACTORS = {
+            // Tiny units
+            'Square yoctometer (ym²)': 1e-48,
+            'Square zeptometer (zm²)': 1e-42,
+            'Square attometer (am²)': 1e-36,
+            'Square femtometer (fm²)': 1e-30,
+            'Square picometer (pm²)': 1e-24,
+            'Square nanometer (nm²)': 1e-18,
+            'Square micrometer (µm²)': 1e-12,
+
+            // Standard units
+            'Square millimeter (mm²)': 1e-6,
+            'Square centimeter (cm²)': 1e-4,
+            'Square inch (in²)': 0.00064516,
+            'Square decimeter (dm²)': 0.01,
+            'Square meter (m²)': 1,
+            'Square foot (ft²)': 0.092903,
+            'Square yard (yd²)': 0.836127,
+            'Square hand': 0.00064516,
+            
+            // Larger units
+            'Square fathom (ftm²)': 3.3445,
+            'Square rod (perch)': 25.2929,
+            'Square chain': 404.6856,
+            'Square decameter (dam²)': 100,
+            'Are (a)': 100,
+            'Square hectometer (hm²)': 10000,
+            'Rood': 1011.7141,
+            'Square furlong': 40468.56,
+            'Acre': 4046.86,
+            'Square kilometer (km²)': 1000000,
+            'Hectare (ha)': 10000,
+            'Square mile (mi²)': 2589990,
+            'Square nautical mile': 3429900,
+            'Townships (US)': 93240000,
+            
+            // Mega units
+            'Square megameter (Mm²)': 1e12,
+            'Square gigameter (Gm²)': 1e18,
+            'Square terameter (Tm²)': 1e24,
+            'Square petameter (Pm²)': 1e30,
+            'Square exometer (Em²)': 1e36,
+            'Square zettameter (Zm²)': 1e42,
+            'Square yottameter (Ym²)': 1e48,
+            
+            // Celestial areas
+            'Earth\'s surface area': 5.101e14,
+            'Moon\'s surface area': 3.79e13,
+            'Mars\' surface area': 1.448e14,
+            'Jupiter\'s surface area': 6.142e16,
+            'Saturn\'s surface area': 4.27e16,
+            'Neptune\'s surface area': 7.64e15,
+            'Uranus\' surface area': 8.1e15,
+            'Sun\'s surface area': 6.09e18,
+            
+            // Astronomical areas (placeholders)
+            'Milky Way Disk Area': 1e20,
+            'Local Group Galaxy Area': 1e22,
+            'Virgo Supercluster Area': 1e24,
+            'Observable Universe Surface Area': 1e80,
+            
+            // Special physics unit
+            'Barn (b)': 1e-28
+        };
+
+        // Custom Dropdown Class
+        class CustomDropdown {
+            constructor(element) {
+                this.dropdown = element;
+                this.header = this.dropdown.querySelector('.dropdown-header');
+                this.list = this.dropdown.querySelector('.dropdown-list');
+                this.searchInput = this.dropdown.querySelector('.dropdown-search');
+                this.content = this.dropdown.querySelector('.dropdown-content');
+                
+                this.units = Object.keys(CONVERSION_FACTORS);
+                this.initDropdown();
+            }
+
+            initDropdown() {
+                // Populate dropdown items
+                this.units.forEach(unit => {
+                    const item = document.createElement('div');
+                    item.classList.add('dropdown-item');
+                    item.textContent = unit;
+                    item.addEventListener('click', () => this.selectItem(unit));
+                    this.content.appendChild(item);
+                });
+
+                // Toggle dropdown
+                this.header.addEventListener('click', () => this.toggleDropdown());
+
+                // Search functionality
+                this.searchInput.addEventListener('input', (e) => this.filterUnits(e.target.value));
+            }
+
+            toggleDropdown() {
+                this.list.classList.toggle('show');
+                this.searchInput.value = '';
+                this.filterUnits('');
+            }
+
+            selectItem(unit) {
+                this.header.textContent = unit;
+                this.list.classList.remove('show');
+            }
+
+            filterUnits(search) {
+                const items = this.content.querySelectorAll('.dropdown-item');
+                items.forEach(item => {
+                    const text = item.textContent.toLowerCase();
+                    const match = text.includes(search.toLowerCase());
+                    item.style.display = match ? 'block' : 'none';
+                });
+            }
+        }
+
+        // Initialize dropdowns
+        const fromDropdown = new CustomDropdown(document.getElementById('from-dropdown'));
+        const toDropdown = new CustomDropdown(document.getElementById('to-dropdown'));
+
+        // Convert button functionality
+        document.querySelector('.convert-btn').addEventListener('click', convertUnits);
+
+        // Copy formula button
+        document.getElementById('copy-formula-btn').addEventListener('click', () => {
+            const formulaText = document.getElementById('formula-text');
+            navigator.clipboard.writeText(formulaText.textContent).then(() => {
+                alert('Formula copied to clipboard!');
+            });
+        });
+
+        function convertUnits() {
+            const valueInput = document.getElementById('value');
+            const resultDiv = document.getElementById('result');
+            const formulaArea = document.getElementById('formula-area');
+            const formulaText = document.getElementById('formula-text');
+
+            // Reset previous errors
+            resultDiv.classList.remove('error');
+            formulaArea.style.display = 'none';
+
+            // Validate input
+            const inputValue = valueInput.value.trim();
+            const fromUnit = fromDropdown.header.textContent;
+            const toUnit = toDropdown.header.textContent;
+
+            // Comprehensive input validation
+            if (inputValue === '') {
+                resultDiv.innerHTML = 'Please enter a value to convert.';
+                resultDiv.classList.add('error');
+                return;
+            }
+
+            // Check if input is a valid number
+            const numericValue = parseFloat(inputValue);
+            if (isNaN(numericValue)) {
+                resultDiv.innerHTML = 'Invalid input. Please enter a numeric value.';
+                resultDiv.classList.add('error');
+                return;
+            }
+
+            // Check for negative numbers
+            if (numericValue < 0) {
+                resultDiv.innerHTML = 'Please enter a non-negative value.';
+                resultDiv.classList.add('error');
+                return;
+            }
+
+            try {
+                // First convert to square meters
+                const squareMeters = numericValue * CONVERSION_FACTORS[fromUnit];
+                
+                // Then convert from square meters to target unit
+                const convertedValue = squareMeters / CONVERSION_FACTORS[toUnit];
+                
+                // Create a conversion formula
+                const formula = `${inputValue} ${fromUnit} → m²: ${inputValue} × ${CONVERSION_FACTORS[fromUnit]} = ${squareMeters} m² → ${toUnit}: ${squareMeters} ÷ ${CONVERSION_FACTORS[toUnit]} = ${convertedValue}`;
+                
+                // Format the result
+                const formattedResult = convertedValue.toString();
+
+                // Special handling for astronomical units with placeholder values
+                const astronomicalPlaceholders = [
+                    'Milky Way Disk Area', 
+                    'Local Group Galaxy Area', 
+                    'Virgo Supercluster Area', 
+                    'Observable Universe Surface Area'
+                ];
+
+                let resultHTML;
+                if (astronomicalPlaceholders.includes(toUnit)) {
+                    resultHTML = `
+                        <strong>Conversion Result:</strong><br>
+                        ${inputValue} ${fromUnit} is approximately<br>
+                        <span class="result-value">~ ${formattedResult} ${toUnit}</span>
+                    `;
+                } else {
+                    resultHTML = `
+                        <strong>Conversion Result:</strong><br>
+                        ${inputValue} ${fromUnit} is equal to<br>
+                        <span class="result-value">${formattedResult} ${toUnit}</span>
+                    `;
+                }
+
+                // Render result
+                resultDiv.innerHTML = resultHTML;
+
+                // Show and populate formula area
+                formulaArea.style.display = 'flex';
+                formulaText.textContent = formula;
+            } catch (error) {
+                resultDiv.innerHTML = 'An unexpected error occurred during conversion.';
+                resultDiv.classList.add('error');
+                console.error(error);
+            }
+        }
+    </script>
+</body>
+</html>
