@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang=en>
+<head>
+<meta charset=UTF-8>
+<meta name=viewport content="width=device-width,initial-scale=1">
+<title>Quadratic Polynomial Visualizer</title>
+<link rel=stylesheet href=https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css>
+<script src=https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js></script>
+<style>:root{--primary:#6a1b9a;--secondary:#9c27b0;--accent:#e1bee7;--light:#1a1a2e;--dark:#f8f9fa;--text-color:#e9ecef;--card-bg:#24243e;--header-bg:#4a1072;--danger:#f48fb1;--table-stripe:#33335a;--table-border:#444474}*{box-sizing:border-box;margin:0;padding:0;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif}body{background-color:var(--light);color:var(--text-color);line-height:1.6}.container{max-width:1200px;margin:0 auto;padding:20px}header{background-color:var(--header-bg);color:#fff;padding:20px 0;margin-bottom:30px;box-shadow:0 2px 10px rgba(0,0,0,.3)}header h1{text-align:center}.subtitle{text-align:center;color:rgba(255,255,255,.8);margin-top:10px}.grid{display:grid;grid-template-columns:1fr;gap:20px}@media (min-width:768px){.grid{grid-template-columns:1fr 1fr}}.card{background-color:var(--card-bg);border-radius:8px;padding:20px;box-shadow:0 2px 10px rgba(0,0,0,.3);margin-bottom:20px;border:1px solid rgba(255,255,255,.1)}.card h2{color:var(--accent);margin-bottom:15px;display:flex;align-items:center;gap:10px}.inputs{display:grid;grid-template-columns:1fr 1fr 1fr;gap:15px;margin-bottom:20px}.input-group{display:flex;flex-direction:column}label{margin-bottom:5px;font-weight:700}input[type=number]{padding:8px;border:1px solid #6a1b9a;border-radius:4px;font-size:16px;background-color:#181829;color:var(--text-color)}.range-inputs{margin-top:20px}.btn{background-color:var(--primary);color:#fff;border:none;padding:10px 15px;border-radius:4px;cursor:pointer;transition:background-color .3s;font-size:16px;margin-top:10px}.btn:hover{background-color:var(--secondary)}.btn-accent{background-color:var(--secondary)}.btn-accent:hover{background-color:#7b1fa2}.formula{font-size:24px;text-align:center;margin:15px 0}.chart-container{position:relative;height:400px;width:100%}table{width:100%;border-collapse:collapse;margin-top:15px}table td,table th{border:1px solid #ddd;padding:8px;text-align:center}table th{background-color:var(--primary);color:#fff}table tr:nth-child(2n){background-color:#7b1fa2}.table-container{max-height:300px;overflow-y:auto;margin-top:20px}.table-controls{margin-bottom:20px}.input-row{display:flex;align-items:flex-end;gap:15px;margin-top:15px;flex-wrap:wrap}.table-buttons{display:flex;gap:10px;margin-top:15px;flex-wrap:wrap}.btn-sm{padding:3px 8px;font-size:12px}.btn-danger{background-color:#dc3545}.btn-danger:hover{background-color:#c82333}.characteristics{margin-top:20px}.characteristics h3{color:var(--secondary);margin-bottom:10px}.characteristics ul{list-style-type:none}.characteristics li{margin-bottom:8px;display:flex;align-items:center}.characteristics i{margin-right:10px;color:var(--accent)}.vertex-point,.x-intercepts,.y-intercept{padding:5px 10px;background-color:rgba(74,111,165,.1);border-radius:4px;display:inline-block;margin-left:10px}footer{text-align:center;margin-top:30px;padding:20px 0;color:#666;font-size:14px}@media (min-width:576px){.inputs{grid-template-columns:1fr 1fr 1fr}.range-inputs{display:grid;grid-template-columns:1fr 1fr;gap:15px}.input-row{flex-wrap:nowrap}}@media (min-width:768px){.grid{grid-template-columns:1fr 1fr}.table-buttons{flex-wrap:nowrap}}@media (min-width:992px){.container{padding:30px}.chart-container{height:500px}.table-container{max-height:400px}}@media (min-width:1200px){.container{padding:40px}.chart-container{height:600px}}@media (max-width:575.98px){.inputs{grid-template-columns:1fr}.input-row{flex-direction:column;align-items:stretch;gap:10px}.table-buttons{flex-direction:column;width:100%}.table-buttons .btn{width:100%;margin-top:5px}.formula{font-size:18px}.characteristics li{flex-wrap:wrap;margin-bottom:15px}.vertex-point,.x-intercepts,.y-intercept{width:100%;margin-left:0;margin-top:5px}h2{font-size:20px}header h1{font-size:24px}}@media (min-width:768px) and (max-height:600px) and (orientation:landscape){.chart-container{height:300px}.table-container{max-height:200px}}@media print{body{background-color:#fff;color:#000}.card{box-shadow:none;border:1px solid #ddd;break-inside:avoid}.btn,footer,header{display:none}.chart-container{height:400px;page-break-before:always}.table-container{overflow:visible;max-height:none}.container{max-width:100%;padding:0}}</style>
+</head>
+<body>
+<header>
+<div class=container>
+<h1><i class="fas fa-chart-line"></i> Quadratic Polynomial Visualizer</h1>
+<p class=subtitle>Explore and analyze quadratic functions interactively</p>
+</div>
+</header>
+<div class=container>
+<div class=card>
+<h2><i class="fas fa-calculator"></i> Polynomial Inputs</h2>
+<p>Enter the coefficients for your quadratic polynomial in the form: ax² + bx + c</p>
+<div class=inputs>
+<div class=input-group>
+<label for=coefficient-a>Coefficient a:</label>
+<input type=number id=coefficient-a value=1 step=0.1>
+</div>
+<div class=input-group>
+<label for=coefficient-b>Coefficient b:</label>
+<input type=number id=coefficient-b value=0 step=0.1>
+</div>
+<div class=input-group>
+<label for=coefficient-c>Coefficient c:</label>
+<input type=number id=coefficient-c value=0 step=0.1>
+</div>
+</div>
+<div class=range-inputs>
+<div class=input-group>
+<label for=x-min>X Range Min:</label>
+<input type=number id=x-min value=-10 step=1>
+</div>
+<div class=input-group style=margin-top:10px>
+<label for=x-max>X Range Max:</label>
+<input type=number id=x-max value=10 step=1>
+</div>
+</div>
+<button id=update-button class=btn><i class="fas fa-sync-alt"></i> Update Graph</button>
+<button id=reset-button class="btn btn-accent"><i class="fas fa-undo"></i> Reset</button>
+</div>
+<div class=grid>
+<div class=card>
+<h2><i class="fas fa-square-root-alt"></i> Quadratic Formula</h2>
+<div class=formula id=formula>f(x) = 1x² + 0x + 0</div>
+<div class=characteristics>
+<h3>Key Characteristics</h3>
+<ul>
+<li><i class="fas fa-bullseye"></i> Vertex: <span id=vertex class=vertex-point>(0, 0)</span></li>
+<li><i class="fas fa-arrows-alt-v"></i> Axis of Symmetry: <span id=axis-symmetry>x = 0</span></li>
+<li><i class="fas fa-long-arrow-alt-up"></i> Opens: <span id=opens>Upward</span></li>
+<li><i class="fas fa-compress-arrows-alt"></i> X-Intercepts: <span id=x-intercepts class=x-intercepts>(0, 0)</span></li>
+<li><i class="fas fa-level-down-alt"></i> Y-Intercept: <span id=y-intercept class=y-intercept>(0, 0)</span></li>
+<li><i class="fas fa-calculator"></i> Discriminant: <span id=discriminant>0</span></li>
+</ul>
+</div>
+</div>
+<div class=card>
+<h2><i class="fas fa-chart-area"></i> Graphical Representation</h2>
+<div class=chart-container>
+<canvas id=quadraticChart></canvas>
+</div>
+</div>
+</div>
+<div class=card>
+<h2><i class="fas fa-table"></i> Data Table</h2>
+<div class=table-controls>
+<p>Add your own points to the table or use the function to generate points.</p>
+<div class=input-row>
+<div class=input-group>
+<label for=custom-x>X Value:</label>
+<input type=number id=custom-x step=0.1>
+</div>
+<div class=input-group>
+<label for=custom-y>Y Value:</label>
+<input type=number id=custom-y step=0.1>
+</div>
+<button id=add-point class=btn><i class="fas fa-plus"></i> Add Point</button>
+</div>
+<div class=table-buttons>
+<button id=clear-table class="btn btn-accent"><i class="fas fa-trash"></i> Clear Table</button>
+<button id=generate-points class=btn><i class="fas fa-magic"></i> Generate From Function</button>
+<button id=update-from-table class=btn><i class="fas fa-sync-alt"></i> Update Graph From Table</button>
+</div>
+</div>
+<div class=table-container>
+<table id=data-table>
+<thead>
+<tr>
+<th>x</th>
+<th>f(x)</th>
+<th>Actions</th>
+</tr>
+</thead>
+<tbody id=table-body>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<footer>
+<div class=container>
+<p>Created with <i class="fas fa-heart" style=color:var(--accent)></i>and arlabs</p>
+</div>
+</footer>
+<script>const coefficientA=document.getElementById("coefficient-a"),coefficientB=document.getElementById("coefficient-b"),coefficientC=document.getElementById("coefficient-c"),xMin=document.getElementById("x-min"),xMax=document.getElementById("x-max"),updateButton=document.getElementById("update-button"),resetButton=document.getElementById("reset-button"),formulaDisplay=document.getElementById("formula"),vertexDisplay=document.getElementById("vertex"),axisSymmetryDisplay=document.getElementById("axis-symmetry"),opensDisplay=document.getElementById("opens"),xInterceptsDisplay=document.getElementById("x-intercepts"),yInterceptDisplay=document.getElementById("y-intercept"),discriminantDisplay=document.getElementById("discriminant"),tableBody=document.getElementById("table-body"),ctx=document.getElementById("quadraticChart").getContext("2d");let quadraticChart=new Chart(ctx,{type:"line",data:{datasets:[{label:"Quadratic Function",borderColor:"#9c27b0",backgroundColor:"rgba(156, 39, 176, 0.2)",borderWidth:3,pointRadius:0,fill:!0,tension:.4},{type:"scatter",label:"Data Points",borderColor:"#e1bee7",backgroundColor:"#f3e5f5",pointStyle:"circle",pointRadius:6,pointHoverRadius:8,borderWidth:2,data:[]}]},options:{responsive:!0,maintainAspectRatio:!1,scales:{x:{type:"linear",position:"center",grid:{color:"rgba(255, 255, 255, 0.1)"},ticks:{color:"#e9ecef"}},y:{type:"linear",position:"center",grid:{color:"rgba(255, 255, 255, 0.1)"},ticks:{color:"#e9ecef"}}},plugins:{legend:{labels:{color:"#e9ecef"}},tooltip:{callbacks:{label:function(t){return`(${t.parsed.x.toFixed(2)}, ${t.parsed.y.toFixed(2)})`}}}}}});function calculateQuadratic(t,e,a,n){return t*n*n+e*n+a}function formatNumber(t){return Number.isInteger(t)?t:parseFloat(t.toFixed(4))}function generateDataPoints(t,e,a,n,o){const r=[],c=(o-n)/100;for(let i=n;i<=o;i+=c){const n=calculateQuadratic(t,e,a,i);r.push({x:i,y:n})}return r}function generateTable(t,e,a,n,o){tableBody.innerHTML="";const r=(o-n)/20;for(let o=0;o<21;o++){const c=n+r*o;addTableRow(formatNumber(c),formatNumber(calculateQuadratic(t,e,a,c)))}}function addTableRow(t,e){const a=document.createElement("tr");a.innerHTML=`\n                <td>${t}</td>\n                <td>${e}</td>\n                <td>\n                    <button class="btn btn-sm btn-danger remove-row">\n                        <i class="fas fa-times"></i>\n                    </button>\n                </td>\n            `;a.querySelector(".remove-row").addEventListener("click",(function(){a.remove(),updateScatterPoints(),quadraticChart.update()})),tableBody.appendChild(a),updateScatterPoints(),quadraticChart.update()}function calculateCharacteristics(t,e,a){const n=-e/(2*t),o=calculateQuadratic(t,e,a,n),r=formatNumber(n),c=formatNumber(o),i=`x = ${r}`,s=t>0?"Upward":"Downward",l=e*e-4*t*a;let u="";if(l>0){const a=(-e+Math.sqrt(l))/(2*t),n=(-e-Math.sqrt(l))/(2*t);u=`(${formatNumber(a)}, 0), (${formatNumber(n)}, 0)`}else u=0===l?`(${r}, 0)`:"No real x-intercepts";const d=`(0, ${formatNumber(a)})`;return{vertex:`(${r}, ${c})`,axisOfSymmetry:i,opensDirection:s,discriminant:formatNumber(l),xIntercepts:u,yIntercept:d}}function formatFormula(t,e,a){let n="f(x) = ";if(0!==t&&(n+=1===t?"x²":-1===t?"-x²":`${t}x²`),0!==e){const a=e>0?0!==t?" + ":"":" - ",o=Math.abs(e);n+=1===o?`${a}x`:`${a}${o}x`}if(0!==a||0===t&&0===e){n+=`${a>0?0!==t||0!==e?" + ":"":" - "}${Math.abs(a)}`}return n}function updateGraph(){const t=parseFloat(coefficientA.value)||0,e=parseFloat(coefficientB.value)||0,a=parseFloat(coefficientC.value)||0,n=parseFloat(xMin.value)||-10,o=parseFloat(xMax.value)||10;0===t&&alert("Warning: When 'a' equals 0, this is not a quadratic function. It becomes a linear function or constant."),formulaDisplay.textContent=formatFormula(t,e,a);const r=calculateCharacteristics(t,e,a);vertexDisplay.textContent=r.vertex,axisSymmetryDisplay.textContent=r.axisOfSymmetry,opensDisplay.textContent=r.opensDirection,xInterceptsDisplay.textContent=r.xIntercepts,yInterceptDisplay.textContent=r.yIntercept,discriminantDisplay.textContent=r.discriminant;const c=generateDataPoints(t,e,a,n,o);quadraticChart.data.datasets[0].data=c,quadraticChart.options.scales.x.min=n,quadraticChart.options.scales.x.max=o;const i=c.map((t=>t.y)),s=Math.min(...i),l=Math.max(...i),u=.1*(l-s);quadraticChart.options.scales.y.min=s-u,quadraticChart.options.scales.y.max=l+u,generateTable(t,e,a,n,o),updateScatterPoints(),quadraticChart.update()}function updateScatterPoints(){const t=tableBody.querySelectorAll("tr"),e=[];t.forEach((t=>{const a=parseFloat(t.cells[0].textContent),n=parseFloat(t.cells[1].textContent);e.push({x:a,y:n})})),quadraticChart.data.datasets[1].data=e}function updateGraphFromTable(){const t=tableBody.querySelectorAll("tr");if(t.length<2)return void alert("Please add at least 2 points to generate a graph.");const e=[];t.forEach((t=>{const a=parseFloat(t.cells[0].textContent),n=parseFloat(t.cells[1].textContent);e.push({x:a,y:n})})),e.sort(((t,e)=>t.x-e.x)),quadraticChart.data.datasets[1].data=e;const a=e.map((t=>t.x)),n=e.map((t=>t.y)),o=Math.min(...a),r=Math.max(...a),c=Math.min(...n),i=Math.max(...n),s=.1*(r-o)||1,l=.1*(i-c)||1;quadraticChart.options.scales.x.min=o-s,quadraticChart.options.scales.x.max=r+s,quadraticChart.options.scales.y.min=c-l,quadraticChart.options.scales.y.max=i+l,fitQuadraticFunction(e),quadraticChart.update()}function fitQuadraticFunction(t){if(!(t.length<3))try{const e=t.length;let a=0,n=0,o=0,r=0,c=0,i=0,s=0;for(const e of t){const{x:t,y:l}=e,u=t*t;a+=t,n+=u,o+=u*t,r+=u*u,c+=l,i+=t*l,s+=u*l}const l=[[e,a,n],[a,n,o],[n,o,r]],u=[c,i,s];for(let t=0;t<3;t++){const e=l[t][t];if(!(Math.abs(e)<1e-10)){for(let a=t;a<3;a++)l[t][a]/=e;u[t]/=e;for(let e=0;e<3;e++){if(e===t)continue;const a=l[e][t];for(let n=t;n<3;n++)l[e][n]-=a*l[t][n];u[e]-=a*u[t]}}}const d=u[0],m=u[1],p=u[2];coefficientA.value=formatNumber(p),coefficientB.value=formatNumber(m),coefficientC.value=formatNumber(d),formulaDisplay.textContent=formatFormula(p,m,d);const f=calculateCharacteristics(p,m,d);vertexDisplay.textContent=f.vertex,axisSymmetryDisplay.textContent=f.axisOfSymmetry,opensDisplay.textContent=f.opensDirection,xInterceptsDisplay.textContent=f.xIntercepts,yInterceptDisplay.textContent=f.yIntercept,discriminantDisplay.textContent=f.discriminant}catch(t){console.error("Error fitting quadratic function:",t)}}function resetValues(){coefficientA.value=1,coefficientB.value=0,coefficientC.value=0,xMin.value=-10,xMax.value=10,updateGraph()}const customX=document.getElementById("custom-x"),customY=document.getElementById("custom-y"),addPointButton=document.getElementById("add-point"),clearTableButton=document.getElementById("clear-table"),generatePointsButton=document.getElementById("generate-points"),updateFromTableButton=document.getElementById("update-from-table");function addPoint(){const t=parseFloat(customX.value),e=parseFloat(customY.value);isNaN(t)||isNaN(e)?alert("Please enter valid numbers for both X and Y values."):(addTableRow(formatNumber(t),formatNumber(e)),customX.value="",customY.value="",customX.focus())}function clearTable(){tableBody.innerHTML=""}updateButton.addEventListener("click",updateGraph),resetButton.addEventListener("click",resetValues),addPointButton.addEventListener("click",addPoint),clearTableButton.addEventListener("click",clearTable),generatePointsButton.addEventListener("click",(function(){const t=parseFloat(coefficientA.value)||0,e=parseFloat(coefficientB.value)||0,a=parseFloat(coefficientC.value)||0,n=parseFloat(xMin.value)||-10,o=parseFloat(xMax.value)||10;clearTable(),generateTable(t,e,a,n,o)})),updateFromTableButton.addEventListener("click",updateGraphFromTable),customY.addEventListener("keypress",(function(t){"Enter"===t.key&&addPoint()})),updateGraph()</script>
+</body>
+</html>
