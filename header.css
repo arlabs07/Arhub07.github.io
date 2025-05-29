@@ -17,7 +17,7 @@
 .menu-container{display:grid;grid-template-columns:1fr;gap:10px;margin-top:20px;width:100%}
 .menu a{text-align:left;color:#fff;text-decoration:none;font-size:20px;font-weight:700;padding:10px;transition:color .3s}
 .menu a:hover{color:rgba(232,143,84,.9)}
-@media (min-width:768px){
+@media (min-width:764px){
 .menu-container{grid-template-columns:repeat(4,1fr)}
 .desktop-menu{display:flex}
 .back-btn{order:-1}
