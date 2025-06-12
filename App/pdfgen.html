@@ -1,0 +1,1449 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enhanced Advanced PDF Generator</title>
+    <!-- Core PDF and HTML-to-Canvas Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <!-- Markdown Parsing and HTML Sanitization Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/4.3.0/marked.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.0.5/purify.min.js"></script>
+    <!-- Tailwind CSS for utility-first styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        /* Print styles to ensure exact color reproduction when printing */
+        @media print {
+            *, *:before, *:after {
+                -webkit-print-color-adjust: exact;
+                color-adjust: exact;
+            }
+        }
+        
+        /* Define A4 page size and zero margins for print output */
+        @page {
+            size: A4;
+            margin: 0;
+        }
+        
+        /* Styling for a single PDF page element (used in preview and for rendering) */
+        .pdf-page {
+            width: 210mm; /* A4 width */
+            min-height: 297mm; /* A4 height */
+            margin: 0 auto;
+            background: white;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+            padding: 20mm; /* Standard A4 margins */
+            box-sizing: border-box; /* Include padding in element's total width and height */
+            page-break-after: always; /* Force a page break after each .pdf-page div in print */
+            transition: all 0.3s ease; /* Smooth transition for hover effects */
+        }
+        
+        /* Prevent page break after the last .pdf-page div */
+        .pdf-page:last-child {
+            page-break-after: auto;
+        }
+        
+        /* Font family for the main editor container */
+        .editor-container {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        /* Enhanced styling for Markdown-rendered content in the preview */
+        .preview-content h1 {
+            color: #2563eb; /* Blue */
+            border-bottom: 3px solid #3b82f6;
+            padding-bottom: 12px;
+            margin-bottom: 20px;
+            font-size: 2.5rem;
+            font-weight: 700;
+        }
+        
+        .preview-content h2 {
+            color: #dc2626; /* Red */
+            border-left: 5px solid #ef4444;
+            padding-left: 16px;
+            margin: 24px 0 16px 0;
+            font-size: 2rem;
+            font-weight: 600;
+        }
+        
+        .preview-content h3 {
+            color: #059669; /* Green */
+            margin: 20px 0 12px 0;
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+        
+        .preview-content h4 {
+            color: #7c3aed; /* Purple */
+            margin: 16px 0 8px 0;
+            font-size: 1.25rem;
+            font-weight: 600;
+        }
+        
+        .preview-content h5 {
+            color: #ea580c; /* Orange */
+            margin: 14px 0 6px 0;
+            font-size: 1.125rem;
+            font-weight: 600;
+        }
+        
+        .preview-content h6 {
+            color: #4338ca; /* Indigo */
+            margin: 12px 0 4px 0;
+            font-size: 1rem;
+            font-weight: 600;
+        }
+        
+        .preview-content blockquote {
+            border-left: 5px solid #fbbf24; /* Yellow */
+            background: linear-gradient(135deg, #fef3c7, #fde68a);
+            padding: 16px 20px;
+            margin: 20px 0;
+            font-style: italic;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .preview-content table {
+            border-collapse: collapse;
+            width: 100%;
+            margin: 20px 0;
+            border: 2px solid #d1d5db;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        .preview-content th, .preview-content td {
+            border: 1px solid #d1d5db;
+            padding: 12px 16px;
+            text-align: left;
+        }
+        
+        .preview-content th {
+            background: linear-gradient(135deg, #f3f4f6, #e5e7eb);
+            font-weight: 700;
+            color: #374151;
+        }
+        
+        .preview-content tr:nth-child(even) {
+            background: #f9fafb;
+        }
+        
+        .preview-content ul, .preview-content ol {
+            margin: 16px 0;
+            padding-left: 32px;
+        }
+        
+        .preview-content li {
+            margin: 6px 0;
+            line-height: 1.6;
+        }
+        
+        .preview-content code {
+            background: #f1f5f9;
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-family: 'Courier New', monospace;
+            color: #1e40af;
+            border: 1px solid #e2e8f0;
+        }
+        
+        .preview-content pre {
+            background: linear-gradient(135deg, #1e293b, #334155);
+            color: #e2e8f0;
+            padding: 20px;
+            border-radius: 12px;
+            overflow-x: auto;
+            margin: 20px 0;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+            border: 1px solid #475569;
+        }
+        
+        .preview-content pre code {
+            background: none;
+            color: inherit;
+            padding: 0;
+            border: none;
+        }
+        
+        .preview-content strong {
+            color: #991b1b;
+            font-weight: 700;
+        }
+        
+        .preview-content em {
+            color: #0369a1;
+            font-style: italic;
+        }
+        
+        .preview-content img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            margin: 16px 0;
+        }
+        
+        .preview-content hr {
+            border: none;
+            height: 3px;
+            background: linear-gradient(to right, #3b82f6, #8b5cf6, #ef4444);
+            margin: 24px 0;
+            border-radius: 2px;
+        }
+        
+        /* Styling for the in-preview page break indicator */
+        .preview-content .page-break {
+            page-break-before: always; /* Force a page break in the print output */
+            border-top: 2px dashed #6b7280;
+            margin: 30px 0;
+            padding-top: 20px;
+            position: relative;
+        }
+        
+        .preview-content .page-break::before {
+            content: "Page Break";
+            position: absolute;
+            top: -12px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: white;
+            padding: 0 10px;
+            color: #6b7280;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+        
+        /* Smooth transitions for interactive elements */
+        .transition-all {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        /* Hover effect for scaling elements slightly */
+        .hover-scale:hover {
+            transform: scale(1.02);
+        }
+        
+        /* Press effect for buttons */
+        .button-press:active {
+            transform: scale(0.98);
+        }
+        
+        /* Mobile optimizations - stacking panels and adjusting sizes */
+        @media (max-width: 768px) {
+            .desktop-layout {
+                flex-direction: column; /* Stack editor and preview vertically */
+            }
+            
+            .editor-panel, .preview-panel {
+                width: 100% !important; /* Full width on small screens */
+            }
+            
+            .pdf-page {
+                width: 100%; /* Adjust preview page width */
+                min-height: auto; /* Allow height to adjust naturally */
+                padding: 15mm; /* Smaller padding on mobile */
+                margin: 10px 0;
+            }
+            
+            .preview-content h1 { font-size: 1.8rem; }
+            .preview-content h2 { font-size: 1.5rem; }
+            .preview-content h3 { font-size: 1.3rem; }
+            
+            .flex-wrap {
+                flex-direction: column; /* Stack control buttons vertically */
+                gap: 8px;
+            }
+            
+            .flex-wrap button {
+                width: 100%; /* Full width for buttons */
+                justify-content: center;
+            }
+        }
+        
+        /* Even smaller screen optimizations */
+        @media (max-width: 480px) {
+            .container {
+                padding: 8px; /* Reduced overall padding */
+            }
+            
+            .bg-white {
+                padding: 16px; /* Reduced card padding */
+            }
+            
+            .preview-content {
+                font-size: 14px; /* Slightly smaller base font size */
+            }
+        }
+        
+        /* Loading animation for buttons */
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #3498db;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* Tooltip styles for informative button hovers */
+        .tooltip {
+            position: relative;
+        }
+        
+        .tooltip:hover::after {
+            content: attr(data-tooltip);
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #1f2937; /* Dark background */
+            color: white;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            white-space: nowrap;
+            z-index: 1000;
+            margin-bottom: 5px;
+        }
+        
+        .tooltip:hover::before {
+            content: '';
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            border: 5px solid transparent;
+            border-top-color: #1f2937; /* Triangle pointer */
+            z-index: 1000;
+        }
+        
+        /* Enhanced form elements for better visual feedback */
+        .form-input {
+            transition: all 0.3s ease;
+            border: 2px solid #e5e7eb;
+        }
+        
+        .form-input:focus {
+            border-color: #3b82f6; /* Blue border on focus */
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1); /* Subtle glow on focus */
+        }
+        
+        /* Custom scrollbar styling for a cleaner look */
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #f1f5f9;
+            border-radius: 4px;
+        }
+        
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #94a3b8;
+            border-radius: 4px;
+        }
+        
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: #64748b;
+        }
+
+        /* Fullscreen preview modal styling */
+        .fullscreen-preview {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.8); /* Dark overlay */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999; /* High z-index to be on top */
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .fullscreen-preview > div {
+            max-width: 800px; /* Limit max width for readability */
+            width: 100%;
+            height: 100%;
+            background: white;
+            border-radius: 8px;
+            overflow-y: auto; /* Scrollable content */
+            position: relative;
+            box-shadow: 0 0 30px rgba(0,0,0,0.5);
+        }
+
+        .fullscreen-preview .close-button {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: #dc2626; /* Red background */
+            color: white;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            cursor: pointer;
+            z-index: 10000; /* Higher than content */
+            transition: background 0.2s ease;
+        }
+        .fullscreen-preview .close-button:hover {
+            background: #ef4444; /* Lighter red on hover */
+        }
+    </style>
+</head>
+
+<body class="bg-gradient-to-br from-gray-50 to-gray-100 min-h-screen">
+    <div class="container mx-auto p-4">
+        <!-- Header Section -->
+        <div class="bg-white rounded-xl shadow-xl p-6 mb-6 hover-scale transition-all">
+            <h1 class="text-4xl font-bold text-gray-800 mb-2 flex items-center">
+                <i class="fas fa-file-pdf text-red-500 mr-3"></i>
+                Enhanced PDF Generator
+            </h1>
+            <p class="text-gray-600 mb-4">Create professional PDFs with advanced formatting, images, and custom layouts</p>
+            
+            <!-- Control Buttons -->
+            <div class="flex flex-wrap gap-3 mb-6">
+                <button onclick="addPage()" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg flex items-center transition-all button-press tooltip" data-tooltip="Add a new page">
+                    <i class="fas fa-plus mr-2"></i>Add Page
+                </button>
+                <button onclick="insertPageBreak()" class="bg-indigo-500 hover:bg-indigo-600 text-white px-4 py-2 rounded-lg flex items-center transition-all button-press tooltip" data-tooltip="Insert page break in current content">
+                    <i class="fas fa-cut mr-2"></i>Page Break
+                </button>
+                <button onclick="insertHorizontalRule()" class="bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 rounded-lg flex items-center transition-all button-press tooltip" data-tooltip="Insert horizontal line">
+                    <i class="fas fa-minus mr-2"></i>HR Line
+                </button>
+                <button onclick="insertTable()" class="bg-teal-500 hover:bg-teal-600 text-white px-4 py-2 rounded-lg flex items-center transition-all button-press tooltip" data-tooltip="Insert markdown table template">
+                    <i class="fas fa-table mr-2"></i>Table
+                </button>
+                <button onclick="insertImage()" class="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg flex items-center transition-all button-press tooltip" data-tooltip="Insert image markdown">
+                    <i class="fas fa-image mr-2"></i>Image
+                </button>
+                <button onclick="generatePDF()" class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg flex items-center transition-all button-press tooltip" data-tooltip="Generate PDF file">
+                    <i class="fas fa-download mr-2"></i>Generate PDF
+                </button>
+                <button onclick="generatePageImages()" class="bg-cyan-500 hover:bg-cyan-600 text-white px-4 py-2 rounded-lg flex items-center transition-all button-press tooltip" data-tooltip="Generate individual PNG images for each page">
+                    <i class="fas fa-image mr-2"></i>Generate Page Images
+                </button>
+                <button onclick="togglePreview()" class="bg-purple-500 hover:bg-purple-600 text-white px-4 py-2 rounded-lg flex items-center transition-all button-press tooltip" data-tooltip="Toggle preview panel visibility">
+                    <i class="fas fa-eye mr-2"></i>Preview
+                </button>
+                <button onclick="maximizePreview()" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg flex items-center transition-all button-press tooltip" data-tooltip="Open full-screen preview">
+                    <i class="fas fa-expand-alt mr-2"></i>Maximize Preview
+                </button>
+                <button onclick="exportMarkdown()" class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg flex items-center transition-all button-press tooltip" data-tooltip="Export all content as Markdown">
+                    <i class="fab fa-markdown mr-2"></i>Export MD
+                </button>
+                <button onclick="importTxtFile()" class="bg-blue-700 hover:bg-blue-800 text-white px-4 py-2 rounded-lg flex items-center transition-all button-press tooltip" data-tooltip="Import text file with page markers">
+                    <i class="fas fa-file-import mr-2"></i>Import TXT
+                </button>
+                <button onclick="showHelp()" class="bg-pink-500 hover:bg-pink-600 text-white px-4 py-2 rounded-lg flex items-center transition-all button-press tooltip" data-tooltip="Show help and formatting guide">
+                    <i class="fas fa-question mr-2"></i>Help
+                </button>
+            </div>
+            
+            <!-- Settings Panel -->
+            <div class="border-t pt-4">
+                <h3 class="text-lg font-semibold mb-3 text-gray-700">Document Settings</h3>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Page Format</label>
+                        <select id="pageFormat" class="form-input w-full px-3 py-2 rounded-lg">
+                            <option value="a4">A4 (210x297mm)</option>
+                            <option value="letter">Letter (8.5x11in)</option>
+                            <option value="legal">Legal (8.5x14in)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Font Size</label>
+                        <select id="fontSize" class="form-input w-full px-3 py-2 rounded-lg">
+                            <option value="12">12pt</option>
+                            <option value="14" selected>14pt</option>
+                            <option value="16">16pt</option>
+                            <option value="18">18pt</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Line Height</label>
+                        <select id="lineHeight" class="form-input w-full px-3 py-2 rounded-lg">
+                            <option value="1.4">1.4</option>
+                            <option value="1.6" selected>1.6</option>
+                            <option value="1.8">1.8</option>
+                            <option value="2.0">2.0</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content Area -->
+        <!-- Flex container to arrange editor and preview panels -->
+        <div class="desktop-layout flex flex-col md:flex-row gap-6 h-[calc(100vh-250px)]"> <!-- Adjusted height for layout -->
+            <!-- Editor Panel -->
+            <div class="editor-panel w-full md:w-1/2">
+                <div class="bg-white rounded-xl shadow-xl p-6 hover-scale transition-all h-full flex flex-col">
+                    <h2 class="text-2xl font-semibold mb-4 text-gray-800 flex items-center">
+                        <i class="fas fa-edit mr-2 text-blue-500"></i>Editor
+                        <span class="ml-auto text-sm text-gray-500" id="wordCount">0 words</span>
+                    </h2>
+                    
+                    <!-- Single Textarea and Title Input wrapped in a flex-grow div for height management -->
+                    <div class="flex-grow flex flex-col"> 
+                        <input type="text" id="pageTitleInput" 
+                               class="text-lg font-semibold bg-transparent border-b-2 border-gray-300 focus:border-blue-500 outline-none w-full mb-3 p-2 form-input"
+                               onchange="updatePageTitle(this.value)" placeholder="Page Title">
+                        <textarea id="mainTextarea" 
+                                  oninput="updateCurrentPageContent(this.value)" 
+                                  rows="15" 
+                                  class="w-full h-full p-4 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none font-mono text-sm form-input custom-scrollbar flex-grow" 
+                                  placeholder="Enter your content using markdown formatting..."></textarea>
+                    </div>
+
+                    <!-- Pagination Controls -->
+                    <div class="flex justify-center items-center mt-4 p-3 bg-gray-50 rounded-lg">
+                        <button id="prevPageBtn" onclick="changePage(-1)" 
+                                class="bg-blue-200 hover:bg-blue-300 text-blue-800 px-4 py-2 rounded-l-lg transition-colors button-press disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                            <i class="fas fa-chevron-left"></i> Previous
+                        </button>
+                        <span id="pageNumberDisplay" class="px-5 py-2 bg-blue-100 text-blue-800 font-semibold">1 / 1</span>
+                        <button id="nextPageBtn" onclick="changePage(1)" 
+                                class="bg-blue-200 hover:bg-blue-300 text-blue-800 px-4 py-2 rounded-r-lg transition-colors button-press disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                            Next <i class="fas fa-chevron-right"></i>
+                        </button>
+                    </div>
+                    
+                    <!-- Quick Insert Toolbar -->
+                    <div class="mt-4 p-3 bg-gray-50 rounded-lg">
+                        <p class="text-sm font-medium text-gray-700 mb-2">Quick Insert:</p>
+                        <div class="flex flex-wrap gap-2">
+                            <button onclick="insertQuickText('**Bold Text**')" class="text-xs bg-gray-200 hover:bg-gray-300 px-2 py-1 rounded transition-colors">Bold</button>
+                            <button onclick="insertQuickText('*Italic Text*')" class="text-xs bg-gray-200 hover:bg-gray-300 px-2 py-1 rounded transition-colors">Italic</button>
+                            <button onclick="insertQuickText('`Code`')" class="text-xs bg-gray-200 hover:bg-gray-300 px-2 py-1 rounded transition-colors">Code</button>
+                            <button onclick="insertQuickText('> Quote')" class="text-xs bg-gray-200 hover:bg-gray-300 px-2 py-1 rounded transition-colors">Quote</button>
+                            <button onclick="insertQuickText('- List item')" class="text-xs bg-gray-200 hover:bg-gray-300 px-2 py-1 rounded transition-colors">List</button>
+                            <button onclick="insertQuickText('[Link Text](URL)')" class="text-xs bg-gray-200 hover:bg-gray-300 px-2 py-1 rounded transition-colors">Link</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Preview Panel -->
+            <div class="preview-panel w-full md:w-1/2">
+                <div class="bg-white rounded-xl shadow-xl p-6 hover-scale transition-all h-full flex flex-col">
+                    <h2 class="text-2xl font-semibold mb-4 text-gray-800 flex items-center">
+                        <i class="fas fa-eye mr-2 text-green-500"></i>Preview
+                        <span class="ml-auto text-sm text-gray-500" id="pageCount">0 pages</span>
+                    </h2>
+                    <!-- Adjusted max-height to be more flexible, using flex-grow on its parent -->
+                    <div id="preview-container" class="border-2 border-gray-200 rounded-lg p-4 overflow-y-auto custom-scrollbar bg-gray-50 flex-grow"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Hidden file input for importing TXT -->
+        <input type="file" id="txtFileInput" accept=".txt" class="hidden">
+
+        <!-- Fullscreen Preview Container (Hidden by default) -->
+        <div id="fullscreenPreviewContainer" class="fullscreen-preview hidden">
+            <button class="close-button" onclick="closeMaximizePreview()">
+                <i class="fas fa-times"></i>
+            </button>
+            <div id="fullscreenPreviewContent" class="custom-scrollbar">
+                <!-- Preview content will be cloned here -->
+            </div>
+        </div>
+
+        <!-- Help Modal -->
+        <div id="help-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+            <div class="bg-white rounded-xl p-6 max-w-4xl max-h-96 overflow-y-auto m-4 custom-scrollbar">
+                <h3 class="text-2xl font-bold mb-4 text-gray-800">Enhanced Formatting Help</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-sm">
+                    <div>
+                        <h4 class="font-bold text-lg mb-2 text-blue-600">Basic Formatting</h4>
+                        <div class="space-y-2">
+                            <div><code># H1</code> - Main Heading</div>
+                            <div><code>## H2</code> - Section Heading</div>
+                            <div><code>### H3</code> - Subsection</div>
+                            <div><code>**bold**</code> - Bold Text</div>
+                            <div><code>*italic*</code> - Italic Text</div>
+                            <div><code>`code`</code> - Inline Code</div>
+                            <div><code>> quote</code> - Blockquote</div>
+                        </div>
+                    </div>
+                    <div>
+                        <h4 class="font-bold text-lg mb-2 text-green-600">Advanced Elements</h4>
+                        <div class="space-y-2">
+                            <div><code>---</code> - Horizontal Rule</div>
+                            <div><code>![alt](url)</code> - Image</div>
+                            <div><code>[text](url)</code> - Link</div>
+                            <div><code>- item</code> - Bullet List</div>
+                            <div><code>1. item</code> - Numbered List</div>
+                            <div><code>```code```</code> - Code Block</div>
+                            <div><code>&lt;!--PAGEBREAK--&gt;</code> - Page Break (for PDF)</div>
+                            <div><code>&lt;!--- page N ---&gt;</code> - Page Separator (for TXT import)</div>
+                        </div>
+                    </div>
+                    <div>
+                        <h4 class="font-bold text-lg mb-2 text-purple-600">Tables</h4>
+                        <div class="bg-gray-100 p-2 rounded font-mono text-xs">
+                            | Header 1 | Header 2 |<br>
+                            |----------|----------|<br>
+                            | Cell 1   | Cell 2   |<br>
+                            | Cell 3   | Cell 4   |
+                        </div>
+                    </div>
+                    <div>
+                        <h4 class="font-bold text-lg mb-2 text-orange-600">Quick Tips</h4>
+                        <div class="space-y-2">
+                            <div>• Use toolbar buttons for quick insertion</div>
+                            <div>• Press Tab in textarea to indent</div>
+                            <div>• Images support base64 encoding or URLs</div>
+                            <div>• Page breaks work in PDF export</div>
+                            <div>• Export to Markdown for sharing</div>
+                            <div>• Import TXT files with `&lt;!--- page N ---&gt;` markers</div>
+                        </div>
+                    </div>
+                </div>
+                <button onclick="closeHelp()" class="mt-6 bg-blue-500 hover:bg-blue-600 text-white px-6 py-2 rounded-lg transition-colors">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Enhanced PDF Generator JavaScript with Error Handling
+        const LOCAL_STORAGE_KEY = 'pdfGeneratorPages'; // Key for local storage
+        let pages = []; // Array to store document pages
+        let currentPageIndex = 0; // Index of the currently active page in the editor
+        let previewVisible = true; // State for preview panel visibility
+
+        // Error logging utility for consistent error reporting
+        function logError(error, context = '') {
+            console.error(`PDF Generator Error ${context}:`, error);
+        }
+
+        // Safe DOM element retrieval to avoid null reference errors
+        function safeGetElement(id) {
+            try {
+                const element = document.getElementById(id);
+                if (!element) {
+                    throw new Error(`Element with id '${id}' not found`);
+                }
+                return element;
+            } catch (error) {
+                logError(error, `getting element ${id}`);
+                return null; // Return null if element not found
+            }
+        }
+
+        // Initialize the application on DOM load
+        function init() {
+            try {
+                // Try to load content from local storage. If successful, don't add a default page.
+                if (!loadFromLocalStorage()) {
+                    addPage(); // Start with one default page if no saved content
+                }
+                setupEventListeners();
+                loadPageContent(); // Load content for the initial/restored page into editor
+                updatePreview(); // Initial render of the preview
+                updateCounters(); // Update word and page count
+                updatePaginationControls(); // Initialize pagination buttons
+            } catch (error) {
+                logError(error, 'during initialization');
+                // Display user-friendly alert for critical initialization errors
+                alert('Error initializing the application. Please refresh the page.');
+            }
+        }
+
+        // Setup all necessary event listeners
+        function setupEventListeners() {
+            try {
+                // Event listeners for document settings
+                safeGetElement('pageFormat')?.addEventListener('change', updatePreview);
+                safeGetElement('fontSize')?.addEventListener('change', updatePreview);
+                safeGetElement('lineHeight')?.addEventListener('change', updatePreview);
+                
+                // Event listener for hidden file input for TXT import
+                safeGetElement('txtFileInput')?.addEventListener('change', handleTxtFileImport);
+                
+                // Global keyboard shortcuts
+                document.addEventListener('keydown', handleKeyboardShortcuts);
+
+                // Save to local storage before the user leaves the page
+                window.addEventListener('beforeunload', saveToLocalStorage);
+            } catch (error) {
+                logError(error, 'setting up event listeners');
+            }
+        }
+
+        /**
+         * Saves the current `pages` array to local storage.
+         */
+        function saveToLocalStorage() {
+            try {
+                const dataToSave = JSON.stringify({ pages: pages, currentPageIndex: currentPageIndex });
+                localStorage.setItem(LOCAL_STORAGE_KEY, dataToSave);
+                // console.log("Content saved to local storage."); // For debugging
+            } catch (error) {
+                logError(error, 'saving to local storage');
+                // Optionally inform user if storage is full or other issue
+                // alert('Could not save your work automatically. Local storage might be full.');
+            }
+        }
+
+        /**
+         * Loads content from local storage into the `pages` array.
+         * @returns {boolean} True if content was loaded, false otherwise.
+         */
+        function loadFromLocalStorage() {
+            try {
+                const savedData = localStorage.getItem(LOCAL_STORAGE_KEY);
+                if (savedData) {
+                    const parsedData = JSON.parse(savedData);
+                    if (parsedData && Array.isArray(parsedData.pages) && parsedData.pages.length > 0) {
+                        pages = parsedData.pages;
+                        currentPageIndex = parsedData.currentPageIndex || 0; // Restore last active page index
+                        if (currentPageIndex >= pages.length) { // Ensure index is valid
+                            currentPageIndex = 0;
+                        }
+                        // console.log("Content loaded from local storage."); // For debugging
+                        return true;
+                    }
+                }
+            } catch (error) {
+                logError(error, 'loading from local storage');
+                // If parsing fails, it's likely corrupt data, so clear it.
+                localStorage.removeItem(LOCAL_STORAGE_KEY);
+                alert('Error loading saved content. Your previous session might be corrupt. Starting fresh.');
+            }
+            return false;
+        }
+
+        // Handle global keyboard shortcuts for efficiency
+        function handleKeyboardShortcuts(event) {
+            try {
+                if (event.ctrlKey || event.metaKey) { // Check for Ctrl (Windows/Linux) or Cmd (macOS) key
+                    switch (event.key) {
+                        case 's': // Ctrl/Cmd + S to generate PDF
+                            event.preventDefault(); // Prevent browser's save dialog
+                            generatePDF();
+                            break;
+                        case 'n': // Ctrl/Cmd + N to add new page
+                            event.preventDefault(); // Prevent browser's new tab
+                            addPage();
+                            break;
+                        case 'p': // Ctrl/Cmd + P to toggle preview visibility
+                            event.preventDefault(); // Prevent browser's print dialog
+                            togglePreview();
+                            break;
+                        case 'ArrowLeft': // Ctrl/Cmd + Left Arrow to go to previous page in editor
+                            event.preventDefault();
+                            changePage(-1);
+                            break;
+                        case 'ArrowRight': // Ctrl/Cmd + Right Arrow to go to next page in editor
+                            event.preventDefault();
+                            changePage(1);
+                            break;
+                    }
+                }
+            } catch (error) {
+                logError(error, 'handling keyboard shortcuts');
+            }
+        }
+
+        // Add a new page to the document's `pages` array
+        function addPage() {
+            try {
+                const pageId = Date.now(); // Unique ID for the new page
+                const newPage = {
+                    id: pageId,
+                    title: `Page ${pages.length + 1}`, // Default title
+                    content: '# Welcome to your new page\n\nStart typing your content here...\n\n## Features Available:\n- **Bold** and *italic* text\n- Images and links\n- Tables and lists\n- Code blocks\n- Page breaks (`<!--PAGEBREAK-->`)\n- And much more!\n\n---\n\n> This is a blockquote example\n\n```javascript\n// Code block example\nfunction hello() {\n    console.log("Hello World!");\n}\n```'
+                };
+                pages.push(newPage); // Add the new page to the array
+                currentPageIndex = pages.length - 1; // Switch editor to the newly added page
+                loadPageContent(); // Update editor with new page's content
+                updatePreview(); // Refresh the preview
+                updateCounters(); // Update total page count
+                updatePaginationControls(); // Update pagination buttons state
+                saveToLocalStorage(); // Save changes
+            } catch (error) {
+                logError(error, 'adding page');
+                alert('Error adding page. Please try again.');
+            }
+        }
+
+        // Load content and title of the current page into the editor's textarea and title input
+        function loadPageContent() {
+            try {
+                const textarea = safeGetElement('mainTextarea');
+                const titleInput = safeGetElement('pageTitleInput');
+                if (!textarea || !titleInput || pages.length === 0) return; // Exit if elements not found or no pages
+
+                const currentPage = pages[currentPageIndex];
+                textarea.value = escapeHtml(currentPage.content); // Set textarea content (escaped)
+                titleInput.value = escapeHtml(currentPage.title); // Set title input content (escaped)
+                updateWordCount(currentPage.content); // Update word count for the currently displayed page
+            } catch (error) {
+                logError(error, 'loading page content');
+            }
+        }
+
+        // Change the currently viewed page in the editor (forward/backward)
+        function changePage(delta) {
+            try {
+                const newIndex = currentPageIndex + delta;
+                if (newIndex >= 0 && newIndex < pages.length) { // Ensure new index is within bounds
+                    currentPageIndex = newIndex; // Update current page index
+                    loadPageContent(); // Load content of the new page
+                    updatePaginationControls(); // Update pagination buttons and display
+                    saveToLocalStorage(); // Save current page index
+                }
+            } catch (error) {
+                logError(error, 'changing page');
+            }
+        }
+
+        // Update the state of pagination buttons and the page number display
+        function updatePaginationControls() {
+            try {
+                const prevBtn = safeGetElement('prevPageBtn');
+                const nextPageBtn = safeGetElement('nextPageBtn');
+                const pageNumberDisplay = safeGetElement('pageNumberDisplay');
+
+                if (prevBtn) prevBtn.disabled = currentPageIndex === 0; // Disable "Previous" on first page
+                if (nextPageBtn) nextPageBtn.disabled = currentPageIndex === pages.length - 1; // Disable "Next" on last page
+                if (pageNumberDisplay) pageNumberDisplay.textContent = `${currentPageIndex + 1} / ${pages.length}`; // Update display
+            } catch (error) {
+                logError(error, 'updating pagination controls');
+            }
+        }
+
+        // Update the title of the current page in the `pages` array
+        function updatePageTitle(title) {
+            try {
+                if (pages.length > 0) {
+                    pages[currentPageIndex].title = title; // Update title in data model
+                    updatePreview(); // Refresh preview to reflect title change
+                    saveToLocalStorage(); // Save changes
+                }
+            } catch (error) {
+                logError(error, `updating page title for index ${currentPageIndex}`);
+            }
+        }
+
+        // Update the content of the current page in the `pages` array
+        function updateCurrentPageContent(content) {
+            try {
+                if (pages.length > 0) {
+                    pages[currentPageIndex].content = content; // Update content in data model
+                    updatePreview(); // Refresh preview
+                    updateWordCount(content); // Update word count for current page
+                    saveToLocalStorage(); // Save changes
+                }
+            } catch (error) {
+                logError(error, `updating current page content for index ${currentPageIndex}`);
+            }
+        }
+
+        // HTML escape utility to prevent Cross-Site Scripting (XSS) in user-provided text
+        function escapeHtml(text) {
+            try {
+                const map = {
+                    '&': '&amp;',
+                    '<': '&lt;',
+                    '>': '&gt;',
+                    '"': '&quot;',
+                    "'": '&#039;'
+                };
+                return text.replace(/[&<>"']/g, m => map[m]);
+            } catch (error) {
+                logError(error, 'escaping HTML');
+                return text; // Return original text on error
+            }
+        }
+
+        // Update the live preview panel with rendered Markdown content
+        function updatePreview(targetContainerId = 'preview-container') {
+            try {
+                if (!previewVisible) return; // Don't update if preview is hidden
+                
+                const container = safeGetElement(targetContainerId);
+                if (!container) return;
+                
+                container.innerHTML = ''; // Clear existing preview content
+                
+                pages.forEach(page => {
+                    try {
+                        const pageDiv = document.createElement('div');
+                        // Apply 'pdf-page' class for consistent styling with A4 dimensions
+                        pageDiv.className = 'pdf-page mb-6'; 
+                        
+                        // Replace custom page break marker with HTML for proper preview rendering
+                        let processedContent = page.content.replace(/<!--PAGEBREAK-->/g, '<div class="page-break"></div>');
+                        
+                        // Convert Markdown to HTML and sanitize to prevent XSS
+                        const htmlContent = marked.parse(processedContent);
+                        const sanitizedContent = DOMPurify.sanitize(htmlContent);
+                        
+                        pageDiv.innerHTML = `<div class="preview-content">${sanitizedContent}</div>`;
+                        container.appendChild(pageDiv);
+                    } catch (error) {
+                        logError(error, `processing page ${page.id} for preview`);
+                    }
+                });
+                
+                applySettings(targetContainerId); // Apply font and line height settings to the preview
+            } catch (error) {
+                logError(error, 'updating preview');
+            }
+        }
+
+        // Apply document settings (font size, line height) to preview content
+        function applySettings(targetContainerId = 'preview-container') {
+            try {
+                const fontSizeElement = safeGetElement('fontSize');
+                const lineHeightElement = safeGetElement('lineHeight');
+                
+                const fontSize = fontSizeElement ? fontSizeElement.value : '14';
+                const lineHeight = lineHeightElement ? lineHeightElement.value : '1.6';
+                
+                // Select only preview-content within the specified container
+                const previewContent = document.querySelectorAll(`#${targetContainerId} .preview-content`);
+                previewContent.forEach(content => {
+                    try {
+                        content.style.fontSize = `${fontSize}pt`;
+                        content.style.lineHeight = lineHeight;
+                    } catch (error) {
+                        logError(error, 'applying settings to content');
+                    }
+                });
+            } catch (error) {
+                logError(error, 'applying settings');
+            }
+        }
+
+        // Update the total page count displayed in the preview panel header
+        function updateCounters() {
+            try {
+                const pageCountElement = safeGetElement('pageCount');
+                if (pageCountElement) pageCountElement.textContent = `${pages.length} pages`;
+            } catch (error) {
+                logError(error, 'updating page counter');
+            }
+        }
+        
+        // Update the word count for the currently displayed page in the editor header
+        function updateWordCount(content) {
+            try {
+                const wordCountElement = safeGetElement('wordCount');
+                const words = (content.match(/\S+/g) || []).length; // Count words by splitting on non-whitespace
+                if (wordCountElement) wordCountElement.textContent = `${words} words`;
+            } catch (error) {
+                logError(error, 'updating word count');
+            }
+        }
+
+        // Toggle visibility of the preview panel
+        function togglePreview() {
+            try {
+                previewVisible = !previewVisible; // Flip visibility state
+                const previewPanel = document.querySelector('.preview-panel');
+                if (previewPanel) {
+                    if (previewVisible) {
+                        previewPanel.style.display = 'flex'; // Use flex for proper layout
+                        updatePreview(); // Re-render preview if it becomes visible
+                    } else {
+                        previewPanel.style.display = 'none';
+                    }
+                }
+            } catch (error) {
+                logError(error, 'toggling preview');
+                alert('Error toggling preview. Please try again.');
+            }
+        }
+
+        // Maximize the preview to full screen in a modal
+        function maximizePreview() {
+            try {
+                const fullscreenContainer = safeGetElement('fullscreenPreviewContainer');
+                const fullscreenContent = safeGetElement('fullscreenPreviewContent');
+                const previewContainer = safeGetElement('preview-container');
+
+                if (fullscreenContainer && fullscreenContent && previewContainer) {
+                    // Clone the content from the regular preview to the fullscreen modal
+                    fullscreenContent.innerHTML = ''; // Clear previous content
+                    previewContainer.childNodes.forEach(node => {
+                        fullscreenContent.appendChild(node.cloneNode(true)); // Deep clone nodes
+                    });
+                    
+                    // Apply settings to the fullscreen content to ensure correct styling
+                    applySettings('fullscreenPreviewContent');
+
+                    fullscreenContainer.classList.remove('hidden'); // Show the modal
+                }
+            } catch (error) {
+                logError(error, 'maximizing preview');
+                alert('Error maximizing preview. Please try again.');
+            }
+        }
+
+        // Close the maximized preview modal
+        function closeMaximizePreview() {
+            try {
+                const fullscreenContainer = safeGetElement('fullscreenPreviewContainer');
+                if (fullscreenContainer) {
+                    fullscreenContainer.classList.add('hidden'); // Hide the modal
+                }
+            } catch (error) {
+                logError(error, 'closing maximized preview');
+            }
+        }
+
+        // Insert a page break markdown marker into the current textarea
+        function insertPageBreak() {
+            insertQuickText('<!--PAGEBREAK-->');
+        }
+
+        // Insert a horizontal rule markdown marker into the current textarea
+        function insertHorizontalRule() {
+            insertQuickText('\n---\n');
+        }
+
+        // Insert a markdown table template into the current textarea
+        function insertTable() {
+            const tableMarkdown = '\n| Header 1 | Header 2 | Header 3 |\n|----------|----------|----------|\n| Cell 1   | Cell 2   | Cell 3   |\n| Cell 4   | Cell 5   | Cell 6   |\n';
+            insertQuickText(tableMarkdown);
+        }
+
+        // Prompt for image URL/base64 and alt text, then insert markdown image syntax
+        function insertImage() {
+            const url = prompt('Enter image URL or paste base64 data:');
+            if (url) {
+                const altText = prompt('Enter alt text for the image (optional):') || 'Image';
+                insertQuickText(`\n![${altText}](${url})\n`);
+            }
+        }
+
+        // Inserts text at the current cursor position in the main textarea
+        function insertQuickText(text) {
+            try {
+                const textarea = safeGetElement('mainTextarea');
+                if (!textarea) {
+                    alert('Editor not ready. Please refresh or try again.');
+                    return;
+                }
+                
+                const start = textarea.selectionStart; // Get current cursor start position
+                const end = textarea.selectionEnd; // Get current cursor end position
+                const value = textarea.value; // Get current textarea content
+                
+                // Insert text at cursor position
+                textarea.value = value.substring(0, start) + text + value.substring(end);
+                textarea.focus(); // Keep focus on the textarea
+                textarea.setSelectionRange(start + text.length, start + text.length); // Place cursor after inserted text
+                
+                updateCurrentPageContent(textarea.value); // Update data model and trigger preview refresh
+            } catch (error) {
+                logError(error, 'inserting quick text');
+                alert('Error inserting text.');
+            }
+        }
+
+        // Export all document content as a single Markdown file
+        function exportMarkdown() {
+            try {
+                if (pages.length === 0) {
+                    alert('No pages to export.');
+                    return;
+                }
+                
+                let markdown = '';
+                pages.forEach((page, index) => {
+                    // Add a custom marker to differentiate document pages in the exported MD
+                    if (index > 0) markdown += `\n\n<!--- page ${index + 1} --->\n\n`; 
+                    markdown += `# ${page.title}\n\n${page.content}`;
+                });
+                
+                // Create a Blob and initiate download
+                const blob = new Blob([markdown], { type: 'text/markdown' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `document_${new Date().toISOString().slice(0, 10)}.md`; // Generate filename
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a); // Clean up the temporary anchor element
+                URL.revokeObjectURL(url); // Release the object URL
+                
+                alert('Markdown exported successfully!');
+            } catch (error) {
+                logError(error, 'exporting markdown');
+                alert('Error exporting markdown. Please try again.');
+            }
+        }
+
+        // Programmatically trigger the hidden file input for TXT import
+        function importTxtFile() {
+            try {
+                const fileInput = safeGetElement('txtFileInput');
+                if (fileInput) {
+                    fileInput.click(); // Open file selection dialog
+                }
+            } catch (error) {
+                logError(error, 'triggering TXT file input');
+                alert('Could not open file selection. Please try again.');
+            }
+        }
+
+        // Handle the selected TXT file import
+        function handleTxtFileImport(event) {
+            try {
+                const file = event.target.files[0]; // Get the selected file
+                if (!file) return; // No file selected
+
+                const reader = new FileReader(); // Create a new FileReader
+                reader.onload = (e) => {
+                    try {
+                        const fileContent = e.target.result; // Get the file content as text
+                        const pageDelimiterRegex = /\<\!---\s*page\s*(\d+)\s*---\>/gi; // Regex to find page markers
+                        const matches = [...fileContent.matchAll(pageDelimiterRegex)]; // Find all occurrences
+
+                        let newPages = [];
+                        let lastIndex = 0;
+                        let inferredPageNum = 1;
+
+                        // Handle content before the first delimiter as the first page
+                        if (matches.length > 0 && matches[0].index > 0) {
+                            const initialContent = fileContent.substring(0, matches[0].index).trim();
+                            if (initialContent) {
+                                newPages.push({
+                                    id: Date.now() + Math.random(), // Unique ID
+                                    title: `Imported Page 1`,
+                                    content: initialContent
+                                });
+                                inferredPageNum++;
+                            }
+                            lastIndex = matches[0].index;
+                        } else if (matches.length === 0 && fileContent.trim() !== '') {
+                            // If no delimiters, treat the whole file as one page
+                            newPages.push({
+                                id: Date.now() + Math.random(),
+                                title: "Imported Page 1",
+                                content: fileContent.trim()
+                            });
+                        }
+
+                        matches.forEach((match, index) => {
+                            const pageNumber = match[1]; // Captured group for page number
+                            const contentStart = match.index + match[0].length; // Start of content after delimiter
+                            let contentEnd = fileContent.length; // Default to end of file
+
+                            // If there's a next delimiter, set contentEnd to its start
+                            if (index < matches.length - 1) {
+                                contentEnd = matches[index + 1].index;
+                            }
+
+                            const content = fileContent.substring(contentStart, contentEnd).trim();
+
+                            if (content.length > 0) { // Only add if content is not empty
+                                newPages.push({
+                                    id: Date.now() + index + Math.random(), // Ensure unique ID
+                                    title: `Imported Page ${pageNumber || inferredPageNum++}`, // Use parsed number or infer
+                                    content: content
+                                });
+                            }
+                            lastIndex = contentStart;
+                        });
+
+                        // If newPages is still empty after parsing, and fileContent was not empty (e.g. only delimiters or unparseable), add a default page
+                        if (newPages.length === 0 && fileContent.trim() !== '') {
+                            newPages.push({
+                                id: Date.now(),
+                                title: "Imported Page 1",
+                                content: fileContent.trim()
+                            });
+                        }
+
+                        // Replace existing pages with the imported ones
+                        pages = newPages.length > 0 ? newPages : [{ id: Date.now(), title: "Page 1", content: "" }]; // Fallback to a single empty page if import results in no content
+                        currentPageIndex = 0; // Reset to the first page
+
+                        loadPageContent(); // Update editor
+                        updatePreview(); // Update preview
+                        updateCounters(); // Update page count
+                        updatePaginationControls(); // Update pagination buttons
+                        saveToLocalStorage(); // Save changes after import
+
+                        alert(`Successfully imported ${newPages.length} page(s)!`);
+
+                    } catch (parseError) {
+                        logError(parseError, 'parsing TXT file content');
+                        alert('Error parsing TXT file. Please ensure correct page markers (<!--- page N --->).');
+                    } finally {
+                        event.target.value = ''; // Clear file input so same file can be selected again
+                    }
+                };
+                reader.onerror = (e) => {
+                    logError(e.target.error, 'reading TXT file');
+                    alert('Error reading TXT file. Please try again.');
+                };
+                reader.readAsText(file); // Read the file as text
+            } catch (error) {
+                logError(error, 'handling TXT file import selection');
+                alert('Error selecting file for import. Please try again.');
+            }
+        }
+
+
+        // Show the help modal
+        function showHelp() {
+            try {
+                const modal = safeGetElement('help-modal');
+                if (modal) {
+                    modal.classList.remove('hidden'); // Show modal
+                    modal.classList.add('flex'); // Use flex for centering
+                }
+            } catch (error) {
+                logError(error, 'showing help');
+            }
+        }
+
+        // Close the help modal
+        function closeHelp() {
+            try {
+                const modal = safeGetElement('help-modal');
+                if (modal) {
+                    modal.classList.add('hidden'); // Hide modal
+                    modal.classList.remove('flex'); // Remove flex styling
+                }
+            } catch (error) {
+                logError(error, 'closing help');
+            }
+        }
+
+        // Generate PDF from document content
+        async function generatePDF() {
+            try {
+                if (pages.length === 0) {
+                    alert('Please add at least one page before generating PDF');
+                    return;
+                }
+
+                // Show loading state on button
+                const generateBtn = document.querySelector('button[onclick="generatePDF()"]');
+                const originalBtnHtml = generateBtn ? generateBtn.innerHTML : ''; // Store original HTML
+                if (generateBtn) {
+                    generateBtn.innerHTML = '<div class="loading mr-2"></div>Generating PDF...';
+                    generateBtn.disabled = true;
+                }
+
+                const { jsPDF } = window.jspdf;
+                if (!jsPDF) {
+                    throw new Error('jsPDF library not loaded. Please check your internet connection.');
+                }
+
+                const pageFormatElement = safeGetElement('pageFormat');
+                const format = pageFormatElement ? pageFormatElement.value : 'a4';
+                
+                const pdf = new jsPDF('p', 'mm', format);
+                let currentPdfPageIndex = 0; // Tracks the current page being added to jsPDF
+
+                // Define PDF page dimensions based on selected format
+                const pdfWidth = { 'a4': 210, 'letter': 215.9, 'legal': 215.9 }[format];
+                const pdfHeight = { 'a4': 297, 'letter': 279.4, 'legal': 355.6 }[format];
+                const paddingMm = 20; // 20mm padding on each side for content
+                const contentWidthMm = pdfWidth - (2 * paddingMm);
+                const contentHeightMm = pdfHeight - (2 * paddingMm);
+
+                for (const page of pages) { // Iterate through each document page
+                    // Split the content of each document page by the internal page break marker
+                    const contentChunks = page.content.split('<!--PAGEBREAK-->');
+
+                    for (let i = 0; i < contentChunks.length; i++) {
+                        const chunk = contentChunks[i];
+                        if (chunk.trim() === '') continue; // Skip empty chunks (e.g., from multiple consecutive page breaks)
+
+                        // Add a new page to the jsPDF document if it's not the very first chunk overall
+                        if (currentPdfPageIndex > 0) {
+                            pdf.addPage();
+                        }
+
+                        // Create a temporary hidden div to render the content chunk for html2canvas
+                        const tempDiv = document.createElement('div');
+                        tempDiv.className = 'pdf-page'; // Re-use styling but ensure it's hidden and has fixed dimensions
+                        tempDiv.style.position = 'absolute';
+                        tempDiv.style.left = '-9999px'; // Hide from view
+                        tempDiv.style.top = '0';
+                        tempDiv.style.width = `${contentWidthMm}mm`; // Set content width for rendering
+                        tempDiv.style.minHeight = `${contentHeightMm}mm`; // Ensure min height for canvas to capture content
+                        tempDiv.style.padding = `${paddingMm}mm`; // Apply padding for rendering
+                        tempDiv.style.backgroundColor = '#ffffff';
+                        tempDiv.style.boxSizing = 'border-box'; // Include padding in width/height calculation
+
+                        const htmlContent = marked.parse(chunk); // Convert Markdown to HTML
+                        const sanitizedContent = DOMPurify.sanitize(htmlContent); // Sanitize HTML
+                        tempDiv.innerHTML = `<div class="preview-content">${sanitizedContent}</div>`;
+                        document.body.appendChild(tempDiv); // Temporarily add to DOM for rendering
+
+                        // Apply font settings for consistent rendering in html2canvas
+                        const fontSize = safeGetElement('fontSize')?.value || '14';
+                        const lineHeight = safeGetElement('lineHeight')?.value || '1.6';
+                        tempDiv.style.fontSize = `${fontSize}pt`;
+                        tempDiv.style.lineHeight = lineHeight;
+
+                        // Use html2canvas to render the temporary div into a canvas
+                        const canvas = await html2canvas(tempDiv, {
+                            scale: 2, // Higher scale for better resolution in PDF
+                            useCORS: true, // Allow cross-origin images (if applicable)
+                            allowTaint: true, // Allow tainting canvas for cross-origin issues
+                            backgroundColor: '#ffffff', // Ensure white background
+                            width: tempDiv.offsetWidth, // Use actual rendered width
+                            height: tempDiv.offsetHeight // Use actual rendered height
+                        });
+
+                        const imgData = canvas.toDataURL('image/png'); // Get image data as PNG
+                        
+                        // Calculate image dimensions to fit precisely within PDF page (maintaining aspect ratio)
+                        const imgWidth = pdfWidth;
+                        const imgHeight = (canvas.height * imgWidth) / canvas.width; 
+
+                        // Add the rendered image to the jsPDF document
+                        pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight);
+                        document.body.removeChild(tempDiv); // Clean up the temporary div from DOM
+
+                        currentPdfPageIndex++; // Increment PDF page count
+                    }
+                }
+
+                const filename = `document_${new Date().toISOString().slice(0, 10)}.pdf`; // Generate filename
+                pdf.save(filename); // Save the PDF
+                alert('PDF generated successfully!');
+
+            } catch (error) {
+                logError(error, 'generating PDF');
+                alert('Error generating PDF. Please check the console for details and ensure all content (especially images) are accessible. You might also try reducing content length or adding more page breaks.');
+            } finally {
+                // Restore button state regardless of success or failure
+                if (generateBtn) {
+                    generateBtn.innerHTML = originalBtnHtml; // Restore original HTML
+                    generateBtn.disabled = false;
+                }
+            }
+        }
+
+        // Generate individual PNG images for each page/content chunk
+        async function generatePageImages() {
+            try {
+                if (pages.length === 0) {
+                    alert('No pages to generate images from.');
+                    return;
+                }
+
+                const generateBtn = document.querySelector('button[onclick="generatePageImages()"]');
+                const originalBtnHtml = generateBtn ? generateBtn.innerHTML : '';
+                if (generateBtn) {
+                    generateBtn.innerHTML = '<div class="loading mr-2"></div>Generating Images...';
+                    generateBtn.disabled = true;
+                }
+
+                let imageCount = 0;
+                for (const page of pages) { // Iterate through each document page
+                    // Split document page content by internal page break marker
+                    const contentChunks = page.content.split('<!--PAGEBREAK-->');
+                    for (let i = 0; i < contentChunks.length; i++) {
+                        const chunk = contentChunks[i];
+                        if (chunk.trim() === '') continue; // Skip empty chunks
+
+                        // Create a temporary div for rendering
+                        const tempDiv = document.createElement('div');
+                        tempDiv.className = 'pdf-page'; // Use pdf-page class for consistent styling
+                        tempDiv.style.position = 'absolute';
+                        tempDiv.style.left = '-9999px'; // Hide off-screen
+                        tempDiv.style.top = '0';
+                        tempDiv.style.width = '210mm'; // Render at A4 width for consistent image size
+                        tempDiv.style.minHeight = '297mm'; // Ensure min height
+                        tempDiv.style.padding = '20mm';
+                        tempDiv.style.backgroundColor = '#ffffff';
+                        tempDiv.style.boxSizing = 'border-box';
+
+                        const htmlContent = marked.parse(chunk);
+                        const sanitizedContent = DOMPurify.sanitize(htmlContent);
+                        tempDiv.innerHTML = `<div class="preview-content">${sanitizedContent}</div>`;
+                        document.body.appendChild(tempDiv); // Add to DOM temporarily
+
+                        // Apply font settings
+                        const fontSize = safeGetElement('fontSize')?.value || '14';
+                        const lineHeight = safeGetElement('lineHeight')?.value || '1.6';
+                        tempDiv.style.fontSize = `${fontSize}pt`;
+                        tempDiv.style.lineHeight = lineHeight;
+
+                        // Render div to canvas
+                        const canvas = await html2canvas(tempDiv, {
+                            scale: 2, // Higher scale for better image quality
+                            useCORS: true,
+                            allowTaint: true,
+                            backgroundColor: '#ffffff'
+                        });
+
+                        const imgData = canvas.toDataURL('image/png'); // Get image data
+                        const a = document.createElement('a'); // Create temporary anchor for download
+                        a.href = imgData;
+                        const pageTitleSlug = page.title.replace(/[^a-z0-9]/gi, '_').toLowerCase(); // Create a slug from page title
+                        a.download = `page_${pageTitleSlug}_chunk${i + 1}.png`; // Generate filename
+                        document.body.appendChild(a);
+                        a.click(); // Trigger download
+                        document.body.removeChild(a); // Clean up anchor
+                        document.body.removeChild(tempDiv); // Clean up temporary div
+
+                        imageCount++;
+                    }
+                }
+                alert(`${imageCount} image(s) generated successfully!`);
+
+            } catch (error) {
+                logError(error, 'generating page images');
+                alert('Error generating images. Please check the console for details and ensure all content (especially images) are accessible.');
+            } finally {
+                // Restore button state
+                if (generateBtn) {
+                    generateBtn.innerHTML = originalBtnHtml;
+                    generateBtn.disabled = false;
+                }
+            }
+        }
+
+        // Initialize when DOM is fully loaded
+        document.addEventListener('DOMContentLoaded', init);
+
+        // Global error handling for uncaught errors
+        window.addEventListener('error', (event) => {
+            logError(event.error, 'global error handler');
+        });
+
+        // Global error handling for unhandled promise rejections
+        window.addEventListener('unhandledrejection', (event) => {
+            logError(event.reason, 'unhandled promise rejection');
+        });
+    </script>
+</body>
+</html>
+
