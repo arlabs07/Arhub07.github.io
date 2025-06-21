@@ -2,168 +2,855 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Xiaomi Clock</title>
-    <!-- Tailwind CSS CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Font Awesome for icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <!-- Custom CSS -->
-    <link rel="stylesheet" href="./style.css">
-    <!-- Inter Font -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <!-- Web App Manifest -->
-    <link rel="manifest" href="./manifest.json">
-    <!-- Favicon and Apple Touch Icon for PWA installation -->
-    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23fff' d='M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm.87 13.91l-4.73-2.73c-.2-.12-.32-.34-.32-.58V7.5c0-.41.34-.75.75-.75s.75.34.75.75v4.56l4.21 2.43c.36.21.49.66.28 1.02-.21.36-.66.49-1.02.28z'/%3E%3C/svg%3E">
-    <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23fff' d='M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm.87 13.91l-4.73-2.73c-.2-.12-.32-.34-.32-.58V7.5c0-.41.34-.75.75-.75s.75.34.75.75v4.56l4.21 2.43c.36.21.49.66.28 1.02-.21.36-.66.49-1.02.28z'/%3E%3C/svg%3E">
-
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Clock</title>
+    <meta name="description" content="Real-time clock widget with hourly notifications">
+    
+    <!-- PWA Meta Tags -->
+    <meta name="theme-color" content="#667eea">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Clock">
+    <meta name="mobile-web-app-capable" content="yes">
+    
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
         body {
-            font-family: 'Inter', sans-serif;
-            background-color: #1a1a1a; /* Dark background */
-            color: #e0e0e0; /* Light text */
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            user-select: none;
+            -webkit-user-select: none;
         }
-        .tab-button.active {
-            border-bottom: 2px solid #5a5a5a; /* Xiaomi grey line */
-            color: #fff; /* Active text color */
+
+        /* Widget mode for 4:3 ratio display */
+        body.widget-mode {
+            background: rgba(102, 126, 234, 0.1);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
         }
-        /* Custom scrollbar for better aesthetics */
-        ::-webkit-scrollbar {
+
+        .widget-container {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: 25px;
+            padding: 40px 30px;
+            box-shadow: 0 8px 32px rgba(31, 38, 135, 0.37), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            text-align: center;
+            width: calc(100vw - 40px);
+            max-width: 350px;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* Widget mode specific styling */
+        body.widget-mode .widget-container {
+            width: 100vw;
+            height: 100vh;
+            max-width: none;
+            border-radius: 0;
+            padding: 20px;
+            background: transparent;
+            backdrop-filter: none;
+            -webkit-backdrop-filter: none;
+            box-shadow: none;
+            border: none;
+        }
+
+        .widget-container::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+            animation: shimmer 3s ease-in-out infinite;
+        }
+
+        body.widget-mode .widget-container::before {
+            display: none;
+        }
+
+        @keyframes shimmer {
+            0%, 100% { transform: rotate(0deg); opacity: 0.3; }
+            50% { transform: rotate(180deg); opacity: 0.1; }
+        }
+
+        .time-display {
+            color: white;
+            position: relative;
+            z-index: 2;
+        }
+
+        .current-time {
+            font-size: clamp(2.5rem, 8vw, 4rem);
+            font-weight: 200;
+            margin-bottom: 15px;
+            text-shadow: 0 2px 20px rgba(0, 0, 0, 0.3);
+            animation: pulse 2s ease-in-out infinite;
+            letter-spacing: -0.02em;
+        }
+
+        body.widget-mode .current-time {
+            font-size: clamp(3rem, 12vw, 6rem);
+            font-weight: 100;
+            margin-bottom: 20px;
+            text-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        @keyframes pulse {
+            0%, 100% { 
+                text-shadow: 0 2px 20px rgba(0, 0, 0, 0.3), 0 0 30px rgba(255, 255, 255, 0.2); 
+                transform: scale(1);
+            }
+            50% { 
+                text-shadow: 0 2px 20px rgba(0, 0, 0, 0.3), 0 0 40px rgba(255, 255, 255, 0.4); 
+                transform: scale(1.02);
+            }
+        }
+
+        .date-info {
+            margin-bottom: 25px;
+        }
+
+        .current-date {
+            font-size: clamp(1rem, 4vw, 1.3rem);
+            opacity: 0.95;
+            margin-bottom: 8px;
+            font-weight: 300;
+        }
+
+        body.widget-mode .current-date {
+            font-size: clamp(1.2rem, 5vw, 1.8rem);
+            margin-bottom: 12px;
+        }
+
+        .current-day {
+            font-size: clamp(0.9rem, 3.5vw, 1.1rem);
+            opacity: 0.85;
+            font-weight: 400;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        body.widget-mode .current-day {
+            font-size: clamp(1rem, 4vw, 1.4rem);
+        }
+
+        .controls {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            display: flex;
+            gap: 8px;
+            z-index: 3;
+        }
+
+        body.widget-mode .controls {
+            display: none;
+        }
+
+        .control-btn {
+            background: rgba(255, 255, 255, 0.25);
+            border: none;
+            border-radius: 50%;
+            width: 44px;
+            height: 44px;
+            color: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            font-size: 1.1rem;
+        }
+
+        .control-btn:active {
+            transform: scale(0.95);
+            background: rgba(255, 255, 255, 0.4);
+        }
+
+        .notification-status {
+            position: absolute;
+            bottom: 15px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.7rem;
+            opacity: 0.6;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        body.widget-mode .notification-status {
+            display: none;
+        }
+
+        .notification-dot {
             width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #00ff00;
+            animation: blink 2s infinite;
         }
-        ::-webkit-scrollbar-track {
-            background: #2a2a2a;
+
+        .notification-dot.disabled {
+            background: #ff4444;
+        }
+
+        @keyframes blink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0.3; }
+        }
+
+        /* Install prompt */
+        .install-prompt {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.9);
+            color: white;
+            padding: 15px;
+            border-radius: 15px;
+            text-align: center;
+            font-size: 0.9rem;
+            display: none;
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+        }
+
+        body.widget-mode .install-prompt {
+            display: none !important;
+        }
+
+        .install-btn {
+            background: #007AFF;
+            color: white;
+            border: none;
+            padding: 10px 20px;
             border-radius: 10px;
+            margin: 10px 5px 0;
+            cursor: pointer;
+            font-size: 0.9rem;
         }
-        ::-webkit-scrollbar-thumb {
-            background: #5a5a5a;
+
+        .install-btn:active {
+            transform: scale(0.95);
+        }
+
+        /* Floating animation */
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            33% { transform: translateY(-5px) rotate(0.5deg); }
+            66% { transform: translateY(5px) rotate(-0.5deg); }
+        }
+
+        .widget-container {
+            animation: float 8s ease-in-out infinite;
+        }
+
+        body.widget-mode .widget-container {
+            animation: none;
+        }
+
+        @media (max-width: 480px) {
+            .widget-container {
+                width: calc(100vw - 20px);
+                padding: 35px 25px;
+            }
+        }
+
+        @media (orientation: landscape) and (max-height: 500px) {
+            .widget-container {
+                padding: 20px;
+                max-width: 500px;
+            }
+            
+            .current-time {
+                font-size: clamp(2rem, 6vw, 3rem);
+                margin-bottom: 10px;
+            }
+        }
+
+        /* Widget mode specific media queries */
+        @media (aspect-ratio: 4/3) {
+            body.widget-mode .current-time {
+                font-size: clamp(2.5rem, 10vw, 4rem);
+            }
+        }
+
+        /* Permission request modal */
+        .permission-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+        }
+
+        .permission-content {
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            text-align: center;
+            max-width: 300px;
+            margin: 20px;
+        }
+
+        .permission-content h3 {
+            margin-bottom: 15px;
+            color: #333;
+        }
+
+        .permission-content p {
+            margin-bottom: 20px;
+            color: #666;
+            line-height: 1.4;
+        }
+
+        .permission-btn {
+            background: #007AFF;
+            color: white;
+            border: none;
+            padding: 12px 24px;
             border-radius: 10px;
+            margin: 0 10px;
+            cursor: pointer;
+            font-size: 1rem;
         }
-        ::-webkit-scrollbar-thumb:hover {
-            background: #7a7a7a;
+
+        .permission-btn.secondary {
+            background: #666;
+        }
+
+        .permission-btn:active {
+            transform: scale(0.95);
         }
     </style>
 </head>
-<body class="flex flex-col min-h-screen">
-    <div class="flex-grow flex flex-col items-center justify-center p-4">
-        <!-- Header with Xiaomi-like clock logo -->
-        <div class="flex items-center justify-center w-32 h-32 rounded-full bg-[#333] mb-8 shadow-lg relative">
-            <svg id="xiaomi-clock-logo" class="w-24 h-24" viewBox="0 0 100 100">
-                <!-- Clock face -->
-                <circle cx="50" cy="50" r="45" fill="#1a1a1a" stroke="#5a5a5a" stroke-width="2"/>
-                <!-- Center dot -->
-                <circle cx="50" cy="50" r="3" fill="#fff"/>
-                <!-- Hour hand (will be rotated by JS) -->
-                <line id="hour-hand" x1="50" y1="50" x2="50" y2="30" stroke="#fff" stroke-width="4" stroke-linecap="round" transform="rotate(0 50 50)"/>
-                <!-- Minute hand (will be rotated by JS) -->
-                <line id="minute-hand" x1="50" y1="50" x2="50" y2="20" stroke="#fff" stroke-width="3" stroke-linecap="round" transform="rotate(0 50 50)"/>
-                <!-- Second hand (will be rotated by JS) -->
-                <line id="second-hand" x1="50" y1="50" x2="50" y2="15" stroke="#ff4d4d" stroke-width="2" stroke-linecap="round" transform="rotate(0 50 50)"/>
-            </svg>
+<body>
+    <div class="widget-container">
+        <div class="controls">
+            <button class="control-btn" onclick="toggleWidgetMode()" aria-label="Toggle widget mode" id="widgetModeBtn">
+                <i class="fas fa-expand"></i>
+            </button>
+            <button class="control-btn" onclick="toggleFormat()" aria-label="Toggle time format">
+                <i class="fas fa-clock"></i>
+            </button>
+            <button class="control-btn" onclick="requestNotificationPermission()" aria-label="Toggle notifications" id="notificationBtn">
+                <i class="fas fa-bell"></i>
+            </button>
         </div>
 
-        <!-- Digital Clock Display -->
-        <div id="digital-clock" class="text-6xl font-light mb-8 text-white">
-            --:--:--
+        <div class="time-display">
+            <div class="current-time" id="time">00:00:00</div>
+            <div class="date-info">
+                <div class="current-date" id="date">Loading...</div>
+                <div class="current-day" id="day">Loading...</div>
+            </div>
         </div>
 
-        <!-- Tab Navigation -->
-        <div class="flex justify-center w-full max-w-lg bg-[#2a2a2a] rounded-lg shadow-inner mb-8">
-            <button id="clock-tab" class="tab-button flex-1 py-3 text-center text-[#e0e0e0] font-medium rounded-l-lg hover:bg-[#3a3a3a] transition-colors active">Clock</button>
-            <button id="alarm-tab" class="tab-button flex-1 py-3 text-center text-[#e0e0e0] font-medium hover:bg-[#3a3a3a] transition-colors">Alarm</button>
-            <button id="timer-tab" class="tab-button flex-1 py-3 text-center text-[#e0e0e0] font-medium hover:bg-[#3a3a3a] transition-colors">Timer</button>
-            <button id="stopwatch-tab" class="tab-button flex-1 py-3 text-center text-[#e0e0e0] font-medium rounded-r-lg hover:bg-[#3a3a3a] transition-colors">Stopwatch</button>
-        </div>
-
-        <!-- Tab Content Containers -->
-        <div id="tab-content" class="w-full max-w-lg bg-[#2a2a2a] rounded-lg shadow-lg p-6 flex flex-col items-center">
-            <!-- Clock Tab Content -->
-            <div id="clock-content" class="tab-panel active w-full flex flex-col items-center">
-                <p class="text-xl text-[#b0b0b0] mb-4">Current Time Zone: <span id="timezone-display">Loading...</span></p>
-                <div class="text-3xl text-white mb-6" id="current-date"></div>
-                <div class="flex items-center space-x-2 text-[#b0b0b0]">
-                    <i class="fas fa-globe"></i>
-                    <span>Your local time</span>
-                </div>
-            </div>
-
-            <!-- Alarm Tab Content -->
-            <div id="alarm-content" class="tab-panel hidden w-full">
-                <h2 class="text-2xl font-semibold mb-4 text-white">Alarms</h2>
-                <div id="alarms-list" class="w-full mb-6">
-                    <!-- Alarm items will be dynamically added here -->
-                </div>
-                <div class="flex items-center w-full mb-4">
-                    <input type="time" id="new-alarm-time" class="flex-grow p-3 rounded-lg bg-[#1a1a1a] border border-[#3a3a3a] text-white text-lg focus:outline-none focus:border-[#5a5a5a] mr-2">
-                    <button id="add-alarm-btn" class="p-3 bg-[#4CAF50] hover:bg-[#45a049] text-white rounded-lg transition-colors flex items-center justify-center">
-                        <i class="fas fa-plus"></i>
-                    </button>
-                </div>
-            </div>
-
-            <!-- Timer Tab Content -->
-            <div id="timer-content" class="tab-panel hidden w-full flex flex-col items-center">
-                <h2 class="text-2xl font-semibold mb-4 text-white">Timer</h2>
-                <div class="flex items-center space-x-2 mb-6">
-                    <input type="number" id="timer-hours" min="0" max="23" value="0" class="w-20 p-3 rounded-lg bg-[#1a1a1a] border border-[#3a3a3a] text-white text-lg text-center focus:outline-none focus:border-[#5a5a5a]">
-                    <span class="text-xl text-white">:</span>
-                    <input type="number" id="timer-minutes" min="0" max="59" value="0" class="w-20 p-3 rounded-lg bg-[#1a1a1a] border border-[#3a3a3a] text-white text-lg text-center focus:outline-none focus:border-[#5a5a5a]">
-                    <span class="text-xl text-white">:</span>
-                    <input type="number" id="timer-seconds" min="0" max="59" value="0" class="w-20 p-3 rounded-lg bg-[#1a1a1a] border border-[#3a3a3a] text-white text-lg text-center focus:outline-none focus:border-[#5a5a5a]">
-                </div>
-                <div id="timer-display" class="text-5xl font-light mb-6 text-white">00:00:00</div>
-                <div class="flex space-x-4">
-                    <button id="start-timer-btn" class="px-6 py-3 bg-[#4CAF50] hover:bg-[#45a049] text-white rounded-lg transition-colors text-lg flex items-center space-x-2">
-                        <i class="fas fa-play"></i> <span>Start</span>
-                    </button>
-                    <button id="pause-timer-btn" class="px-6 py-3 bg-[#FFC107] hover:bg-[#e0a800] text-white rounded-lg transition-colors text-lg flex items-center space-x-2 hidden">
-                        <i class="fas fa-pause"></i> <span>Pause</span>
-                    </button>
-                    <button id="reset-timer-btn" class="px-6 py-3 bg-[#F44336] hover:bg-[#da190b] text-white rounded-lg transition-colors text-lg flex items-center space-x-2">
-                        <i class="fas fa-redo"></i> <span>Reset</span>
-                    </button>
-                </div>
-            </div>
-
-            <!-- Stopwatch Tab Content -->
-            <div id="stopwatch-content" class="tab-panel hidden w-full flex flex-col items-center">
-                <h2 class="text-2xl font-semibold mb-4 text-white">Stopwatch</h2>
-                <div id="stopwatch-display" class="text-5xl font-light mb-6 text-white">00:00:00.000</div>
-                <div class="flex space-x-4 mb-4">
-                    <button id="start-stopwatch-btn" class="px-6 py-3 bg-[#4CAF50] hover:bg-[#45a049] text-white rounded-lg transition-colors text-lg flex items-center space-x-2">
-                        <i class="fas fa-play"></i> <span>Start</span>
-                    </button>
-                    <button id="pause-stopwatch-btn" class="px-6 py-3 bg-[#FFC107] hover:bg-[#e0a800] text-white rounded-lg transition-colors text-lg flex items-center space-x-2 hidden">
-                        <i class="fas fa-pause"></i> <span>Pause</span>
-                    </button>
-                    <button id="reset-stopwatch-btn" class="px-6 py-3 bg-[#F44336] hover:bg-[#da190b] text-white rounded-lg transition-colors text-lg flex items-center space-x-2">
-                        <i class="fas fa-redo"></i> <span>Reset</span>
-                    </button>
-                </div>
-                <div id="laps-list" class="w-full max-h-48 overflow-y-auto bg-[#1a1a1a] rounded-lg p-4">
-                    <!-- Lap times will be dynamically added here -->
-                </div>
-                <button id="lap-stopwatch-btn" class="mt-4 px-6 py-3 bg-[#2196F3] hover:bg-[#0b7dda] text-white rounded-lg transition-colors text-lg flex items-center space-x-2">
-                    <i class="fas fa-flag"></i> <span>Lap</span>
-                </button>
-            </div>
+        <div class="notification-status">
+            <div class="notification-dot" id="notificationDot"></div>
+            <span id="notificationStatus">Notifications enabled</span>
         </div>
     </div>
 
-    <!-- Beep Sound Element -->
-    <audio id="beep-sound" src="https://www.soundjay.com/buttons/beep-07.mp3" preload="auto"></audio>
+    <div class="install-prompt" id="installPrompt">
+        <div>📱 Add this clock widget to your home screen!</div>
+        <button class="install-btn" onclick="installPWA()">Add to Home Screen</button>
+        <button class="install-btn" onclick="hideInstallPrompt()" style="background: #666;">Later</button>
+    </div>
 
-    <!-- Custom Modal for Notifications (instead of alert) -->
-    <div id="custom-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-        <div class="bg-[#2a2a2a] p-6 rounded-lg shadow-xl text-white max-w-sm w-full">
-            <h3 id="modal-title" class="text-xl font-semibold mb-3">Notification</h3>
-            <p id="modal-message" class="mb-4"></p>
-            <button id="modal-close-btn" class="w-full py-2 bg-[#2196F3] hover:bg-[#0b7dda] rounded-lg transition-colors">OK</button>
+    <!-- Permission Request Modal -->
+    <div class="permission-modal" id="permissionModal">
+        <div class="permission-content">
+            <h3>🔔 Enable Notifications</h3>
+            <p>Get hourly time notifications to stay on track throughout your day.</p>
+            <button class="permission-btn" onclick="enableNotifications()">Allow</button>
+            <button class="permission-btn secondary" onclick="closePermissionModal()">Not Now</button>
         </div>
     </div>
 
-    <!-- JavaScript File -->
-    <script src="./script.js"></script>
+    <script>
+        // Global variables
+        let is24Hour = true;
+        let deferredPrompt;
+        let notificationsEnabled = false;
+        let widgetMode = false;
+        let lastNotificationHour = -1;
+
+        // Generate minimal clock icon with red hour hand and white minute hand
+        function generateClockIcon() {
+            const now = new Date();
+            const hours = now.getHours() % 12;
+            const minutes = now.getMinutes();
+            
+            // Calculate angles (12 o'clock is 0 degrees, going clockwise)
+            const hourAngle = (hours * 30) + (minutes * 0.5) - 90;
+            const minuteAngle = (minutes * 6) - 90;
+            
+            const svg = `
+                <svg width="512" height="512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+                    <!-- Black circle background -->
+                    <circle cx="256" cy="256" r="240" fill="#000000" stroke="none"/>
+                    
+                    <!-- Hour hand - Red -->
+                    <line x1="256" y1="256" 
+                          x2="${256 + Math.cos(hourAngle * Math.PI / 180) * 140}" 
+                          y2="${256 + Math.sin(hourAngle * Math.PI / 180) * 140}" 
+                          stroke="#ff0000" stroke-width="12" stroke-linecap="round"/>
+                    
+                    <!-- Minute hand - White -->
+                    <line x1="256" y1="256" 
+                          x2="${256 + Math.cos(minuteAngle * Math.PI / 180) * 180}" 
+                          y2="${256 + Math.sin(minuteAngle * Math.PI / 180) * 180}" 
+                          stroke="#ffffff" stroke-width="8" stroke-linecap="round"/>
+                    
+                    <!-- Center dot -->
+                    <circle cx="256" cy="256" r="8" fill="#ffffff"/>
+                </svg>
+            `;
+            
+            return svg;
+        }
+
+        function updateClockIcon() {
+            const svg = generateClockIcon();
+            const blob = new Blob([svg], { type: 'image/svg+xml' });
+            const url = URL.createObjectURL(blob);
+            
+            // Update favicon
+            let favicon = document.querySelector('link[rel="icon"]');
+            if (!favicon) {
+                favicon = document.createElement('link');
+                favicon.rel = 'icon';
+                document.head.appendChild(favicon);
+            }
+            favicon.href = url;
+            
+            // Update apple touch icon
+            let appleTouchIcon = document.querySelector('link[rel="apple-touch-icon"]');
+            if (!appleTouchIcon) {
+                appleTouchIcon = document.createElement('link');
+                appleTouchIcon.rel = 'apple-touch-icon';
+                document.head.appendChild(appleTouchIcon);
+            }
+            appleTouchIcon.href = url;
+            
+            // Update manifest
+            updateManifest(url);
+        }
+
+        function updateManifest(iconUrl) {
+            const manifest = {
+                "name": "Clock",
+                "short_name": "Clock",
+                "description": "Real-time clock widget with hourly notifications",
+                "start_url": "./",
+                "display": "standalone",
+                "orientation": "portrait-primary",
+                "theme_color": "#667eea",
+                "background_color": "#667eea",
+                "scope": "./",
+                "icons": [
+                    {
+                        "src": iconUrl,
+                        "sizes": "192x192",
+                        "type": "image/svg+xml",
+                        "purpose": "any maskable"
+                    },
+                    {
+                        "src": iconUrl,
+                        "sizes": "512x512",
+                        "type": "image/svg+xml",
+                        "purpose": "any maskable"
+                    }
+                ],
+                "shortcuts": [
+                    {
+                        "name": "Open Clock",
+                        "url": "./",
+                        "description": "Open the clock widget"
+                    }
+                ]
+            };
+
+            // Remove old manifest
+            const oldManifest = document.querySelector('link[rel="manifest"]');
+            if (oldManifest) {
+                oldManifest.remove();
+            }
+
+            const manifestBlob = new Blob([JSON.stringify(manifest)], { type: 'application/json' });
+            const manifestURL = URL.createObjectURL(manifestBlob);
+            const manifestLink = document.createElement('link');
+            manifestLink.rel = 'manifest';
+            manifestLink.href = manifestURL;
+            document.head.appendChild(manifestLink);
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeWidget();
+            updateTime();
+            updateClockIcon();
+            
+            setInterval(updateTime, 1000);
+            setInterval(updateClockIcon, 60000); // Update icon every minute
+            setInterval(checkHourlyNotification, 60000); // Check for hourly notifications
+            
+            // Show install prompt after 3 seconds if not installed
+            setTimeout(() => {
+                if (!window.matchMedia('(display-mode: standalone)').matches && 
+                    !window.navigator.standalone && !widgetMode) {
+                    document.getElementById('installPrompt').style.display = 'block';
+                }
+            }, 3000);
+
+            // Auto-enable widget mode if accessed as widget
+            if (window.location.search.includes('widget=true') || 
+                window.matchMedia('(display-mode: standalone)').matches) {
+                enableWidgetMode();
+            }
+        });
+
+        function initializeWidget() {
+            // Load saved preferences
+            const savedFormat = localStorage.getItem('clockWidget_format');
+            if (savedFormat === '12hour') {
+                is24Hour = false;
+            }
+            
+            // Check notification permission
+            if ('Notification' in window) {
+                if (Notification.permission === 'granted') {
+                    notificationsEnabled = true;
+                    updateNotificationStatus();
+                } else if (Notification.permission === 'default') {
+                    // Show permission request after 5 seconds
+                    setTimeout(() => {
+                        if (!widgetMode) {
+                            document.getElementById('permissionModal').style.display = 'flex';
+                        }
+                    }, 5000);
+                }
+            }
+        }
+
+        function updateTime() {
+            const now = new Date();
+            const timeEl = document.getElementById('time');
+            const dateEl = document.getElementById('date');
+            const dayEl = document.getElementById('day');
+
+            let timeString;
+            if (is24Hour) {
+                timeString = now.toLocaleTimeString('en-US', {
+                    hour12: false,
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    second: widgetMode ? undefined : '2-digit'
+                });
+            } else {
+                timeString = now.toLocaleTimeString('en-US', {
+                    hour12: true,
+                    hour: 'numeric',
+                    minute: '2-digit',
+                    second: widgetMode ? undefined : '2-digit'
+                });
+            }
+
+            const dateString = now.toLocaleDateString('en-US', {
+                month: 'long',
+                day: 'numeric',
+                year: 'numeric'
+            });
+
+            const dayString = now.toLocaleDateString('en-US', {
+                weekday: 'long'
+            });
+
+            timeEl.textContent = timeString;
+            dateEl.textContent = dateString;
+            dayEl.textContent = dayString;
+
+            // Update document title with current time for real-time display
+            document.title = timeString;
+        }
+
+        function toggleFormat() {
+            is24Hour = !is24Hour;
+            localStorage.setItem('clockWidget_format', is24Hour ? '24hour' : '12hour');
+            updateTime();
+            
+            // Haptic feedback if available
+            if (navigator.vibrate) {
+                navigator.vibrate(50);
+            }
+        }
+
+        function toggleWidgetMode() {
+            if (widgetMode) {
+                disableWidgetMode();
+            } else {
+                enableWidgetMode();
+            }
+        }
+
+        function enableWidgetMode() {
+            widgetMode = true;
+            document.body.classList.add('widget-mode');
+            document.getElementById('widgetModeBtn').innerHTML = '<i class="fas fa-compress"></i>';
+            localStorage.setItem('clockWidget_widgetMode', 'true');
+        }
+
+        function disableWidgetMode() {
+            widgetMode = false;
+            document.body.classList.remove('widget-mode');
+            document.getElementById('widgetModeBtn').innerHTML = '<i class="fas fa-expand"></i>';
+            localStorage.setItem('clockWidget_widgetMode', 'false');
+        }
+
+        function requestNotificationPermission() {
+            if (!('Notification' in window)) {
+                alert('This browser does not support notifications');
+                return;
+            }
+
+            if (Notification.permission === 'granted') {
+                // Disable notifications
+                notificationsEnabled = false;
+                updateNotificationStatus();
+            } else {
+                document.getElementById('permissionModal').style.display = 'flex';
+            }
+        }
+
+        function enableNotifications() {
+            Notification.requestPermission().then(permission => {
+                if (permission === 'granted') {
+                    notificationsEnabled = true;
+                    updateNotificationStatus();
+                    // Show test notification
+                    showNotification('Notifications Enabled', 'You will now receive hourly time updates');
+                }
+                closePermissionModal();
+            });
+        }
+
+        function closePermissionModal() {
+            document.getElementById('permissionModal').style.display = 'none';
+        }
+
+        function updateNotificationStatus() {
+            const dot = document.getElementById('notificationDot');
+            const status = document.getElementById('notificationStatus');
+            
+            if (notificationsEnabled) {
+                dot.classList.remove('disabled');
+                status.textContent = 'Hourly notifications enabled';
+                document.getElementById('notificationBtn').innerHTML = '<i class="fas fa-bell"></i>';
+            } else {
+                dot.classList.add('disabled');
+                status.textContent = 'Notifications disabled';
+                document.getElementById('notificationBtn').innerHTML = '<i class="fas fa-bell-slash"></i>';
+            }
+        }
+
+        function checkHourlyNotification() {
+            if (!notificationsEnabled) return;
+
+            const now = new Date();
+            const currentHour = now.getHours();
+            const currentMinute = now.getMinutes();
+
+            // Send notification at the top of each hour
+            if (currentMinute === 0 && currentHour !== lastNotificationHour) {
+                const timeString = now.toLocaleTimeString('en-US', {
+                    hour12: !is24Hour,
+                    hour: 'numeric',
+                    minute: '2-digit'
+                });
+                
+                showNotification('Current Time', timeString);
+                lastNotificationHour = currentHour;
+            }
+        }
+
+        function showNotification(title, body) {
+            if (!notificationsEnabled || Notification.permission !== 'granted') return;
+
+            new Notification(title, {
+                body: body,
+                icon: document.querySelector('link[rel="icon"]')?.href,
+                badge: document.querySelector('link[rel="icon"]')?.href,
+                tag: 'hourly-time',
+                requireInteraction: false,
+                silent: false
+            });
+        }
+
+        // PWA Installation
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+        });
+
+        function installPWA() {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                deferredPrompt.userChoice.then((choiceResult) => {
+                    if (choiceResult.outcome === 'accepted') {
+                        hideInstallPrompt();
+                    }
+                    deferredPrompt = null;
+                });
+            } else {
+                showManualInstallInstructions();
+            }
+        }
+
+        function showManualInstallInstructions() {
+            const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+            const isAndroid = /Android/.test(navigator.userAgent);
+            
+            let instructions = '';
+            if (isIOS) {
+                instructions = 'In Safari: Tap Share → "Add to Home Screen"';
+            } else if (isAndroid) {
+                instructions = 'In Chrome: Tap Menu (⋮) → "Add to Home Screen"';
+            } else {
+                instructions = 'Use your browser\'s "Install App" option';
+            }
+            
+            document.getElementById('installPrompt').innerHTML = `
+                <div>🕐 ${instructions}</div>
+                <button class="install-btn" onclick="hideInstallPrompt()" style="background: #007AFF;">Got it!</button>
+            `;
+        }
+
+        function hideInstallPrompt() {
+            document.getElementById('installPrompt').style.display = 'none';
+        }
+
+        // Handle app lifecycle for real-time updates
+        document.addEventListener('visibilitychange', function() {
+            if (!document.hidden) {
+                updateTime();
+                updateClockIcon();
+            }
+        });
+
+        window.addEventListener('focus', function() {
+            updateTime();
+            updateClockIcon();
+        });
+
+        // Service Worker for offline functionality and real-time updates
+        if ('serviceWorker' in navigator) {
+            const swCode = `
+                const CACHE_NAME = 'clock-widget-v3';
+                const urlsToCache = [
+                    './',
+                    'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css'
+                ];
+                
+                self.addEventListener('install', (event) => {
+                    event.waitUntil(
+                        caches.open(CACHE_NAME)
+                            .then((cache) => cache.addAll(urlsToCache))
+                    );
+                    self.skipWaiting();
+                });
+                
+                self.addEventListener('activate', (event) => {
+                    event.waitUntil(
+                        caches.keys().then((cacheNames) => {
+                            return Promise.all(
+                                cacheNames.map((cacheName) => {
+                                    if (cacheName !== CACHE_NAME) {
+                                        return caches.delete(cacheName);
+                                    }
+                                })
+                            );
+                        })
+                    );
+                });
+                
+                self.addEventListener('fetch', (event) => {
+                    event.respondWith(
+                        caches.match(event.request)
+                            .then((response) => {
+                                if (response) {
+                                    return response;
+                                }
+                                return fetch(event.request);
+                            })
+                    );
+                });
+
+                // Background sync for real-time updates
+                self.addEventListener('message', (event) => {
+                    if (event.data && event.data.type === 'UPDATE_TIME') {
+                        // Keep the service worker active for real-time updates
+                        event.waitUntil(Promise.resolve());
+                    }
+                });
+            `;
+            
+            const blob = new Blob([swCode], { type: 'application/javascript' });
+            const swURL = URL.createObjectURL(blob);
+            
+            navigator.serviceWorker.register(swURL)
+                .then(() => {
+                    console.log('Service Worker registered for real-time updates');
+                    // Send periodic messages to keep SW active
+                    setInterval(() => {
+                        if (navigator.serviceWorker.controller) {
+                            navigator.serviceWorker.controller.postMessage({
+                                type: 'UPDATE_TIME'
+                            });
+                        }
+                    }, 30000);
+                })
+                .catch(err => console.log('SW registration failed:', err));
+        }
+
+        // Load saved preferences on startup
+        window.addEventListener('load', function() {
+            const savedWidgetMode = localStorage.getItem('clockWidget_widgetMode');
+            if (savedWidgetMode === 'true') {
+                enableWidgetMode();
+            }
+        });
+    </script>
 </body>
 </html>
