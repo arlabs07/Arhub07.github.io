@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Xiaomi Clock</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="./style.css">
+    <!-- Inter Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Web App Manifest -->
+    <link rel="manifest" href="./manifest.json">
+    <!-- Favicon and Apple Touch Icon for PWA installation -->
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23fff' d='M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm.87 13.91l-4.73-2.73c-.2-.12-.32-.34-.32-.58V7.5c0-.41.34-.75.75-.75s.75.34.75.75v4.56l4.21 2.43c.36.21.49.66.28 1.02-.21.36-.66.49-1.02.28z'/%3E%3C/svg%3E">
+    <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23fff' d='M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm.87 13.91l-4.73-2.73c-.2-.12-.32-.34-.32-.58V7.5c0-.41.34-.75.75-.75s.75.34.75.75v4.56l4.21 2.43c.36.21.49.66.28 1.02-.21.36-.66.49-1.02.28z'/%3E%3C/svg%3E">
+
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #1a1a1a; /* Dark background */
+            color: #e0e0e0; /* Light text */
+        }
+        .tab-button.active {
+            border-bottom: 2px solid #5a5a5a; /* Xiaomi grey line */
+            color: #fff; /* Active text color */
+        }
+        /* Custom scrollbar for better aesthetics */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #2a2a2a;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #5a5a5a;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #7a7a7a;
+        }
+    </style>
+</head>
+<body class="flex flex-col min-h-screen">
+    <div class="flex-grow flex flex-col items-center justify-center p-4">
+        <!-- Header with Xiaomi-like clock logo -->
+        <div class="flex items-center justify-center w-32 h-32 rounded-full bg-[#333] mb-8 shadow-lg relative">
+            <svg id="xiaomi-clock-logo" class="w-24 h-24" viewBox="0 0 100 100">
+                <!-- Clock face -->
+                <circle cx="50" cy="50" r="45" fill="#1a1a1a" stroke="#5a5a5a" stroke-width="2"/>
+                <!-- Center dot -->
+                <circle cx="50" cy="50" r="3" fill="#fff"/>
+                <!-- Hour hand (will be rotated by JS) -->
+                <line id="hour-hand" x1="50" y1="50" x2="50" y2="30" stroke="#fff" stroke-width="4" stroke-linecap="round" transform="rotate(0 50 50)"/>
+                <!-- Minute hand (will be rotated by JS) -->
+                <line id="minute-hand" x1="50" y1="50" x2="50" y2="20" stroke="#fff" stroke-width="3" stroke-linecap="round" transform="rotate(0 50 50)"/>
+                <!-- Second hand (will be rotated by JS) -->
+                <line id="second-hand" x1="50" y1="50" x2="50" y2="15" stroke="#ff4d4d" stroke-width="2" stroke-linecap="round" transform="rotate(0 50 50)"/>
+            </svg>
+        </div>
+
+        <!-- Digital Clock Display -->
+        <div id="digital-clock" class="text-6xl font-light mb-8 text-white">
+            --:--:--
+        </div>
+
+        <!-- Tab Navigation -->
+        <div class="flex justify-center w-full max-w-lg bg-[#2a2a2a] rounded-lg shadow-inner mb-8">
+            <button id="clock-tab" class="tab-button flex-1 py-3 text-center text-[#e0e0e0] font-medium rounded-l-lg hover:bg-[#3a3a3a] transition-colors active">Clock</button>
+            <button id="alarm-tab" class="tab-button flex-1 py-3 text-center text-[#e0e0e0] font-medium hover:bg-[#3a3a3a] transition-colors">Alarm</button>
+            <button id="timer-tab" class="tab-button flex-1 py-3 text-center text-[#e0e0e0] font-medium hover:bg-[#3a3a3a] transition-colors">Timer</button>
+            <button id="stopwatch-tab" class="tab-button flex-1 py-3 text-center text-[#e0e0e0] font-medium rounded-r-lg hover:bg-[#3a3a3a] transition-colors">Stopwatch</button>
+        </div>
+
+        <!-- Tab Content Containers -->
+        <div id="tab-content" class="w-full max-w-lg bg-[#2a2a2a] rounded-lg shadow-lg p-6 flex flex-col items-center">
+            <!-- Clock Tab Content -->
+            <div id="clock-content" class="tab-panel active w-full flex flex-col items-center">
+                <p class="text-xl text-[#b0b0b0] mb-4">Current Time Zone: <span id="timezone-display">Loading...</span></p>
+                <div class="text-3xl text-white mb-6" id="current-date"></div>
+                <div class="flex items-center space-x-2 text-[#b0b0b0]">
+                    <i class="fas fa-globe"></i>
+                    <span>Your local time</span>
+                </div>
+            </div>
+
+            <!-- Alarm Tab Content -->
+            <div id="alarm-content" class="tab-panel hidden w-full">
+                <h2 class="text-2xl font-semibold mb-4 text-white">Alarms</h2>
+                <div id="alarms-list" class="w-full mb-6">
+                    <!-- Alarm items will be dynamically added here -->
+                </div>
+                <div class="flex items-center w-full mb-4">
+                    <input type="time" id="new-alarm-time" class="flex-grow p-3 rounded-lg bg-[#1a1a1a] border border-[#3a3a3a] text-white text-lg focus:outline-none focus:border-[#5a5a5a] mr-2">
+                    <button id="add-alarm-btn" class="p-3 bg-[#4CAF50] hover:bg-[#45a049] text-white rounded-lg transition-colors flex items-center justify-center">
+                        <i class="fas fa-plus"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Timer Tab Content -->
+            <div id="timer-content" class="tab-panel hidden w-full flex flex-col items-center">
+                <h2 class="text-2xl font-semibold mb-4 text-white">Timer</h2>
+                <div class="flex items-center space-x-2 mb-6">
+                    <input type="number" id="timer-hours" min="0" max="23" value="0" class="w-20 p-3 rounded-lg bg-[#1a1a1a] border border-[#3a3a3a] text-white text-lg text-center focus:outline-none focus:border-[#5a5a5a]">
+                    <span class="text-xl text-white">:</span>
+                    <input type="number" id="timer-minutes" min="0" max="59" value="0" class="w-20 p-3 rounded-lg bg-[#1a1a1a] border border-[#3a3a3a] text-white text-lg text-center focus:outline-none focus:border-[#5a5a5a]">
+                    <span class="text-xl text-white">:</span>
+                    <input type="number" id="timer-seconds" min="0" max="59" value="0" class="w-20 p-3 rounded-lg bg-[#1a1a1a] border border-[#3a3a3a] text-white text-lg text-center focus:outline-none focus:border-[#5a5a5a]">
+                </div>
+                <div id="timer-display" class="text-5xl font-light mb-6 text-white">00:00:00</div>
+                <div class="flex space-x-4">
+                    <button id="start-timer-btn" class="px-6 py-3 bg-[#4CAF50] hover:bg-[#45a049] text-white rounded-lg transition-colors text-lg flex items-center space-x-2">
+                        <i class="fas fa-play"></i> <span>Start</span>
+                    </button>
+                    <button id="pause-timer-btn" class="px-6 py-3 bg-[#FFC107] hover:bg-[#e0a800] text-white rounded-lg transition-colors text-lg flex items-center space-x-2 hidden">
+                        <i class="fas fa-pause"></i> <span>Pause</span>
+                    </button>
+                    <button id="reset-timer-btn" class="px-6 py-3 bg-[#F44336] hover:bg-[#da190b] text-white rounded-lg transition-colors text-lg flex items-center space-x-2">
+                        <i class="fas fa-redo"></i> <span>Reset</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Stopwatch Tab Content -->
+            <div id="stopwatch-content" class="tab-panel hidden w-full flex flex-col items-center">
+                <h2 class="text-2xl font-semibold mb-4 text-white">Stopwatch</h2>
+                <div id="stopwatch-display" class="text-5xl font-light mb-6 text-white">00:00:00.000</div>
+                <div class="flex space-x-4 mb-4">
+                    <button id="start-stopwatch-btn" class="px-6 py-3 bg-[#4CAF50] hover:bg-[#45a049] text-white rounded-lg transition-colors text-lg flex items-center space-x-2">
+                        <i class="fas fa-play"></i> <span>Start</span>
+                    </button>
+                    <button id="pause-stopwatch-btn" class="px-6 py-3 bg-[#FFC107] hover:bg-[#e0a800] text-white rounded-lg transition-colors text-lg flex items-center space-x-2 hidden">
+                        <i class="fas fa-pause"></i> <span>Pause</span>
+                    </button>
+                    <button id="reset-stopwatch-btn" class="px-6 py-3 bg-[#F44336] hover:bg-[#da190b] text-white rounded-lg transition-colors text-lg flex items-center space-x-2">
+                        <i class="fas fa-redo"></i> <span>Reset</span>
+                    </button>
+                </div>
+                <div id="laps-list" class="w-full max-h-48 overflow-y-auto bg-[#1a1a1a] rounded-lg p-4">
+                    <!-- Lap times will be dynamically added here -->
+                </div>
+                <button id="lap-stopwatch-btn" class="mt-4 px-6 py-3 bg-[#2196F3] hover:bg-[#0b7dda] text-white rounded-lg transition-colors text-lg flex items-center space-x-2">
+                    <i class="fas fa-flag"></i> <span>Lap</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Beep Sound Element -->
+    <audio id="beep-sound" src="https://www.soundjay.com/buttons/beep-07.mp3" preload="auto"></audio>
+
+    <!-- Custom Modal for Notifications (instead of alert) -->
+    <div id="custom-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+        <div class="bg-[#2a2a2a] p-6 rounded-lg shadow-xl text-white max-w-sm w-full">
+            <h3 id="modal-title" class="text-xl font-semibold mb-3">Notification</h3>
+            <p id="modal-message" class="mb-4"></p>
+            <button id="modal-close-btn" class="w-full py-2 bg-[#2196F3] hover:bg-[#0b7dda] rounded-lg transition-colors">OK</button>
+        </div>
+    </div>
+
+    <!-- JavaScript File -->
+    <script src="./script.js"></script>
+</body>
+</html>
