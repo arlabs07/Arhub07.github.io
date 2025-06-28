@@ -1,0 +1,1345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PDF Analyzer</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Base styles from original, with minor adjustments for new elements */
+        .pdf-page {
+            transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+            transform-origin: center;
+        }
+        .pdf-page:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3), 0 0 30px rgba(99,102,241,0.2);
+        }
+        .overlay {
+            backdrop-filter: blur(20px);
+            background: rgba(0,0,0,0.8);
+        }
+        .glass-effect {
+            background: rgba(30,30,30,0.95);
+            backdrop-filter: blur(30px);
+            border: 1px solid rgba(255,255,255,0.1);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+        }
+        .upload-zone {
+            background: linear-gradient(135deg, #1e1b4b 0%, #7c3aed 50%, #c026d3 100%);
+            position: relative;
+            overflow: hidden;
+        }
+        .upload-zone::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: conic-gradient(transparent, rgba(255,255,255,0.1), transparent);
+            animation: rotate 4s linear infinite;
+            opacity: 0.5;
+        }
+        .upload-zone.drag-over {
+            transform: scale(1.03);
+            background: linear-gradient(135deg, #c026d3 0%, #7c3aed 50%, #1e1b4b 100%);
+            box-shadow: 0 0 50px rgba(192,38,211,0.5);
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #d946ef 100%);
+            transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+            position: relative;
+            overflow: hidden;
+        }
+        .btn-primary::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.6s;
+        }
+        .btn-primary:hover::before {
+            left: 100%;
+        }
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 30px rgba(99,102,241,0.4);
+        }
+        .loading-spinner {
+            animation: spin 1s linear infinite, pulse 2s ease-in-out infinite alternate;
+        }
+        .material-surface {
+            background: rgba(30,30,30,0.95);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255,255,255,0.1);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.1);
+        }
+        .page-actions {
+            opacity: 0;
+            transform: translateY(15px) scale(0.9);
+            transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+        .pdf-page:hover .page-actions {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+        .maximize-overlay {
+            backdrop-filter: blur(30px);
+            background: rgba(0,0,0,0.9);
+        }
+        .maximize-content {
+            background: rgba(20,20,20,0.95);
+            backdrop-filter: blur(40px);
+            border: 2px solid rgba(255,255,255,0.1);
+            box-shadow: 0 25px 50px rgba(0,0,0,0.5);
+        }
+        .scroll-smooth {
+            scroll-behavior: smooth;
+        }
+        .ripple {
+            position: relative;
+            overflow: hidden;
+        }
+        .ripple::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.3);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+        .ripple:active::after {
+            width: 300px;
+            height: 300px;
+        }
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        @keyframes pulse {
+            0% { opacity: 1; }
+            100% { opacity: 0.7; }
+        }
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        .animate-slideIn { animation: slideIn 0.6s cubic-bezier(0.23, 1, 0.32, 1); }
+        .animate-fadeIn { animation: fadeIn 0.4s ease-out; }
+        @media (max-width: 768px) {
+            .page-actions {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+        .password-input {
+            background: rgba(40,40,40,0.95);
+            border: 2px solid rgba(99,102,241,0.3);
+            color: white;
+            transition: all 0.3s ease;
+        }
+        .password-input:focus {
+            border-color: #6366f1;
+            box-shadow: 0 0 20px rgba(99,102,241,0.3);
+            outline: none;
+        }
+
+        /* New print modal specific styles */
+        .print-options-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 1rem;
+        }
+        .page-checkbox-item {
+            display: flex;
+            align-items: center;
+            background-color: rgba(60, 60, 60, 0.7);
+            padding: 0.75rem;
+            border-radius: 0.75rem;
+            cursor: pointer;
+            transition: background-color 0.2s, transform 0.2s;
+        }
+        .page-checkbox-item:hover {
+            background-color: rgba(80, 80, 80, 0.8);
+            transform: translateY(-2px);
+        }
+        .page-checkbox-item input[type="checkbox"] {
+            margin-right: 0.75rem;
+            appearance: none;
+            width: 1.25rem;
+            height: 1.25rem;
+            border: 2px solid #6366f1;
+            border-radius: 0.375rem;
+            background-color: transparent;
+            position: relative;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .page-checkbox-item input[type="checkbox"]:checked {
+            background-color: #6366f1;
+            border-color: #6366f1;
+        }
+        .page-checkbox-item input[type="checkbox"]:checked::after {
+            content: '\2713'; /* Checkmark symbol */
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-size: 0.875rem;
+        }
+    </style>
+</head>
+<body class="bg-gray-900 min-h-screen text-white">
+    <header class="bg-gray-800 shadow-2xl border-b border-gray-700">
+        <div class="container mx-auto px-4 py-4">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-3">
+                    <i class="fas fa-file-pdf text-3xl text-red-400"></i>
+                    <h1 class="text-3xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">PDF Analyzer</h1>
+                </div>
+                <div class="flex items-center space-x-3" id="headerActions" style="display:none;">
+                    <button onclick="downloadPDF()" class="btn-primary text-white px-6 py-3 rounded-xl flex items-center space-x-2 ripple">
+                        <i class="fas fa-download"></i><span class="hidden sm:inline">Download</span>
+                    </button>
+                    <!-- New Print Button -->
+                    <button onclick="openPrintModal()" class="bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white px-6 py-3 rounded-xl flex items-center space-x-2 transition-all ripple">
+                        <i class="fas fa-print"></i><span class="hidden sm:inline">Print</span>
+                    </button>
+                    <button onclick="toggleFullscreen()" class="bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white px-6 py-3 rounded-xl flex items-center space-x-2 transition-all ripple">
+                        <i class="fas fa-expand"></i><span class="hidden sm:inline">Fullscreen</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="container mx-auto px-4 py-8 scroll-smooth">
+        <div id="uploadZone" class="upload-zone text-white rounded-3xl p-16 text-center mb-8 cursor-pointer transition-all duration-500 animate-slideIn">
+            <div class="max-w-md mx-auto relative z-10">
+                <i class="fas fa-cloud-upload-alt text-8xl mb-8 opacity-90"></i>
+                <h2 class="text-3xl font-bold mb-6">Upload Your PDF</h2>
+                <p class="text-xl opacity-90 mb-8">Drag & drop your PDF file here or click to browse</p>
+                <input type="file" id="fileInput" accept=".pdf" class="hidden">
+                <button onclick="document.getElementById('fileInput').click()" class="bg-white bg-opacity-20 backdrop-blur-sm text-white px-8 py-4 rounded-xl font-semibold hover:bg-opacity-30 transition-all ripple">
+                    <i class="fas fa-folder-open mr-3"></i>Choose File
+                </button>
+            </div>
+        </div>
+
+        <div id="loadingContainer" class="hidden text-center py-16">
+            <div class="loading-spinner inline-block w-16 h-16 border-4 border-gray-600 border-t-blue-500 rounded-full mb-6"></div>
+            <p class="text-gray-300 text-xl">Processing your PDF...</p>
+        </div>
+
+        <div id="pdfInfo" class="hidden material-surface rounded-2xl p-8 mb-8 animate-slideIn">
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+                <div>
+                    <h3 class="text-2xl font-bold text-white mb-3" id="fileName">Document.pdf</h3>
+                    <p class="text-gray-300 text-lg" id="pageCount">0 pages</p>
+                </div>
+                <div class="mt-6 sm:mt-0 flex items-center space-x-3">
+                    <span class="bg-gradient-to-r from-blue-500 to-purple-500 text-white px-4 py-2 rounded-full text-sm font-medium"><i class="fas fa-file-pdf mr-2"></i>PDF Document</span>
+                    <span class="bg-gradient-to-r from-green-500 to-emerald-500 text-white px-4 py-2 rounded-full text-sm font-medium" id="fileSizeInfo"><i class="fas fa-weight mr-2"></i>Loading...</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="flex justify-center mb-8 space-x-4" id="viewControls" style="display:none;">
+            <button onclick="setView('grid')" id="gridViewBtn" class="bg-gradient-to-r from-blue-500 to-indigo-500 text-white px-6 py-3 rounded-xl flex items-center space-x-2 transition-all ripple">
+                <i class="fas fa-th-large"></i><span>Grid View</span>
+            </button>
+            <button onclick="setView('list')" id="listViewBtn" class="bg-gray-700 text-white px-6 py-3 rounded-xl flex items-center space-x-2 transition-all ripple">
+                <i class="fas fa-list"></i><span>List View</span>
+            </button>
+        </div>
+
+        <div id="pagesContainer" class="hidden grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <!-- PDF pages will be rendered here -->
+        </div>
+    </main>
+
+    <!-- Page Settings Overlay -->
+    <div id="pageOverlay" class="fixed inset-0 overlay z-50 hidden">
+        <div class="flex items-center justify-center min-h-screen p-4">
+            <div class="glass-effect rounded-3xl max-w-md w-full p-8 animate-slideIn">
+                <div class="text-center mb-8">
+                    <h3 class="text-2xl font-bold text-white mb-3">Page Settings</h3>
+                    <p class="text-gray-300 text-lg" id="overlayPageNumber">Page 1</p>
+                </div>
+                <div class="space-y-4">
+                    <button onclick="maximizePage()" class="w-full bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white px-6 py-4 rounded-xl flex items-center justify-center space-x-3 transition-all ripple">
+                        <i class="fas fa-expand-arrows-alt"></i><span>Maximize Page</span>
+                    </button>
+                    <button onclick="removePage()" class="w-full bg-gradient-to-r from-red-500 to-rose-500 hover:from-red-600 hover:to-rose-600 text-white px-6 py-4 rounded-xl flex items-center justify-center space-x-3 transition-all ripple">
+                        <i class="fas fa-trash"></i><span>Remove Page</span>
+                    </button>
+                    <button onclick="duplicatePage()" class="w-full bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 text-white px-6 py-4 rounded-xl flex items-center justify-center space-x-3 transition-all ripple">
+                        <i class="fas fa-copy"></i><span>Duplicate Page</span>
+                    </button>
+                    <button onclick="rotatePage()" class="w-full bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 text-white px-6 py-4 rounded-xl flex items-center justify-center space-x-3 transition-all ripple">
+                        <i class="fas fa-redo"></i><span>Rotate Page</span>
+                    </button>
+                    <button onclick="downloadSinglePage()" class="w-full bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white px-6 py-4 rounded-xl flex items-center justify-center space-x-3 transition-all ripple">
+                        <i class="fas fa-download"></i><span>Download Page</span>
+                    </button>
+                    <div class="flex space-x-2">
+                        <button onclick="movePageUp()" class="flex-1 bg-gradient-to-r from-indigo-500 to-purple-500 hover:from-indigo-600 hover:to-purple-600 text-white px-4 py-4 rounded-xl flex items-center justify-center space-x-2 transition-all ripple">
+                            <i class="fas fa-arrow-up"></i><span>Up</span>
+                        </button>
+                        <button onclick="movePageDown()" class="flex-1 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white px-4 py-4 rounded-xl flex items-center justify-center space-x-2 transition-all ripple">
+                            <i class="fas fa-arrow-down"></i><span>Down</span>
+                        </button>
+                    </div>
+                </div>
+                <button onclick="closeOverlay()" class="w-full mt-6 bg-gray-700 hover:bg-gray-600 text-white px-6 py-4 rounded-xl transition-all ripple">
+                    <i class="fas fa-times mr-2"></i>Close
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Maximize Page Overlay -->
+    <div id="maximizeOverlay" class="fixed inset-0 maximize-overlay z-60 hidden">
+        <div class="flex items-center justify-center min-h-screen p-4">
+            <div class="maximize-content rounded-2xl max-w-6xl w-full max-h-[90vh] overflow-auto">
+                <div class="sticky top-0 bg-gray-800 p-4 border-b border-gray-600 flex justify-between items-center z-10">
+                    <h3 class="text-xl font-bold text-white" id="maximizePageTitle">Page 1</h3>
+                    <div class="flex space-x-2">
+                        <button onclick="zoomIn()" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg transition-all ripple"><i class="fas fa-search-plus"></i></button>
+                        <button onclick="zoomOut()" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg transition-all ripple"><i class="fas fa-search-minus"></i></button>
+                        <button onclick="resetZoom()" class="bg-gray-600 hover:bg-gray-500 text-white px-4 py-2 rounded-lg transition-all ripple"><i class="fas fa-search"></i></button>
+                        <button onclick="closeMaximize()" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg transition-all ripple"><i class="fas fa-times"></i></button>
+                    </div>
+                </div>
+                <div id="maximizeContent" class="p-8 text-center"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Password Overlay -->
+    <div id="passwordOverlay" class="fixed inset-0 overlay z-70 hidden">
+        <div class="flex items-center justify-center min-h-screen p-4">
+            <div class="glass-effect rounded-3xl max-w-md w-full p-8 animate-slideIn">
+                <div class="text-center mb-8">
+                    <i class="fas fa-lock text-4xl text-yellow-400 mb-4"></i>
+                    <h3 class="text-2xl font-bold text-white mb-3">Password Protected PDF</h3>
+                    <p class="text-gray-300">This PDF requires a password to open</p>
+                </div>
+                <div class="space-y-6">
+                    <input type="password" id="passwordInput" placeholder="Enter PDF password" class="w-full password-input px-4 py-4 rounded-xl text-lg">
+                    <div class="flex space-x-3">
+                        <button onclick="unlockPDF()" class="flex-1 btn-primary text-white px-6 py-4 rounded-xl font-semibold ripple">
+                            <i class="fas fa-unlock mr-2"></i>Unlock
+                        </button>
+                        <button onclick="closePasswordOverlay()" class="flex-1 bg-gray-600 hover:bg-gray-500 text-white px-6 py-4 rounded-xl font-semibold transition-all ripple">
+                            <i class="fas fa-times mr-2"></i>Cancel
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- New Print Modal -->
+    <div id="printModal" class="fixed inset-0 overlay z-80 hidden">
+        <div class="flex items-center justify-center min-h-screen p-4">
+            <div class="glass-effect rounded-3xl max-w-2xl w-full p-8 animate-slideIn max-h-[90vh] overflow-y-auto">
+                <div class="text-center mb-8">
+                    <i class="fas fa-print text-4xl text-green-400 mb-4"></i>
+                    <h3 class="text-2xl font-bold text-white mb-3">Print Options</h3>
+                    <p class="text-gray-300">Select pages to print and choose orientation</p>
+                </div>
+                <div class="space-y-6">
+                    <div>
+                        <label class="block text-gray-300 text-lg font-semibold mb-3">Pages to Print:</label>
+                        <div class="flex items-center space-x-4 mb-4">
+                            <button onclick="selectAllPages(true)" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-all ripple">Select All</button>
+                            <button onclick="selectAllPages(false)" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg transition-all ripple">Deselect All</button>
+                        </div>
+                        <div id="printPagesCheckboxes" class="print-options-grid max-h-60 overflow-y-auto pr-2">
+                            <!-- Checkboxes for pages will be inserted here -->
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-gray-300 text-lg font-semibold mb-3">Orientation:</label>
+                        <div class="flex space-x-4">
+                            <label class="flex items-center text-white cursor-pointer">
+                                <input type="radio" name="printOrientation" value="portrait" checked class="form-radio h-5 w-5 text-blue-600 bg-gray-700 border-gray-600 focus:ring-blue-500 transition-all">
+                                <span class="ml-2">Portrait</span>
+                            </label>
+                            <label class="flex items-center text-white cursor-pointer">
+                                <input type="radio" name="printOrientation" value="landscape" class="form-radio h-5 w-5 text-blue-600 bg-gray-700 border-gray-600 focus:ring-blue-500 transition-all">
+                                <span class="ml-2">Landscape</span>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="flex space-x-3">
+                        <button onclick="printSelectedPages()" class="flex-1 btn-primary text-white px-6 py-4 rounded-xl font-semibold ripple">
+                            <i class="fas fa-print mr-2"></i>Print Selected
+                        </button>
+                        <button onclick="closePrintModal()" class="flex-1 bg-gray-600 hover:bg-gray-500 text-white px-6 py-4 rounded-xl font-semibold transition-all ripple">
+                            <i class="fas fa-times mr-2"></i>Cancel
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="fixed bottom-6 right-6 z-40" id="floatingActions" style="display:none;">
+        <div class="flex flex-col space-y-3">
+            <button onclick="scrollToTop()" class="bg-gradient-to-r from-blue-500 to-purple-500 text-white p-4 rounded-full shadow-lg hover:shadow-xl transition-all ripple">
+                <i class="fas fa-arrow-up"></i>
+            </button>
+        </div>
+    </div>
+
+<script>
+    let pdfDoc = null;
+    let pdfPages = []; // Stores {canvas, originalPageNum, currentIndex, rotation}
+    let currentOverlayPage = null; // Index of the page currently in the settings overlay
+    let currentView = 'grid'; // 'grid' or 'list'
+    let zoomLevel = 1; // For maximized page view
+    let maximizedPageIndex = null; // Index of the page currently maximized
+    let currentPassword = ''; // Stores PDF password if needed
+
+    // Set worker source for PDF.js
+    pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+
+    // Event Listeners for upload zone
+    document.getElementById('fileInput').addEventListener('change', handleFileSelect);
+    const uploadZone = document.getElementById('uploadZone');
+    uploadZone.addEventListener('dragover', handleDragOver);
+    uploadZone.addEventListener('dragleave', handleDragLeave);
+    uploadZone.addEventListener('drop', handleDrop);
+    uploadZone.addEventListener('click', () => document.getElementById('fileInput').click());
+
+    // Keyboard shortcuts
+    document.addEventListener('keydown', handleKeyboardShortcuts);
+
+    /**
+     * Handles keyboard shortcuts for common actions.
+     * @param {KeyboardEvent} e - The keyboard event.
+     */
+    function handleKeyboardShortcuts(e) {
+        if (e.ctrlKey || e.metaKey) { // Cmd on Mac, Ctrl on Windows
+            switch (e.key) {
+                case 'd':
+                    e.preventDefault();
+                    downloadPDF();
+                    break;
+                // 'p' for print is removed as per request, new print is via modal
+                case 'f':
+                    e.preventDefault();
+                    toggleFullscreen();
+                    break;
+                case '=': // Ctrl/Cmd + = for zoom in
+                    e.preventDefault();
+                    zoomIn();
+                    break;
+                case '-': // Ctrl/Cmd + - for zoom out
+                    e.preventDefault();
+                    zoomOut();
+                    break;
+                case '0': // Ctrl/Cmd + 0 for reset zoom
+                    e.preventDefault();
+                    resetZoom();
+                    break;
+            }
+        }
+        if (e.key === 'Escape') {
+            closeOverlay();
+            closeMaximize();
+            closePasswordOverlay();
+            closePrintModal(); // Close print modal on escape
+        }
+        if (e.key === 'F11') { // F11 for fullscreen
+            e.preventDefault();
+            toggleFullscreen();
+        }
+    }
+
+    /**
+     * Handles drag over event for upload zone.
+     * @param {DragEvent} e - The drag event.
+     */
+    function handleDragOver(e) {
+        e.preventDefault();
+        uploadZone.classList.add('drag-over');
+    }
+
+    /**
+     * Handles drag leave event for upload zone.
+     * @param {DragEvent} e - The drag event.
+     */
+    function handleDragLeave(e) {
+        e.preventDefault();
+        uploadZone.classList.remove('drag-over');
+    }
+
+    /**
+     * Handles drop event for upload zone.
+     * @param {DragEvent} e - The drop event.
+     */
+    function handleDrop(e) {
+        e.preventDefault();
+        uploadZone.classList.remove('drag-over');
+        const files = e.dataTransfer.files;
+        if (files.length > 0 && files[0].type === 'application/pdf') {
+            processPDF(files[0]);
+        }
+    }
+
+    /**
+     * Handles file selection from input.
+     * @param {Event} e - The change event from file input.
+     */
+    function handleFileSelect(e) {
+        const file = e.target.files[0];
+        if (file && file.type === 'application/pdf') {
+            processPDF(file);
+        }
+    }
+
+    /**
+     * Processes the selected PDF file.
+     * @param {File} file - The PDF file to process.
+     */
+    async function processPDF(file) {
+        showLoading();
+        try {
+            const arrayBuffer = await file.arrayBuffer();
+            const loadingTask = pdfjsLib.getDocument({
+                data: arrayBuffer,
+                password: currentPassword
+            });
+
+            // Handle password protected PDFs
+            loadingTask.onPassword = (updatePassword, reason) => {
+                if (reason === 1) { // PASSWORD_REQUIRED
+                    showPasswordOverlay();
+                    return;
+                }
+                if (reason === 2) { // INCORRECT_PASSWORD
+                    // Using a custom message box instead of alert()
+                    const messageBox = document.createElement('div');
+                    messageBox.className = 'fixed inset-0 flex items-center justify-center bg-black bg-opacity-70 z-50';
+                    messageBox.innerHTML = `
+                        <div class="glass-effect rounded-xl p-8 max-w-sm text-center">
+                            <i class="fas fa-exclamation-triangle text-yellow-500 text-4xl mb-4"></i>
+                            <p class="text-white text-lg mb-6">Incorrect password. Please try again.</p>
+                            <button onclick="this.parentNode.parentNode.remove()" class="btn-primary text-white px-6 py-3 rounded-xl ripple">OK</button>
+                        </div>
+                    `;
+                    document.body.appendChild(messageBox);
+                    showPasswordOverlay(); // Re-show password input
+                    return;
+                }
+            };
+
+            pdfDoc = await loadingTask.promise;
+
+            document.getElementById('fileName').textContent = file.name;
+            document.getElementById('pageCount').textContent = `${pdfDoc.numPages} pages`;
+            document.getElementById('fileSizeInfo').innerHTML = `<i class="fas fa-weight mr-2"></i>${formatFileSize(file.size)}`;
+
+            await renderAllPages();
+            hideLoading();
+            showPDFContent();
+        } catch (error) {
+            console.error('Error processing PDF:', error);
+            if (error.name === 'PasswordException') {
+                showPasswordOverlay();
+            } else {
+                // Using a custom message box instead of alert()
+                const messageBox = document.createElement('div');
+                messageBox.className = 'fixed inset-0 flex items-center justify-center bg-black bg-opacity-70 z-50';
+                messageBox.innerHTML = `
+                    <div class="glass-effect rounded-xl p-8 max-w-sm text-center">
+                        <i class="fas fa-exclamation-circle text-red-500 text-4xl mb-4"></i>
+                        <p class="text-white text-lg mb-6">Error processing PDF. Please ensure it's a valid PDF file and try again.</p>
+                        <button onclick="this.parentNode.parentNode.remove()" class="btn-primary text-white px-6 py-3 rounded-xl ripple">OK</button>
+                    </div>
+                `;
+                document.body.appendChild(messageBox);
+            }
+            hideLoading();
+        }
+    }
+
+    /**
+     * Shows the password input overlay.
+     */
+    function showPasswordOverlay() {
+        document.getElementById('passwordOverlay').classList.remove('hidden');
+        document.getElementById('passwordInput').focus();
+    }
+
+    /**
+     * Closes the password input overlay.
+     */
+    function closePasswordOverlay() {
+        document.getElementById('passwordOverlay').classList.add('hidden');
+        document.getElementById('passwordInput').value = ''; // Clear password field
+    }
+
+    /**
+     * Attempts to unlock a password-protected PDF.
+     */
+    function unlockPDF() {
+        const password = document.getElementById('passwordInput').value;
+        if (password) {
+            currentPassword = password;
+            closePasswordOverlay();
+            const fileInput = document.getElementById('fileInput');
+            if (fileInput.files[0]) {
+                processPDF(fileInput.files[0]); // Retry processing with password
+            }
+        }
+    }
+
+    /**
+     * Formats file size into a human-readable string.
+     * @param {number} bytes - The file size in bytes.
+     * @returns {string} Formatted file size.
+     */
+    function formatFileSize(bytes) {
+        if (bytes === 0) return '0 Bytes';
+        const k = 1024;
+        const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+        const i = Math.floor(Math.log(bytes) / Math.log(k));
+        return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+    }
+
+    /**
+     * Renders all pages of the loaded PDF document.
+     */
+    async function renderAllPages() {
+        pdfPages = []; // Clear previous pages
+        const container = document.getElementById('pagesContainer');
+        container.innerHTML = ''; // Clear container
+
+        for (let pageNum = 1; pageNum <= pdfDoc.numPages; pageNum++) {
+            const page = await pdfDoc.getPage(pageNum);
+            const pageData = await renderPage(page, pageNum);
+            pdfPages.push(pageData);
+            const pageElement = createPageElement(pageData, pageNum);
+            container.appendChild(pageElement);
+        }
+    }
+
+    /**
+     * Renders a single PDF page onto a canvas.
+     * @param {Object} page - The PDFPageProxy object.
+     * @param {number} pageNum - The original page number (1-indexed).
+     * @returns {Promise<Object>} An object containing the rendered canvas and page metadata.
+     */
+    async function renderPage(page, pageNum) {
+        const scale = 1.5;
+        const viewport = page.getViewport({ scale });
+
+        const canvas = document.createElement('canvas');
+        const context = canvas.getContext('2d');
+        canvas.height = viewport.height;
+        canvas.width = viewport.width;
+
+        await page.render({ canvasContext: context, viewport: viewport }).promise;
+
+        return {
+            canvas: canvas,
+            originalPageNum: pageNum,
+            currentIndex: pageNum - 1, // 0-indexed for array
+            rotation: 0 // Initial rotation
+        };
+    }
+
+    /**
+     * Creates a DOM element for a single PDF page.
+     * @param {Object} pageData - Data for the page including its canvas.
+     * @param {number} displayNum - The 1-indexed number to display for the page.
+     * @returns {HTMLElement} The created page element.
+     */
+    function createPageElement(pageData, displayNum) {
+        const pageDiv = document.createElement('div');
+        pageDiv.className = 'pdf-page material-surface rounded-2xl overflow-hidden relative cursor-pointer animate-slideIn';
+        pageDiv.dataset.pageIndex = pageData.currentIndex; // Store 0-indexed page index
+
+        pageDiv.innerHTML = `
+            <div class="relative">
+                <div class="p-6">
+                    <div class="flex items-center justify-between mb-4">
+                        <h4 class="text-xl font-semibold text-white">Page ${displayNum}</h4>
+                        <div class="flex items-center space-x-2">
+                            <span class="bg-gray-700 text-gray-300 px-3 py-1 rounded-full text-sm">${pageData.canvas.width} × ${pageData.canvas.height}</span>
+                            <span class="bg-gradient-to-r from-blue-500 to-purple-500 text-white px-3 py-1 rounded-full text-xs font-medium">PDF</span>
+                        </div>
+                    </div>
+                    <div class="border border-gray-600 rounded-xl overflow-hidden bg-gray-800 flex justify-center p-2">
+                        <!-- Canvas will be appended here -->
+                    </div>
+                </div>
+                <div class="page-actions absolute top-4 right-4 hidden md:flex space-x-2">
+                    <button onclick="openPageSettings(${pageData.currentIndex})" class="bg-blue-500 hover:bg-blue-600 text-white p-3 rounded-full transition-all ripple shadow-lg">
+                        <i class="fas fa-cog"></i>
+                    </button>
+                    <button onclick="maximizePage(${pageData.currentIndex})" class="bg-purple-500 hover:bg-purple-600 text-white p-3 rounded-full transition-all ripple shadow-lg">
+                        <i class="fas fa-expand-arrows-alt"></i>
+                    </button>
+                </div>
+            </div>
+        `;
+
+        const canvasContainer = pageDiv.querySelector('.border');
+        // Clone the canvas to avoid it being removed from original pdfPages array when moved in DOM
+        const clonedCanvas = document.createElement('canvas');
+        clonedCanvas.width = pageData.canvas.width;
+        clonedCanvas.height = pageData.canvas.height;
+        clonedCanvas.getContext('2d').drawImage(pageData.canvas, 0, 0);
+
+        clonedCanvas.className = 'max-w-full h-auto rounded-lg';
+        canvasContainer.appendChild(clonedCanvas);
+
+        // For mobile, click on the page directly opens settings
+        pageDiv.addEventListener('click', (e) => {
+            if (window.innerWidth < 768) {
+                // Ensure the click isn't from a nested button, but on the page card itself
+                if (!e.target.closest('button')) {
+                    openPageSettings(pageData.currentIndex);
+                }
+            }
+        });
+
+        return pageDiv;
+    }
+
+    /**
+     * Opens the page settings overlay for a specific page.
+     * @param {number} pageIndex - The 0-indexed index of the page.
+     */
+    function openPageSettings(pageIndex) {
+        currentOverlayPage = pageIndex;
+        document.getElementById('overlayPageNumber').textContent = `Page ${pageIndex + 1}`;
+        document.getElementById('pageOverlay').classList.remove('hidden');
+    }
+
+    /**
+     * Closes the page settings overlay.
+     */
+    function closeOverlay() {
+        document.getElementById('pageOverlay').classList.add('hidden');
+        currentOverlayPage = null;
+    }
+
+    /**
+     * Maximizes a specific PDF page for detailed viewing.
+     * @param {number|null} pageIndex - The 0-indexed index of the page to maximize. If null, uses currentOverlayPage.
+     */
+    function maximizePage(pageIndex = null) {
+        const index = pageIndex !== null ? pageIndex : currentOverlayPage;
+        if (index !== null) {
+            maximizedPageIndex = index;
+            const pageData = pdfPages[index];
+            document.getElementById('maximizePageTitle').textContent = `Page ${index + 1}`;
+            const content = document.getElementById('maximizeContent');
+            content.innerHTML = ''; // Clear previous content
+
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            canvas.width = pageData.canvas.width;
+            canvas.height = pageData.canvas.height;
+            ctx.drawImage(pageData.canvas, 0, 0); // Draw the current state of the page's canvas
+
+            canvas.style.maxWidth = '100%';
+            canvas.style.height = 'auto'; // Maintain aspect ratio
+            canvas.style.transform = `scale(${zoomLevel})`;
+            canvas.style.transformOrigin = 'center';
+            canvas.style.transition = 'transform 0.3s ease'; // Smooth zoom transition
+
+            content.appendChild(canvas);
+            document.getElementById('maximizeOverlay').classList.remove('hidden');
+
+            if (pageIndex === null) { // If maximized from the settings overlay, close the settings overlay
+                closeOverlay();
+            }
+        }
+    }
+
+    /**
+     * Closes the maximized page overlay.
+     */
+    function closeMaximize() {
+        document.getElementById('maximizeOverlay').classList.add('hidden');
+        maximizedPageIndex = null;
+        zoomLevel = 1; // Reset zoom level
+    }
+
+    /**
+     * Zooms in on the maximized page.
+     */
+    function zoomIn() {
+        if (zoomLevel < 3) { // Max zoom limit
+            zoomLevel += 0.25;
+            updateZoom();
+        }
+    }
+
+    /**
+     * Zooms out on the maximized page.
+     */
+    function zoomOut() {
+        if (zoomLevel > 0.5) { // Min zoom limit
+            zoomLevel -= 0.25;
+            updateZoom();
+        }
+    }
+
+    /**
+     * Resets the zoom level of the maximized page to 1.
+     */
+    function resetZoom() {
+        zoomLevel = 1;
+        updateZoom();
+    }
+
+    /**
+     * Applies the current zoom level to the maximized page's canvas.
+     */
+    function updateZoom() {
+        const canvas = document.querySelector('#maximizeContent canvas');
+        if (canvas) {
+            canvas.style.transform = `scale(${zoomLevel})`;
+        }
+    }
+
+    /**
+     * Removes the currently selected page.
+     */
+    function removePage() {
+        if (currentOverlayPage !== null && pdfPages.length > 1) {
+            pdfPages.splice(currentOverlayPage, 1);
+            updatePageIndices();
+            rerenderPages();
+            closeOverlay();
+        } else if (pdfPages.length === 1) {
+            // Using a custom message box instead of alert()
+            const messageBox = document.createElement('div');
+            messageBox.className = 'fixed inset-0 flex items-center justify-center bg-black bg-opacity-70 z-50';
+            messageBox.innerHTML = `
+                <div class="glass-effect rounded-xl p-8 max-w-sm text-center">
+                    <i class="fas fa-info-circle text-blue-500 text-4xl mb-4"></i>
+                    <p class="text-white text-lg mb-6">Cannot remove the last page of the document.</p>
+                    <button onclick="this.parentNode.parentNode.remove()" class="btn-primary text-white px-6 py-3 rounded-xl ripple">OK</button>
+                </div>
+            `;
+            document.body.appendChild(messageBox);
+        }
+    }
+
+    /**
+     * Duplicates the currently selected page.
+     */
+    function duplicatePage() {
+        if (currentOverlayPage !== null) {
+            const pageData = { ...pdfPages[currentOverlayPage] }; // Shallow copy
+
+            // Create a new canvas with the content of the original
+            const newCanvas = document.createElement('canvas');
+            const newContext = newCanvas.getContext('2d');
+            newCanvas.width = pageData.canvas.width;
+            newCanvas.height = pageData.canvas.height;
+            newContext.drawImage(pageData.canvas, 0, 0);
+            pageData.canvas = newCanvas; // Assign the new canvas to the duplicated pageData
+
+            // Insert the duplicated page after the original
+            pageData.currentIndex = currentOverlayPage + 1; // Update index for insertion
+            pdfPages.splice(currentOverlayPage + 1, 0, pageData);
+
+            updatePageIndices();
+            rerenderPages();
+            closeOverlay();
+        }
+    }
+
+    /**
+     * Rotates the currently selected page by 90 degrees clockwise.
+     */
+    function rotatePage() {
+        if (currentOverlayPage !== null) {
+            const pageData = pdfPages[currentOverlayPage];
+            const canvas = pageData.canvas;
+
+            const tempCanvas = document.createElement('canvas');
+            const tempCtx = tempCanvas.getContext('2d');
+
+            pageData.rotation = (pageData.rotation + 90) % 360; // Update rotation angle
+
+            // Swap width and height if rotation is 90 or 270 degrees
+            if (pageData.rotation === 90 || pageData.rotation === 270) {
+                tempCanvas.width = canvas.height;
+                tempCanvas.height = canvas.width;
+            } else {
+                tempCanvas.width = canvas.width;
+                tempCanvas.height = canvas.height;
+            }
+
+            tempCtx.save();
+            tempCtx.translate(tempCanvas.width / 2, tempCanvas.height / 2);
+            tempCtx.rotate((pageData.rotation * Math.PI) / 180);
+            tempCtx.drawImage(canvas, -canvas.width / 2, -canvas.height / 2);
+            tempCtx.restore();
+
+            // Create a new canvas from the rotated tempCanvas to avoid reference issues
+            const newCanvas = document.createElement('canvas');
+            newCanvas.width = tempCanvas.width;
+            newCanvas.height = tempCanvas.height;
+            newCanvas.getContext('2d').drawImage(tempCanvas, 0, 0);
+
+            pdfPages[currentOverlayPage].canvas = newCanvas; // Update the pageData with the new canvas
+            rerenderPages(); // Re-render the display
+            closeOverlay();
+        }
+    }
+
+    /**
+     * Moves the currently selected page up in the document order.
+     */
+    function movePageUp() {
+        if (currentOverlayPage !== null && currentOverlayPage > 0) {
+            // Swap array elements
+            const temp = pdfPages[currentOverlayPage];
+            pdfPages[currentOverlayPage] = pdfPages[currentOverlayPage - 1];
+            pdfPages[currentOverlayPage - 1] = temp;
+            currentOverlayPage--; // Update current overlay page index
+            updatePageIndices();
+            rerenderPages();
+            document.getElementById('overlayPageNumber').textContent = `Page ${currentOverlayPage + 1}`;
+        }
+    }
+
+    /**
+     * Moves the currently selected page down in the document order.
+     */
+    function movePageDown() {
+        if (currentOverlayPage !== null && currentOverlayPage < pdfPages.length - 1) {
+            // Swap array elements
+            const temp = pdfPages[currentOverlayPage];
+            pdfPages[currentOverlayPage] = pdfPages[currentOverlayPage + 1];
+            pdfPages[currentOverlayPage + 1] = temp;
+            currentOverlayPage++; // Update current overlay page index
+            updatePageIndices();
+            rerenderPages();
+            document.getElementById('overlayPageNumber').textContent = `Page ${currentOverlayPage + 1}`;
+        }
+    }
+
+    /**
+     * Updates the `currentIndex` property for all pages in the `pdfPages` array.
+     * This is important after reordering, adding, or removing pages.
+     */
+    function updatePageIndices() {
+        pdfPages.forEach((page, index) => {
+            page.currentIndex = index;
+        });
+    }
+
+    /**
+     * Re-renders all PDF pages in the display container.
+     * Called after modifications to the `pdfPages` array.
+     */
+    function rerenderPages() {
+        const container = document.getElementById('pagesContainer');
+        container.innerHTML = ''; // Clear existing elements
+        pdfPages.forEach((pageData, index) => {
+            const pageElement = createPageElement(pageData, index + 1); // Use 1-indexed for display
+            container.appendChild(pageElement);
+        });
+        document.getElementById('pageCount').textContent = `${pdfPages.length} pages`;
+        updateViewMode(); // Ensure view mode is applied after re-rendering
+    }
+
+    /**
+     * Sets the display view mode ('grid' or 'list').
+     * @param {string} viewType - The desired view type.
+     */
+    function setView(viewType) {
+        currentView = viewType;
+        const gridBtn = document.getElementById('gridViewBtn');
+        const listBtn = document.getElementById('listViewBtn');
+
+        // Update button active states
+        if (viewType === 'grid') {
+            gridBtn.className = 'bg-gradient-to-r from-blue-500 to-indigo-500 text-white px-6 py-3 rounded-xl flex items-center space-x-2 transition-all ripple';
+            listBtn.className = 'bg-gray-700 text-white px-6 py-3 rounded-xl flex items-center space-x-2 transition-all ripple';
+        } else {
+            listBtn.className = 'bg-gradient-to-r from-blue-500 to-indigo-500 text-white px-6 py-3 rounded-xl flex items-center space-x-2 transition-all ripple';
+            gridBtn.className = 'bg-gray-700 text-white px-6 py-3 rounded-xl flex items-center space-x-2 transition-all ripple';
+        }
+        updateViewMode(); // Apply the view mode to the container
+    }
+
+    /**
+     * Applies the current view mode CSS classes to the pages container.
+     */
+    function updateViewMode() {
+        const container = document.getElementById('pagesContainer');
+        if (currentView === 'grid') {
+            container.className = 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8';
+        } else {
+            container.className = 'space-y-6'; // Vertical list layout
+        }
+    }
+
+    /**
+     * Downloads the currently selected single page as a PDF.
+     */
+    async function downloadSinglePage() {
+        if (currentOverlayPage !== null) {
+            const { jsPDF } = window.jspdf;
+            const pdf = new jsPDF();
+            const canvas = pdfPages[currentOverlayPage].canvas;
+
+            const imgData = canvas.toDataURL('image/jpeg', 0.95); // Higher quality image
+            const pdfWidth = pdf.internal.pageSize.getWidth();
+            const pdfHeight = pdf.internal.pageSize.getHeight();
+
+            const imgWidth = canvas.width;
+            const imgHeight = canvas.height;
+
+            // Calculate ratio to fit image within PDF page while maintaining aspect ratio
+            const ratio = Math.min(pdfWidth / imgWidth, pdfHeight / imgHeight);
+            const imgX = (pdfWidth - imgWidth * ratio) / 2;
+            const imgY = (pdfHeight - imgHeight * ratio) / 2;
+
+            pdf.addImage(imgData, 'JPEG', imgX, imgY, imgWidth * ratio, imgHeight * ratio);
+            pdf.save(`page-${currentOverlayPage + 1}.pdf`);
+            closeOverlay();
+        }
+    }
+
+    /**
+     * Downloads the entire processed PDF (all current pages).
+     */
+    async function downloadPDF() {
+        if (pdfPages.length === 0) return;
+
+        const { jsPDF } = window.jspdf;
+        const pdf = new jsPDF(); // Default portrait 'p', 'mm', 'a4'
+
+        for (let i = 0; i < pdfPages.length; i++) {
+            if (i > 0) {
+                pdf.addPage(); // Add a new page for subsequent canvases
+            }
+            const canvas = pdfPages[i].canvas;
+            const imgData = canvas.toDataURL('image/jpeg', 0.95); // High quality image
+
+            const pdfWidth = pdf.internal.pageSize.getWidth();
+            const pdfHeight = pdf.internal.pageSize.getHeight();
+
+            const imgWidth = canvas.width;
+            const imgHeight = canvas.height;
+
+            const ratio = Math.min(pdfWidth / imgWidth, pdfHeight / imgHeight);
+            const imgX = (pdfWidth - imgWidth * ratio) / 2;
+            const imgY = (pdfHeight - imgHeight * ratio) / 2;
+
+            pdf.addImage(imgData, 'JPEG', imgX, imgY, imgWidth * ratio, imgHeight * ratio);
+        }
+
+        pdf.save('processed-document.pdf');
+    }
+
+    /**
+     * Opens the print modal and populates it with page checkboxes.
+     */
+    function openPrintModal() {
+        if (pdfPages.length === 0) {
+            const messageBox = document.createElement('div');
+            messageBox.className = 'fixed inset-0 flex items-center justify-center bg-black bg-opacity-70 z-50';
+            messageBox.innerHTML = `
+                <div class="glass-effect rounded-xl p-8 max-w-sm text-center">
+                    <i class="fas fa-info-circle text-blue-500 text-4xl mb-4"></i>
+                    <p class="text-white text-lg mb-6">Please upload a PDF first to use the print functionality.</p>
+                    <button onclick="this.parentNode.parentNode.remove()" class="btn-primary text-white px-6 py-3 rounded-xl ripple">OK</button>
+                </div>
+            `;
+            document.body.appendChild(messageBox);
+            return;
+        }
+        populatePrintPages();
+        document.getElementById('printModal').classList.remove('hidden');
+    }
+
+    /**
+     * Closes the print modal.
+     */
+    function closePrintModal() {
+        document.getElementById('printModal').classList.add('hidden');
+    }
+
+    /**
+     * Populates the print modal with checkboxes for each PDF page.
+     */
+    function populatePrintPages() {
+        const container = document.getElementById('printPagesCheckboxes');
+        container.innerHTML = ''; // Clear previous checkboxes
+
+        pdfPages.forEach((_, index) => {
+            const div = document.createElement('label');
+            div.className = 'page-checkbox-item';
+            div.innerHTML = `
+                <input type="checkbox" id="printPage${index}" value="${index}" checked>
+                <span class="text-gray-200">Page ${index + 1}</span>
+            `;
+            container.appendChild(div);
+            // Add click listener to the label to toggle checkbox when clicking anywhere on the label
+            div.addEventListener('click', (e) => {
+                if (e.target.tagName !== 'INPUT') { // Only toggle if not clicking directly on the checkbox
+                    const checkbox = div.querySelector('input[type="checkbox"]');
+                    checkbox.checked = !checkbox.checked;
+                }
+            });
+        });
+    }
+
+    /**
+     * Selects or deselects all page checkboxes in the print modal.
+     * @param {boolean} select - True to select all, false to deselect all.
+     */
+    function selectAllPages(select) {
+        const checkboxes = document.querySelectorAll('#printPagesCheckboxes input[type="checkbox"]');
+        checkboxes.forEach(checkbox => {
+            checkbox.checked = select;
+        });
+    }
+
+    /**
+     * Prints the selected pages with the chosen orientation.
+     */
+    async function printSelectedPages() {
+        const selectedPageIndices = [];
+        document.querySelectorAll('#printPagesCheckboxes input[type="checkbox"]:checked').forEach(checkbox => {
+            selectedPageIndices.push(parseInt(checkbox.value));
+        });
+
+        if (selectedPageIndices.length === 0) {
+            const messageBox = document.createElement('div');
+            messageBox.className = 'fixed inset-0 flex items-center justify-center bg-black bg-opacity-70 z-50';
+            messageBox.innerHTML = `
+                <div class="glass-effect rounded-xl p-8 max-w-sm text-center">
+                    <i class="fas fa-exclamation-triangle text-yellow-500 text-4xl mb-4"></i>
+                    <p class="text-white text-lg mb-6">Please select at least one page to print.</p>
+                    <button onclick="this.parentNode.parentNode.remove()" class="btn-primary text-white px-6 py-3 rounded-xl ripple">OK</button>
+                </div>
+            `;
+            document.body.appendChild(messageBox);
+            return;
+        }
+
+        const orientation = document.querySelector('input[name="printOrientation"]:checked').value;
+        const { jsPDF } = window.jspdf;
+
+        // Initialize jsPDF with selected orientation. 'p' for portrait, 'l' for landscape.
+        const pdf = new jsPDF(orientation, 'mm', 'a4'); // 'a4' is default, can be 'letter', etc.
+
+        // Create a temporary loading message for the print process
+        const printLoadingMessage = document.createElement('div');
+        printLoadingMessage.className = 'fixed inset-0 flex items-center justify-center bg-black bg-opacity-70 z-50';
+        printLoadingMessage.innerHTML = `
+            <div class="glass-effect rounded-xl p-8 max-w-sm text-center">
+                <div class="loading-spinner inline-block w-12 h-12 border-4 border-gray-600 border-t-blue-500 rounded-full mb-4"></div>
+                <p class="text-white text-lg">Preparing your document for printing...</p>
+            </div>
+        `;
+        document.body.appendChild(printLoadingMessage);
+
+
+        for (let i = 0; i < selectedPageIndices.length; i++) {
+            const pageIndex = selectedPageIndices[i];
+            const canvas = pdfPages[pageIndex].canvas;
+
+            if (i > 0) {
+                pdf.addPage(orientation, 'a4'); // Add page with selected orientation
+            }
+
+            const imgData = canvas.toDataURL('image/jpeg', 0.95);
+            const pdfWidth = pdf.internal.pageSize.getWidth();
+            const pdfHeight = pdf.internal.pageSize.getHeight();
+
+            const imgWidth = canvas.width;
+            const imgHeight = canvas.height;
+
+            // Calculate ratio to fit image within PDF page while maintaining aspect ratio
+            const ratio = Math.min(pdfWidth / imgWidth, pdfHeight / imgHeight);
+            const imgX = (pdfWidth - imgWidth * ratio) / 2;
+            const imgY = (pdfHeight - imgHeight * ratio) / 2;
+
+            pdf.addImage(imgData, 'JPEG', imgX, imgY, imgWidth * ratio, imgHeight * ratio);
+        }
+
+        // Generate a data URL for the PDF and open it in a new window for printing
+        const dataUri = pdf.output('datauristring');
+        const printWindow = window.open(dataUri, '_blank');
+
+        if (printWindow) {
+            printWindow.onload = () => {
+                printWindow.focus(); // Bring the new window into focus
+                printWindow.print(); // Trigger the print dialog
+                // No need to close the window immediately, user might want to review print dialog
+                // printWindow.onafterprint = () => printWindow.close(); // Close after printing (optional)
+                document.body.removeChild(printLoadingMessage); // Remove loading message
+                closePrintModal(); // Close the custom print modal
+            };
+        } else {
+            // Fallback if the new window was blocked by a pop-up blocker
+            const messageBox = document.createElement('div');
+            messageBox.className = 'fixed inset-0 flex items-center justify-center bg-black bg-opacity-70 z-50';
+            messageBox.innerHTML = `
+                <div class="glass-effect rounded-xl p-8 max-w-sm text-center">
+                    <i class="fas fa-exclamation-triangle text-yellow-500 text-4xl mb-4"></i>
+                    <p class="text-white text-lg mb-6">Pop-up blocked! Please allow pop-ups for this site to print.</p>
+                    <button onclick="this.parentNode.parentNode.remove()" class="btn-primary text-white px-6 py-3 rounded-xl ripple">OK</button>
+                </div>
+            `;
+            document.body.appendChild(messageBox);
+            document.body.removeChild(printLoadingMessage); // Remove loading message
+        }
+    }
+
+
+    /**
+     * Toggles fullscreen mode for the document.
+     */
+    function toggleFullscreen() {
+        if (!document.fullscreenElement) {
+            document.documentElement.requestFullscreen().catch(err => {
+                console.log(`Error attempting to enable fullscreen: ${err.message}`);
+                // Using a custom message box instead of alert()
+                const messageBox = document.createElement('div');
+                messageBox.className = 'fixed inset-0 flex items-center justify-center bg-black bg-opacity-70 z-50';
+                messageBox.innerHTML = `
+                    <div class="glass-effect rounded-xl p-8 max-w-sm text-center">
+                        <i class="fas fa-info-circle text-blue-500 text-4xl mb-4"></i>
+                        <p class="text-white text-lg mb-6">Fullscreen not supported or allowed by your browser.</p>
+                        <button onclick="this.parentNode.parentNode.remove()" class="btn-primary text-white px-6 py-3 rounded-xl ripple">OK</button>
+                    </div>
+                `;
+                document.body.appendChild(messageBox);
+            });
+        } else {
+            document.exitFullscreen();
+        }
+    }
+
+    /**
+     * Scrolls the window to the top.
+     */
+    function scrollToTop() {
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth'
+        });
+    }
+
+    // Removed toggleTheme() as per request
+
+    /**
+     * Shows the loading spinner and hides the upload zone.
+     */
+    function showLoading() {
+        document.getElementById('uploadZone').style.display = 'none';
+        document.getElementById('loadingContainer').classList.remove('hidden');
+    }
+
+    /**
+     * Hides the loading spinner.
+     */
+    function hideLoading() {
+        document.getElementById('loadingContainer').classList.add('hidden');
+    }
+
+    /**
+     * Shows the PDF information, pages container, header actions, and floating actions.
+     */
+    function showPDFContent() {
+        document.getElementById('pdfInfo').classList.remove('hidden');
+        document.getElementById('pagesContainer').classList.remove('hidden');
+        document.getElementById('headerActions').style.display = 'flex';
+        document.getElementById('viewControls').style.display = 'flex';
+        document.getElementById('floatingActions').style.display = 'block';
+    }
+
+    // Event listener to close overlays when clicking outside the content
+    document.getElementById('pageOverlay').addEventListener('click', (e) => {
+        if (e.target === e.currentTarget) {
+            closeOverlay();
+        }
+    });
+
+    document.getElementById('maximizeOverlay').addEventListener('click', (e) => {
+        if (e.target === e.currentTarget) {
+            closeMaximize();
+        }
+    });
+
+    document.getElementById('passwordOverlay').addEventListener('click', (e) => {
+        if (e.target === e.currentTarget) {
+            closePasswordOverlay();
+        }
+    });
+
+    document.getElementById('printModal').addEventListener('click', (e) => {
+        if (e.target === e.currentTarget) {
+            closePrintModal();
+        }
+    });
+
+    // Handle Enter key for password input
+    document.getElementById('passwordInput').addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+            unlockPDF();
+        }
+    });
+
+    // Adjust zoom on window resize for maximized page if active
+    window.addEventListener('resize', () => {
+        if (maximizedPageIndex !== null) {
+            updateZoom(); // Recalculate and apply zoom to fit if needed
+        }
+    });
+
+    // Ctrl + scroll for zoom on maximized page
+    document.addEventListener('wheel', (e) => {
+        if (maximizedPageIndex !== null && e.ctrlKey) {
+            e.preventDefault(); // Prevent page scrolling
+            if (e.deltaY < 0) {
+                zoomIn();
+            } else {
+                zoomOut();
+            }
+        }
+    }, { passive: false }); // Use passive: false to allow preventDefault
+</script>
+</body>
+</html>
