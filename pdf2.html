@@ -1,0 +1,1085 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DocuVault - Premium PDF Library</title>
+    <!-- PDF.js library for rendering PDFs -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+    <!-- Tailwind CSS for utility-first styling -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Base styles for all elements */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* Body background with animated gradient */
+        body {
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 25%, #16213e 50%, #0f0f23 75%, #1a1a2e 100%);
+            background-size: 400% 400%;
+            animation: gradientShift 20s ease infinite;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; /* Changed to Inter font */
+            color: #fff;
+            overflow-x: hidden; /* Prevent horizontal scroll */
+        }
+
+        /* Keyframe animation for background gradient */
+        @keyframes gradientShift {
+            0% { background-position: 0% 50% }
+            50% { background-position: 100% 50% }
+            100% { background-position: 0% 50% }
+        }
+
+        /* Styling for gradient text effect */
+        .gradient-text {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: gradientTextShift 8s ease infinite;
+        }
+
+        /* Keyframe animation for gradient text */
+        @keyframes gradientTextShift {
+            0%, 100% { background-position: 0% 50% }
+            50% { background-position: 100% 50% }
+        }
+
+        /* Glassmorphism effect base */
+        .glass {
+            backdrop-filter: blur(20px);
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Glassmorphism hover effect */
+        .glass-hover {
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .glass-hover:hover {
+            backdrop-filter: blur(25px);
+            background: rgba(255, 255, 255, 0.12);
+            border: 1px solid rgba(102, 126, 234, 0.3);
+            box-shadow: 0 20px 60px rgba(102, 126, 234, 0.2);
+            transform: translateY(-8px);
+        }
+
+        /* Card floating effect on hover */
+        .card-float {
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .card-float:hover {
+            transform: translateY(-12px) scale(1.02);
+            box-shadow: 0 25px 80px rgba(102, 126, 234, 0.3), 0 0 40px rgba(118, 75, 162, 0.2);
+        }
+
+        /* Search input glassmorphism style */
+        .search-glass {
+            backdrop-filter: blur(15px);
+            background: rgba(255, 255, 255, 0.06);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .search-glass:focus {
+            border-color: #667eea;
+            background: rgba(255, 255, 255, 0.1);
+            box-shadow: 0 0 30px rgba(102, 126, 234, 0.3);
+        }
+
+        /* PDF page canvas styling */
+        .page-canvas {
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .page-canvas:hover {
+            transform: scale(1.01);
+            box-shadow: 0 15px 40px rgba(102, 126, 234, 0.4);
+        }
+
+        /* Thumbnail styling */
+        .thumbnail {
+            transition: all 0.2s ease;
+            border: 2px solid transparent;
+        }
+
+        .thumbnail:hover {
+            transform: scale(1.05);
+            border-color: #667eea;
+        }
+
+        .thumbnail.active {
+            border-color: #f093fb;
+            box-shadow: 0 0 20px rgba(240, 147, 251, 0.5);
+        }
+
+        /* Modal overlay with blur */
+        .modal-overlay {
+            backdrop-filter: blur(10px);
+            background: rgba(0, 0, 0, 0.9);
+        }
+
+        /* Zoom controls styling */
+        .zoom-controls {
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+        }
+
+        /* Custom scrollbar styles */
+        .scrollbar-custom::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+
+        .scrollbar-custom::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+        }
+
+        .scrollbar-custom::-webkit-scrollbar-thumb {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 10px;
+        }
+
+        .scrollbar-custom::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(135deg, #764ba2, #f093fb);
+        }
+
+        /* Pulse animation for dot */
+        .pulse-dot {
+            width: 8px;
+            height: 8px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 1 }
+            50% { transform: scale(1.2); opacity: 0.8 }
+        }
+
+        /* Loading spinner animation */
+        .loading-spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid rgba(102, 126, 234, 0.2);
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg) }
+            100% { transform: rotate(360deg) }
+        }
+
+        /* Fade-in animations */
+        .fade-in {
+            animation: fadeIn 0.8s ease-out forwards;
+        }
+
+        .fade-in-delay {
+            animation: fadeIn 0.8s ease-out 0.3s forwards;
+            opacity: 0;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(30px) }
+            to { opacity: 1; transform: translateY(0) }
+        }
+
+        /* Slide-up animation */
+        .slide-up {
+            animation: slideUp 0.4s ease-out;
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(100px); opacity: 0 }
+            to { transform: translateY(0); opacity: 1 }
+        }
+
+        /* Category badge styling */
+        .category-badge {
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.2), rgba(118, 75, 162, 0.2));
+            border: 1px solid rgba(102, 126, 234, 0.3);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        /* Notification container */
+        #notificationContainer {
+            position: fixed;
+            top: 1rem;
+            right: 1rem;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            max-width: 90%; /* Responsive width */
+        }
+
+        /* Individual notification styling */
+        .notification {
+            padding: 1rem 1.5rem;
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            color: #fff;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            animation: slideInRight 0.3s ease-out forwards;
+        }
+
+        .notification.success { background-color: #28a745; }
+        .notification.error { background-color: #dc3545; }
+        .notification.info { background-color: #007bff; }
+        .notification.warning { background-color: #ffc107; }
+
+        /* Notification slide-in animation */
+        @keyframes slideInRight {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        /* Notification slide-out animation */
+        .notification.slide-out {
+            animation: slideOutRight 0.3s ease-in forwards;
+        }
+
+        @keyframes slideOutRight {
+            from { transform: translateX(0); opacity: 1; }
+            to { transform: translateX(100%); opacity: 0; }
+        }
+
+        /* Responsive adjustments for mobile */
+        @media (max-width: 640px) {
+            .mobile-hidden { display: none; }
+            .mobile-full { width: 100%; }
+            .mobile-text-sm { font-size: 0.875rem; }
+            .mobile-grid { grid-template-columns: 1fr; }
+            .mobile-p-2 { padding: 0.5rem; }
+            #notificationContainer {
+                top: 0.5rem;
+                right: 0.5rem;
+                left: 0.5rem;
+                max-width: unset; /* Allow full width on mobile */
+            }
+        }
+
+        /* Responsive adjustments for tablet */
+        @media (min-width: 641px) and (max-width: 1024px) {
+            .tablet-grid { grid-template-columns: repeat(2, 1fr); }
+            .tablet-p-4 { padding: 1rem; }
+        }
+
+        /* Responsive adjustments for desktop */
+        @media (min-width: 1025px) {
+            .desktop-grid { grid-template-columns: repeat(3, 1fr); }
+            .desktop-p-6 { padding: 1.5rem; }
+        }
+    </style>
+</head>
+<body class="min-h-screen">
+    <!-- Main Screen (Document Grid) -->
+    <div id="mainScreen" class="min-h-screen">
+        <!-- Sticky Header with Search Bar -->
+        <div class="sticky top-0 z-50 glass p-4 md:p-6">
+            <div class="max-w-7xl mx-auto">
+                <div class="flex items-center justify-between mb-6">
+                    <h1 class="text-3xl md:text-5xl font-bold gradient-text">DocuVault</h1>
+                    <div class="flex items-center space-x-3">
+                        <div class="pulse-dot"></div>
+                        <span class="text-sm text-gray-400">Premium PDF Library</span>
+                    </div>
+                </div>
+                <!-- Search Input -->
+                <div class="relative max-w-2xl mx-auto">
+                    <div class="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400">
+                        <i class="fas fa-search text-lg"></i>
+                    </div>
+                    <input type="text" id="searchInput" placeholder="Search documents by title, category, or content..."
+                           class="w-full pl-12 pr-4 py-4 search-glass rounded-2xl text-white placeholder-gray-400 text-lg focus:outline-none">
+                    <div class="absolute right-4 top-1/2 transform -translate-y-1/2 mobile-hidden">
+                        <kbd class="px-2 py-1 text-xs bg-gray-700 rounded">⌘K</kbd>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Document Grid Section -->
+        <div class="max-w-7xl mx-auto p-4 md:p-6">
+            <div class="mb-8">
+                <div class="flex items-center justify-between mb-4">
+                    <h2 class="text-2xl font-semibold text-gray-300">Document Collection</h2>
+                    <div class="flex items-center space-x-4 text-sm text-gray-400">
+                        <span id="totalDocs">5 documents</span>
+                        <span id="searchResults" class="hidden"></span>
+                    </div>
+                </div>
+            </div>
+            <!-- PDF Document Cards Grid -->
+            <div id="pdfGrid" class="grid mobile-grid tablet-grid desktop-grid gap-6 md:gap-8">
+                <!-- PDF cards will be injected here by JavaScript -->
+            </div>
+            <!-- No Results Found Message -->
+            <div id="noResults" class="hidden text-center py-20">
+                <div class="text-6xl text-gray-600 mb-4"><i class="fas fa-search"></i></div>
+                <h3 class="text-xl text-gray-400 mb-2">No documents found</h3>
+                <p class="text-gray-500">Try adjusting your search terms</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- PDF Viewer Screen -->
+    <div id="pdfViewer" class="min-h-screen hidden flex flex-col">
+        <!-- Top Bar with PDF Title, Category, and Controls -->
+        <div class="glass p-4 sticky top-0 z-40">
+            <div class="flex items-center justify-between">
+                <button id="backBtn" class="text-white hover:text-purple-400 transition-colors p-2 rounded-lg hover:bg-gray-700" title="Back to Library">
+                    <i class="fas fa-arrow-left text-xl"></i>
+                </button>
+                <div class="flex-1 mx-4">
+                    <h2 id="pdfTitle" class="text-lg md:text-xl font-semibold truncate gradient-text"></h2>
+                    <p id="pdfCategory" class="text-sm text-gray-400 mt-1"></p>
+                </div>
+                <div class="flex items-center space-x-2 md:space-x-4">
+                    <div class="flex items-center space-x-2 mobile-hidden">
+                        <span class="text-sm text-gray-300">Page:</span>
+                        <input type="number" id="pageInput" class="w-16 px-2 py-1 bg-gray-800 rounded text-white text-sm" min="1">
+                        <button id="goToPage" class="px-3 py-1 bg-purple-600 hover:bg-purple-700 rounded text-sm transition-colors">Go</button>
+                    </div>
+                    <button id="shareBtn" class="p-2 hover:bg-gray-700 rounded transition-colors" title="Share Document">
+                        <i class="fas fa-share"></i>
+                    </button>
+                    <button id="downloadBtn" class="p-2 hover:bg-gray-700 rounded transition-colors" title="Download Document">
+                        <i class="fas fa-download"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- PDF Pages Container -->
+        <div class="flex-1 p-4 flex justify-center items-start">
+            <div id="pdfContainer" class="max-w-4xl w-full scrollbar-custom" style="max-height:calc(100vh - 200px);overflow-y:auto">
+                <div id="loadingSpinner" class="flex items-center justify-center py-20">
+                    <div class="loading-spinner"></div>
+                </div>
+                <div id="pdfPages" class="space-y-6">
+                    <!-- PDF pages will be rendered here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Bottom Bar with Page Navigation and Thumbnails -->
+        <div class="glass p-4 sticky bottom-0">
+            <div class="flex items-center justify-center space-x-4">
+                <button id="prevPage" class="p-2 hover:bg-gray-700 rounded transition-colors" title="Previous Page">
+                    <i class="fas fa-chevron-left"></i>
+                </button>
+                <div id="thumbnailContainer" class="flex space-x-2 overflow-x-auto scrollbar-custom" style="max-width:calc(100vw - 200px)">
+                    <!-- Thumbnails will be injected here -->
+                </div>
+                <button id="nextPage" class="p-2 hover:bg-gray-700 rounded transition-colors" title="Next Page">
+                    <i class="fas fa-chevron-right"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Full-Page Modal for Zooming -->
+    <div id="pageModal" class="fixed inset-0 z-50 hidden">
+        <div class="modal-overlay absolute inset-0"></div>
+        <div class="relative h-full flex items-center justify-center p-4">
+            <!-- Zoom Controls -->
+            <div class="zoom-controls absolute top-4 left-4 z-10 rounded-lg p-2 flex space-x-2">
+                <button id="zoomIn" class="p-2 text-white hover:bg-gray-600 rounded transition-colors" title="Zoom In">
+                    <i class="fas fa-search-plus"></i>
+                </button>
+                <button id="zoomOut" class="p-2 text-white hover:bg-gray-600 rounded transition-colors" title="Zoom Out">
+                    <i class="fas fa-search-minus"></i>
+                </button>
+                <button id="resetZoom" class="p-2 text-white hover:bg-gray-600 rounded transition-colors" title="Reset Zoom">
+                    <i class="fas fa-expand-arrows-alt"></i>
+                </button>
+            </div>
+            <!-- Close Modal Button -->
+            <button id="closeModal" class="absolute top-4 right-4 z-10 p-2 text-white hover:bg-gray-600 rounded transition-colors" title="Close">
+                <i class="fas fa-times text-xl"></i>
+            </button>
+            <!-- Modal Content (Canvas for zoomed page) -->
+            <div id="modalContent" class="max-w-full max-h-full overflow-auto">
+                <canvas id="modalCanvas" class="max-w-full max-h-full"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification Container -->
+    <div id="notificationContainer"></div>
+
+    <script>
+        // Set worker source for PDF.js
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+
+        /**
+         * Manages displaying notifications to the user.
+         */
+        class NotificationManager {
+            constructor() {
+                this.container = document.getElementById('notificationContainer');
+                if (!this.container) {
+                    console.error('Notification container not found!');
+                    return;
+                }
+            }
+
+            /**
+             * Shows a notification message.
+             * @param {string} message - The message to display.
+             * @param {'success'|'error'|'info'|'warning'} type - The type of notification.
+             * @param {number} duration - How long the notification should be visible in milliseconds.
+             */
+            show(message, type = 'info', duration = 3000) {
+                const notificationElement = document.createElement('div');
+                notificationElement.className = `notification ${type} rounded-xl shadow-lg`;
+                notificationElement.innerHTML = `
+                    <i class="fas ${this._getIcon(type)} text-xl"></i>
+                    <span>${message}</span>
+                `;
+
+                this.container.appendChild(notificationElement);
+
+                // Automatically remove after duration
+                setTimeout(() => {
+                    notificationElement.classList.add('slide-out');
+                    notificationElement.addEventListener('animationend', () => {
+                        notificationElement.remove();
+                    }, { once: true });
+                }, duration);
+            }
+
+            /**
+             * Gets the appropriate Font Awesome icon for a notification type.
+             * @param {string} type - The type of notification.
+             * @returns {string} - The Font Awesome class string.
+             */
+            _getIcon(type) {
+                switch (type) {
+                    case 'success': return 'fa-check-circle';
+                    case 'error': return 'fa-times-circle';
+                    case 'info': return 'fa-info-circle';
+                    case 'warning': return 'fa-exclamation-triangle';
+                    default: return 'fa-info-circle';
+                }
+            }
+
+            /**
+             * Convenience method for success notifications.
+             * @param {string} message - The message to display.
+             * @param {number} duration - How long the notification should be visible.
+             */
+            showSuccess(message, duration = 3000) {
+                this.show(message, 'success', duration);
+            }
+
+            /**
+             * Convenience method for error notifications.
+             * @param {string} message - The message to display.
+             * @param {number} duration - How long the notification should be visible.
+             */
+            showError(message, duration = 5000) {
+                this.show(message, 'error', duration);
+            }
+
+            /**
+             * Convenience method for info notifications.
+             * @param {string} message - The message to display.
+             * @param {number} duration - How long the notification should be visible.
+             */
+            showInfo(message, duration = 3000) {
+                this.show(message, 'info', duration);
+            }
+        }
+
+        /**
+         * Main class for the DocuVault application.
+         * Handles PDF loading, rendering, search, and UI interactions.
+         */
+        class DocuVault {
+            constructor() {
+                // Initialize Notification Manager
+                this.notificationManager = new NotificationManager();
+
+                // Sample PDF data. In a real application, this would come from an API or database.
+                // Note: 'file1.pdf' is used for all entries. Ensure this PDF exists in the same directory
+                // as your HTML file for the application to function correctly.
+                this.pdfFiles = [
+                    { id: 1, name: ' FMM', category: 'subject', description: ' introduction to financial market NSQF Level-2', data: 'file1.pdf', pages: 84, tags: ['javascript', ] }
+                ];
+
+                this.filteredFiles = this.pdfFiles; // Initially, all files are shown
+                this.currentPdf = null; // Currently opened PDF document object
+                this.currentPage = 1; // Current page number in viewer
+                this.totalPages = 0; // Total pages of the current PDF
+                this.zoomLevel = 1; // Zoom level for the modal viewer
+                this.pages = []; // Array to hold rendered page canvases and PDFPageProxy objects
+
+                // DOM Elements
+                this.elements = {
+                    mainScreen: document.getElementById('mainScreen'),
+                    pdfViewer: document.getElementById('pdfViewer'),
+                    searchInput: document.getElementById('searchInput'),
+                    backBtn: document.getElementById('backBtn'),
+                    pdfTitle: document.getElementById('pdfTitle'),
+                    pdfCategory: document.getElementById('pdfCategory'),
+                    pageInput: document.getElementById('pageInput'),
+                    goToPage: document.getElementById('goToPage'),
+                    shareBtn: document.getElementById('shareBtn'),
+                    downloadBtn: document.getElementById('downloadBtn'),
+                    prevPage: document.getElementById('prevPage'),
+                    nextPage: document.getElementById('nextPage'),
+                    pdfGrid: document.getElementById('pdfGrid'),
+                    noResults: document.getElementById('noResults'),
+                    totalDocs: document.getElementById('totalDocs'),
+                    searchResults: document.getElementById('searchResults'),
+                    pdfContainer: document.getElementById('pdfContainer'),
+                    loadingSpinner: document.getElementById('loadingSpinner'),
+                    pdfPages: document.getElementById('pdfPages'),
+                    thumbnailContainer: document.getElementById('thumbnailContainer'),
+                    pageModal: document.getElementById('pageModal'),
+                    modalCanvas: document.getElementById('modalCanvas'),
+                    closeModal: document.getElementById('closeModal'),
+                    zoomIn: document.getElementById('zoomIn'),
+                    zoomOut: document.getElementById('zoomOut'),
+                    resetZoom: document.getElementById('resetZoom')
+                };
+
+                this.initializeEventListeners();
+                this.renderPdfGrid(); // Initial render of the document grid
+            }
+
+            /**
+             * Sets up all event listeners for UI interactions.
+             */
+            initializeEventListeners() {
+                this.elements.searchInput.addEventListener('input', (e) => this.handleSearch(e.target.value));
+                this.elements.backBtn.addEventListener('click', () => this.showMainScreen());
+                this.elements.goToPage.addEventListener('click', () => this.goToPage());
+                this.elements.pageInput.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') {
+                        this.goToPage();
+                    }
+                });
+                this.elements.shareBtn.addEventListener('click', () => this.sharePdf());
+                this.elements.downloadBtn.addEventListener('click', () => this.downloadPdf());
+                this.elements.prevPage.addEventListener('click', () => this.navigatePage(-1));
+                this.elements.nextPage.addEventListener('click', () => this.navigatePage(1));
+                this.elements.closeModal.addEventListener('click', () => this.closeModal());
+                this.elements.zoomIn.addEventListener('click', () => this.adjustZoom(0.2));
+                this.elements.zoomOut.addEventListener('click', () => this.adjustZoom(-0.2));
+                this.elements.resetZoom.addEventListener('click', () => this.resetZoom());
+                document.addEventListener('keydown', (e) => this.handleKeyboard(e));
+
+                // Listen for scroll events on the PDF container to update current page and thumbnail selection
+                this.elements.pdfContainer.addEventListener('scroll', () => this.updateCurrentPageOnScroll());
+            }
+
+            /**
+             * Handles keyboard shortcuts for search and PDF navigation/zoom.
+             * @param {KeyboardEvent} e - The keyboard event object.
+             */
+            handleKeyboard(e) {
+                // Cmd/Ctrl + K to focus search
+                if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+                    e.preventDefault();
+                    this.elements.searchInput.focus();
+                }
+
+                // If PDF viewer is not active, only search shortcut works
+                if (this.elements.pdfViewer.classList.contains('hidden')) {
+                    return;
+                }
+
+                switch (e.key) {
+                    case 'ArrowLeft':
+                        this.navigatePage(-1);
+                        break;
+                    case 'ArrowRight':
+                        this.navigate(1);
+                        break;
+                    case 'Escape':
+                        this.closeModal();
+                        break;
+                    case '+': // Zoom in
+                        if (this.elements.pageModal.classList.contains('hidden')) return; // Only zoom in modal
+                        this.adjustZoom(0.2);
+                        break;
+                    case '-': // Zoom out
+                        if (this.elements.pageModal.classList.contains('hidden')) return; // Only zoom in modal
+                        this.adjustZoom(-0.2);
+                        break;
+                    default:
+                        break;
+                }
+            }
+
+            /**
+             * Filters PDF documents based on a search query.
+             * @param {string} query - The search string.
+             */
+            handleSearch(query) {
+                const searchLower = query.toLowerCase().trim();
+
+                if (!searchLower) {
+                    this.filteredFiles = this.pdfFiles;
+                    this.renderPdfGrid();
+                    return;
+                }
+
+                this.filteredFiles = this.pdfFiles.filter(file =>
+                    file.name.toLowerCase().includes(searchLower) ||
+                    file.category.toLowerCase().includes(searchLower) ||
+                    file.description.toLowerCase().includes(searchLower) ||
+                    file.tags.some(tag => tag.toLowerCase().includes(searchLower))
+                );
+
+                this.renderPdfGrid();
+            }
+
+            /**
+             * Shows the main document grid screen and hides the PDF viewer.
+             */
+            showMainScreen() {
+                this.elements.mainScreen.classList.remove('hidden');
+                this.elements.pdfViewer.classList.add('hidden');
+                this.currentPdf = null; // Clear current PDF
+                this.elements.pdfPages.innerHTML = ''; // Clear rendered pages
+                this.elements.thumbnailContainer.innerHTML = ''; // Clear thumbnails
+                this.pages = []; // Clear page data
+                this.elements.loadingSpinner.classList.add('hidden'); // Ensure spinner is hidden
+            }
+
+            /**
+             * Shows the PDF viewer screen and hides the main document grid.
+             */
+            showPdfViewer() {
+                this.elements.mainScreen.classList.add('hidden');
+                this.elements.pdfViewer.classList.remove('hidden');
+            }
+
+            /**
+             * Renders the grid of PDF document cards.
+             */
+            renderPdfGrid() {
+                const grid = this.elements.pdfGrid;
+                const noResults = this.elements.noResults;
+                const totalDocs = this.elements.totalDocs;
+                const searchResults = this.elements.searchResults;
+
+                grid.innerHTML = ''; // Clear existing cards
+
+                if (this.filteredFiles.length === 0) {
+                    grid.classList.add('hidden');
+                    noResults.classList.remove('hidden');
+                    totalDocs.textContent = '0 documents';
+                    searchResults.classList.remove('hidden');
+                    searchResults.textContent = 'No results for your search.';
+                    return;
+                }
+
+                grid.classList.remove('hidden');
+                noResults.classList.add('hidden');
+                totalDocs.textContent = `${this.filteredFiles.length} document${this.filteredFiles.length !== 1 ? 's' : ''}`;
+                searchResults.classList.add('hidden'); // Hide search results text if there are results
+
+                this.filteredFiles.forEach((file, index) => {
+                    const card = document.createElement('div');
+                    card.className = 'glass glass-hover card-float rounded-2xl p-6 cursor-pointer fade-in';
+                    card.style.animationDelay = `${index * 0.1}s`; // Staggered fade-in
+
+                    card.innerHTML = `
+                        <div class="flex items-start justify-between mb-4">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-12 h-12 bg-gradient-to-r from-purple-500 to-pink-500 rounded-xl flex items-center justify-center">
+                                    <i class="fas fa-file-pdf text-white text-lg"></i>
+                                </div>
+                                <div>
+                                    <h3 class="text-lg font-semibold text-white mb-1">${file.name}</h3>
+                                    <div class="category-badge">${file.category}</div>
+                                </div>
+                            </div>
+                            <div class="text-gray-400 text-sm">${file.pages} pages</div>
+                        </div>
+                        <p class="text-gray-300 text-sm mb-4 line-clamp-2">${file.description}</p>
+                        <div class="flex items-center justify-between">
+                            <div class="flex flex-wrap gap-2">
+                                ${file.tags.slice(0, 3).map(tag => `<span class="px-2 py-1 bg-gray-700 text-gray-300 text-xs rounded-full">${tag}</span>`).join('')}
+                            </div>
+                            <button class="px-4 py-2 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 rounded-lg transition-all duration-300 text-sm font-medium">
+                                <i class="fas fa-eye mr-2"></i>Open
+                            </button>
+                        </div>
+                    `;
+                    card.addEventListener('click', () => this.openPdf(file));
+                    grid.appendChild(card);
+                });
+            }
+
+            /**
+             * Opens and renders a PDF document in the viewer.
+             * @param {Object} file - The PDF file object from `this.pdfFiles`.
+             */
+            async openPdf(file) {
+                this.currentPdf = file;
+                this.showPdfViewer();
+                this.elements.pdfTitle.textContent = file.name;
+                this.elements.pdfCategory.textContent = file.category;
+                this.elements.loadingSpinner.classList.remove('hidden'); // Show loading spinner
+                this.elements.pdfPages.innerHTML = ''; // Clear previous pages
+                this.elements.thumbnailContainer.innerHTML = ''; // Clear previous thumbnails
+                this.pages = []; // Reset pages array
+
+                try {
+                    // Get PDF document from path
+                    const pdf = await pdfjsLib.getDocument(file.data).promise;
+                    this.totalPages = pdf.numPages;
+                    this.currentPage = 1;
+                    this.elements.pageInput.max = this.totalPages;
+                    this.elements.pageInput.value = 1;
+
+                    await this.renderAllPages(pdf);
+                    await this.renderThumbnails(pdf);
+
+                    this.elements.loadingSpinner.classList.add('hidden'); // Hide loading spinner
+                    this.updateThumbnailSelection(); // Select the first thumbnail
+                    this.notificationManager.showSuccess(`"${file.name}" loaded successfully.`);
+                } catch (error) {
+                    console.error('Error loading PDF:', error);
+                    this.elements.loadingSpinner.classList.add('hidden'); // Hide loading spinner on error
+                    this.notificationManager.showError(`Failed to load PDF: "${file.name}". Please ensure the file exists and is valid.`);
+                    this.showMainScreen(); // Go back to main screen on error
+                }
+            }
+
+            /**
+             * Renders all pages of the PDF into the main viewer.
+             * @param {pdfjsLib.PDFDocumentProxy} pdf - The PDF document proxy object.
+             */
+            async renderAllPages(pdf) {
+                const container = this.elements.pdfPages;
+                container.innerHTML = ''; // Clear existing pages
+                this.pages = []; // Reset stored pages
+
+                for (let pageNum = 1; pageNum <= this.totalPages; pageNum++) {
+                    try {
+                        const page = await pdf.getPage(pageNum);
+                        // Scale for rendering. Adjust as needed for better quality vs performance.
+                        const viewport = page.getViewport({ scale: 1.5 });
+                        const canvas = document.createElement('canvas');
+                        canvas.className = 'page-canvas w-full rounded-lg shadow-lg';
+                        canvas.width = viewport.width;
+                        canvas.height = viewport.height;
+                        const context = canvas.getContext('2d');
+
+                        // Render page to canvas
+                        await page.render({ canvasContext: context, viewport: viewport }).promise;
+
+                        // Add click listener to open page in modal view
+                        canvas.addEventListener('click', () => this.openPageModal(page, pageNum));
+                        container.appendChild(canvas);
+                        this.pages.push({ canvas, page, pageNum }); // Store page data for later use
+                    } catch (pageError) {
+                        console.error(`Error rendering page ${pageNum}:`, pageError);
+                        this.notificationManager.showWarning(`Could not render page ${pageNum}. Skipping.`);
+                        // Optionally, add a placeholder for failed pages
+                        const errorDiv = document.createElement('div');
+                        errorDiv.className = 'w-full h-48 bg-gray-800 text-gray-500 flex items-center justify-center rounded-lg';
+                        errorDiv.textContent = `Error loading page ${pageNum}`;
+                        container.appendChild(errorDiv);
+                    }
+                }
+            }
+
+            /**
+             * Renders thumbnails for all pages in the bottom navigation.
+             * @param {pdfjsLib.PDFDocumentProxy} pdf - The PDF document proxy object.
+             */
+            async renderThumbnails(pdf) {
+                const container = this.elements.thumbnailContainer;
+                container.innerHTML = ''; // Clear existing thumbnails
+
+                for (let pageNum = 1; pageNum <= this.totalPages; pageNum++) {
+                    try {
+                        const page = await pdf.getPage(pageNum);
+                        const viewport = page.getViewport({ scale: 0.25 }); // Smaller scale for thumbnails
+                        const canvas = document.createElement('canvas');
+                        canvas.className = 'thumbnail w-16 h-20 rounded cursor-pointer flex-shrink-0'; // flex-shrink-0 to prevent shrinking
+                        canvas.width = viewport.width;
+                        canvas.height = viewport.height;
+                        const context = canvas.getContext('2d');
+
+                        await page.render({ canvasContext: context, viewport: viewport }).promise;
+
+                        const wrapper = document.createElement('div');
+                        wrapper.className = 'flex flex-col items-center space-y-1';
+                        wrapper.innerHTML = `<span class="text-xs text-gray-400">${pageNum}</span>`;
+                        wrapper.insertBefore(canvas, wrapper.firstChild); // Add canvas before page number
+
+                        // Add click listener to scroll to the corresponding page
+                        canvas.addEventListener('click', () => this.scrollToPage(pageNum));
+                        container.appendChild(wrapper);
+                    } catch (thumbError) {
+                        console.error(`Error rendering thumbnail for page ${pageNum}:`, thumbError);
+                        this.notificationManager.showWarning(`Could not render thumbnail for page ${pageNum}.`);
+                    }
+                }
+            }
+
+            /**
+             * Scrolls the main PDF viewer to a specific page.
+             * @param {number} pageNum - The page number to scroll to.
+             */
+            scrollToPage(pageNum) {
+                // Ensure pageNum is within valid range
+                if (pageNum < 1 || pageNum > this.totalPages || !this.pages[pageNum - 1]) {
+                    this.notificationManager.showError(`Page ${pageNum} does not exist.`);
+                    return;
+                }
+
+                const pageElement = this.pages[pageNum - 1]?.canvas;
+                if (pageElement) {
+                    pageElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    this.currentPage = pageNum;
+                    this.elements.pageInput.value = pageNum; // Update page input field
+                    this.updateThumbnailSelection();
+                } else {
+                    this.notificationManager.showError(`Could not find element for page ${pageNum}.`);
+                }
+            }
+
+            /**
+             * Updates the active state of thumbnails based on the current page.
+             */
+            updateThumbnailSelection() {
+                const thumbnails = document.querySelectorAll('.thumbnail');
+                thumbnails.forEach((thumb, index) => {
+                    thumb.classList.toggle('active', index + 1 === this.currentPage);
+                });
+
+                // Scroll thumbnail container to keep active thumbnail visible
+                const activeThumbnail = document.querySelector('.thumbnail.active');
+                if (activeThumbnail) {
+                    activeThumbnail.scrollIntoView({ behavior: 'smooth', inline: 'center' });
+                }
+            }
+
+            /**
+             * Updates the current page number based on scroll position in the PDF container.
+             */
+            updateCurrentPageOnScroll() {
+                const container = this.elements.pdfContainer;
+                const pages = this.elements.pdfPages.children;
+                let newCurrentPage = this.currentPage;
+
+                for (let i = 0; i < pages.length; i++) {
+                    const pageElement = pages[i];
+                    const rect = pageElement.getBoundingClientRect();
+                    // Check if the top of the page is visible within the container's viewport
+                    // Add a small offset (e.g., 50px) to make it more forgiving
+                    if (rect.top >= 0 && rect.top < container.clientHeight / 2) {
+                        newCurrentPage = i + 1;
+                        break;
+                    }
+                }
+
+                if (newCurrentPage !== this.currentPage) {
+                    this.currentPage = newCurrentPage;
+                    this.elements.pageInput.value = this.currentPage;
+                    this.updateThumbnailSelection();
+                }
+            }
+
+            /**
+             * Opens the full-page modal to view a single PDF page with zoom controls.
+             * @param {pdfjsLib.PDFPageProxy} page - The PDFPageProxy object for the page.
+             * @param {number} pageNum - The page number.
+             */
+            async openPageModal(page, pageNum) {
+                this.elements.pageModal.classList.remove('hidden');
+                this.elements.pageModal.classList.add('slide-up');
+                this.zoomLevel = 1; // Reset zoom when opening modal
+                this.currentPage = pageNum; // Ensure current page is updated for modal context
+                await this.renderModalPage(page, this.elements.modalCanvas);
+            }
+
+            /**
+             * Renders a single PDF page onto the modal canvas with the current zoom level.
+             * @param {pdfjsLib.PDFPageProxy} page - The PDFPageProxy object for the page.
+             * @param {HTMLCanvasElement} canvas - The canvas element to render on.
+             */
+            async renderModalPage(page, canvas) {
+                try {
+                    // Adjust scale for higher resolution in modal, multiplied by zoom level
+                    const baseScale = window.innerWidth > 768 ? 2.0 : 1.5; // Higher base scale for larger screens
+                    const viewport = page.getViewport({ scale: this.zoomLevel * baseScale });
+
+                    // Set canvas dimensions to match viewport, respecting max-width/height from CSS
+                    canvas.width = viewport.width;
+                    canvas.height = viewport.height;
+
+                    const context = canvas.getContext('2d');
+                    await page.render({ canvasContext: context, viewport: viewport }).promise;
+                } catch (error) {
+                    console.error('Error rendering modal page:', error);
+                    this.notificationManager.showError('Failed to render page in modal view.');
+                }
+            }
+
+            /**
+             * Closes the full-page modal.
+             */
+            closeModal() {
+                this.elements.pageModal.classList.add('hidden');
+                this.elements.pageModal.classList.remove('slide-up');
+                this.zoomLevel = 1; // Reset zoom level
+            }
+
+            /**
+             * Adjusts the zoom level of the page in the modal.
+             * @param {number} delta - The amount to change the zoom level by.
+             */
+            adjustZoom(delta) {
+                const newZoom = Math.max(0.5, Math.min(3, this.zoomLevel + delta));
+                if (newZoom !== this.zoomLevel) {
+                    this.zoomLevel = newZoom;
+                    const currentPageData = this.pages[this.currentPage - 1];
+                    if (currentPageData && currentPageData.page) {
+                        this.renderModalPage(currentPageData.page, this.elements.modalCanvas);
+                    } else {
+                        this.notificationManager.showError('Cannot adjust zoom: current page data is unavailable.');
+                    }
+                }
+            }
+
+            /**
+             * Resets the zoom level of the page in the modal to default.
+             */
+            resetZoom() {
+                this.zoomLevel = 1;
+                const currentPageData = this.pages[this.currentPage - 1];
+                if (currentPageData && currentPageData.page) {
+                    this.renderModalPage(currentPageData.page, this.elements.modalCanvas);
+                } else {
+                    this.notificationManager.showError('Cannot reset zoom: current page data is unavailable.');
+                }
+            }
+
+            /**
+             * Navigates to a specific page number entered in the input field.
+             */
+            goToPage() {
+                const pageNumStr = this.elements.pageInput.value;
+                const pageNum = parseInt(pageNumStr, 10);
+
+                if (isNaN(pageNum) || pageNum < 1 || pageNum > this.totalPages) {
+                    this.notificationManager.showError(`Please enter a valid page number between 1 and ${this.totalPages}.`);
+                    this.elements.pageInput.value = this.currentPage; // Reset input to current page
+                    return;
+                }
+                this.scrollToPage(pageNum);
+            }
+
+            /**
+             * Navigates to the previous or next page in the PDF viewer.
+             * @param {-1|1} direction - -1 for previous page, 1 for next page.
+             */
+            navigatePage(direction) {
+                const newPage = this.currentPage + direction;
+                if (newPage >= 1 && newPage <= this.totalPages) {
+                    this.scrollToPage(newPage);
+                } else {
+                    this.notificationManager.showInfo('You are at the beginning or end of the document.');
+                }
+            }
+
+            /**
+             * Shares the current PDF document using the Web Share API or copies its URL.
+             */
+            sharePdf() {
+                if (!this.currentPdf) {
+                    this.notificationManager.showWarning('No document is currently open to share.');
+                    return;
+                }
+
+                const shareData = {
+                    title: this.currentPdf.name,
+                    text: `Check out this PDF: ${this.currentPdf.description}`,
+                    url: window.location.href // Shares the current URL of the application
+                };
+
+                if (navigator.share) {
+                    navigator.share(shareData)
+                        .then(() => this.notificationManager.showSuccess('Document shared successfully!'))
+                        .catch((error) => {
+                            // User cancelled or other error
+                            if (error.name === 'AbortError') {
+                                this.notificationManager.showInfo('Sharing cancelled.');
+                            } else {
+                                console.error('Error sharing:', error);
+                                this.notificationManager.showError('Failed to share document.');
+                            }
+                        });
+                } else {
+                    // Fallback for browsers that do not support Web Share API
+                    navigator.clipboard.writeText(window.location.href)
+                        .then(() => this.notificationManager.showInfo('Link copied to clipboard!'))
+                        .catch(err => {
+                            console.error('Failed to copy link:', err);
+                            this.notificationManager.showError('Failed to copy link to clipboard.');
+                        });
+                }
+            }
+
+            /**
+             * Initiates the download of the current PDF document.
+             */
+            downloadPdf() {
+                if (!this.currentPdf || !this.currentPdf.data) {
+                    this.notificationManager.showWarning('No document is currently open or available for download.');
+                    return;
+                }
+
+                try {
+                    const link = document.createElement('a');
+                    link.href = this.currentPdf.data; // The path to the PDF file
+                    link.download = `${this.currentPdf.name}.pdf`; // Suggested filename for download
+                    document.body.appendChild(link); // Append to body to make it clickable
+                    link.click(); // Programmatically click the link to trigger download
+                    document.body.removeChild(link); // Clean up the temporary link
+                    this.notificationManager.showSuccess(`Downloading "${this.currentPdf.name}"...`);
+                } catch (error) {
+                    console.error('Error initiating download:', error);
+                    this.notificationManager.showError('Failed to initiate download. Please try again.');
+                }
+            }
+        }
+
+        // Initialize the DocuVault application when the DOM is fully loaded.
+        document.addEventListener('DOMContentLoaded', () => {
+            new DocuVault();
+        });
+    </script>
+</body>
+</html>
+
