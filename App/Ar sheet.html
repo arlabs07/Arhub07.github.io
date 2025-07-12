@@ -1,0 +1,3153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ar Sheets</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        html, body {
+            height: 100%;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #202124;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            padding: 0;
+            margin: 0;
+            box-sizing: border-box;
+            color: #e8eaed;
+            transition: background-color 0.3s ease;
+            overflow: hidden;
+        }
+
+        .header-fixed {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background-color: #2e2f31;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+            padding: 10px 20px;
+            display: flex;
+            align-items: center;
+            flex-wrap: nowrap;
+            overflow-x: auto;
+            gap: 10px;
+            width: 100%;
+            -webkit-overflow-scrolling: touch;
+            justify-content: space-between;
+        }
+
+        .footer-fixed {
+            position: sticky;
+            bottom: 0;
+            top: auto;
+            z-index: 100;
+            background-color: #2e2f31;
+            box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.3);
+            display: flex;
+            flex-wrap: nowrap;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            flex-shrink: 0;
+            padding: 8px 20px;
+            gap: 10px; /* Gap between styling toolbar and sheet tabs */
+            align-items: center;
+        }
+
+        .main-content-area {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            padding: 10px 20px;
+            overflow-y: auto;
+            box-sizing: border-box;
+            width: 100%;
+        }
+
+        .action-buttons, .utility-buttons {
+            display: flex;
+            gap: 8px;
+            flex-wrap: nowrap;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .file-input-wrapper, .action-button, .styling-button {
+            position: relative;
+            overflow: hidden;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            background-color: #3c4043; /* Default dark background */
+            color: #e8eaed; /* Default text color */
+            padding: 8px 12px;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+            font-weight: 600;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            white-space: nowrap;
+            min-width: 40px;
+            text-align: center;
+            flex-shrink: 0;
+        }
+
+        .action-button span, .styling-button span {
+            display: none;
+        }
+        .action-button i, .styling-button i, .styling-button svg {
+            margin-right: 0;
+        }
+        .styling-button svg {
+            width: 1em; /* Adjust SVG size */
+            height: 1em;
+            vertical-align: middle;
+            fill: currentColor; /* Ensure SVG color matches text color */
+        }
+
+
+        @media (min-width: 768px) {
+            .header-fixed, .footer-fixed {
+                padding: 15px 30px;
+                gap: 15px;
+            }
+            .main-content-area {
+                padding: 20px 30px;
+            }
+            .action-buttons, .utility-buttons {
+                gap: 10px;
+            }
+            .file-input-wrapper, .action-button, .styling-button {
+                padding: 10px 15px;
+                min-width: 100px;
+            }
+            .action-button span, .styling-button span {
+                display: inline;
+            }
+            .action-button i, .styling-button i, .styling-button svg {
+                margin-right: 8px;
+            }
+        }
+
+        .file-input-wrapper:hover, .action-button:hover, .styling-button:hover {
+            background-color: #5f6368; /* Lighter gray on hover */
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        }
+        .action-button:active, .styling-button:active {
+            background-color: #8ab4f8; /* Blue on active/click */
+            color: #202124; /* Dark text on blue background */
+            transform: translateY(0);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+        }
+
+        .file-input-wrapper input[type="file"] {
+            position: absolute;
+            left: 0;
+            top: 0;
+            opacity: 0;
+            cursor: pointer;
+            width: 100%;
+            height: 100%;
+        }
+
+        /* Editor Controls (Formula Bar) */
+        .editor-controls {
+            position: fixed;
+            bottom: 70px; /* Adjust based on footer height + gap */
+            left: 20px;
+            right: 20px;
+            z-index: 90;
+            display: flex;
+            gap: 8px;
+            width: calc(100% - 40px); /* Account for left/right padding */
+            align-items: center;
+            flex-shrink: 0;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease-out;
+        }
+
+        .editor-controls.show {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        #formulaBar {
+            background-color: #3c4043;
+            border: 1px solid #5f6368;
+            border-radius: 8px;
+            padding: 10px 15px;
+            color: #e8eaed;
+            flex-grow: 1;
+            font-family: 'Inter', sans-serif;
+            font-size: 1em;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        #formulaBar:focus {
+            border-color: #8ab4f8;
+            box-shadow: 0 0 0 2px rgba(138, 180, 248, 0.4);
+        }
+
+        #fxButton {
+            background-color: #5f6368;
+            color: #e8eaed;
+            padding: 8px 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            font-weight: 600;
+            flex-shrink: 0;
+        }
+        #fxButton:hover {
+            background-color: #70757a;
+            transform: translateY(-1px);
+        }
+        #fxButton:active {
+            background-color: #8ab4f8;
+            color: #202124;
+            transform: translateY(0);
+        }
+
+        .styling-toolbar {
+            display: flex;
+            flex-wrap: nowrap;
+            overflow-x: auto;
+            gap: 8px;
+            padding: 10px;
+            background-color: #3c4043;
+            border-radius: 8px;
+            transition: opacity 0.3s ease;
+            -webkit-overflow-scrolling: touch;
+            flex-shrink: 0;
+        }
+
+        .styling-toolbar.hidden {
+            opacity: 0;
+            height: 0;
+            overflow: hidden;
+            padding: 0;
+            margin: 0;
+            pointer-events: none; /* Disable interactions when hidden */
+        }
+
+        .styling-button.active {
+            background-color: #8ab4f8; /* Blue when active */
+            color: #202124;
+            box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.3);
+        }
+
+        input[type="color"] {
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            width: 30px;
+            height: 30px;
+            background-color: transparent;
+            border: none;
+            cursor: pointer;
+            padding: 0;
+            border-radius: 4px;
+            overflow: hidden;
+            transition: transform 0.2s ease;
+        }
+        input[type="color"]::-webkit-color-swatch-wrapper { padding: 0; }
+        input[type="color"]::-webkit-color-swatch { border: none; border-radius: 4px; }
+        input[type="color"]:hover { transform: scale(1.1); }
+
+
+        .table-container {
+            overflow: auto;
+            flex-grow: 1;
+            border: 1px solid #444;
+            border-radius: 8px;
+            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+            transition: opacity 0.5s ease;
+            margin-top: 0;
+            width: 100%;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            font-size: 0.9em;
+            color: #e8eaed;
+            min-width: fit-content;
+        }
+
+        th, td {
+            padding: 6px 10px; /* Smaller padding for more cells */
+            border: 1px solid #444;
+            text-align: left;
+            white-space: nowrap;
+            box-sizing: border-box;
+            outline: none;
+            transition: background-color 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+        }
+
+        th {
+            background-color: #3c4043;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            font-weight: 600;
+            color: #bdc1c6;
+            border-bottom: 2px solid #5f6368;
+            cursor: pointer;
+        }
+
+        th.sorted-asc {
+            background-color: #5f6368;
+            color: #8ab4f8;
+        }
+
+        th.sorted-desc {
+            background-color: #5f6368;
+            color: #f28b82;
+        }
+
+        th.row-number-header, td.row-number-cell, th.column-letter-header {
+            background-color: #3c4043;
+            color: #9aa0a6;
+            font-weight: normal;
+            text-align: center;
+            min-width: 40px;
+            max-width: 40px;
+            width: 40px;
+            position: sticky;
+            left: 0;
+            z-index: 11;
+            border-right: 2px solid #5f6368;
+            cursor: default;
+        }
+
+        th.column-letter-header {
+            top: 0;
+            z-index: 12;
+        }
+
+        td {
+            background-color: #2e2f31;
+        }
+
+        th:focus, td:focus {
+            box-shadow: inset 0 0 0 2px #8ab4f8;
+            background-color: #3c4043;
+        }
+
+        tr:nth-child(even) td {
+            background-color: #28292b;
+        }
+
+        tr:hover td {
+            background-color: #3c4043;
+        }
+        tr:hover td.row-number-cell {
+            background-color: #3c4043;
+        }
+
+        td.invalid-cell {
+            border: 2px solid #f28b82;
+            box-shadow: inset 0 0 0 1px #f28b82;
+        }
+
+        .message-box {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #3c4043;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.4);
+            z-index: 1000;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+            font-family: 'Inter', sans-serif;
+            color: #e8eaed;
+            animation: fadeIn 0.3s ease-out;
+            width: 70%;
+            max-width: 600px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .message-box.show {
+            display: flex;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translate(-50%, -60%); }
+            to { opacity: 1; transform: translate(-50%, -50%); }
+        }
+
+        .message-box-content {
+            font-size: 1.1em;
+            color: #e8eaed;
+            text-align: center;
+            flex-grow: 1;
+        }
+
+        .message-box-close-button {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: none;
+            border: none;
+            color: #bdc1c6;
+            font-size: 1.2em;
+            cursor: pointer;
+            transition: color 0.2s ease;
+        }
+        .message-box-close-button:hover {
+            color: #f28b82;
+        }
+
+        .context-menu {
+            position: fixed;
+            background-color: #3c4043;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+            z-index: 1001;
+            display: none;
+            flex-direction: column;
+            padding: 8px 0;
+            min-width: 180px;
+            animation: slideIn 0.15s ease-out;
+        }
+
+        .context-menu.show {
+            display: flex;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .context-menu-item {
+            padding: 10px 20px;
+            color: #e8eaed;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+            white-space: nowrap;
+        }
+
+        .context-menu-item:hover {
+            background-color: #5f6368;
+        }
+
+        .context-menu-separator {
+            height: 1px;
+            background-color: #444;
+            margin: 5px 0;
+        }
+
+        .modal-input, .modal-select {
+            background-color: #3c4043;
+            border: 1px solid #5f6368;
+            border-radius: 8px;
+            padding: 10px 15px;
+            color: #e8eaed;
+            width: 100%;
+            max-width: 100%;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .modal-input:focus, .modal-select:focus {
+            border-color: #8ab4f8;
+            box-shadow: 0 0 0 2px rgba(138, 180, 248, 0.4);
+        }
+
+        #sheetTabs {
+            display: flex;
+            flex-wrap: nowrap;
+            gap: 8px;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            padding-right: 10px;
+            flex-grow: 1; 
+            flex-shrink: 1;
+            min-width: 0; 
+        }
+
+        .sheet-tab {
+            background-color: #5f6368;
+            color: #e8eaed;
+            padding: 8px 15px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.2s ease, transform 0.1s ease;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+
+        .sheet-tab:hover {
+            background-color: #70757a;
+            transform: translateY(-1px);
+        }
+
+        .sheet-tab.active {
+            background-color: #8ab4f8;
+            color: #202124;
+            font-weight: 700;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+        }
+
+        .sheet-tab-close {
+            background: none;
+            border: none;
+            color: #e8eaed;
+            font-size: 0.8em;
+            cursor: pointer;
+            padding: 0 4px;
+            transition: color 0.2s ease;
+        }
+        .sheet-tab-close:hover {
+            color: #f28b82;
+        }
+
+        .selected-row {
+            background-color: #3a3b3d !important;
+        }
+        .selected-col {
+            background-color: #3a3b3d !important;
+        }
+
+        .sidebar-backdrop {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1001;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease-in-out;
+        }
+
+        .sidebar-backdrop.show {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: -250px; /* Hidden by default */
+            width: 250px;
+            height: 100%;
+            background-color: #2e2f31;
+            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.5);
+            z-index: 1002;
+            transition: left 0.3s ease-in-out;
+            display: flex;
+            flex-direction: column;
+            padding: 20px 0;
+        }
+
+        .sidebar.show {
+            left: 0;
+        }
+
+        .sidebar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px 20px 20px;
+            border-bottom: 1px solid #444;
+            margin-bottom: 10px;
+        }
+
+        .sidebar-header h3 {
+            font-size: 1.5em;
+            color: #e8eaed;
+        }
+
+        .sidebar-close-button {
+            background: none;
+            border: none;
+            color: #bdc1c6;
+            font-size: 1.5em;
+            cursor: pointer;
+            transition: color 0.2s ease;
+        }
+        .sidebar-close-button:hover {
+            color: #f28b82;
+        }
+
+        .sidebar-menu-item {
+            padding: 12px 20px;
+            color: #e8eaed;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .sidebar-menu-item:hover {
+            background-color: #3c4043;
+        }
+        .sidebar-menu-item i {
+            width: 20px;
+            text-align: center;
+        }
+
+        #formulaHelpModal, #keyboardShortcutsModal, #saveAsModal {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #2e2f31;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.4);
+            z-index: 1003;
+            display: none;
+            flex-direction: column;
+            max-width: 400px;
+            max-height: 80vh;
+            overflow-y: auto;
+            animation: fadeIn 0.3s ease-out;
+        }
+        #formulaHelpModal.show, #keyboardShortcutsModal.show, #saveAsModal.show {
+            display: flex;
+        }
+        #formulaHelpModal h3, #keyboardShortcutsModal h3, #saveAsModal h3 {
+            margin-bottom: 15px;
+            color: #8ab4f8;
+        }
+        #formulaHelpModal ul, #keyboardShortcutsModal ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            width: 100%;
+        }
+        #formulaHelpModal li, #keyboardShortcutsModal li {
+            padding: 10px 0;
+            border-bottom: 1px solid #444;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+        #formulaHelpModal li:last-child, #keyboardShortcutsModal li:last-child {
+            border-bottom: none;
+        }
+        #formulaHelpModal li:hover {
+            background-color: #3c4043;
+        }
+        #formulaHelpModal li strong, #keyboardShortcutsModal li strong {
+            color: #e8eaed;
+        }
+        #formulaHelpModal li span, #keyboardShortcutsModal li span {
+            font-size: 0.9em;
+            color: #bdc1c6;
+        }
+
+        @media print {
+            body > *:not(.main-content-area, .editor-controls) { /* Keep editor controls for printing if needed */
+                display: none !important;
+            }
+            .main-content-area {
+                padding: 0 !important;
+                margin: 0 !important;
+                width: 100% !important;
+                max-width: 100% !important;
+                height: auto !important;
+                overflow: visible !important;
+            }
+            .table-container {
+                max-height: none !important;
+                overflow: visible !important;
+                border: none !important;
+                box-shadow: none !important;
+            }
+            table, th, td {
+                border: 1px solid #000 !important;
+                color: #000 !important;
+                background-color: #fff !important;
+            }
+            tr:nth-child(even) td {
+                background-color: #f0f0f0 !important;
+            }
+            th.row-number-header, td.row-number-cell, th.column-letter-header {
+                background-color: #e0e0e0 !important;
+                border-right: 1px solid #000 !important;
+                color: #000 !important;
+            }
+        }
+    </style>
+    <link rel="manifest" id="pwaManifest" href="">
+</head>
+<body>
+    <div class="header-fixed">
+        <div class="flex items-center gap-3 flex-shrink-0">
+            <button id="sidebarToggleButton" class="action-button">
+                <i class="fas fa-bars"></i><span>Menu</span>
+            </button>
+            <h1 id="appTitle" class="text-3xl font-bold text-gray-100">Ar Sheets</h1>
+            <p id="fileNameDisplay" class="text-gray-400 text-sm hidden"></p>
+            <button id="undoButton" class="action-button hidden">
+                <i class="fas fa-undo"></i><span>Undo</span>
+            </button>
+            <button id="redoButton" class="action-button hidden">
+                <i class="fas fa-redo"></i><span>Redo</span>
+            </button>
+            <!-- Separate Save Cell Button -->
+            <button id="saveCellButton" class="action-button hidden">
+                <i class="fas fa-check"></i><span>Save Cell</span>
+            </button>
+            <!-- Close Workbook Button - Moved after Save Cell Button -->
+            <button id="closeWorkbookButton" class="action-button hidden">
+                <i class="fas fa-times"></i><span>Close</span>
+            </button>
+        </div>
+        <div class="action-buttons flex-shrink-0">
+            <div class="file-input-wrapper action-button">
+                <i class="fas fa-upload"></i><span>Upload</span>
+                <input type="file" id="headerFileInput" accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel" multiple>
+            </div>
+            <button id="newSheetButton" class="action-button">
+                <i class="fas fa-file-alt"></i><span>New Sheet</span>
+            </button>
+        </div>
+    </div>
+
+    <div class="main-content-area">
+        <div id="messageDisplay" class="text-center text-gray-400 italic mt-4">
+            Start by creating a new sheet or uploading an existing CSV/Excel file.
+        </div>
+
+        <div id="tableContainer" class="table-container hidden">
+            <table id="dataTable"></table>
+        </div>
+    </div>
+
+    <div class="footer-fixed">
+        <div id="stylingToolbar" class="styling-toolbar hidden">
+            <button id="boldButton" class="styling-button" title="Bold"><i class="fas fa-bold"></i><span>Bold</span></button>
+            <button id="italicButton" class="styling-button" title="Italic"><i class="fas fa-italic"></i><span>Italic</span></button>
+            <button id="underlineButton" class="styling-button" title="Underline"><i class="fas fa-underline"></i><span>Underline</span></button>
+            <div class="flex items-center gap-1 flex-shrink-0">
+                <label for="textColorPicker" class="text-gray-400 text-sm">Text:</label>
+                <input type="color" id="textColorPicker" value="#e8eaed" title="Text Color">
+            </div>
+            <div class="flex items-center gap-1 flex-shrink-0">
+                <label for="bgColorPicker" class="text-gray-400 text-sm">Cell:</label>
+                <input type="color" id="bgColorPicker" value="#2e2f31" title="Background Color">
+            </div>
+            <button id="alignLeftButton" class="styling-button" title="Align Left"><i class="fas fa-align-left"></i><span>Left</span></button>
+            <button id="alignCenterButton" class="styling-button" title="Align Center"><i class="fas fa-align-center"></i><span>Center</span></button>
+            <button id="alignRightButton" class="styling-button" title="Align Right"><i class="fas fa-align-right"></i><span>Right</span></button>
+            
+            <!-- SVG Icons for Table Operations -->
+            <button id="insertRowAboveButton" class="styling-button" title="Insert Row Above">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 2v6"/>
+                    <path d="m16 5-4-4-4 4"/>
+                    <rect x="3" y="10" width="18" height="11" rx="2"/>
+                    <path d="M3 15h18"/>
+                </svg>
+                <span>Row Above</span>
+            </button>
+            <button id="insertRowBelowButton" class="styling-button" title="Insert Row Below">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 22v-6"/>
+                    <path d="m16 19-4 4-4-4"/>
+                    <rect x="3" y="3" width="18" height="11" rx="2"/>
+                    <path d="M3 9h18"/>
+                </svg>
+                <span>Row Below</span>
+            </button>
+            <button id="insertColLeftButton" class="styling-button" title="Insert Column Left">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M2 12h6"/>
+                    <path d="m5 16-3-4 3-4"/>
+                    <rect x="10" y="3" width="11" height="18" rx="2"/>
+                    <path d="M15 3v18"/>
+                </svg>
+                <span>Col Left</span>
+            </button>
+            <button id="insertColRightButton" class="styling-button" title="Insert Column Right">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M22 12h-6"/>
+                    <path d="m19 16 3-4-3-4"/>
+                    <rect x="3" y="3" width="11" height="18" rx="2"/>
+                    <path d="M9 3v18"/>
+                </svg>
+                <span>Col Right</span>
+            </button>
+            <!-- Custom SVG for Delete Row -->
+            <button id="deleteRowButton" class="styling-button" title="Delete Row">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M3 6h18"/>
+                    <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/>
+                    <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/>
+                    <line x1="10" y1="11" x2="10" y2="17"/>
+                    <line x1="14" y1="11" x2="14" y2="17"/>
+                    <line x1="3" y1="12" x2="21" y2="12" stroke-dasharray="3 3"/> <!-- Horizontal line for row -->
+                </svg>
+                <span>Row</span>
+            </button>
+            <!-- Custom SVG for Delete Column -->
+            <button id="deleteColButton" class="styling-button" title="Delete Column">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M3 6h18"/>
+                    <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/>
+                    <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/>
+                    <line x1="10" y1="11" x2="10" y2="17"/>
+                    <line x1="14" y1="11" x2="14" y2="17"/>
+                    <line x1="12" y1="3" x2="12" y2="21" stroke-dasharray="3 3"/> <!-- Vertical line for column -->
+                </svg>
+                <span>Col</span>
+            </button>
+        </div>
+        <div id="sheetTabs"></div>
+    </div>
+
+    <!-- Editor Controls (Formula Bar) - Fixed position -->
+    <div id="editorControls" class="editor-controls">
+        <input type="text" id="formulaBar" placeholder="fx" readonly>
+        <button id="fxButton">Fx</button>
+    </div>
+
+    <div id="messageBox" class="message-box">
+        <p id="messageBoxContent" class="message-box-content"></p>
+        <button id="messageBoxCloseButton" class="message-box-close-button">
+            <i class="fas fa-times"></i>
+        </button>
+    </div>
+
+    <div id="contextMenu" class="context-menu">
+        <div class="context-menu-item" id="setValidationCell">Set Data Validation...</div>
+    </div>
+
+    <div id="sheetTabContextMenu" class="context-menu">
+        <div class="context-menu-item" id="renameSheet">Rename Sheet</div>
+        <div class="context-menu-item" id="deleteSheet">Delete Sheet</div>
+    </div>
+
+    <div id="chartModal" class="message-box">
+        <button id="closeChartModalButton" class="message-box-close-button">
+            <i class="fas fa-times"></i>
+        </button>
+        <h3 class="text-xl font-bold mb-4">Create Chart</h3>
+        <input type="text" id="chartRangeInput" placeholder="Enter data range (e.g., A1:B5 or A:B)" class="modal-input mb-3">
+        <select id="chartTypeSelect" class="modal-select mb-3">
+            <option value="bar">Bar Chart</option>
+            <option value="line">Line Chart</option>
+            <option value="pie">Pie Chart</option>
+        </select>
+        <canvas id="myChart" width="400" height="200"></canvas>
+        <div class="flex gap-3 mt-4">
+            <button id="renderChartButton" class="action-button">
+                <i class="fas fa-chart-line"></i><span>Render Chart</span>
+            </button>
+        </div>
+    </div>
+
+    <div id="validationModal" class="message-box">
+        <button id="closeValidationModalButton" class="message-box-close-button">
+            <i class="fas fa-times"></i>
+        </button>
+        <h3 class="text-xl font-bold mb-4">Set Data Validation</h3>
+        <p id="validationCellDisplay" class="text-gray-400 mb-3"></p>
+        <select id="validationTypeSelect" class="modal-select mb-3">
+            <option value="">No Validation</option>
+            <option value="number">Number</option>
+            <option value="text">Text</option>
+            <option value="list">List (comma-separated)</option>
+        </select>
+        <input type="text" id="validationRuleInput" placeholder="Rule (e.g., min:10,max:100 or item1,item2)" class="modal-input mb-3 hidden">
+        <div class="flex gap-3 mt-4">
+            <button id="applyValidationButton" class="action-button">
+                <i class="fas fa-check"></i><span>Apply Validation</span>
+            </button>
+            <button id="clearValidationButton" class="action-button bg-yellow-500 hover:bg-yellow-600">
+                <i class="fas fa-eraser"></i><span>Clear Validation</span>
+            </button>
+        </div>
+    </div>
+
+    <div id="formulaHelpModal" class="message-box">
+        <button id="closeFormulaHelpModalButton" class="message-box-close-button">
+            <i class="fas fa-times"></i>
+        </button>
+        <h3 class="text-xl font-bold mb-4">Supported Formulas</h3>
+        <ul>
+            <li data-formula="SUM()"><strong>SUM(range)</strong><span> - Calculates the sum of a range of cells. E.g., =SUM(A1:B5)</span></li>
+            <li data-formula="AVG()"><strong>AVG(range)</strong><span> - Calculates the average of a range of cells. E.g., =AVG(C1:C10)</span></li>
+        </ul>
+    </div>
+
+    <div id="keyboardShortcutsModal" class="message-box">
+        <button id="closeKeyboardShortcutsModalButton" class="message-box-close-button">
+            <i class="fas fa-times"></i>
+        </button>
+        <h3 class="text-xl font-bold mb-4">Keyboard Shortcuts</h3>
+        <ul>
+            <li><strong>Enter</strong><span> - Save cell content and move down.</span></li>
+            <li><strong>Tab</strong><span> - Save cell content and move right.</span></li>
+            <li><strong>Shift + Tab</strong><span> - Save cell content and move left.</span></li>
+            <li><strong>Arrow Keys (Up/Down/Left/Right)</strong><span> - Save cell content and move in direction.</span></li>
+            <li><strong>F2</strong><span> - Edit active cell (focus formula bar).</span></li>
+            <li><strong>Escape</strong><span> - Save cell content and close editor/modals.</span></li>
+            <li><strong>Ctrl/Cmd + S</strong><span> - Save workbook to file.</span></li>
+            <li><strong>Ctrl/Cmd + Z</strong><span> - Undo last action.</span></li>
+            <li><strong>Ctrl/Cmd + Y</strong><span> - Redo last action.</span></li>
+            <li><strong>Ctrl/Cmd + B</strong><span> - Toggle bold on active cell.</span></li>
+            <li><strong>Ctrl/Cmd + I</strong><span> - Toggle italic on active cell.</span></li>
+            <li><strong>Ctrl/Cmd + U</strong><span> - Toggle underline on active cell.</span></li>
+        </ul>
+    </div>
+
+    <div id="saveAsModal" class="message-box">
+        <button id="closeSaveAsModalButton" class="message-box-close-button">
+            <i class="fas fa-times"></i>
+        </button>
+        <h3 class="text-xl font-bold mb-4">Save As</h3>
+        <div class="w-full mb-3">
+            <label for="saveAsFilename" class="block text-sm font-medium text-gray-300 mb-1">File Name:</label>
+            <input type="text" id="saveAsFilename" class="modal-input" placeholder="Enter file name">
+        </div>
+        <div class="w-full mb-4">
+            <label for="saveAsExtension" class="block text-sm font-medium text-gray-300 mb-1">Save as Type:</label>
+            <select id="saveAsExtension" class="modal-select">
+                <option value="xlsx">Excel Workbook (*.xlsx)</option>
+                <option value="csv">CSV (Comma delimited) (*.csv)</option>
+            </select>
+        </div>
+        <div class="flex gap-3 mt-4">
+            <button id="confirmSaveAsButton" class="action-button">
+                <i class="fas fa-save"></i><span>Save</span>
+            </button>
+            <button id="cancelSaveAsButton" class="action-button bg-gray-500 hover:bg-gray-600">
+                <i class="fas fa-times"></i><span>Cancel</span>
+            </button>
+        </div>
+    </div>
+
+    <div id="sidebar" class="sidebar">
+        <div class="sidebar-header">
+            <h3>Menu</h3>
+            <button id="sidebarCloseButton" class="sidebar-close-button">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="flex flex-col gap-2">
+            <button id="menuSaveButton" class="sidebar-menu-item"><i class="fas fa-save"></i> Save a Copy</button>
+            <button id="saveToLocalStorageButton" class="sidebar-menu-item"><i class="fas fa-hdd"></i> Save to Local Storage</button>
+            <button id="loadFromLocalStorageButton" class="sidebar-menu-item"><i class="fas fa-folder-open"></i> Load from Local Storage</button>
+            <button id="menuCreateChartButton" class="sidebar-menu-item"><i class="fas fa-chart-bar"></i> Create Chart</button>
+            <button id="menuSetValidationButton" class="sidebar-menu-item"><i class="fas fa-check-circle"></i> Set Data Validation</button>
+            <button id="menuKeyboardShortcutsButton" class="sidebar-menu-item"><i class="fas fa-keyboard"></i> Keyboard Shortcuts</button>
+            <div class="context-menu-separator"></div>
+            <button id="menuAddRowButton" class="sidebar-menu-item"><i class="fas fa-plus"></i> Add Row</button>
+            <button id="menuAddColumnButton" class="sidebar-menu-item"><i class="fas fa-columns"></i> Add Column</button>
+        </div>
+    </div>
+    <div id="sidebarBackdrop" class="sidebar-backdrop"></div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // PWA File Handler Registration
+            if ('launchQueue' in window) {
+                window.launchQueue.setConsumer(async (launchParams) => {
+                    if (launchParams.files && launchParams.files.length > 0) {
+                        try {
+                            const fileHandle = launchParams.files[0];
+                            const file = await fileHandle.getFile();
+                            handleFileFromLaunch({ target: { files: [file] } });
+                        } catch (error) {
+                            console.error('Error handling launched file:', error);
+                            showMessageBox('Failed to open file via "Open With".');
+                        }
+                    }
+                });
+            }
+
+            const manifestData = {
+                name: "Ar Sheets",
+                short_name: "Ar Sheets",
+                start_url: ".",
+                display: "standalone",
+                background_color: "#202124",
+                theme_color: "#2e2f31",
+                icons: [
+                    {
+                        src: "https://placehold.co/192x192/2e2f31/e8eaed?text=AS",
+                        sizes: "192x192",
+                        type: "image/png"
+                    },
+                    {
+                        src: "https://placehold.co/512x512/2e2f31/e8eaed?text=AS",
+                        sizes: "512x512",
+                        type: "image/png"
+                    }
+                ],
+                file_handlers: [
+                    {
+                        action: "/",
+                        name: "Open with Ar Sheets",
+                        accept: {
+                            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": [".xlsx"],
+                            "application/vnd.ms-excel": [".xls"],
+                            "text/csv": [".csv"]
+                        }
+                    }
+                ]
+            };
+            const manifestBlob = new Blob([JSON.stringify(manifestData)], { type: 'application/json' });
+            const manifestUrl = URL.createObjectURL(manifestBlob);
+            document.getElementById('pwaManifest').setAttribute('href', manifestUrl);
+
+            const appTitle = document.getElementById('appTitle');
+            const fileNameDisplay = document.getElementById('fileNameDisplay');
+            const messageDisplay = document.getElementById('messageDisplay');
+            const tableContainer = document.getElementById('tableContainer');
+            const dataTable = document.getElementById('dataTable');
+            const newSheetButton = document.getElementById('newSheetButton');
+            const messageBox = document.getElementById('messageBox');
+            const messageBoxContent = document.getElementById('messageBoxContent');
+            const messageBoxCloseButton = document.getElementById('messageBoxCloseButton');
+
+            const sheetTabsContainer = document.getElementById('sheetTabs');
+            const sheetTabContextMenu = document.getElementById('sheetTabContextMenu');
+            const renameSheetBtn = document.getElementById('renameSheet');
+            const deleteSheetBtn = document.getElementById('deleteSheet');
+
+            const undoButton = document.getElementById('undoButton');
+            const redoButton = document.getElementById('redoButton');
+            const contextMenu = document.getElementById('contextMenu');
+            const closeWorkbookButton = document.getElementById('closeWorkbookButton');
+            const saveCellButton = document.getElementById('saveCellButton'); 
+
+            const editorControls = document.getElementById('editorControls'); 
+            const formulaBar = document.getElementById('formulaBar');
+            const fxButton = document.getElementById('fxButton');
+
+            const stylingToolbar = document.getElementById('stylingToolbar'); 
+            const boldButton = document.getElementById('boldButton');
+            const italicButton = document.getElementById('italicButton');
+            const underlineButton = document.getElementById('underlineButton');
+            const textColorPicker = document.getElementById('textColorPicker');
+            const bgColorPicker = document.getElementById('bgColorPicker');
+            const alignLeftButton = document.getElementById('alignLeftButton');
+            const alignCenterButton = document.getElementById('alignCenterButton');
+            const alignRightButton = document.getElementById('alignRightButton');
+            const insertRowAboveButton = document.getElementById('insertRowAboveButton');
+            const insertRowBelowButton = document.getElementById('insertRowBelowButton');
+            const insertColLeftButton = document.getElementById('insertColLeftButton');
+            const insertColRightButton = document.getElementById('insertColRightButton');
+            const deleteRowButton = document.getElementById('deleteRowButton');
+            const deleteColButton = document.getElementById('deleteColButton');
+
+
+            const chartModal = document.getElementById('chartModal');
+            const chartRangeInput = document.getElementById('chartRangeInput');
+            const chartTypeSelect = document.getElementById('chartTypeSelect');
+            const myChartCanvas = document.getElementById('myChart');
+            const renderChartButton = document.getElementById('renderChartButton');
+            const closeChartModalButton = document.getElementById('closeChartModalButton');
+            let myChartInstance = null;
+
+            const setValidationCellBtn = document.getElementById('setValidationCell');
+            const validationModal = document.getElementById('validationModal');
+            const validationCellDisplay = document.getElementById('validationCellDisplay');
+            const validationTypeSelect = document.getElementById('validationTypeSelect');
+            const validationRuleInput = document.getElementById('validationRuleInput');
+            const applyValidationButton = document.getElementById('applyValidationButton');
+            const clearValidationButton = document.getElementById('clearValidationButton');
+            const closeValidationModalButton = document.getElementById('closeValidationModalButton');
+
+            const sidebarToggleButton = document.getElementById('sidebarToggleButton');
+            const sidebar = document.getElementById('sidebar');
+            const sidebarCloseButton = document.getElementById('sidebarCloseButton');
+            const sidebarBackdrop = document.getElementById('sidebarBackdrop');
+
+            const menuSaveButton = document.getElementById('menuSaveButton');
+            const saveToLocalStorageButton = document.getElementById('saveToLocalStorageButton'); 
+            const loadFromLocalStorageButton = document.getElementById('loadFromLocalStorageButton'); 
+            const headerFileInput = document.getElementById('headerFileInput');
+            const menuCreateChartButton = document.getElementById('menuCreateChartButton');
+            const menuSetValidationButton = document.getElementById('menuSetValidationButton');
+            const menuAddRowButton = document.getElementById('menuAddRowButton');
+            const menuAddColumnButton = document.getElementById('menuAddColumnButton');
+            const menuKeyboardShortcutsButton = document.getElementById('menuKeyboardShortcutsButton'); 
+
+            const formulaHelpModal = document.getElementById('formulaHelpModal');
+            const closeFormulaHelpModalButton = document.getElementById('closeFormulaHelpModalButton');
+            const formulaList = formulaHelpModal.querySelector('ul');
+
+            const keyboardShortcutsModal = document.getElementById('keyboardShortcutsModal');
+            const closeKeyboardShortcutsModalButton = document.getElementById('closeKeyboardShortcutsModalButton');
+
+            const saveAsModal = document.getElementById('saveAsModal');
+            const saveAsFilenameInput = document.getElementById('saveAsFilename');
+            const saveAsExtensionSelect = document.getElementById('saveAsExtension');
+            const confirmSaveAsButton = document.getElementById('confirmSaveAsButton');
+            const cancelSaveAsButton = document.getElementById('cancelSaveAsButton');
+            const closeSaveAsModalButton = document.getElementById('closeSaveAsModalButton');
+
+            let workbookData = {};
+            let activeSheetName = '';
+            let history = {};
+            let historyPointer = {};
+            let activeCell = null; 
+            let currentSortColumn = -1;
+            let currentSortOrder = 'asc';
+            let contextMenuTargetCell = null;
+            let contextMenuTargetTab = null;
+            let messageBoxTimeout = null;
+            let currentFileName = '';
+            let selectedRowIndex = -1;
+            let selectedColIndex = -1;
+
+            const SESSION_STORAGE_KEY = 'arSheetsWorkbookData';
+            const LOCAL_STORAGE_KEY = 'arSheetsLocalSave';
+            const DEFAULT_EXTRA_ROWS_COLS = 20; 
+            const MIN_INITIAL_ROWS = 10;
+            const MIN_INITIAL_COLS = 10;
+
+            function isMobileDevice() {
+                return window.innerWidth < 768;
+            }
+
+            function showMessageBox(message) {
+                messageBoxContent.textContent = message;
+                messageBox.classList.add('show');
+                if (messageBoxTimeout) {
+                    clearTimeout(messageBoxTimeout);
+                }
+                messageBoxTimeout = setTimeout(() => {
+                    messageBox.classList.remove('show');
+                    messageBoxTimeout = null;
+                }, 3000);
+            }
+
+            messageBoxCloseButton.addEventListener('click', () => {
+                messageBox.classList.remove('show');
+                if (messageBoxTimeout) {
+                    clearTimeout(messageBoxTimeout);
+                    messageBoxTimeout = null;
+                }
+            });
+
+            document.addEventListener('click', (event) => {
+                if (messageBox.classList.contains('show') && !messageBox.contains(event.target) && event.target !== messageBoxCloseButton) {
+                    messageBox.classList.remove('show');
+                    if (messageBoxTimeout) {
+                        clearTimeout(messageBoxTimeout);
+                        messageBoxTimeout = null;
+                    }
+                }
+            });
+
+            function getColumnLetter(c) {
+                let s = '';
+                let t;
+                while (c >= 0) {
+                    t = c % 26;
+                    s = String.fromCharCode(65 + t) + s;
+                    c = (c - t) / 26 - 1;
+                }
+                return s;
+            }
+
+            function getColumnIndex(letter) {
+                let index = 0;
+                for (let i = 0; i < letter.length; i++) {
+                    index = index * 26 + (letter.charCodeAt(i) - 'A'.charCodeAt(0) + 1);
+                }
+                return index - 1;
+            }
+
+            function parseCellReference(ref) {
+                const match = ref.match(/^([A-Z]+)(\d+)$/);
+                if (!match) return null;
+                const colLetter = match[1];
+                const rowNum = parseInt(match[2], 10);
+                return [rowNum - 1, getColumnIndex(colLetter)];
+            }
+
+            function saveWorkbookToSessionStorage() {
+                try {
+                    const dataToSave = {
+                        workbookData: workbookData,
+                        activeSheetName: activeSheetName,
+                        currentFileName: currentFileName,
+                        history: history,
+                        historyPointer: historyPointer
+                    };
+                    sessionStorage.setItem(SESSION_STORAGE_KEY, JSON.stringify(dataToSave));
+                } catch (e) {
+                    console.error("Error saving to session storage:", e);
+                }
+            }
+
+            function loadWorkbookFromSessionStorage() {
+                try {
+                    const savedData = sessionStorage.getItem(SESSION_STORAGE_KEY);
+                    if (savedData) {
+                        const parsedData = JSON.parse(savedData);
+                        workbookData = parsedData.workbookData || {};
+                        activeSheetName = parsedData.activeSheetName || '';
+                        currentFileName = parsedData.currentFileName || '';
+                        history = parsedData.history || {};
+                        historyPointer = parsedData.historyPointer || {};
+
+                        if (Object.keys(workbookData).length > 0) {
+                            if (!activeSheetName || !workbookData[activeSheetName]) {
+                                activeSheetName = Object.keys(workbookData)[0];
+                            }
+                            renderTable(workbookData[activeSheetName]);
+                            renderSheetTabs();
+                            updateHeaderDisplay();
+                            showMessageBox('Workbook loaded from previous session.');
+                        } else {
+                            resetAppState();
+                        }
+                    } else {
+                        resetAppState();
+                    }
+                } catch (e) {
+                    console.error("Error loading from session storage:", e);
+                    showMessageBox("Failed to load previous session data. Starting fresh.");
+                    resetAppState();
+                }
+            }
+
+            function pushHistory() {
+                if (!activeSheetName) return;
+                if (!history[activeSheetName]) {
+                    history[activeSheetName] = [];
+                    historyPointer[activeSheetName] = -1;
+                }
+                if (historyPointer[activeSheetName] < history[activeSheetName].length - 1) {
+                    history[activeSheetName] = history[activeSheetName].slice(0, historyPointer[activeSheetName] + 1);
+                }
+                history[activeSheetName].push(JSON.parse(JSON.stringify(workbookData[activeSheetName])));
+                historyPointer[activeSheetName]++;
+                updateUndoRedoButtons();
+                saveWorkbookToSessionStorage();
+            }
+
+            function updateUndoRedoButtons() {
+                const currentHistory = history[activeSheetName] || [];
+                const currentPointer = historyPointer[activeSheetName] || -1;
+                undoButton.disabled = currentPointer <= 0;
+                redoButton.disabled = currentPointer >= currentHistory.length - 1;
+            }
+
+            function updateHeaderDisplay() {
+                // This function controls the visibility of main header elements
+                // based on whether a workbook is open and if a cell is being edited.
+                const isWorkbookOpen = Object.keys(workbookData).length > 0;
+                const isEditingCell = editorControls.classList.contains('show');
+
+                if (!isWorkbookOpen) {
+                    appTitle.textContent = 'Ar Sheets';
+                    appTitle.classList.remove('hidden');
+                    fileNameDisplay.classList.add('hidden');
+                    closeWorkbookButton.classList.add('hidden');
+                    saveCellButton.classList.add('hidden'); 
+                    undoButton.classList.add('hidden');
+                    redoButton.classList.add('hidden');
+                    sidebarToggleButton.classList.add('hidden');
+                    newSheetButton.classList.remove('hidden');
+                    editorControls.classList.remove('show'); 
+                    stylingToolbar.classList.add('hidden'); 
+                } else {
+                    appTitle.classList.add('hidden');
+                    fileNameDisplay.classList.remove('hidden');
+                    fileNameDisplay.textContent = currentFileName.length > 20 && window.innerWidth < 768 ? currentFileName.substring(0, 17) + '...' : currentFileName;
+                    undoButton.classList.remove('hidden');
+                    redoButton.classList.remove('hidden');
+                    sidebarToggleButton.classList.remove('hidden');
+                    newSheetButton.classList.add('hidden');
+
+                    if (isEditingCell) {
+                        closeWorkbookButton.classList.add('hidden'); // Hide close button when editing
+                        saveCellButton.classList.remove('hidden'); // Show save cell button when editing
+                    } else {
+                        closeWorkbookButton.classList.remove('hidden'); // Show close button when not editing
+                        saveCellButton.classList.add('hidden'); // Hide save cell button when not editing
+                    }
+                }
+            }
+
+            function resetAppState() {
+                workbookData = {};
+                activeSheetName = '';
+                history = {};
+                historyPointer = {};
+                activeCell = null;
+                currentSortColumn = -1;
+                currentSortOrder = 'asc';
+                formulaBar.value = '';
+                currentFileName = '';
+                selectedRowIndex = -1;
+                selectedColIndex = -1;
+                dataTable.innerHTML = '';
+                messageDisplay.textContent = 'Start by creating a new sheet or uploading an existing CSV/Excel file.';
+                tableContainer.classList.add('hidden');
+                renderSheetTabs();
+                updateHeaderDisplay();
+                hideEditorAndToolbar(); 
+                sessionStorage.removeItem(SESSION_STORAGE_KEY);
+            }
+
+            function ensureDimensions(data, targetRows, targetCols) {
+                const currentRows = data.length;
+                const currentCols = data.length > 0 ? data[0].length : 0;
+
+                if (currentRows < targetRows) {
+                    const colsToAdd = currentCols > 0 ? currentCols : targetCols; 
+                    for (let r = currentRows; r < targetRows; r++) {
+                        data.push(Array(colsToAdd).fill(null).map(() => ({ value: '', formula: '', style: {}, validation: null })));
+                    }
+                }
+
+                if (data.length > 0 && currentCols < targetCols) {
+                    data.forEach((row, rowIndex) => {
+                        for (let c = currentCols; c < targetCols; c++) {
+                            const newCell = { value: '', formula: '', style: {}, validation: null };
+                            if (rowIndex === 0) newCell.value = `Column ${getColumnLetter(c)}`; 
+                            row.push(newCell);
+                        }
+                    });
+                } else if (data.length === 0 && targetCols > 0) { 
+                     data.push(Array(targetCols).fill(null).map((_, i) => ({ value: `Column ${getColumnLetter(i)}`, formula: '', style: {}, validation: null })));
+                     for (let r = 1; r < targetRows; r++) {
+                        data.push(Array(targetCols).fill(null).map(() => ({ value: '', formula: '', style: {}, validation: null })));
+                    }
+                }
+                return data;
+            }
+
+
+            async function handleFile(event) {
+                const files = event.target.files;
+                if (files.length === 0) {
+                    if (Object.keys(workbookData).length === 0) {
+                        resetAppState();
+                    }
+                    return;
+                }
+
+                messageDisplay.textContent = 'Processing files...';
+                tableContainer.classList.add('hidden');
+                updateHeaderDisplay();
+
+                let firstNewSheetName = null;
+                let newWorkbookData = {};
+
+                for (const file of files) {
+                    const fileNameLower = file.name.toLowerCase();
+                    const reader = new FileReader();
+                    reader.onerror = () => {
+                        console.error('FileReader error:', reader.error);
+                        showMessageBox(`Error reading file ${file.name}: ${reader.error.message || 'Unknown error'}.`);
+                    };
+
+                    await new Promise((resolve) => {
+                        if (fileNameLower.endsWith('.csv')) {
+                            reader.onload = (e) => {
+                                try {
+                                    let parsedData = parseCSV(e.target.result);
+                                    const initialRows = parsedData.length;
+                                    const initialCols = initialRows > 0 ? parsedData[0].length : 0;
+                                    parsedData = ensureDimensions(parsedData, initialRows + DEFAULT_EXTRA_ROWS_COLS, initialCols + DEFAULT_EXTRA_ROWS_COLS);
+
+                                    let sheetName = file.name.replace(/\.csv$/i, '') || 'Sheet';
+                                    let counter = 1;
+                                    let uniqueSheetName = sheetName;
+                                    while (newWorkbookData[uniqueSheetName] || workbookData[uniqueSheetName]) {
+                                        uniqueSheetName = `${sheetName}${++counter}`;
+                                    }
+                                    newWorkbookData[uniqueSheetName] = parsedData;
+                                    if (!firstNewSheetName) firstNewSheetName = uniqueSheetName;
+                                } catch (error) {
+                                    console.error(`Error parsing CSV ${file.name}:`, error);
+                                    showMessageBox(`Error parsing CSV file "${file.name}".`);
+                                }
+                                resolve();
+                            };
+                            reader.readAsText(file);
+                        } else if (fileNameLower.endsWith('.xlsx') || fileNameLower.endsWith('.xls')) {
+                            reader.onload = (e) => {
+                                try {
+                                    const data = new Uint8Array(e.target.result);
+                                    const workbook = XLSX.read(data, { type: 'array' });
+
+                                    workbook.SheetNames.forEach(sheetName => {
+                                        const worksheet = workbook.Sheets[sheetName];
+                                        let jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, raw: false });
+                                        const cellObjectData = jsonData.map(row =>
+                                            row.map(cellValue => ({ value: String(cellValue || ''), formula: '', style: {}, validation: null }))
+                                        );
+                                        const initialRows = cellObjectData.length;
+                                        const initialCols = initialRows > 0 ? cellObjectData[0].length : 0;
+                                        let processedData = ensureDimensions(cellObjectData, initialRows + DEFAULT_EXTRA_ROWS_COLS, initialCols + DEFAULT_EXTRA_ROWS_COLS);
+
+                                        let uniqueSheetName = sheetName;
+                                        let counter = 1;
+                                        while (newWorkbookData[uniqueSheetName] || workbookData[uniqueSheetName]) {
+                                            uniqueSheetName = `${sheetName} (${++counter})`;
+                                        }
+                                        newWorkbookData[uniqueSheetName] = processedData;
+                                        if (!firstNewSheetName) firstNewSheetName = uniqueSheetName;
+                                    });
+                                } catch (error) {
+                                    console.error(`Error parsing XLSX ${file.name}:`, error);
+                                    showMessageBox(`Error parsing Excel file "${file.name}".`);
+                                }
+                                resolve();
+                            };
+                            reader.readAsArrayBuffer(file);
+                        } else {
+                            showMessageBox(`Unsupported file type for "${file.name}". Skipping.`);
+                            resolve();
+                        }
+                    });
+                }
+
+                Object.assign(workbookData, newWorkbookData);
+
+                if (Object.keys(workbookData).length > 0) {
+                    activeSheetName = activeSheetName || firstNewSheetName || Object.keys(workbookData)[0];
+                    currentFileName = files[0].name;
+                    fileNameDisplay.textContent = currentFileName.length > 20 && window.innerWidth < 768 ? currentFileName.substring(0, 17) + '...' : currentFileName;
+                    renderTable(workbookData[activeSheetName]);
+                    renderSheetTabs();
+                    pushHistory();
+                } else {
+                    resetAppState();
+                }
+                headerFileInput.value = '';
+            }
+
+            async function handleFileFromLaunch(event) {
+                const files = event.target.files;
+                if (files.length === 0) return;
+
+                resetAppState();
+
+                messageDisplay.textContent = 'Opening file...';
+                tableContainer.classList.add('hidden');
+                updateHeaderDisplay();
+
+                let firstNewSheetName = null;
+                let newWorkbookData = {};
+
+                const file = files[0]; 
+                const fileNameLower = file.name.toLowerCase();
+                const reader = new FileReader();
+                reader.onerror = () => {
+                    console.error('FileReader error:', reader.error);
+                    showMessageBox(`Error reading file ${file.name}: ${reader.error.message || 'Unknown error'}.`);
+                };
+
+                await new Promise((resolve) => {
+                    if (fileNameLower.endsWith('.csv')) {
+                        reader.onload = (e) => {
+                            try {
+                                let parsedData = parseCSV(e.target.result);
+                                const initialRows = parsedData.length;
+                                const initialCols = initialRows > 0 ? parsedData[0].length : 0;
+                                parsedData = ensureDimensions(parsedData, initialRows + DEFAULT_EXTRA_ROWS_COLS, initialCols + DEFAULT_EXTRA_ROWS_COLS);
+
+                                let sheetName = file.name.replace(/\.csv$/i, '') || 'Sheet';
+                                let counter = 1;
+                                let uniqueSheetName = sheetName;
+                                while (newWorkbookData[uniqueSheetName] || workbookData[uniqueSheetName]) {
+                                    uniqueSheetName = `${sheetName}${++counter}`;
+                                }
+                                newWorkbookData[uniqueSheetName] = parsedData;
+                                if (!firstNewSheetName) firstNewSheetName = uniqueSheetName;
+                            } catch (error) {
+                                console.error(`Error parsing CSV ${file.name}:`, error);
+                                showMessageBox(`Error parsing CSV file "${file.name}".`);
+                            }
+                            resolve();
+                        };
+                        reader.readAsText(file);
+                    } else if (fileNameLower.endsWith('.xlsx') || fileNameLower.endsWith('.xls')) {
+                        reader.onload = (e) => {
+                            try {
+                                const data = new Uint8Array(e.target.result);
+                                const workbook = XLSX.read(data, { type: 'array' });
+
+                                workbook.SheetNames.forEach(sheetName => {
+                                    const worksheet = workbook.Sheets[sheetName];
+                                    let jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, raw: false });
+                                    const cellObjectData = jsonData.map(row =>
+                                        row.map(cellValue => ({ value: String(cellValue || ''), formula: '', style: {}, validation: null }))
+                                    );
+                                    const initialRows = cellObjectData.length;
+                                    const initialCols = initialRows > 0 ? cellObjectData[0].length : 0;
+                                    let processedData = ensureDimensions(cellObjectData, initialRows + DEFAULT_EXTRA_ROWS_COLS, initialCols + DEFAULT_EXTRA_ROWS_COLS);
+
+                                    let uniqueSheetName = sheetName;
+                                    let counter = 1;
+                                    while (newWorkbookData[uniqueSheetName] || workbookData[uniqueSheetName]) {
+                                        uniqueSheetName = `${sheetName} (${++counter})`;
+                                    }
+                                    newWorkbookData[uniqueSheetName] = processedData;
+                                    if (!firstNewSheetName) firstNewSheetName = uniqueSheetName;
+                                });
+                            } catch (error) {
+                                console.error(`Error parsing XLSX ${file.name}:`, error);
+                                showMessageBox(`Error parsing Excel file "${file.name}".`);
+                            }
+                            resolve();
+                        };
+                        reader.readAsArrayBuffer(file);
+                    } else {
+                        showMessageBox(`Unsupported file type for "${file.name}". Skipping.`);
+                        resolve();
+                    }
+                });
+
+                Object.assign(workbookData, newWorkbookData);
+
+                if (Object.keys(workbookData).length > 0) {
+                    activeSheetName = activeSheetName || firstNewSheetName || Object.keys(workbookData)[0];
+                    currentFileName = file.name;
+                    fileNameDisplay.textContent = currentFileName.length > 20 && window.innerWidth < 768 ? currentFileName.substring(0, 17) + '...' : currentFileName;
+                    renderTable(workbookData[activeSheetName]);
+                    renderSheetTabs();
+                    pushHistory();
+                } else {
+                    resetAppState();
+                }
+            }
+
+
+            function parseCSV(csvData) {
+                const rows = [];
+                let inQuote = false;
+                let currentCell = '';
+                let currentRow = [];
+
+                for (let i = 0; i < csvData.length; i++) {
+                    const char = csvData[i];
+                    const nextChar = csvData[i + 1];
+
+                    if (char === '"') {
+                        if (inQuote && nextChar === '"') {
+                            currentCell += '"';
+                            i++;
+                        } else {
+                            inQuote = !inQuote;
+                        }
+                    } else if (char === ',' && !inQuote) {
+                        currentRow.push({ value: currentCell.trim(), formula: '', style: {}, validation: null });
+                        currentCell = '';
+                    } else if ((char === '\n' || char === '\r') && !inQuote) {
+                        if (char === '\r' && nextChar === '\n') {
+                            i++;
+                        }
+                        currentRow.push({ value: currentCell.trim(), formula: '', style: {}, validation: null });
+                        rows.push(currentRow);
+                        currentRow = [];
+                        currentCell = '';
+                    } else {
+                        currentCell += char;
+                    }
+                }
+                currentRow.push({ value: currentCell.trim(), formula: '', style: {}, validation: null });
+                rows.push(currentRow);
+
+                const filteredRows = rows.filter(row => row.length > 0 && row.some(cell => cell.value !== ''));
+                return filteredRows;
+            }
+
+            function renderTable(data) {
+                dataTable.innerHTML = '';
+                if (!data || data.length === 0 || data[0].length === 0) {
+                    messageDisplay.textContent = 'No data found for this sheet. Add rows/columns to begin.';
+                    tableContainer.classList.add('hidden');
+                    hideEditorAndToolbar();
+                    return;
+                }
+
+                messageDisplay.textContent = '';
+                tableContainer.classList.remove('hidden');
+                updateHeaderDisplay();
+
+                const numCols = data[0].length;
+                const thead = dataTable.createTHead();
+                // FIX: Changed thead.insertCell() to thead.insertRow()
+                const columnLetterRow = thead.insertRow(); 
+                const cornerTh = document.createElement('th');
+                cornerTh.classList.add('column-letter-header');
+                cornerTh.textContent = '';
+                columnLetterRow.appendChild(cornerTh);
+                for (let i = 0; i < numCols; i++) {
+                    const th = document.createElement('th');
+                    th.classList.add('column-letter-header');
+                    th.textContent = getColumnLetter(i);
+                    th.dataset.colIndex = i;
+                    th.addEventListener('click', (event) => selectColumn(event, i));
+                    columnLetterRow.appendChild(th);
+                }
+
+                const headerRow = thead.insertRow();
+                const sNoHeader = document.createElement('th');
+                sNoHeader.classList.add('row-number-header');
+                sNoHeader.textContent = '';
+                headerRow.appendChild(sNoHeader);
+                data[0].forEach((cellObj, index) => {
+                    const th = document.createElement('th');
+                    th.textContent = cellObj.value;
+                    th.setAttribute('contenteditable', 'false'); 
+                    th.dataset.colIndex = index;
+                    th.dataset.rowIndex = 0;
+                    th.addEventListener('click', () => sortColumn(index));
+                    headerRow.appendChild(th);
+                });
+
+                const tbody = dataTable.createTBody();
+                for (let i = 1; i < data.length; i++) {
+                    const rowData = data[i];
+                    const tr = tbody.insertRow();
+                    const sNoTd = tr.insertCell();
+                    sNoTd.classList.add('row-number-cell');
+                    sNoTd.textContent = i;
+                    sNoTd.setAttribute('contenteditable', 'false');
+                    sNoTd.dataset.rowIndex = i;
+                    sNoTd.addEventListener('click', (event) => selectRow(event, i));
+
+                    rowData.forEach((cellObj, colIdx) => {
+                        const td = tr.insertCell();
+                        td.textContent = cellObj.formula ? evaluateFormula(cellObj.formula, i, colIdx) : cellObj.value;
+                        td.setAttribute('contenteditable', 'false'); 
+                        td.dataset.rowIndex = i;
+                        td.dataset.colIndex = colIdx;
+                        applyCellStyles(td, cellObj.style);
+                        if (cellObj.validation && !validateCell(cellObj.value, cellObj.validation)) {
+                            td.classList.add('invalid-cell');
+                        } else {
+                            td.classList.remove('invalid-cell');
+                        }
+                    });
+                }
+
+                evaluateAllFormulas();
+                updateUndoRedoButtons();
+                clearSelection();
+                updateHeaderDisplay(); // Re-call to ensure button visibility is correct
+            }
+
+            function applyCellStyles(cellElement, styles) {
+                if (!styles) return;
+                cellElement.style.fontWeight = styles.bold ? 'bold' : '';
+                cellElement.style.fontStyle = styles.italic ? 'italic' : '';
+                cellElement.style.textDecoration = styles.underline ? 'underline' : '';
+                cellElement.style.color = styles.textColor || '';
+                cellElement.style.backgroundColor = styles.bgColor || '';
+                cellElement.style.textAlign = styles.textAlign || '';
+            }
+
+            function showEditorAndToolbar() {
+                editorControls.classList.add('show');
+                stylingToolbar.classList.remove('hidden');
+
+                formulaBar.focus();
+                formulaBar.setSelectionRange(formulaBar.value.length, formulaBar.value.length);
+                formulaBar.removeAttribute('readonly'); 
+                updateStylingToolbarState();
+                updateHeaderDisplay(); // Update header buttons
+            }
+
+            function hideEditorAndToolbar() {
+                editorControls.classList.remove('show');
+                stylingToolbar.classList.add('hidden');
+
+                activeCell = null;
+                formulaBar.setAttribute('readonly', true); 
+                updateHeaderDisplay(); // Update header buttons
+            }
+
+            function updateStylingToolbarState() {
+                if (!activeCell || !activeSheetName || !workbookData[activeSheetName]) {
+                    stylingToolbar.classList.add('hidden');
+                    return;
+                }
+
+                const rowIndex = parseInt(activeCell.dataset.rowIndex);
+                const colIndex = parseInt(activeCell.dataset.colIndex);
+
+                const sheetData = workbookData[activeSheetName];
+
+                if (!sheetData || rowIndex < 0 || rowIndex >= sheetData.length || !Array.isArray(sheetData[rowIndex]) || colIndex < 0 || colIndex >= sheetData[rowIndex].length) {
+                    stylingToolbar.classList.add('hidden');
+                    return;
+                }
+
+                const cellObj = sheetData[rowIndex][colIndex];
+
+                stylingToolbar.classList.remove('hidden');
+                if (cellObj && cellObj.style) {
+                    boldButton.classList.toggle('active', cellObj.style.bold);
+                    italicButton.classList.toggle('active', cellObj.style.italic);
+                    underlineButton.classList.toggle('active', cellObj.style.underline);
+                    textColorPicker.value = cellObj.style.textColor || '#e8eaed';
+                    bgColorPicker.value = cellObj.style.bgColor || '#2e2f31';
+
+                    alignLeftButton.classList.toggle('active', cellObj.style.textAlign === 'left');
+                    alignCenterButton.classList.toggle('active', cellObj.style.textAlign === 'center');
+                    alignRightButton.classList.toggle('active', cellObj.style.textAlign === 'right');
+                } else {
+                    boldButton.classList.remove('active');
+                    italicButton.classList.remove('active');
+                    underlineButton.classList.remove('active');
+                    textColorPicker.value = '#e8eaed';
+                    bgColorPicker.value = '#2e2f31';
+                    alignLeftButton.classList.remove('active');
+                    alignCenterButton.classList.remove('active');
+                    alignRightButton.classList.remove('active');
+                }
+            }
+
+            dataTable.addEventListener('click', (event) => {
+                const target = event.target;
+                if (target.tagName === 'TD' || (target.tagName === 'TH' && target.parentNode.rowIndex === 1)) {
+                    if (activeCell === target) {
+                        formulaBar.focus();
+                        return;
+                    }
+
+                    if (activeCell) {
+                        saveActiveCellContent();
+                    }
+
+                    activeCell = target;
+                    const rowIndex = parseInt(activeCell.dataset.rowIndex);
+                    const colIndex = parseInt(activeCell.dataset.colIndex);
+                    const cellObj = workbookData[activeSheetName][rowIndex][colIndex];
+                    formulaBar.value = cellObj.formula || cellObj.value;
+                    
+                    showEditorAndToolbar(); 
+                    clearSelection();
+                    checkAndExpandSheet();
+                } else {
+                    if (activeCell) {
+                        saveActiveCellContent();
+                    }
+                    hideEditorAndToolbar();
+                    clearSelection();
+                }
+            });
+
+            formulaBar.addEventListener('click', () => {
+                formulaBar.removeAttribute('readonly');
+                formulaBar.focus();
+            });
+
+            function saveActiveCellContent() {
+                if (!activeCell) return;
+
+                const rowIndex = parseInt(activeCell.dataset.rowIndex);
+                const colIndex = parseInt(activeCell.dataset.colIndex);
+                const cellObj = workbookData[activeSheetName][rowIndex][colIndex];
+                const newValue = formulaBar.value;
+
+                if (newValue.startsWith('=')) {
+                    cellObj.formula = newValue;
+                    cellObj.value = evaluateFormula(newValue, rowIndex, colIndex);
+                } else {
+                    cellObj.value = newValue;
+                    cellObj.formula = '';
+                }
+                activeCell.textContent = cellObj.value;
+
+                if (cellObj.validation && !validateCell(cellObj.value, cellObj.validation)) {
+                    activeCell.classList.add('invalid-cell');
+                } else {
+                    activeCell.classList.remove('invalid-cell');
+                }
+                pushHistory();
+                evaluateAllFormulas(); 
+            }
+
+            saveCellButton.addEventListener('click', () => {
+                saveActiveCellContent();
+                hideEditorAndToolbar();
+            });
+
+            formulaBar.addEventListener('blur', () => {
+                if (activeCell) { 
+                    saveActiveCellContent();
+                }
+            });
+
+            formulaBar.addEventListener('keydown', (event) => {
+                if (event.key === 'Enter') {
+                    event.preventDefault();
+                    saveActiveCellContent(); 
+                    hideEditorAndToolbar(); 
+                    const rowIndex = parseInt(activeCell.dataset.rowIndex);
+                    const colIndex = parseInt(activeCell.dataset.colIndex);
+                    const nextRowIndex = rowIndex + 1;
+                    const nextCellElement = dataTable.querySelector(`[data-row-index="${nextRowIndex}"][data-col-index="${colIndex}"]`);
+                    if (nextCellElement) {
+                        nextCellElement.click(); 
+                    }
+                }
+            });
+
+            function evaluateFormula(formula, currentRow, currentCol) {
+                if (!formula.startsWith('=')) return formula;
+                let expression = formula.substring(1).toUpperCase();
+                const sheetData = workbookData[activeSheetName];
+
+                expression = expression.replace(/[A-Z]+\d+/g, (match) => {
+                    const [r, c] = parseCellReference(match);
+                    if (r !== null && c !== null && sheetData[r] && sheetData[r][c]) {
+                        if (r === currentRow && c === currentCol) {
+                            return '0';
+                        }
+                        const referencedCell = sheetData[r][c];
+                        if (referencedCell.formula) {
+                            return evaluateFormula(referencedCell.formula, r, c);
+                        }
+                        const val = parseFloat(referencedCell.value);
+                        return isNaN(val) ? '0' : val;
+                    }
+                    return '0';
+                });
+
+                expression = expression.replace(/SUM\(([A-Z]+)(\d*):([A-Z]+)(\d*)\)/g, (match, startColL, startRowN, endColL, endRowN) => {
+                    let sum = 0;
+                    try {
+                        const startCol = getColumnIndex(startColL);
+                        const endCol = getColumnIndex(endColL);
+                        let startRow = startRowN ? parseInt(startRowN) : 1;
+                        let endRow = endRowN ? parseInt(endRowN) : sheetData.length - 1;
+
+                        for (let r = startRow; r <= endRow; r++) {
+                            for (let c = startCol; c <= endCol; c++) {
+                                if (sheetData[r] && sheetData[r][c]) {
+                                    const cell = sheetData[r][c];
+                                    let valueToSum = cell.value;
+                                    if (cell.formula) {
+                                        valueToSum = evaluateFormula(cell.formula, r, c);
+                                    }
+                                    const num = parseFloat(valueToSum);
+                                    if (!isNaN(num)) sum += num;
+                                }
+                            }
+                        }
+                        return sum;
+                    } catch (e) {
+                        return '#ERROR!';
+                    }
+                });
+
+                expression = expression.replace(/AVG\(([A-Z]+)(\d*):([A-Z]+)(\d*)\)/g, (match, startColL, startRowN, endColL, endRowN) => {
+                    let sum = 0;
+                    let count = 0;
+                    try {
+                        const startCol = getColumnIndex(startColL);
+                        const endCol = getColumnIndex(endColL);
+                        let startRow = startRowN ? parseInt(startRowN) : 1;
+                        let endRow = endRowN ? parseInt(endRowN) : sheetData.length - 1;
+
+                        for (let r = startRow; r <= endRow; r++) {
+                            for (let c = startCol; c <= endCol; c++) {
+                                if (sheetData[r] && sheetData[r][c]) {
+                                    const cell = sheetData[r][c];
+                                    let valueToAvg = cell.value;
+                                    if (cell.formula) {
+                                        valueToAvg = evaluateFormula(cell.formula, r, c);
+                                    }
+                                    const num = parseFloat(valueToAvg);
+                                    if (!isNaN(num)) {
+                                        sum += num;
+                                        count++;
+                                    }
+                                }
+                            }
+                        }
+                        return count > 0 ? (sum / count).toFixed(2) : '0';
+                    } catch (e) {
+                        return '#ERROR!';
+                    }
+                });
+
+                try {
+                    const result = eval(expression);
+                    return isNaN(result) ? '#VALUE!' : result;
+                } catch (e) {
+                    return '#ERROR!';
+                }
+            }
+
+            function evaluateAllFormulas() {
+                const sheetData = workbookData[activeSheetName];
+                if (!sheetData || sheetData.length === 0) return;
+
+                const tbodyRows = dataTable.querySelectorAll('tbody tr');
+                for (let r = 1; r < sheetData.length; r++) {
+                    for (let c = 0; c < sheetData[r].length; c++) {
+                        const cellObj = sheetData[r][c];
+                        if (cellObj.formula) {
+                            const result = evaluateFormula(cellObj.formula, r, c);
+                            if (tbodyRows[r - 1] && tbodyRows[r - 1].cells[c + 1]) {
+                                tbodyRows[r - 1].cells[c + 1].textContent = result;
+                            }
+                            cellObj.value = result;
+                        }
+                    }
+                }
+            }
+
+            function checkAndExpandSheet() {
+                if (!activeCell || !activeSheetName) return;
+
+                const sheetData = workbookData[activeSheetName];
+                if (!sheetData || sheetData.length === 0 || sheetData[0].length === 0) return;
+
+                const rowIndex = parseInt(activeCell.dataset.rowIndex);
+                const colIndex = parseInt(activeCell.dataset.colIndex);
+
+                let needsRowExpansion = false;
+                let needsColExpansion = false;
+
+                if (rowIndex >= sheetData.length - 5) {
+                    needsRowExpansion = true;
+                }
+
+                if (colIndex >= sheetData[0].length - 5) {
+                    needsColExpansion = true;
+                }
+
+                if (needsRowExpansion) {
+                    const numCols = sheetData[0].length;
+                    const newRowData = Array(numCols).fill(null).map(() => ({ value: '', formula: '', style: {}, validation: null }));
+                    sheetData.push(newRowData);
+                }
+
+                if (needsColExpansion) {
+                    sheetData.forEach((row, index) => {
+                        const newCell = { value: '', formula: '', style: {}, validation: null };
+                        if (index === 0) {
+                            newCell.value = `Column ${row.length + 1}`;
+                        }
+                        row.push(newCell);
+                    });
+                }
+
+                if (needsRowExpansion || needsColExpansion) {
+                    renderTable(sheetData);
+                    pushHistory();
+                }
+            }
+
+            function addRow(atIndex = -1) {
+                try {
+                    const sheetData = workbookData[activeSheetName];
+                    if (!sheetData || sheetData.length === 0) {
+                        workbookData[activeSheetName] = ensureDimensions([], MIN_INITIAL_ROWS + DEFAULT_EXTRA_ROWS_COLS, MIN_INITIAL_COLS + DEFAULT_EXTRA_ROWS_COLS);
+                        renderTable(workbookData[activeSheetName]);
+                        showMessageBox('New sheet created with default rows/columns.');
+                        pushHistory();
+                        return;
+                    }
+
+                    const numCols = sheetData[0].length;
+                    const newRowData = Array(numCols).fill(null).map(() => ({ value: '', formula: '', style: {}, validation: null }));
+                    
+                    if (atIndex === -1 || atIndex >= sheetData.length) {
+                        sheetData.push(newRowData);
+                    } else {
+                        sheetData.splice(atIndex, 0, newRowData);
+                    }
+                    renderTable(sheetData);
+                    showMessageBox('New row added!');
+                    pushHistory();
+                } catch (error) {
+                    console.error("Error adding row:", error);
+                    showMessageBox("Failed to add row. Please try again.");
+                }
+            }
+
+            function addColumn(atIndex = -1) {
+                try {
+                    const sheetData = workbookData[activeSheetName];
+                    if (!sheetData || sheetData.length === 0) {
+                        workbookData[activeSheetName] = ensureDimensions([], MIN_INITIAL_ROWS + DEFAULT_EXTRA_ROWS_COLS, MIN_INITIAL_COLS + DEFAULT_EXTRA_ROWS_COLS);
+                        renderTable(workbookData[activeSheetName]);
+                        showMessageBox('New sheet created with default rows/columns.');
+                        pushHistory();
+                        return;
+                    }
+
+                    sheetData.forEach((row, index) => {
+                        const newCell = { value: '', formula: '', style: {}, validation: null };
+                        if (index === 0) {
+                            newCell.value = `Column ${getColumnLetter(row.length)}`; 
+                        }
+
+                        if (atIndex === -1 || atIndex >= row.length) {
+                            row.push(newCell);
+                        } else {
+                            row.splice(atIndex, 0, newCell);
+                        }
+                    });
+                    renderTable(sheetData);
+                    showMessageBox('New column added!');
+                    pushHistory();
+                } catch (error) {
+                    console.error("Error adding column:", error);
+                    showMessageBox("Failed to add column. Please try again.");
+                }
+            }
+
+            function deleteRow(rowIndex) {
+                try {
+                    const sheetData = workbookData[activeSheetName];
+                    if (!sheetData || sheetData.length <= 1 || rowIndex === 0) {
+                        showMessageBox('Cannot delete header row or the last data row.');
+                        return;
+                    }
+                    if (rowIndex < 1 || rowIndex >= sheetData.length) {
+                        showMessageBox('Invalid row to delete.');
+                        return;
+                    }
+                    sheetData.splice(rowIndex, 1);
+                    renderTable(sheetData);
+                    showMessageBox('Row deleted!');
+                    pushHistory();
+                } catch (error) {
+                    console.error("Error deleting row:", error);
+                    showMessageBox("Failed to delete row. Please try again.");
+                }
+            }
+
+            function deleteColumn(colIndex) {
+                try {
+                    const sheetData = workbookData[activeSheetName];
+                    if (!sheetData || sheetData[0].length <= 1) {
+                        showMessageBox('Cannot delete the last column.');
+                        return;
+                    }
+                    if (colIndex < 0 || colIndex >= sheetData[0].length) {
+                        showMessageBox('Invalid column to delete.');
+                        return;
+                    }
+                    sheetData.forEach(row => {
+                        row.splice(colIndex, 1);
+                    });
+                    renderTable(sheetData);
+                    showMessageBox('Column deleted!');
+                    pushHistory();
+                } catch (error) {
+                    console.error("Error deleting column:", error);
+                    showMessageBox("Failed to delete column. Please try again.");
+                }
+            }
+
+            function sortColumn(colIndex) {
+                try {
+                    const sheetData = workbookData[activeSheetName];
+                    if (!sheetData || sheetData.length <= 1) {
+                        showMessageBox('No data to sort or only header row exists.');
+                        return;
+                    }
+
+                    if (currentSortColumn === colIndex) {
+                        currentSortOrder = currentSortOrder === 'asc' ? 'desc' : 'asc';
+                    } else {
+                        currentSortColumn = colIndex;
+                        currentSortOrder = 'asc';
+                    }
+
+                    const headerCells = dataTable.querySelector('thead').rows[1].cells;
+                    Array.from(headerCells).forEach((th, idx) => {
+                        if (idx > 0) {
+                            th.classList.remove('sorted-asc', 'sorted-desc');
+                            if (idx - 1 === currentSortColumn) {
+                                th.classList.add(`sorted-${currentSortOrder}`);
+                            }
+                        }
+                    });
+
+                    const dataRows = sheetData.slice(1);
+                    dataRows.sort((a, b) => {
+                        const valA = a[colIndex] ? a[colIndex].value : '';
+                        const valB = b[colIndex] ? b[colIndex].value : '';
+
+                        const numA = parseFloat(valA);
+                        const numB = parseFloat(valB);
+
+                        if (!isNaN(numA) && !isNaN(numB)) {
+                            return currentSortOrder === 'asc' ? numA - numB : numB - numA;
+                        } else {
+                            return currentSortOrder === 'asc' ? String(valA).localeCompare(String(valB)) : String(valB).localeCompare(String(valB));
+                        }
+                    });
+
+                    workbookData[activeSheetName] = [sheetData[0], ...dataRows];
+                    renderTable(workbookData[activeSheetName]);
+                    pushHistory();
+                } catch (error) {
+                    console.error("Error sorting column:", error);
+                    showMessageBox("Failed to sort column. Please try again.");
+                }
+            }
+
+            function deleteSheet(sheetToDelete) {
+                try {
+                    const sheetData = workbookData[activeSheetName];
+                    if (Object.keys(workbookData).length === 1) {
+                        showMessageBox('Cannot delete the last sheet.');
+                        sheetTabContextMenu.classList.remove('show');
+                        return;
+                    }
+
+                    delete workbookData[sheetToDelete];
+                    delete history[sheetToDelete];
+                    delete historyPointer[sheetToDelete];
+
+                    if (activeSheetName === sheetToDelete) {
+                        activeSheetName = Object.keys(workbookData)[0];
+                    }
+                    renderSheetTabs();
+                    renderTable(workbookData[activeSheetName]);
+                    showMessageBox(`Sheet "${sheetToDelete}" deleted.`);
+                    saveWorkbookToSessionStorage();
+                }
+                catch (error) {
+                    console.error("Error deleting sheet:", error); 
+                    showMessageBox("Failed to delete sheet. Please try again.");
+                }
+            }
+
+            undoButton.addEventListener('click', () => {
+                if (historyPointer[activeSheetName] > 0) {
+                    historyPointer[activeSheetName]--;
+                    workbookData[activeSheetName] = JSON.parse(JSON.stringify(history[activeSheetName][historyPointer[activeSheetName]]));
+                    renderTable(workbookData[activeSheetName]);
+                    showMessageBox('Undo successful!');
+                    saveWorkbookToSessionStorage();
+                } else {
+                    showMessageBox('Nothing to undo.');
+                }
+            });
+
+            redoButton.addEventListener('click', () => {
+                const currentHistory = history[activeSheetName] || [];
+                if (historyPointer[activeSheetName] < currentHistory.length - 1) {
+                    historyPointer[activeSheetName]++;
+                    workbookData[activeSheetName] = JSON.parse(JSON.stringify(currentHistory[historyPointer[activeSheetName]]));
+                    renderTable(workbookData[activeSheetName]);
+                    showMessageBox('Redo successful!');
+                    saveWorkbookToSessionStorage();
+                } else {
+                    showMessageBox('Nothing to redo.');
+                }
+            });
+
+            function renderSheetTabs() {
+                sheetTabsContainer.innerHTML = '';
+                Object.keys(workbookData).forEach(sheetName => {
+                    const tabButton = document.createElement('button');
+                    tabButton.classList.add('sheet-tab');
+                    tabButton.textContent = sheetName;
+                    tabButton.dataset.sheetName = sheetName;
+
+                    if (sheetName === activeSheetName) {
+                        tabButton.classList.add('active');
+                    }
+
+                    tabButton.addEventListener('click', () => switchSheet(sheetName));
+                    tabButton.addEventListener('contextmenu', (event) => {
+                        event.preventDefault();
+                        contextMenuTargetTab = tabButton;
+                        sheetTabContextMenu.style.left = `${event.clientX}px`;
+                        sheetTabContextMenu.style.top = `${event.clientY}px`;
+                        sheetTabContextMenu.classList.add('show');
+                    });
+
+                    const closeButton = document.createElement('button');
+                    closeButton.classList.add('sheet-tab-close');
+                    closeButton.innerHTML = '<i class="fas fa-times"></i>';
+                    closeButton.title = `Delete sheet ${sheetName}`;
+                    closeButton.addEventListener('click', (event) => {
+                        event.stopPropagation();
+                        deleteSheet(sheetName);
+                    });
+                    tabButton.appendChild(closeButton);
+                    sheetTabsContainer.appendChild(tabButton);
+                });
+
+                const addSheetBtn = document.createElement('button');
+                addSheetBtn.id = 'addSheetTabButton';
+                addSheetBtn.classList.add('action-button', 'text-sm', 'px-3', 'py-1');
+                addSheetBtn.style.flexShrink = '0'; // Prevent stretching
+                addSheetBtn.innerHTML = '<i class="fas fa-plus"></i><span>Add Sheet</span>';
+                addSheetBtn.addEventListener('click', addSheet);
+                sheetTabsContainer.appendChild(addSheetBtn);
+
+                if (Object.keys(workbookData).length > 0) {
+                    sheetTabsContainer.classList.remove('hidden');
+                } else {
+                    sheetTabsContainer.classList.add('hidden');
+                }
+            }
+
+            function switchSheet(sheetName) {
+                if (sheetName === activeSheetName) return;
+
+                if (activeCell) {
+                    saveActiveCellContent();
+                }
+                hideEditorAndToolbar(); 
+
+                activeSheetName = sheetName;
+                renderTable(workbookData[activeSheetName]);
+                renderSheetTabs();
+                showMessageBox(`Switched to sheet: ${sheetName}`);
+                updateUndoRedoButtons();
+                saveWorkbookToSessionStorage();
+            }
+
+            function createNewSheet() {
+                let newSheetName = 'Sheet1';
+                let counter = 1;
+                while (workbookData[newSheetName]) {
+                    newSheetName = `Sheet${++counter}`;
+                }
+
+                workbookData = {
+                    [newSheetName]: ensureDimensions([], MIN_INITIAL_ROWS + DEFAULT_EXTRA_ROWS_COLS, MIN_INITIAL_COLS + DEFAULT_EXTRA_ROWS_COLS) 
+                };
+                activeSheetName = newSheetName;
+                currentFileName = 'new_ar_sheet.xlsx';
+                fileNameDisplay.textContent = `New sheet: ${currentFileName}`;
+                history = {};
+                historyPointer = {};
+                renderTable(workbookData[activeSheetName]);
+                renderSheetTabs();
+                pushHistory();
+                showMessageBox('New blank Ar Sheet created!');
+                updateHeaderDisplay();
+            }
+
+            function addSheet() {
+                let newSheetName = 'Sheet1';
+                let counter = 1;
+                while (workbookData[newSheetName]) {
+                    newSheetName = `Sheet${++counter}`;
+                }
+
+                workbookData[newSheetName] = ensureDimensions([], MIN_INITIAL_ROWS + DEFAULT_EXTRA_ROWS_COLS, MIN_INITIAL_COLS + DEFAULT_EXTRA_ROWS_COLS); 
+                activeSheetName = newSheetName;
+                currentFileName = currentFileName || 'new_ar_sheet.xlsx';
+                renderTable(workbookData[activeSheetName]);
+                renderSheetTabs();
+                pushHistory();
+                showMessageBox(`New sheet "${newSheetName}" added!`);
+                updateHeaderDisplay();
+            }
+
+            renameSheetBtn.addEventListener('click', () => {
+                if (contextMenuTargetTab) {
+                    const oldName = contextMenuTargetTab.dataset.sheetName;
+                    const newName = prompt(`Rename sheet "${oldName}" to:`, oldName);
+                    if (newName && newName.trim() !== '' && newName.trim() !== oldName) {
+                        const trimmedNewName = newName.trim();
+                        if (workbookData[trimmedNewName]) {
+                            showMessageBox('Sheet name already exists.');
+                            sheetTabContextMenu.classList.remove('show');
+                            return;
+                        }
+
+                        workbookData[trimmedNewName] = workbookData[oldName];
+                        delete workbookData[oldName];
+
+                        if (history[oldName]) {
+                            history[trimmedNewName] = history[oldName];
+                            historyPointer[trimmedNewName] = historyPointer[oldName];
+                            delete history[oldName];
+                            delete historyPointer[oldName];
+                        }
+
+                        if (activeSheetName === oldName) {
+                            activeSheetName = trimmedNewName;
+                        }
+                        renderSheetTabs();
+                        renderTable(workbookData[activeSheetName]);
+                        showMessageBox(`Sheet renamed to "${trimmedNewName}"`);
+                        saveWorkbookToSessionStorage();
+                    } else if (newName !== null && newName.trim() === '') {
+                        showMessageBox('Sheet name cannot be empty.');
+                    }
+                }
+                sheetTabContextMenu.classList.remove('show');
+            });
+
+            deleteSheetBtn.addEventListener('click', () => {
+                if (contextMenuTargetTab) {
+                    const sheetToDelete = contextMenuTargetTab.dataset.sheetName;
+                    if (Object.keys(workbookData).length === 1) {
+                        showMessageBox('Cannot delete the last sheet.');
+                        sheetTabContextMenu.classList.remove('show');
+                        return;
+                    }
+
+                    delete workbookData[sheetToDelete];
+                    delete history[sheetToDelete];
+                    delete historyPointer[sheetToDelete];
+
+                    if (activeSheetName === sheetToDelete) {
+                        activeSheetName = Object.keys(workbookData)[0];
+                    }
+                    renderSheetTabs();
+                    renderTable(workbookData[activeSheetName]);
+                    showMessageBox(`Sheet "${sheetToDelete}" deleted.`);
+                    saveWorkbookToSessionStorage();
+                }
+                sheetTabContextMenu.classList.remove('show');
+            });
+
+            document.addEventListener('click', (event) => {
+                if (!contextMenu.contains(event.target)) {
+                    contextMenu.classList.remove('show');
+                    contextMenuTargetCell = null;
+                }
+                if (!sheetTabContextMenu.contains(event.target)) {
+                    sheetTabContextMenu.classList.remove('show');
+                    contextMenuTargetTab = null;
+                }
+                if (!sidebar.contains(event.target) && event.target !== sidebarToggleButton && sidebar.classList.contains('show')) {
+                    sidebar.classList.remove('show');
+                    sidebarBackdrop.classList.remove('show');
+                }
+                if (!formulaHelpModal.contains(event.target) && event.target !== fxButton) {
+                    formulaHelpModal.classList.remove('show');
+                }
+                if (!keyboardShortcutsModal.contains(event.target) && event.target !== menuKeyboardShortcutsButton) {
+                    keyboardShortcutsModal.classList.remove('show');
+                }
+                if (!saveAsModal.contains(event.target) && event.target !== menuSaveButton && saveAsModal.classList.contains('show')) {
+                    saveAsModal.classList.remove('show');
+                }
+            });
+
+            function getChartData(rangeString) {
+                const sheetData = workbookData[activeSheetName];
+                if (!sheetData || sheetData.length === 0) {
+                    showMessageBox('No data in the current sheet to create a chart.');
+                    return null;
+                }
+
+                const rangeMatch = rangeString.match(/^([A-Z]+)(\d*):([A-Z]+)(\d*)$/i);
+                if (!rangeMatch) {
+                    showMessageBox('Invalid range format. Use A1:B5 or A:B.');
+                    return null;
+                }
+
+                const startColLetter = rangeMatch[1];
+                const startRowNumber = rangeMatch[2] ? parseInt(rangeMatch[2], 10) : 1;
+                const endColLetter = rangeMatch[3];
+                const endRowNumber = rangeMatch[4] ? parseInt(rangeMatch[4], 10) : sheetData.length - 1;
+
+                const startColIndex = getColumnIndex(startColLetter);
+                const endColIndex = getColumnIndex(endColLetter);
+
+                if (startColIndex === -1 || endColIndex === -1 || startRowNumber < 1 || endRowNumber >= sheetData.length) {
+                    showMessageBox('Invalid range. Columns or rows out of bounds.');
+                    return null;
+                }
+
+                const labels = [];
+                const datasets = [];
+                const numColsInRange = endColIndex - startColIndex + 1;
+
+                if (numColsInRange > 1) {
+                    for (let r = startRowNumber; r <= endRowNumber; r++) {
+                        if (sheetData[r] && sheetData[r][startColIndex]) {
+                            labels.push(sheetData[r][startColIndex].value);
+                        } else {
+                            labels.push(`Row ${r}`);
+                        }
+                    }
+                } else { 
+                    for (let r = startRowNumber; r <= endRowNumber; r++) {
+                        labels.push(`Row ${r}`);
+                    }
+                }
+
+
+                const dataColStart = (numColsInRange > 1) ? startColIndex + 1 : startColIndex;
+
+                for (let c = dataColStart; c <= endColIndex; c++) {
+                    const dataValues = [];
+                    const datasetLabel = sheetData[0][c] ? sheetData[0][c].value : getColumnLetter(c);
+
+                    for (let r = startRowNumber; r <= endRowNumber; r++) {
+                        if (sheetData[r] && sheetData[r][c]) {
+                            const value = parseFloat(sheetData[r][c].value);
+                            dataValues.push(isNaN(value) ? 0 : value);
+                        } else {
+                            dataValues.push(0);
+                        }
+                    }
+                    if (dataValues.length > 0) {
+                        datasets.push({
+                            label: datasetLabel,
+                            data: dataValues,
+                            backgroundColor: `rgba(${Math.floor(Math.random() * 255)}, ${Math.floor(Math.random() * 255)}, ${Math.floor(Math.random() * 255)}, 0.6)`,
+                            borderColor: `rgba(${Math.floor(Math.random() * 255)}, ${Math.floor(Math.random() * 255)}, ${Math.floor(Math.random() * 255)}, 1)`,
+                            borderWidth: 1
+                        });
+                    }
+                }
+                return { labels, datasets };
+            }
+
+            function renderChart() {
+                try {
+                    if (myChartInstance) {
+                        myChartInstance.destroy();
+                    }
+
+                    const range = chartRangeInput.value.trim();
+                    const chartType = chartTypeSelect.value;
+                    const chartData = getChartData(range);
+
+                    if (!chartData) {
+                        return;
+                    }
+                    if (chartData.labels.length === 0 || chartData.datasets.length === 0 || chartData.datasets[0].data.length === 0) {
+                        showMessageBox('No valid data found for the selected range to create a chart.');
+                        return;
+                    }
+
+                    const ctx = myChartCanvas.getContext('2d');
+                    myChartInstance = new Chart(ctx, {
+                        type: chartType,
+                        data: {
+                            labels: chartData.labels,
+                            datasets: chartData.datasets
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                legend: {
+                                    labels: {
+                                        color: '#e8eaed'
+                                    }
+                                }
+                            },
+                            scales: {
+                                x: {
+                                    ticks: {
+                                        color: '#bdc1c6'
+                                    },
+                                    grid: {
+                                        color: '#444'
+                                    }
+                                },
+                                y: {
+                                    ticks: {
+                                        color: '#bdc1c6'
+                                    },
+                                    grid: {
+                                        color: '#444'
+                                    }
+                                }
+                            }
+                        }
+                    });
+                } catch (error) {
+                    console.error("Error rendering chart:", error);
+                    showMessageBox("Failed to render chart. Please check your data range and try again.");
+                }
+            }
+
+            function validateCell(value, validationRule) {
+                if (!validationRule || !validationRule.type) return true;
+                const trimmedValue = String(value).trim();
+
+                switch (validationRule.type) {
+                    case 'number':
+                        const numValue = parseFloat(trimmedValue);
+                        if (isNaN(numValue)) return false;
+                        if (validationRule.rule.min !== undefined && numValue < validationRule.rule.min) return false;
+                        if (validationRule.rule.max !== undefined && numValue > validationRule.rule.max) return false;
+                        return true;
+                    case 'text':
+                        return true;
+                    case 'list':
+                        const validValues = validationRule.rule.values.map(v => String(v).trim().toLowerCase());
+                        return validValues.includes(trimmedValue.toLowerCase());
+                    default:
+                        return true;
+                }
+            }
+
+            function openValidationModal() {
+                if (!activeCell && contextMenuTargetCell) {
+                    activeCell = contextMenuTargetCell;
+                }
+                if (!activeCell) {
+                    showMessageBox('Please select a cell to set data validation.');
+                    return;
+                }
+
+                const rowIndex = parseInt(activeCell.dataset.rowIndex);
+                const colIndex = parseInt(activeCell.dataset.colIndex);
+                const cellObj = workbookData[activeSheetName][rowIndex][colIndex];
+
+                validationCellDisplay.textContent = `For cell: ${getColumnLetter(colIndex)}${rowIndex + 1}`;
+
+                if (cellObj.validation) {
+                    validationTypeSelect.value = cellObj.validation.type;
+                    if (cellObj.validation.type === 'number') {
+                        validationRuleInput.value = `min:${cellObj.validation.rule.min || ''},max:${cellObj.validation.rule.max || ''}`;
+                        validationRuleInput.classList.remove('hidden');
+                        validationRuleInput.placeholder = 'min:X,max:Y (optional)';
+                    } else if (cellObj.validation.type === 'list') {
+                        validationRuleInput.value = cellObj.validation.rule.values.join(',');
+                        validationRuleInput.classList.remove('hidden');
+                        validationRuleInput.placeholder = 'item1,item2,item3';
+                    } else {
+                        validationRuleInput.value = '';
+                        validationRuleInput.classList.add('hidden');
+                    }
+                } else {
+                    validationTypeSelect.value = '';
+                    validationRuleInput.value = '';
+                    validationRuleInput.classList.add('hidden');
+                }
+
+                validationModal.classList.add('show');
+            }
+
+            validationTypeSelect.addEventListener('change', () => {
+                const selectedType = validationTypeSelect.value;
+                validationRuleInput.value = '';
+                if (selectedType === 'number') {
+                    validationRuleInput.classList.remove('hidden');
+                    validationRuleInput.placeholder = 'min:X,max:Y (optional)';
+                } else if (selectedType === 'list') {
+                    validationRuleInput.classList.remove('hidden');
+                    validationRuleInput.placeholder = 'item1,item2,item3';
+                } else {
+                    validationRuleInput.classList.add('hidden');
+                }
+            });
+
+            applyValidationButton.addEventListener('click', () => {
+                if (!activeCell) {
+                    showMessageBox('No cell selected for validation. This should not happen.');
+                    validationModal.classList.remove('show');
+                    return;
+                }
+
+                const rowIndex = parseInt(activeCell.dataset.rowIndex);
+                const colIndex = parseInt(activeCell.dataset.colIndex);
+                const cellObj = workbookData[activeSheetName][rowIndex][colIndex];
+
+                const selectedType = validationTypeSelect.value;
+                const ruleInput = validationRuleInput.value.trim();
+                let validationRule = null;
+
+                if (selectedType) {
+                    validationRule = { type: selectedType, rule: {} };
+                    if (selectedType === 'number') {
+                        const parts = ruleInput.split(',').map(p => p.trim());
+                        let hasRule = false;
+                        parts.forEach(part => {
+                            if (part.startsWith('min:')) {
+                                validationRule.rule.min = parseFloat(part.substring(4));
+                                hasRule = true;
+                            }
+                            if (part.startsWith('max:')) {
+                                validationRule.rule.max = parseFloat(part.substring(4));
+                                hasRule = true;
+                            }
+                        });
+                        if (ruleInput !== '' && !hasRule) {
+                            showMessageBox('Invalid number rule format. Use min:X,max:Y (both optional).');
+                            return;
+                        }
+                    } else if (selectedType === 'list') {
+                        validationRule.rule.values = ruleInput.split(',').map(v => v.trim()).filter(v => v !== '');
+                        if (validationRule.rule.values.length === 0) {
+                            showMessageBox('List validation requires at least one item.');
+                            return;
+                        }
+                    }
+                }
+
+                cellObj.validation = validationRule;
+                if (cellObj.validation && !validateCell(cellObj.value, cellObj.validation)) {
+                    activeCell.classList.add('invalid-cell');
+                } else {
+                    activeCell.classList.remove('invalid-cell');
+                }
+                pushHistory();
+                validationModal.classList.remove('show');
+                showMessageBox('Data validation applied.');
+            });
+
+            clearValidationButton.addEventListener('click', () => {
+                if (!activeCell) {
+                    showMessageBox('No cell selected for validation. This should not happen.');
+                    validationModal.classList.remove('show');
+                    return;
+                }
+                const rowIndex = parseInt(activeCell.dataset.rowIndex);
+                const colIndex = parseInt(activeCell.dataset.colIndex);
+                workbookData[activeSheetName][rowIndex][colIndex].validation = null;
+                activeCell.classList.remove('invalid-cell');
+                pushHistory();
+                validationModal.classList.remove('show');
+                showMessageBox('Data validation cleared.');
+            });
+
+            closeValidationModalButton.addEventListener('click', () => {
+                validationModal.classList.remove('show');
+            });
+
+            let copiedCellContent = null;
+
+            document.addEventListener('copy', (event) => {
+                if (activeCell) {
+                    const rowIndex = parseInt(activeCell.dataset.rowIndex);
+                    const colIndex = parseInt(activeCell.dataset.colIndex);
+                    const cellObj = workbookData[activeSheetName][rowIndex][colIndex];
+
+                    copiedCellContent = {
+                        value: cellObj.value,
+                        formula: cellObj.formula,
+                        style: JSON.parse(JSON.stringify(cellObj.style || {})),
+                        validation: JSON.parse(JSON.stringify(cellObj.validation || {}))
+                    };
+                    event.clipboardData.setData('text/plain', activeCell.textContent);
+                    event.preventDefault();
+                    showMessageBox('Cell content copied!');
+                }
+            });
+
+            document.addEventListener('paste', (event) => {
+                if (activeCell && copiedCellContent) {
+                    event.preventDefault();
+                    const rowIndex = parseInt(activeCell.dataset.rowIndex);
+                    const colIndex = parseInt(activeCell.dataset.colIndex);
+                    const sheetData = workbookData[activeSheetName];
+
+                    if (activeCell.tagName === 'TD' || (activeCell.tagName === 'TH' && rowIndex === 0)) {
+                        const cellObj = sheetData[rowIndex][colIndex];
+                        cellObj.value = copiedCellContent.value;
+                        cellObj.formula = copiedCellContent.formula;
+                        cellObj.style = JSON.parse(JSON.stringify(copiedCellContent.style));
+                        cellObj.validation = JSON.parse(JSON.stringify(copiedCellContent.validation));
+
+                        activeCell.textContent = cellObj.formula ? evaluateFormula(cellObj.formula, rowIndex, colIndex) : cellObj.value;
+                        applyCellStyles(activeCell, cellObj.style);
+
+                        if (cellObj.validation && !validateCell(cellObj.value, cellObj.validation)) {
+                            activeCell.classList.add('invalid-cell');
+                        } else {
+                            activeCell.classList.remove('invalid-cell');
+                        }
+
+                        pushHistory();
+                        evaluateAllFormulas();
+                        showMessageBox('Cell content pasted!');
+                    }
+                }
+            });
+
+            function trimSheetDataForExport(sheetData) {
+                if (!sheetData || sheetData.length === 0) return [];
+
+                let maxRow = 0;
+                let maxCol = 0;
+
+                for (let r = 0; r < sheetData.length; r++) {
+                    const row = sheetData[r];
+                    for (let c = 0; c < row.length; c++) {
+                        const cell = row[c];
+                        if (cell && (cell.value !== '' || cell.formula !== '')) {
+                            maxRow = Math.max(maxRow, r);
+                            maxCol = Math.max(maxCol, c);
+                        }
+                    }
+                }
+
+                if (maxRow === 0 && maxCol === 0 && (sheetData[0] && sheetData[0].every(cell => cell.value === '' && cell.formula === ''))) {
+                    return []; 
+                }
+
+                const trimmedRows = sheetData.slice(0, maxRow + 1);
+
+                return trimmedRows.map(row => row.slice(0, maxCol + 1));
+            }
+
+            function openSaveAsModal() {
+                if (Object.keys(workbookData).length === 0) {
+                    showMessageBox('No data to save. Please upload or create some data first.');
+                    return;
+                }
+                saveAsFilenameInput.value = currentFileName.replace(/\.(xlsx|csv)$/i, '') || 'ar_sheet';
+                saveAsExtensionSelect.value = 'xlsx'; 
+                saveAsModal.classList.add('show');
+            }
+
+            confirmSaveAsButton.addEventListener('click', () => {
+                const filename = saveAsFilenameInput.value.trim();
+                const extension = saveAsExtensionSelect.value;
+
+                if (!filename) {
+                    showMessageBox('Please enter a filename.');
+                    return;
+                }
+
+                const wb = XLSX.utils.book_new();
+
+                for (const sheetName in workbookData) {
+                    const originalSheetData = workbookData[sheetName];
+                    const trimmedSheetData = trimSheetDataForExport(originalSheetData);
+
+                    if (trimmedSheetData.length === 0) {
+                        continue; 
+                    }
+
+                    const dataForExport = trimmedSheetData.map(row =>
+                        row.map(cellObj => cellObj.formula || cellObj.value)
+                    );
+                    const ws = XLSX.utils.aoa_to_sheet(dataForExport);
+                    XLSX.utils.book_append_sheet(wb, ws, sheetName);
+                }
+
+                if (wb.SheetNames.length === 0) {
+                    showMessageBox('No valid data sheets to save after trimming blank rows/columns.');
+                    return;
+                }
+
+                try {
+                    if (extension === 'xlsx') {
+                        XLSX.writeFile(wb, `${filename}.xlsx`);
+                    } else if (extension === 'csv') {
+                        if (workbookData[activeSheetName]) {
+                            const trimmedActiveSheet = trimSheetDataForExport(workbookData[activeSheetName]);
+                            if (trimmedActiveSheet.length > 0) {
+                                const csvData = trimmedActiveSheet.map(row =>
+                                    row.map(cellObj => `"${String(cellObj.formula || cellObj.value).replace(/"/g, '""')}"`).join(',')
+                                ).join('\n');
+                                const blob = new Blob([csvData], { type: 'text/csv;charset=utf-8;' });
+                                const link = document.createElement('a');
+                                if (link.download !== undefined) {
+                                    const url = URL.createObjectURL(blob);
+                                    link.setAttribute('href', url);
+                                    link.setAttribute('download', `${filename}.csv`);
+                                    link.style.visibility = 'hidden';
+                                    document.body.appendChild(link);
+                                    link.click();
+                                    document.body.removeChild(link);
+                                    URL.revokeObjectURL(url);
+                                } else {
+                                    showMessageBox('CSV download not supported by your browser.');
+                                }
+                            } else {
+                                showMessageBox('Active sheet is empty, cannot save as CSV.');
+                            }
+                        } else {
+                            showMessageBox('No active sheet selected to save as CSV.');
+                        }
+                    }
+                    showMessageBox(`File saved as ${filename}.${extension}!`);
+                    saveAsModal.classList.remove('show');
+                } catch (error) {
+                    console.error('Error saving file:', error);
+                    showMessageBox('Failed to save the file. Please check console for details.');
+                }
+            });
+
+            cancelSaveAsButton.addEventListener('click', () => {
+                saveAsModal.classList.remove('show');
+            });
+            closeSaveAsModalButton.addEventListener('click', () => {
+                saveAsModal.classList.remove('show');
+            });
+
+
+            headerFileInput.addEventListener('change', handleFile);
+            newSheetButton.addEventListener('click', createNewSheet);
+            closeWorkbookButton.addEventListener('click', resetAppState);
+
+            undoButton.addEventListener('click', () => {
+                if (historyPointer[activeSheetName] > 0) {
+                    historyPointer[activeSheetName]--;
+                    workbookData[activeSheetName] = JSON.parse(JSON.stringify(history[activeSheetName][historyPointer[activeSheetName]]));
+                    renderTable(workbookData[activeSheetName]);
+                    showMessageBox('Undo successful!');
+                    saveWorkbookToSessionStorage();
+                } else {
+                    showMessageBox('Nothing to undo.');
+                }
+            });
+
+            redoButton.addEventListener('click', () => {
+                const currentHistory = history[activeSheetName] || [];
+                if (historyPointer[activeSheetName] < currentHistory.length - 1) {
+                    historyPointer[activeSheetName]++;
+                    workbookData[activeSheetName] = JSON.parse(JSON.stringify(currentHistory[historyPointer[activeSheetName]]));
+                    renderTable(workbookData[activeSheetName]);
+                    showMessageBox('Redo successful!');
+                    saveWorkbookToSessionStorage();
+                } else {
+                    showMessageBox('Nothing to redo.');
+                }
+            });
+
+            dataTable.addEventListener('contextmenu', (event) => {
+                const target = event.target;
+                if (target.tagName === 'TD' || (target.tagName === 'TH' && target.parentNode.rowIndex === 1)) {
+                    event.preventDefault();
+                    contextMenuTargetCell = target;
+                    activeCell = target; 
+                    contextMenu.style.left = `${event.clientX}px`;
+                    contextMenu.style.top = `${event.clientY}px`;
+                    contextMenu.classList.add('show');
+                }
+            });
+
+            insertRowAboveButton.addEventListener('click', () => {
+                if (activeCell) {
+                    const rowIndex = parseInt(activeCell.dataset.rowIndex);
+                    addRow(rowIndex);
+                } else {
+                    showMessageBox('Please select a cell to insert row above.');
+                }
+            });
+
+            insertRowBelowButton.addEventListener('click', () => {
+                if (activeCell) {
+                    const rowIndex = parseInt(activeCell.dataset.rowIndex);
+                    addRow(rowIndex + 1);
+                } else {
+                    showMessageBox('Please select a cell to insert row below.');
+                }
+            });
+
+            insertColLeftButton.addEventListener('click', () => {
+                if (activeCell) {
+                    const colIndex = parseInt(activeCell.dataset.colIndex);
+                    addColumn(colIndex);
+                } else {
+                    showMessageBox('Please select a cell to insert column left.');
+                }
+            });
+
+            insertColRightButton.addEventListener('click', () => {
+                if (activeCell) {
+                    const colIndex = parseInt(activeCell.dataset.colIndex);
+                    addColumn(colIndex + 1);
+                } else {
+                    showMessageBox('Please select a cell to insert column right.');
+                }
+            });
+
+            deleteRowButton.addEventListener('click', () => {
+                if (activeCell) {
+                    const rowIndex = parseInt(activeCell.dataset.rowIndex);
+                    deleteRow(rowIndex);
+                } else {
+                    showMessageBox('Please select a cell to delete row.');
+                }
+            });
+
+            deleteColButton.addEventListener('click', () => {
+                if (activeCell) {
+                    const colIndex = parseInt(activeCell.dataset.colIndex);
+                    deleteColumn(colIndex);
+                } else {
+                    showMessageBox('Please select a cell to delete column.');
+                }
+            });
+
+            setValidationCellBtn.addEventListener('click', () => {
+                openValidationModal();
+                contextMenu.classList.remove('show');
+            });
+
+            renderChartButton.addEventListener('click', renderChart);
+            closeChartModalButton.addEventListener('click', () => chartModal.classList.remove('show'));
+
+            sidebarToggleButton.addEventListener('click', () => {
+                sidebar.classList.add('show');
+                sidebarBackdrop.classList.add('show');
+            });
+
+            sidebarCloseButton.addEventListener('click', () => {
+                sidebar.classList.remove('show');
+                sidebarBackdrop.classList.remove('show');
+            });
+
+            sidebarBackdrop.addEventListener('click', () => {
+                sidebar.classList.remove('show');
+                sidebarBackdrop.classList.remove('show');
+            });
+
+            menuSaveButton.addEventListener('click', () => { openSaveAsModal(); sidebar.classList.remove('show'); sidebarBackdrop.classList.remove('show'); });
+            saveToLocalStorageButton.addEventListener('click', () => {
+                try {
+                    if (Object.keys(workbookData).length === 0) {
+                        showMessageBox('No data to save to local storage.');
+                        return;
+                    }
+                    localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(workbookData));
+                    showMessageBox('Workbook saved to local storage!');
+                } catch (e) {
+                    console.error("Error saving to local storage:", e);
+                    showMessageBox("Failed to save to local storage. Storage might be full or blocked.");
+                }
+                sidebar.classList.remove('show');
+                sidebarBackdrop.classList.remove('show');
+            });
+
+            loadFromLocalStorageButton.addEventListener('click', () => {
+                try {
+                    const savedData = localStorage.getItem(LOCAL_STORAGE_KEY);
+                    if (savedData) {
+                        const loadedWorkbook = JSON.parse(savedData);
+                        if (Object.keys(loadedWorkbook).length > 0) {
+                            workbookData = loadedWorkbook;
+                            activeSheetName = Object.keys(workbookData)[0];
+                            currentFileName = 'loaded_from_local_storage.xlsx';
+                            history = {}; 
+                            historyPointer = {};
+                            renderTable(workbookData[activeSheetName]);
+                            renderSheetTabs();
+                            updateHeaderDisplay();
+                            showMessageBox('Workbook loaded from local storage!');
+                        } else {
+                            showMessageBox('No valid workbook found in local storage.');
+                        }
+                    } else {
+                        showMessageBox('No saved workbook found in local storage.');
+                    }
+                } catch (e) {
+                    console.error("Error loading from local storage:", e);
+                    showMessageBox("Failed to load from local storage. Data might be corrupted.");
+                }
+                sidebar.classList.remove('show');
+                sidebarBackdrop.classList.remove('show');
+            });
+            menuCreateChartButton.addEventListener('click', () => {
+                chartModal.classList.add('show');
+                if (myChartInstance) {
+                    myChartInstance.destroy();
+                    myChartInstance = null;
+                }
+                sidebar.classList.remove('show'); sidebarBackdrop.classList.remove('show');
+            });
+            menuSetValidationButton.addEventListener('click', () => { openValidationModal(); sidebar.classList.remove('show'); sidebarBackdrop.classList.remove('show'); });
+            menuAddRowButton.addEventListener('click', () => { addRow(); sidebar.classList.remove('show'); sidebarBackdrop.classList.remove('show'); });
+            menuAddColumnButton.addEventListener('click', () => { addColumn(); sidebar.classList.remove('show'); sidebarBackdrop.classList.remove('show'); });
+            menuKeyboardShortcutsButton.addEventListener('click', () => { keyboardShortcutsModal.classList.add('show'); sidebar.classList.remove('show'); sidebarBackdrop.classList.remove('show'); });
+            closeKeyboardShortcutsModalButton.addEventListener('click', () => keyboardShortcutsModal.classList.remove('show'));
+
+            boldButton.addEventListener('click', () => toggleCellStyle('bold'));
+            italicButton.addEventListener('click', () => toggleCellStyle('italic'));
+            underlineButton.addEventListener('click', () => toggleCellStyle('underline'));
+            textColorPicker.addEventListener('input', (event) => setCellStyle('textColor', event.target.value));
+            bgColorPicker.addEventListener('input', (event) => setCellStyle('bgColor', event.target.value));
+            alignLeftButton.addEventListener('click', () => setCellStyle('textAlign', 'left'));
+            alignCenterButton.addEventListener('click', () => setCellStyle('textAlign', 'center'));
+            alignRightButton.addEventListener('click', () => setCellStyle('textAlign', 'right'));
+
+            function toggleCellStyle(styleProp) {
+                if (!activeCell) {
+                    showMessageBox('Please select a cell to apply styling.');
+                    return;
+                }
+                const rowIndex = parseInt(activeCell.dataset.rowIndex);
+                const colIndex = parseInt(activeCell.dataset.colIndex);
+                let cellObj;
+                if (activeCell.tagName === 'TD' || (activeCell.tagName === 'TH' && rowIndex === 0)) {
+                    cellObj = workbookData[activeSheetName][rowIndex][colIndex];
+                }
+                if (cellObj) {
+                    cellObj.style[styleProp] = !cellObj.style[styleProp];
+                    applyCellStyles(activeCell, cellObj.style);
+                    updateStylingToolbarState();
+                    pushHistory();
+                }
+            }
+
+            function setCellStyle(styleProp, value) {
+                if (!activeCell) {
+                    showMessageBox('Please select a cell to apply styling.');
+                    return;
+                }
+                const rowIndex = parseInt(activeCell.dataset.rowIndex);
+                const colIndex = parseInt(activeCell.dataset.colIndex);
+                let cellObj;
+                if (activeCell.tagName === 'TD' || (activeCell.tagName === 'TH' && rowIndex === 0)) {
+                    cellObj = workbookData[activeSheetName][rowIndex][colIndex];
+                }
+                if (cellObj) {
+                    cellObj.style[styleProp] = value;
+                    applyCellStyles(activeCell, cellObj.style);
+                    updateStylingToolbarState();
+                    pushHistory();
+                }
+            }
+
+            function clearSelection() {
+                const allCells = dataTable.querySelectorAll('td, th');
+                allCells.forEach(cell => {
+                    cell.classList.remove('selected-row', 'selected-col');
+                });
+                selectedRowIndex = -1;
+                selectedColIndex = -1;
+            }
+
+            function selectRow(event, rowIndex) {
+                clearSelection();
+                const rowElements = dataTable.querySelectorAll(`tr:nth-child(${rowIndex + 1}) td, tr:nth-child(${rowIndex + 1}) th`);
+                rowElements.forEach(cell => cell.classList.add('selected-row'));
+                selectedRowIndex = rowIndex;
+                event.stopPropagation();
+            }
+
+            function selectColumn(event, colIndex) {
+                clearSelection();
+                const colElements = dataTable.querySelectorAll(`td[data-col-index="${colIndex}"], th[data-col-index="${colIndex}"]`);
+                colElements.forEach(cell => cell.classList.add('selected-col'));
+                selectedColIndex = colIndex;
+                event.stopPropagation();
+            }
+
+            window.addEventListener('resize', () => {
+                updateHeaderDisplay();
+            });
+
+            fxButton.addEventListener('click', () => {
+                formulaHelpModal.classList.add('show');
+            });
+
+            closeFormulaHelpModalButton.addEventListener('click', () => {
+                formulaHelpModal.classList.remove('show');
+            });
+
+            formulaList.addEventListener('click', (event) => {
+                const formulaItem = event.target.closest('li[data-formula]');
+                if (formulaItem) {
+                    const formula = formulaItem.dataset.formula;
+                    formulaBar.value = `=${formula}`;
+                    formulaBar.focus();
+                    formulaHelpModal.classList.remove('show');
+                }
+            });
+
+            document.addEventListener('keydown', (event) => {
+                if (activeCell) {
+                    const rowIndex = parseInt(activeCell.dataset.rowIndex);
+                    const colIndex = parseInt(activeCell.dataset.colIndex);
+                    let nextCell = null;
+
+                    if (event.key === 'Tab') {
+                        event.preventDefault();
+                        saveActiveCellContent(); 
+                        if (event.shiftKey) {
+                            nextCell = dataTable.querySelector(`[data-row-index="${rowIndex}"][data-col-index="${colIndex - 1}"]`);
+                        } else {
+                            nextCell = dataTable.querySelector(`[data-row-index="${rowIndex}"][data-col-index="${colIndex + 1}"]`);
+                        }
+                    } else if (event.key === 'ArrowUp') {
+                        event.preventDefault();
+                        saveActiveCellContent(); 
+                        nextCell = dataTable.querySelector(`[data-row-index="${rowIndex - 1}"][data-col-index="${colIndex}"]`);
+                    } else if (event.key === 'ArrowDown') {
+                        event.preventDefault();
+                        saveActiveCellContent(); 
+                        nextCell = dataTable.querySelector(`[data-row-index="${rowIndex + 1}"][data-col-index="${colIndex}"]`);
+                    } else if (event.key === 'ArrowLeft') {
+                        event.preventDefault();
+                        saveActiveCellContent(); 
+                        nextCell = dataTable.querySelector(`[data-row-index="${rowIndex}"][data-col-index="${colIndex - 1}"]`);
+                    } else if (event.key === 'ArrowRight') {
+                        event.preventDefault();
+                        saveActiveCellContent(); 
+                        nextCell = dataTable.querySelector(`[data-row-index="${rowIndex}"][data-col-index="${colIndex + 1}"]`);
+                    } else if (event.key === 'F2') {
+                        event.preventDefault();
+                        formulaBar.focus();
+                        formulaBar.setSelectionRange(formulaBar.value.length, formulaBar.value.length);
+                    } else if (event.key === 'Escape') {
+                        if (sidebar.classList.contains('show')) {
+                            sidebar.classList.remove('show');
+                            sidebarBackdrop.classList.remove('show');
+                        } else if (chartModal.classList.contains('show')) {
+                            chartModal.classList.remove('show');
+                        } else if (validationModal.classList.contains('show')) {
+                            validationModal.classList.remove('show');
+                        } else if (formulaHelpModal.classList.contains('show')) {
+                            formulaHelpModal.classList.remove('show');
+                        } else if (keyboardShortcutsModal.classList.contains('show')) {
+                            keyboardShortcutsModal.classList.remove('show');
+                        } else if (saveAsModal.classList.contains('show')) {
+                            saveAsModal.classList.remove('show');
+                        } else if (editorControls.classList.contains('show')) { 
+                            saveActiveCellContent(); 
+                            hideEditorAndToolbar();
+                        }
+                    }
+
+                    if (nextCell) {
+                        nextCell.click(); 
+                    }
+                }
+
+                if ((event.ctrlKey || event.metaKey) && event.key === 's') {
+                    event.preventDefault();
+                    openSaveAsModal(); 
+                } else if ((event.ctrlKey || event.metaKey) && event.key === 'z') {
+                    event.preventDefault();
+                    undoButton.click();
+                } else if ((event.ctrlKey || event.metaKey) && event.key === 'y') {
+                    event.preventDefault();
+                    redoButton.click();
+                } else if ((event.ctrlKey || event.metaKey) && event.key === 'b') {
+                    event.preventDefault();
+                    boldButton.click();
+                } else if ((event.ctrlKey || event.metaKey) && event.key === 'i') {
+                    event.preventDefault();
+                    italicButton.click();
+                } else if ((event.ctrlKey || event.metaKey) && event.key === 'u') {
+                    event.preventDefault();
+                    underlineButton.click();
+                }
+            });
+
+            loadWorkbookFromSessionStorage();
+        });
+    </script>
+</body>
+</html>
