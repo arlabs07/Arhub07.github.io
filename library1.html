@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ArHub Icon Library</title>
+    <link rel="stylesheet" href="arhub-icons.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .installation {
+            background: #f8f9fa;
+            padding: 20px 30px;
+            border-left: 4px solid #3498db;
+            margin: 20px 30px;
+            border-radius: 5px;
+        }
+
+        .installation h3 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+        }
+
+        .code-block {
+            background: #2c3e50;
+            color: #ecf0f1;
+            padding: 15px;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            margin: 10px 0;
+            position: relative;
+            overflow-x: auto;
+        }
+
+        .copy-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 0.8em;
+            transition: background 0.3s;
+        }
+
+        .copy-btn:hover {
+            background: #2980b9;
+        }
+
+        .search-container {
+            padding: 20px 30px;
+            background: #f8f9fa;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .search-box {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #ddd;
+            border-radius: 25px;
+            font-size: 1em;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        .search-box:focus {
+            border-color: #3498db;
+        }
+
+        .icons-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            padding: 30px;
+        }
+
+        .icon-card {
+            background: white;
+            border: 1px solid #e9ecef;
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .icon-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            border-color: #3498db;
+        }
+
+        .icon-card .icon {
+            font-size: 2.5em;
+            color: #3498db;
+            margin-bottom: 15px;
+        }
+
+        .icon-card .icon-name {
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+
+        .icon-card .icon-code {
+            font-family: 'Courier New', monospace;
+            font-size: 0.85em;
+            color: #7f8c8d;
+            background: #f8f9fa;
+            padding: 8px;
+            border-radius: 5px;
+            border: 1px solid #e9ecef;
+        }
+
+        .copied {
+            animation: pulse 0.6s ease-in-out;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #27ae60;
+            color: white;
+            padding: 15px 20px;
+            border-radius: 5px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            transform: translateX(100%);
+            transition: transform 0.3s ease;
+            z-index: 1000;
+        }
+
+        .notification.show {
+            transform: translateX(0);
+        }
+
+        .category-title {
+            grid-column: 1 / -1;
+            font-size: 1.5em;
+            color: #2c3e50;
+            margin: 20px 0 10px 0;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #3498db;
+        }
+
+        @media (max-width: 768px) {
+            .icons-grid {
+                grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+                gap: 15px;
+                padding: 20px;
+            }
+            
+            .header h1 {
+                font-size: 2em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>ArHub Icon Library</h1>
+            <p>Professional SVG icons for modern web development</p>
+        </div>
+
+        <div class="installation">
+            <h3>Installation</h3>
+            <p>Add this CSS file to your HTML to use the icons:</p>
+            <div class="code-block">
+                <button class="copy-btn" onclick="copyToClipboard(this)">Copy</button>
+                &lt;link rel="stylesheet" href="https://arlabs07.github.io/Arhub07.github.io/arhub-icons.css"&gt;
+            </div>
+            <p>Then use any icon with the class format: <code>&lt;i class="ar-icon-name"&gt;&lt;/i&gt;</code></p>
+        </div>
+
+        <div class="search-container">
+            <input type="text" class="search-box" placeholder="Search icons..." id="searchInput">
+        </div>
+
+        <div class="icons-grid" id="iconsGrid">
+            <!-- General Icons -->
+            <div class="category-title">General</div>
+            
+            <div class="icon-card" onclick="copyIconCode(this)">
+                <div class="icon ar-home"></div>
+                <div class="icon-name">Home</div>
+                <div class="icon-code">&lt;i class="ar-home"&gt;&lt;/i&gt;</div>
+            </div>
+
+            <div class="icon-card" onclick="copyIconCode(this)">
+                <div class="icon ar-user"></div>
+                <div class="icon-name">User</div>
+                <div class="icon-code">&lt;i class="ar-user"&gt;&lt;/i&gt;</div>
+            </div>
+
+            <div class="icon-card" onclick="copyIconCode(this)">
+                <div class="icon ar-search"></div>
+                <div class="icon-name">Search</div>
+                <div class="icon-code">&lt;i class="ar-search"&gt;&lt;/i&gt;</div>
+            </div>
+
+            <div class="icon-card" onclick="copyIconCode(this)">
+                <div class="icon ar-heart"></div>
+                <div class="icon-name">Heart</div>
+                <div class="icon-code">&lt;i class="ar-heart"&gt;&lt;/i&gt;</div>
+            </div>
+
+            <div class="icon-card" onclick="copyIconCode(this)">
+                <div class="icon ar-star"></div>
+                <div class="icon-name">Star</div>
+                <div class="icon-code">&lt;i class="ar-star"&gt;&lt;/i&gt;</div>
+            </div>
+
+            <div class="icon-card" onclick="copyIconCode(this)">
+                <div class="icon ar-settings"></div>
+                <div class="icon-name">Settings</div>
+                <div class="icon-code">&lt;i class="ar-settings"&gt;&lt;/i&gt;</div>
+            </div>
+
+            <!-- Navigation Icons -->
+            <div class="category-title">Navigation</div>
+
+            <div class="icon-card" onclick="copyIconCode(this)">
+                <div class="icon ar-menu"></div>
+                <div class="icon-name">Menu</div>
+                <div class="icon-code">&lt;i class="ar-menu"&gt;&lt;/i&gt;</div>
+            </div>
+
+            <div class="icon-card" onclick="copyIconCode(this)">
+                <div class="icon ar-close"></div>
+                <div class="icon-name">Close</div>
+                <div class="icon-code">&lt;i class="ar-close"&gt;&lt;/i&gt;</div>
+            </div>
+
+            <div class="icon-card" onclick="copyIconCode(this)">
+                <div class="icon ar-arrow-left"></div>
+                <div class="icon-name">Arrow Left</div>
+                <div class="icon-code">&lt;i class="ar-arrow-left"&gt;&lt;/i&gt;</div>
+            </div>
+
+            <div class="icon-card" onclick="copyIconCode(this)">
+                <div class="icon ar-arrow-right"></div>
+                <div class="icon-name">Arrow Right</div>
+                <div class="icon-code">&lt;i class="ar-arrow-right"&gt;&lt;/i&gt;</div>
+            </div>
+
+            <div class="icon-card" onclick="copyIconCode(this)">
+                <div class="icon ar-arrow-up"></div>
+                <div class="icon-name">Arrow Up</div>
+                <div class="icon-code">&lt;i class="ar-arrow-up"&gt;&lt;/i&gt;</div>
+            </div>
+
+            <div class="icon-card" onclick="copyIconCode(this)">
+                <div class="icon ar-arrow-down"></div>
+                <div class="icon-name">Arrow Down</div>
+                <div class="icon-code">&lt;i class="ar-arrow-down"&gt;&lt;/i&gt;</div>
+            </div>
+
+            <!-- Communication Icons -->
+            <div class="category-title">Communication</div>
+
+            <div class="icon-card" onclick="copyIconCode(this)">
+                <div class="icon ar-mail"></div>
+                <div class="icon-name">Mail</div>
+                <div class="icon-code">&lt;i class="ar-mail"&gt;&lt;/i&gt;</div>
+            </div>
+
+            <div class="icon-card" onclick="copyIconCode(this)">
+                <div class="icon ar-phone"></div>
+                <div class="icon-name">Phone</div>
+                <div class="icon-code">&lt;i class="ar-phone"&gt;&lt;/i&gt;</div>
+            </div>
+
+            <div class="icon-card" onclick="copyIconCode(this)">
+                <div class="icon ar-message"></div>
+                <div class="icon-name">Message</div>
+                <div class="icon-code">&lt;i class="ar-message"&gt;&lt;/i&gt;</div>
+            </div>
+
+            <div class="icon-card" onclick="copyIconCode(this)">
+                <div class="icon ar-notification"></div>
+                <div class="icon-name">Notification</div>
+                <div class="icon-code">&lt;i class="ar-notification"&gt;&lt;/i&gt;</div>
+            </div>
+
+            <!-- Social Icons -->
+            <div class="category-title">Social</div>
+
+            <div class="icon-card" onclick="copyIconCode(this)">
+                <div class="icon ar-share"></div>
+                <div class="icon-name">Share</div>
+                <div class="icon-code">&lt;i class="ar-share"&gt;&lt;/i&gt;</div>
+            </div>
+
+            <div class="icon-card" onclick="copyIconCode(this)">
+                <div class="icon ar-like"></div>
+                <div class="icon-name">Like</div>
+                <div class="icon-code">&lt;i class="ar-like"&gt;&lt;/i&gt;</div>
+            </div>
+
+            <div class="icon-card" onclick="copyIconCode(this)">
+                <div class="icon ar-comment"></div>
+                <div class="icon-name">Comment</div>
+                <div class="icon-code">&lt;i class="ar-comment"&gt;&lt;/i&gt;</div>
+            </div>
+
+            <div class="icon-card" onclick="copyIconCode(this)">
+                <div class="icon ar-bookmark"></div>
+                <div class="icon-name">Bookmark</div>
+                <div class="icon-code">&lt;i class="ar-bookmark"&gt;&lt;/i&gt;</div>
+            </div>
+
+            <!-- File Icons -->
+            <div class="category-title">Files</div>
+
+            <div class="icon-card" onclick="copyIconCode(this)">
+                <div class="icon ar-file"></div>
+                <div class="icon-name">File</div>
+                <div class="icon-code">&lt;i class="ar-file"&gt;&lt;/i&gt;</div>
+            </div>
+
+            <div class="icon-card" onclick="copyIconCode(this)">
+                <div class="icon ar-folder"></div>
+                <div class="icon-name">Folder</div>
+                <div class="icon-code">&lt;i class="ar-folder"&gt;&lt;/i&gt;</div>
+            </div>
+
+            <div class="icon-card" onclick="copyIconCode(this)">
+                <div class="icon ar-download"></div>
+                <div class="icon-name">Download</div>
+                <div class="icon-code">&lt;i class="ar-download"&gt;&lt;/i&gt;</div>
+            </div>
+
+            <div class="icon-card" onclick="copyIconCode(this)">
+                <div class="icon ar-upload"></div>
+                <div class="icon-name">Upload</div>
+                <div class="icon-code">&lt;i class="ar-upload"&gt;&lt;/i&gt;</div>
+            </div>
+
+            <!-- Media Icons -->
+            <div class="category-title">Media</div>
+
+            <div class="icon-card" onclick="copyIconCode(this)">
+                <div class="icon ar-play"></div>
+                <div class="icon-name">Play</div>
+                <div class="icon-code">&lt;i class="ar-play"&gt;&lt;/i&gt;</div>
+            </div>
+
+            <div class="icon-card" onclick="copyIconCode(this)">
+                <div class="icon ar-pause"></div>
+                <div class="icon-name">Pause</div>
+                <div class="icon-code">&lt;i class="ar-pause"&gt;&lt;/i&gt;</div>
+            </div>
+
+            <div class="icon-card" onclick="copyIconCode(this)">
+                <div class="icon ar-stop"></div>
+                <div class="icon-name">Stop</div>
+                <div class="icon-code">&lt;i class="ar-stop"&gt;&lt;/i&gt;</div>
+            </div>
+
+            <div class="icon-card" onclick="copyIconCode(this)">
+                <div class="icon ar-volume"></div>
+                <div class="icon-name">Volume</div>
+                <div class="icon-code">&lt;i class="ar-volume"&gt;&lt;/i&gt;</div>
+            </div>
+
+            <div class="icon-card" onclick="copyIconCode(this)">
+                <div class="icon ar-image"></div>
+                <div class="icon-name">Image</div>
+                <div class="icon-code">&lt;i class="ar-image"&gt;&lt;/i&gt;</div>
+            </div>
+
+            <div class="icon-card" onclick="copyIconCode(this)">
+                <div class="icon ar-video"></div>
+                <div class="icon-name">Video</div>
+                <div class="icon-code">&lt;i class="ar-video"&gt;&lt;/i&gt;</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="notification" id="notification">
+        Icon code copied to clipboard!
+    </div>
+
+    <script>
+        function copyToClipboard(button) {
+            const codeBlock = button.parentElement;
+            const text = codeBlock.textContent.replace('Copy', '').trim();
+            
+            navigator.clipboard.writeText(text).then(() => {
+                showNotification('Code copied to clipboard!');
+            }).catch(() => {
+                // Fallback for older browsers
+                const textArea = document.createElement('textarea');
+                textArea.value = text;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                showNotification('Code copied to clipboard!');
+            });
+        }
+
+        function copyIconCode(card) {
+            const iconCode = card.querySelector('.icon-code').textContent;
+            
+            navigator.clipboard.writeText(iconCode).then(() => {
+                card.classList.add('copied');
+                showNotification('Icon code copied to clipboard!');
+                setTimeout(() => {
+                    card.classList.remove('copied');
+                }, 600);
+            }).catch(() => {
+                // Fallback for older browsers
+                const textArea = document.createElement('textarea');
+                textArea.value = iconCode;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                card.classList.add('copied');
+                showNotification('Icon code copied to clipboard!');
+                setTimeout(() => {
+                    card.classList.remove('copied');
+                }, 600);
+            });
+        }
+
+        function showNotification(message) {
+            const notification = document.getElementById('notification');
+            notification.textContent = message;
+            notification.classList.add('show');
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+
+        // Search functionality
+        document.getElementById('searchInput').addEventListener('input', function(e) {
+            const searchTerm = e.target.value.toLowerCase();
+            const iconCards = document.querySelectorAll('.icon-card');
+            const categoryTitles = document.querySelectorAll('.category-title');
+            
+            iconCards.forEach(card => {
+                const iconName = card.querySelector('.icon-name').textContent.toLowerCase();
+                const iconCode = card.querySelector('.icon-code').textContent.toLowerCase();
+                
+                if (iconName.includes(searchTerm) || iconCode.includes(searchTerm)) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+            
+            // Hide/show category titles based on visible cards
+            categoryTitles.forEach(title => {
+                let hasVisibleCards = false;
+                let nextElement = title.nextElementSibling;
+                
+                while (nextElement && !nextElement.classList.contains('category-title')) {
+                    if (nextElement.style.display !== 'none') {
+                        hasVisibleCards = true;
+                        break;
+                    }
+                    nextElement = nextElement.nextElementSibling;
+                }
+                
+                title.style.display = hasVisibleCards ? 'block' : 'none';
+            });
+        });
+    </script>
+</body>
+</html>
