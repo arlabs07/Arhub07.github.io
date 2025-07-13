@@ -3,335 +3,214 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Placeholder Image Service</title>
+    <title>Dynamic Placeholder Image Service</title>
+    <!-- Tailwind CSS CDN for modern styling and responsiveness -->
+    <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
+        /* Custom font for a clean, modern look */
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            color: #333;
+            font-family: 'Inter', sans-serif;
         }
-
+        /* Hide canvas elements by default, they are used for generation */
+        canvas {
+            display: none;
+        }
+        /* Ensure the main container takes full width on small screens */
         .container {
             max-width: 1200px;
             margin: 0 auto;
-            padding: 20px;
+            padding: 1rem; /* Responsive padding */
         }
-
-        .header {
-            text-align: center;
-            color: white;
-            margin-bottom: 40px;
-        }
-
-        .header h1 {
-            font-size: 2.5rem;
-            margin-bottom: 10px;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
-        }
-
-        .header p {
-            font-size: 1.2rem;
-            opacity: 0.9;
-        }
-
-        .main-content {
-            background: white;
-            border-radius: 15px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
-            padding: 30px;
-            margin-bottom: 30px;
-        }
-
-        .demo-section {
-            margin-bottom: 40px;
-        }
-
-        .demo-section h2 {
-            color: #4a5568;
-            margin-bottom: 20px;
-            font-size: 1.5rem;
-        }
-
-        .demo-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 20px;
-            margin-bottom: 30px;
-        }
-
-        .demo-item {
-            text-align: center;
-            padding: 20px;
-            background: #f8f9fa;
-            border-radius: 10px;
-            border: 2px dashed #e2e8f0;
-            transition: all 0.3s ease;
-        }
-
-        .demo-item:hover {
-            border-color: #667eea;
-            transform: translateY(-5px);
-            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
-        }
-
+        /* Specific styling for the demo canvas elements to make them visible */
         .demo-item canvas {
-            border-radius: 8px;
-            margin-bottom: 15px;
+            display: block; /* Make demo canvases visible */
+            border-radius: 0.5rem; /* Rounded corners */
+            margin-bottom: 1rem; /* Spacing below canvas */
+            max-width: 100%; /* Ensure it fits its container */
+            height: auto; /* Maintain aspect ratio */
+            border: 2px dashed #e2e8f0; /* Dashed border for demo */
+        }
+        /* Styling for the generated image canvas */
+        #generatedResult canvas {
+            display: block; /* Make generated canvas visible */
+            border-radius: 0.5rem;
+            margin: 1rem auto; /* Center it with margin */
             max-width: 100%;
             height: auto;
-        }
-
-        .demo-item .url {
-            background: #2d3748;
-            color: #e2e8f0;
-            padding: 10px;
-            border-radius: 5px;
-            font-family: 'Courier New', monospace;
-            font-size: 0.9rem;
-            word-break: break-all;
-            margin-bottom: 10px;
-        }
-
-        .api-section {
-            background: #f8f9fa;
-            padding: 25px;
-            border-radius: 10px;
-            margin: 30px 0;
-        }
-
-        .api-section h3 {
-            color: #2d3748;
-            margin-bottom: 15px;
-        }
-
-        .api-section code {
-            background: #2d3748;
-            color: #e2e8f0;
-            padding: 2px 6px;
-            border-radius: 3px;
-            font-family: 'Courier New', monospace;
-        }
-
-        .api-section pre {
-            background: #2d3748;
-            color: #e2e8f0;
-            padding: 15px;
-            border-radius: 8px;
-            overflow-x: auto;
-            margin: 10px 0;
-        }
-
-        .generator {
-            background: #f0f4f8;
-            padding: 25px;
-            border-radius: 10px;
-            margin: 30px 0;
-        }
-
-        .generator h3 {
-            color: #2d3748;
-            margin-bottom: 20px;
-        }
-
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: 600;
-            color: #4a5568;
-        }
-
-        .form-group input, .form-group select {
-            width: 100%;
-            padding: 10px;
-            border: 2px solid #e2e8f0;
-            border-radius: 5px;
-            font-size: 1rem;
-            transition: border-color 0.3s ease;
-        }
-
-        .form-group input:focus, .form-group select:focus {
-            outline: none;
-            border-color: #667eea;
-        }
-
-        .form-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
-        }
-
-        .btn {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 12px 25px;
-            border: none;
-            border-radius: 8px;
-            font-size: 1rem;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-        }
-
-        .generated-result {
-            margin-top: 20px;
-            padding: 20px;
-            background: white;
-            border-radius: 8px;
-            border: 2px solid #e2e8f0;
-            text-align: center;
-        }
-
-        .generated-result canvas {
-            border-radius: 8px;
-            margin-bottom: 15px;
-            max-width: 100%;
-            height: auto;
-        }
-
-        @media (max-width: 768px) {
-            .container {
-                padding: 10px;
-            }
-            
-            .header h1 {
-                font-size: 2rem;
-            }
-            
-            .main-content {
-                padding: 20px;
-            }
-            
-            .form-row {
-                grid-template-columns: 1fr;
-            }
-            
-            .demo-grid {
-                grid-template-columns: 1fr;
-            }
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1); /* Subtle shadow */
         }
     </style>
 </head>
-<body>
-    <div class="container">
-        <div class="header">
-            <h1>🖼️ Placeholder Image Service</h1>
-            <p>Generate placeholder images with custom dimensions, colors, and text via URL</p>
-        </div>
+<body class="bg-gradient-to-br from-indigo-600 to-purple-700 min-h-screen flex flex-col items-center justify-center text-gray-800">
 
-        <div class="main-content">
-            <div class="demo-section">
-                <h2>Live Examples</h2>
-                <div class="demo-grid">
-                    <div class="demo-item">
-                        <canvas id="demo1"></canvas>
-                        <div class="url">300x200/blue/white</div>
-                        <p>Basic placeholder with custom colors</p>
+    <!-- Main content container for the interactive page -->
+    <div id="mainContent" class="container bg-white rounded-xl shadow-2xl p-6 md:p-10 lg:p-12 my-8 w-11/12 md:w-4/5 lg:w-3/4 xl:w-2/3 hidden">
+        <!-- Header Section -->
+        <header class="text-center mb-8">
+            <h1 class="text-4xl md:text-5xl font-extrabold text-indigo-700 mb-2">
+                🖼️ Dynamic Placeholder Images
+            </h1>
+            <p class="text-lg md:text-xl text-gray-600">
+                Generate custom placeholder images on the fly via URL or interactive form.
+            </p>
+        </header>
+
+        <!-- Live Examples Section -->
+        <section class="mb-10">
+            <h2 class="text-2xl md:text-3xl font-bold text-gray-700 mb-6">Live Examples</h2>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Example 1 -->
+                <div class="demo-item bg-blue-50 p-6 rounded-lg shadow-md flex flex-col items-center text-center transition-transform duration-300 hover:scale-105 hover:shadow-lg">
+                    <canvas id="demo1"></canvas>
+                    <div class="url bg-gray-800 text-white text-sm md:text-base p-2 rounded-md break-all font-mono mb-3 w-full">
+                        300x200/blue/white
                     </div>
-                    <div class="demo-item">
-                        <canvas id="demo2"></canvas>
-                        <div class="url">400x300/ff6b6b/ffffff?text=Hello World</div>
-                        <p>Custom text with hex colors</p>
+                    <p class="text-gray-700 text-sm">Basic placeholder with custom colors.</p>
+                </div>
+                <!-- Example 2 -->
+                <div class="demo-item bg-red-50 p-6 rounded-lg shadow-md flex flex-col items-center text-center transition-transform duration-300 hover:scale-105 hover:shadow-lg">
+                    <canvas id="demo2"></canvas>
+                    <div class="url bg-gray-800 text-white text-sm md:text-base p-2 rounded-md break-all font-mono mb-3 w-full">
+                        400x300/ff6b6b/ffffff?text=Hello World
                     </div>
-                    <div class="demo-item">
-                        <canvas id="demo3"></canvas>
-                        <div class="url">350x250/gradient/white</div>
-                        <p>Gradient background</p>
+                    <p class="text-gray-700 text-sm">Custom text with hex colors.</p>
+                </div>
+                <!-- Example 3 -->
+                <div class="demo-item bg-purple-50 p-6 rounded-lg shadow-md flex flex-col items-center text-center transition-transform duration-300 hover:scale-105 hover:shadow-lg">
+                    <canvas id="demo3"></canvas>
+                    <div class="url bg-gray-800 text-white text-sm md:text-base p-2 rounded-md break-all font-mono mb-3 w-full">
+                        350x250/gradient/white
                     </div>
+                    <p class="text-gray-700 text-sm">Gradient background example.</p>
                 </div>
             </div>
+        </section>
 
-            <div class="api-section">
-                <h3>🔗 API Usage</h3>
-                <p>Generate placeholder images by using URL parameters:</p>
-                <pre>https://arlabs07.github.io/Arhub07.github.io/library/placeholder.html?width=300&height=200&bg=blue&text=Hello&color=white</pre>
-                
-                <h4>URL Parameters:</h4>
-                <ul style="margin: 15px 0; padding-left: 20px;">
-                    <li><code>width</code> - Image width (default: 300)</li>
-                    <li><code>height</code> - Image height (default: 200)</li>
-                    <li><code>bg</code> - Background color (hex, named color, or "gradient")</li>
-                    <li><code>color</code> - Text color (default: white)</li>
-                    <li><code>text</code> - Custom text (default: dimensions)</li>
-                    <li><code>format</code> - Image format: png, jpg, webp (default: png)</li>
-                </ul>
+        <!-- API Usage Section -->
+        <section class="bg-gray-100 p-6 rounded-lg shadow-inner mb-10">
+            <h3 class="text-xl md:text-2xl font-bold text-gray-700 mb-4">🔗 API Usage</h3>
+            <p class="text-gray-700 mb-4">Generate placeholder images by appending URL parameters to this page's URL:</p>
+            <pre class="bg-gray-800 text-green-300 p-4 rounded-md overflow-x-auto text-sm md:text-base mb-4">
+<span id="baseUrlDisplay"></span>?width=300&height=200&bg=blue&text=Hello&color=white
+            </pre>
 
-                <h4>Example URLs:</h4>
-                <pre>?width=400&height=300&bg=ff6b6b&text=Placeholder
-?width=500&height=400&bg=gradient&color=black&text=Beautiful Image
-?width=600&height=200&bg=2196f3&color=white&format=jpg</pre>
-            </div>
+            <h4 class="text-lg md:text-xl font-semibold text-gray-700 mb-3">URL Parameters:</h4>
+            <ul class="list-disc list-inside text-gray-700 mb-4 space-y-1">
+                <li><code class="font-mono bg-gray-200 p-1 rounded">width</code> - Image width in pixels (default: 300)</li>
+                <li><code class="font-mono bg-gray-200 p-1 rounded">height</code> - Image height in pixels (default: 200)</li>
+                <li><code class="font-mono bg-gray-200 p-1 rounded">bg</code> - Background color (hex code like `ff00ff`, named color like `red`, or `gradient`)</li>
+                <li><code class="font-mono bg-gray-200 p-1 rounded">color</code> - Text color (hex code or named color, default: white)</li>
+                <li><code class="font-mono bg-gray-200 p-1 rounded">text</code> - Custom text to display (default: dimensions)</li>
+                <li><code class="font-mono bg-gray-200 p-1 rounded">format</code> - Image format: `png`, `jpg`, `webp` (default: `png`)</li>
+            </ul>
 
-            <div class="generator">
-                <h3>🎨 Image Generator</h3>
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="width">Width (px)</label>
-                        <input type="number" id="width" value="300" min="50" max="2000">
-                    </div>
-                    <div class="form-group">
-                        <label for="height">Height (px)</label>
-                        <input type="number" id="height" value="200" min="50" max="2000">
-                    </div>
-                </div>
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="bgColor">Background Color</label>
-                        <input type="text" id="bgColor" value="4a90e2" placeholder="hex, named color, or 'gradient'">
-                    </div>
-                    <div class="form-group">
-                        <label for="textColor">Text Color</label>
-                        <input type="text" id="textColor" value="white" placeholder="hex or named color">
-                    </div>
+            <h4 class="text-lg md:text-xl font-semibold text-gray-700 mb-3">Example URLs:</h4>
+            <pre class="bg-gray-800 text-green-300 p-4 rounded-md overflow-x-auto text-sm md:text-base">
+<span id="exampleUrl1"></span>
+<span id="exampleUrl2"></span>
+<span id="exampleUrl3"></span>
+            </pre>
+        </section>
+
+        <!-- Interactive Image Generator Section -->
+        <section class="bg-blue-50 p-6 rounded-lg shadow-md mb-10">
+            <h3 class="text-xl md:text-2xl font-bold text-blue-800 mb-6">🎨 Image Generator</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4 mb-6">
+                <div class="form-group">
+                    <label for="width" class="block text-gray-700 font-semibold mb-1">Width (px)</label>
+                    <input type="number" id="width" value="300" min="50" max="2000" class="w-full p-2 border-2 border-blue-200 rounded-md focus:border-blue-500 focus:ring focus:ring-blue-200 transition duration-200">
                 </div>
                 <div class="form-group">
-                    <label for="customText">Custom Text</label>
-                    <input type="text" id="customText" placeholder="Leave empty for dimensions">
+                    <label for="height" class="block text-gray-700 font-semibold mb-1">Height (px)</label>
+                    <input type="number" id="height" value="200" min="50" max="2000" class="w-full p-2 border-2 border-blue-200 rounded-md focus:border-blue-500 focus:ring focus:ring-blue-200 transition duration-200">
                 </div>
                 <div class="form-group">
-                    <label for="format">Format</label>
-                    <select id="format">
-                        <option value="png">PNG</option>
-                        <option value="jpg">JPG</option>
-                        <option value="webp">WebP</option>
-                    </select>
+                    <label for="bgColor" class="block text-gray-700 font-semibold mb-1">Background Color</label>
+                    <input type="text" id="bgColor" value="4a90e2" placeholder="hex, named color, or 'gradient'" class="w-full p-2 border-2 border-blue-200 rounded-md focus:border-blue-500 focus:ring focus:ring-blue-200 transition duration-200">
                 </div>
-                <button class="btn" onclick="generateImage()">Generate Image</button>
-                <div id="generatedResult" class="generated-result" style="display: none;"></div>
+                <div class="form-group">
+                    <label for="textColor" class="block text-gray-700 font-semibold mb-1">Text Color</label>
+                    <input type="text" id="textColor" value="white" placeholder="hex or named color" class="w-full p-2 border-2 border-blue-200 rounded-md focus:border-blue-500 focus:ring focus:ring-blue-200 transition duration-200">
+                </div>
             </div>
-        </div>
+            <div class="form-group mb-6">
+                <label for="customText" class="block text-gray-700 font-semibold mb-1">Custom Text</label>
+                <input type="text" id="customText" placeholder="Leave empty for dimensions" class="w-full p-2 border-2 border-blue-200 rounded-md focus:border-blue-500 focus:ring focus:ring-blue-200 transition duration-200">
+            </div>
+            <div class="form-group mb-6">
+                <label for="format" class="block text-gray-700 font-semibold mb-1">Format</label>
+                <select id="format" class="w-full p-2 border-2 border-blue-200 rounded-md focus:border-blue-500 focus:ring focus:ring-blue-200 transition duration-200">
+                    <option value="png">PNG</option>
+                    <option value="jpg">JPG</option>
+                    <option value="webp">WebP</option>
+                </select>
+            </div>
+            <button onclick="generateImage()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-6 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
+                Generate Image
+            </button>
+            <div id="generatedResult" class="generated-result mt-6 p-4 bg-white border-2 border-blue-200 rounded-lg text-center hidden">
+                <!-- Generated image and URL will be inserted here -->
+            </div>
+        </section>
+
+        <!-- Footer Section -->
+        <footer class="text-center text-gray-500 text-sm mt-8">
+            <p>&copy; 2025 Dynamic Placeholder Image Service. All rights reserved.</p>
+            <p>Built with ❤️ for developers.</p>
+        </footer>
     </div>
 
     <script>
-        // Parse URL parameters
+        /**
+         * Helper function to parse URL parameters from the current window location.
+         * @returns {object} An object containing parsed parameters.
+         */
         function getUrlParams() {
             const params = new URLSearchParams(window.location.search);
             return {
-                width: parseInt(params.get('width')) || 300,
-                height: parseInt(params.get('height')) || 200,
-                bg: params.get('bg') || '4a90e2',
-                color: params.get('color') || 'white',
-                text: params.get('text') || '',
-                format: params.get('format') || 'png'
+                width: parseInt(params.get('width')),
+                height: parseInt(params.get('height')),
+                bg: params.get('bg'),
+                color: params.get('color'),
+                text: params.get('text'),
+                format: params.get('format') || 'png' // Default to png if not specified
             };
         }
 
-        // Generate placeholder image
-        function createPlaceholderImage(canvas, width, height, bgColor, textColor, text, format = 'png') {
+        /**
+         * Converts a color string (hex, named, or hex without #) to a valid CSS color.
+         * Handles the special 'gradient' keyword.
+         * @param {string} color - The color string.
+         * @returns {string} The formatted CSS color or 'gradient'.
+         */
+        function formatColor(color) {
+            if (color === 'gradient') {
+                return 'gradient';
+            }
+            // If it's a named color or already has '#', return as is.
+            // Using CSS.supports to check for named colors is a robust way.
+            if (color && (CSS.supports('color', color) || color.startsWith('#'))) {
+                return color;
+            }
+            // Assume it's a hex without '#' if it's a valid hex string
+            if (color && /^[0-9a-fA-F]{3,6}$/.test(color)) {
+                return `#${color}`;
+            }
+            // Fallback for invalid or empty colors
+            return '#cccccc'; // A neutral grey
+        }
+
+        /**
+         * Draws a placeholder image onto a given canvas element.
+         * This function does not return a data URL; it modifies the canvas directly.
+         * @param {HTMLCanvasElement} canvas - The canvas element to draw on.
+         * @param {number} width - The width of the image.
+         * @param {number} height - The height of the image.
+         * @param {string} bgColor - The background color (hex, named, or 'gradient').
+         * @param {string} textColor - The text color (hex or named).
+         * @param {string} text - The custom text to display.
+         */
+        function drawPlaceholderOnCanvas(canvas, width, height, bgColor, textColor, text) {
             const ctx = canvas.getContext('2d');
             canvas.width = width;
             canvas.height = height;
@@ -339,36 +218,37 @@
             // Set background
             if (bgColor === 'gradient') {
                 const gradient = ctx.createLinearGradient(0, 0, width, height);
-                gradient.addColorStop(0, '#667eea');
-                gradient.addColorStop(1, '#764ba2');
+                gradient.addColorStop(0, '#667eea'); // Start color of gradient
+                gradient.addColorStop(1, '#764ba2'); // End color of gradient
                 ctx.fillStyle = gradient;
             } else {
-                ctx.fillStyle = bgColor.startsWith('#') ? bgColor : `#${bgColor}`;
+                ctx.fillStyle = formatColor(bgColor);
             }
             ctx.fillRect(0, 0, width, height);
 
             // Add text
             const displayText = text || `${width} × ${height}`;
-            ctx.fillStyle = textColor.startsWith('#') ? textColor : textColor;
-            
-            // Calculate font size based on image size
-            const fontSize = Math.min(width, height) * 0.1;
-            ctx.font = `${fontSize}px Arial`;
+            ctx.fillStyle = formatColor(textColor);
+
+            // Calculate font size dynamically based on the smaller dimension
+            const fontSize = Math.min(width, height) * 0.1; // 10% of the smaller dimension
+            ctx.font = `bold ${fontSize}px Inter, Arial, sans-serif`; // Use Inter, fallback to Arial
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
-            
-            // Add text shadow for better readability
-            ctx.shadowColor = 'rgba(0,0,0,0.3)';
-            ctx.shadowBlur = 2;
+
+            // Add text shadow for better readability against various backgrounds
+            ctx.shadowColor = 'rgba(0,0,0,0.4)';
+            ctx.shadowBlur = 3;
             ctx.shadowOffsetX = 1;
             ctx.shadowOffsetY = 1;
-            
-            ctx.fillText(displayText, width / 2, height / 2);
 
-            return canvas;
+            ctx.fillText(displayText, width / 2, height / 2);
         }
 
-        // Initialize demo images
+        /**
+         * Initializes the demo images on the main page.
+         * This runs only when the page is loaded without URL parameters.
+         */
         function initDemoImages() {
             const demos = [
                 { id: 'demo1', width: 300, height: 200, bg: '4a90e2', color: 'white', text: '' },
@@ -378,12 +258,18 @@
 
             demos.forEach(demo => {
                 const canvas = document.getElementById(demo.id);
-                createPlaceholderImage(canvas, demo.width, demo.height, demo.bg, demo.color, demo.text);
+                if (canvas) { // Ensure canvas exists before drawing
+                    drawPlaceholderOnCanvas(canvas, demo.width, demo.height, demo.bg, demo.color, demo.text);
+                }
             });
         }
 
-        // Generate image from form
+        /**
+         * Handles image generation from the interactive form.
+         * Displays the generated image and its URL on the page.
+         */
         function generateImage() {
+            // Get values from form inputs
             const width = parseInt(document.getElementById('width').value);
             const height = parseInt(document.getElementById('height').value);
             const bgColor = document.getElementById('bgColor').value;
@@ -391,79 +277,122 @@
             const customText = document.getElementById('customText').value;
             const format = document.getElementById('format').value;
 
+            // Validate inputs (basic validation)
+            if (isNaN(width) || isNaN(height) || width < 50 || height < 50) {
+                alert('Please enter valid width and height (minimum 50px).');
+                return;
+            }
+
+            // Create a temporary canvas to draw the image
+            const tempCanvas = document.createElement('canvas');
+            drawPlaceholderOnCanvas(tempCanvas, width, height, bgColor, textColor, customText);
+
+            // Get the data URL from the temporary canvas
+            const dataUrl = tempCanvas.toDataURL(`image/${format}`);
+
+            // Construct the URL for direct access (for copy-pasting)
+            const baseUrl = window.location.origin + window.location.pathname;
+            const params = new URLSearchParams();
+            params.append('width', width);
+            params.append('height', height);
+            params.append('bg', bgColor);
+            params.append('color', textColor);
+            if (customText) {
+                params.append('text', customText);
+            }
+            params.append('format', format);
+            const generatedUrl = `${baseUrl}?${params.toString()}`;
+
+            // Display the generated image and URL in the result section
             const resultDiv = document.getElementById('generatedResult');
-            resultDiv.innerHTML = '';
-
-            const canvas = document.createElement('canvas');
-            createPlaceholderImage(canvas, width, height, bgColor, textColor, customText, format);
-
-            const url = `${window.location.origin}${window.location.pathname}?width=${width}&height=${height}&bg=${bgColor}&color=${textColor}&text=${encodeURIComponent(customText)}&format=${format}`;
-            
             resultDiv.innerHTML = `
-                <canvas id="generatedCanvas"></canvas>
-                <div class="url">${url}</div>
-                <button class="btn" onclick="downloadImage()">Download Image</button>
+                <img src="${dataUrl}" alt="Generated Placeholder" class="mx-auto rounded-md shadow-lg border-2 border-blue-300 mb-4 max-w-full h-auto">
+                <div class="bg-gray-800 text-white text-sm md:text-base p-3 rounded-md break-all font-mono mb-4">
+                    ${generatedUrl}
+                </div>
+                <button onclick="copyToClipboard('${generatedUrl}')" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-lg shadow-md hover:shadow-lg transition-all duration-300 mr-2">
+                    Copy URL
+                </button>
+                <button onclick="downloadImage('${dataUrl}', '${format}')" class="bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded-lg shadow-md hover:shadow-lg transition-all duration-300">
+                    Download Image
+                </button>
             `;
-
-            const generatedCanvas = document.getElementById('generatedCanvas');
-            generatedCanvas.width = width;
-            generatedCanvas.height = height;
-            const ctx = generatedCanvas.getContext('2d');
-            ctx.drawImage(canvas, 0, 0);
-
-            resultDiv.style.display = 'block';
-            
-            // Store canvas for download
-            window.currentCanvas = canvas;
+            resultDiv.classList.remove('hidden'); // Show the result section
         }
 
-        // Download generated image
-        function downloadImage() {
-            if (window.currentCanvas) {
-                const format = document.getElementById('format').value;
-                const link = document.createElement('a');
-                link.download = `placeholder.${format}`;
-                link.href = window.currentCanvas.toDataURL(`image/${format}`);
-                link.click();
+        /**
+         * Copies text to the clipboard.
+         * @param {string} text - The text to copy.
+         */
+        function copyToClipboard(text) {
+            const textarea = document.createElement('textarea');
+            textarea.value = text;
+            document.body.appendChild(textarea);
+            textarea.select();
+            try {
+                document.execCommand('copy');
+                alert('URL copied to clipboard!'); // Using alert for simplicity, consider custom modal for production
+            } catch (err) {
+                console.error('Failed to copy text: ', err);
+                alert('Failed to copy URL. Please copy manually: ' + text);
             }
+            document.body.removeChild(textarea);
         }
 
-        // Check if accessed via URL parameters and show image
-        function handleUrlAccess() {
+        /**
+         * Downloads the generated image.
+         * @param {string} dataUrl - The data URL of the image.
+         * @param {string} format - The format of the image (e.g., 'png', 'jpg').
+         */
+        function downloadImage(dataUrl, format) {
+            const link = document.createElement('a');
+            link.download = `placeholder.${format}`;
+            link.href = dataUrl;
+            document.body.appendChild(link); // Required for Firefox
+            link.click();
+            document.body.removeChild(link); // Clean up
+        }
+
+        /**
+         * Handles the initial page load. If URL parameters are present, it generates
+         * the image and redirects the browser to the image data URL. Otherwise, it
+         * displays the interactive generator page.
+         */
+        function handleInitialLoad() {
             const params = getUrlParams();
-            const hasParams = window.location.search.includes('width') || window.location.search.includes('height');
-            
-            if (hasParams) {
-                // Create a canvas and generate the image
-                const canvas = document.createElement('canvas');
-                createPlaceholderImage(canvas, params.width, params.height, params.bg, params.color, params.text, params.format);
-                
-                // Convert canvas to blob and create object URL
-                canvas.toBlob((blob) => {
-                    const url = URL.createObjectURL(blob);
-                    
-                    // Replace the entire page with just the image
-                    document.body.innerHTML = `
-                        <div style="margin: 0; padding: 0; display: flex; justify-content: center; align-items: center; min-height: 100vh; background: #f0f0f0;">
-                            <img src="${url}" style="max-width: 100%; max-height: 100vh; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);" alt="Placeholder ${params.width}x${params.height}">
-                        </div>
-                    `;
-                    
-                    // Clean up the object URL after a delay
-                    setTimeout(() => URL.revokeObjectURL(url), 5000);
-                }, `image/${params.format}`);
-                
-                return true;
+            const hasImageParams = params.width || params.height || params.bg || params.text || params.color;
+
+            if (hasImageParams) {
+                // If image parameters are present, generate the image and redirect
+                const width = params.width || 300;
+                const height = params.height || 200;
+                const bg = params.bg || 'cccccc'; // Default grey background for direct image access
+                const color = params.color || 'white';
+                const text = params.text || '';
+                const format = params.format || 'png';
+
+                const tempCanvas = document.createElement('canvas');
+                drawPlaceholderOnCanvas(tempCanvas, width, height, bg, color, text);
+                const dataUrl = tempCanvas.toDataURL(`image/${format}`);
+
+                // Redirect the browser to the data URL. This makes the URL itself become the image.
+                window.location.replace(dataUrl);
+            } else {
+                // If no image parameters, show the interactive generator page
+                document.getElementById('mainContent').classList.remove('hidden');
+                initDemoImages(); // Initialize demo images for the interactive page
+
+                // Populate base URL and example URLs for the API section
+                const baseUrl = window.location.origin + window.location.pathname;
+                document.getElementById('baseUrlDisplay').textContent = baseUrl;
+                document.getElementById('exampleUrl1').textContent = `${baseUrl}?width=400&height=300&bg=ff6b6b&text=Placeholder`;
+                document.getElementById('exampleUrl2').textContent = `${baseUrl}?width=500&height=400&bg=gradient&color=black&text=Beautiful%20Image`;
+                document.getElementById('exampleUrl3').textContent = `${baseUrl}?width=600&height=200&bg=2196f3&color=white&format=jpg`;
             }
-            return false;
         }
 
-        // Initialize the application
-        document.addEventListener('DOMContentLoaded', function() {
-            if (!handleUrlAccess()) {
-                initDemoImages();
-            }
-        });
+        // Run the initial load handler when the DOM is fully loaded
+        document.addEventListener('DOMContentLoaded', handleInitialLoad);
     </script>
 </body>
 </html>
