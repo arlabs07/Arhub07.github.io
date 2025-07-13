@@ -1,0 +1,664 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Artistic QR Hub | Styled Modules, Verification</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <script src="https://unpkg.com/qr-code-styling@1.6.0/lib/qr-code-styling.js"></script>
+    <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+
+    <style>
+        /* Base Styles - Scrollbar, Glow, Gradients */
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: #111827; }
+        ::-webkit-scrollbar-thumb { background: #7c3aed; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #a855f7; }
+
+        /* Removed strong glows for a cleaner look, kept subtle ones for interaction */
+        .interactive-subtle-glow:hover, .interactive-subtle-glow:focus-within { box-shadow: 0 0 8px 1px rgba(168, 85, 247, 0.2); }
+        .text-gradient-purple-pink { background-image: linear-gradient(to right, #a855f7, #ec4899); -webkit-background-clip: text; background-clip: text; color: transparent; }
+        
+        /* Scanner & Preview Elements */
+        #qrScannerPreview video, #uploadedImagePreview { 
+            width: 100% !important; 
+            height: auto !important; 
+            max-height: 400px; 
+            object-fit: contain; 
+            border-radius: 0.75rem; /* rounded-xl */
+        }
+        /* html5-qrcode's scan region border */
+        #qrScannerPreview_scan_region { 
+            border: 3px dashed #a855f7 !important; 
+            box-shadow: 0 0 15px rgba(168, 85, 247, 0.4); 
+            border-radius: 0.75rem; /* Match outer container */
+        }
+        .html5-qrcode-element { 
+            color: white !important; 
+            background-color: #1f2937 !important; /* Darker background */
+            border-radius: 0.75rem !important; /* rounded-xl */
+        }
+
+        /* Custom File & Color Inputs */
+        input[type="file"]::file-selector-button { 
+            background-image: linear-gradient(to right, #8b5cf6, #d946ef); 
+            color: white; 
+            border: none; 
+            padding: 0.5rem 1rem; 
+            border-radius: 0.5rem; /* rounded-lg */
+            cursor: pointer; 
+            transition: all 0.3s ease-in-out; 
+        }
+        input[type="file"]::file-selector-button:hover { 
+            filter: brightness(1.1); 
+            box-shadow: 0 0 8px 1px rgba(192, 132, 252, 0.3); 
+        }
+        input[type="color"] { 
+            -webkit-appearance: none; 
+            -moz-appearance: none; 
+            appearance: none; 
+            width: 40px; /* Slightly larger */
+            height: 40px; /* Slightly larger */
+            background-color: transparent; 
+            border: none; 
+            cursor: pointer; 
+            padding:0; 
+        }
+        input[type="color"]::-webkit-color-swatch { 
+            border-radius: 0.5rem; /* rounded-lg */
+            border: 2px solid #374151; /* gray-700 */
+        }
+        input[type="color"]::-moz-color-swatch { 
+            border-radius: 0.5rem; /* rounded-lg */
+            border: 2px solid #374151; /* gray-700 */
+        }
+        input[type="color"]:disabled::-webkit-color-swatch { border-color: #4b5563; opacity: 0.5; }
+        input[type="color"]:disabled::-moz-color-swatch { border-color: #4b5563; opacity: 0.5; }
+        input[type="color"]:disabled { cursor: not-allowed; }
+
+
+        /* Alert & Verification Styling */
+        .alert-icon { font-size: 1.25rem; margin-right: 0.75rem; }
+        .verification-status { font-size: 0.875rem; padding: 0.5rem; border-radius: 0.5rem; margin-top: 0.5rem; text-align: center; font-weight: 500; }
+        .verified-success { background-color: #10B98130; color: #A7F3D0; border: 1px solid #059669; }
+        .verified-failure { background-color: #EF444430; color: #FECACA; border: 1px solid #DC2626; }
+        .verified-pending { background-color: #3B82F630; color: #BFDBFE; border: 1px solid #2563EB; }
+        #torchBtn.active { background-color: #a855f7; color: white; box-shadow: 0 0 10px #a855f7; }
+
+        /* QR Code Canvas Container */
+        #qrcodeCanvasContainer {
+            width: 100%;
+            max-width: 320px; /* Default, will be adjusted by selected size */
+            aspect-ratio: 1 / 1;
+            margin-left: auto;
+            margin-right: auto;
+            background-color: #1f2937; /* Darker gray for container */
+            border-radius: 0.75rem; /* rounded-xl */
+            overflow: hidden; /* Important for canvas rendering */
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3); /* Softer shadow */
+        }
+        #qrcodeCanvasContainer.transparent-bg {
+            background-color: transparent; /* For visual cue, actual transparency is on canvas */
+        }
+        #qrcodeCanvasContainer canvas { /* The canvas created by qr-code-styling */
+            display: block;
+            width: 100% !important;
+            height: 100% !important;
+        }
+        .section-title {
+            font-size: 1rem; /* text-base */
+            font-weight: 600; /* font-semibold */
+            color: #c4b5fd; /* purple-300 */
+            padding-bottom: 0.5rem; /* pb-2 */
+            margin-bottom: 0.75rem; /* mb-3 */
+            border-bottom: 1px solid #374151; /* gray-700 */
+            text-align: center;
+        }
+    </style>
+</head>
+<body class="bg-black text-gray-100 min-h-screen flex flex-col items-center justify-start p-4 font-sans selection:bg-purple-600 selection:text-white">
+
+    <div class="w-full max-w-4xl bg-gray-900 rounded-3xl shadow-xl p-6 md:p-8">
+        <header class="text-center mb-6">
+            <h1 class="text-2xl md:text-3xl font-bold text-gradient-purple-pink flex items-center justify-center">
+                <i class="fas fa-qrcode mr-2"></i>Artistic QR Hub
+            </h1>
+        </header>
+
+        <div class="mb-6 flex justify-center bg-gray-800 rounded-full p-1 shadow-inner">
+            <button id="tabGenerator" class="tab-button active-tab w-1/2 py-2.5 rounded-full text-sm font-medium transition-all duration-300 ease-in-out focus:outline-none">
+                <i class="fas fa-cogs mr-2"></i>Generate QR
+            </button>
+            <button id="tabScanner" class="tab-button w-1/2 py-2.5 rounded-full text-sm font-medium transition-all duration-300 ease-in-out focus:outline-none">
+                <i class="fas fa-camera-retro mr-2"></i>Scan QR
+            </button>
+        </div>
+
+        <div id="alertMessage" class="hidden items-center p-3 mb-6 text-sm rounded-lg transition-all duration-300" role="alert">
+            <span id="alertIconArea"><i class="fas fa-info-circle alert-icon"></i></span>
+            <span id="alertText" class="flex-1"></span>
+            <button type="button" class="ml-auto -mx-1.5 -my-1.5 rounded-lg p-1.5 inline-flex h-8 w-8 hover:bg-opacity-20 hover:bg-white focus:outline-none" aria-label="Close" onclick="document.getElementById('alertMessage').classList.add('hidden')">
+                <span class="sr-only">Close</span><i class="fas fa-times text-xl"></i>
+            </button>
+        </div>
+
+        <div id="generatorSection" class="space-y-5 lg:grid lg:grid-cols-2 lg:gap-6">
+            <div class="lg:col-span-1 space-y-5">
+                <div class="space-y-4 p-4 bg-gray-800 rounded-xl interactive-subtle-glow">
+                    <h3 class="section-title">QR Data (Required)</h3>
+                    <div>
+                        <label for="qrText" class="form-label">Text or URL:</label>
+                        <textarea id="qrText" rows="2" class="form-input" placeholder="e.g., https://example.com">https://arlabs07.github.io/Arhub07.github.io/index.html#</textarea>
+                    </div>
+                </div>
+                
+                <div class="space-y-4 p-4 bg-gray-800 rounded-xl interactive-subtle-glow">
+                    <h3 class="section-title">QR Configuration</h3>
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label for="qrSize" class="form-label">Canvas Size (px):</label>
+                            <select id="qrSize" class="form-input">
+                                <option value="200">200</option> <option value="300" selected>300</option> <option value="400">400</option> <option value="500">500</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="qrErrorCorrection" class="form-label">Error Correction:</label>
+                            <select id="qrErrorCorrection" class="form-input">
+                                <option value="L">Low</option> <option value="M">Medium</option> <option value="Q">Quartile</option> <option value="H" selected>High</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="space-y-4 p-4 bg-gray-800 rounded-xl interactive-subtle-glow">
+                    <h3 class="section-title">Module Styling</h3>
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label for="dotsType" class="form-label">Dot Style:</label>
+                            <select id="dotsType" class="form-input">
+                                <option value="square" selected>Square</option> <option value="dots">Dots</option> <option value="rounded">Rounded</option>
+                                <option value="classy">Classy</option> <option value="classy-rounded">Classy Rounded</option> <option value="extra-rounded">Extra Rounded</option>
+                            </select>
+                        </div>
+                         <div>
+                            <label for="dotsColor" class="form-label">Dot Color:</label>
+                            <input type="color" id="dotsColor" value="#8b5cf6" class="form-color-input mx-auto block">
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label for="cornersSquareType" class="form-label">Corner Square Style:</label>
+                            <select id="cornersSquareType" class="form-input">
+                                <option value="" selected>Default (Dot Style)</option> <option value="square">Square</option> <option value="dot">Dot</option> <option value="extra-rounded">Extra Rounded</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="cornersDotType" class="form-label">Corner Dot Style:</label>
+                            <select id="cornersDotType" class="form-input">
+                                 <option value="" selected>Default (Dot Style)</option> <option value="square">Square</option> <option value="dot">Dot</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="lg:col-span-1 space-y-5">
+                <div class="space-y-4 p-4 bg-gray-800 rounded-xl interactive-subtle-glow">
+                    <h3 class="section-title">Background & Center Logo</h3>
+                     <div class="grid grid-cols-2 gap-3 items-center">
+                        <div>
+                            <label for="qrBackgroundColor" class="form-label">QR Background Color:</label>
+                            <input type="color" id="qrBackgroundColor" value="#FFFFFF" class="form-color-input mx-auto block">
+                        </div>
+                         <div class="flex items-center mt-1 sm:mt-0">
+                            <input type="checkbox" id="transparentQrBackground" class="form-checkbox mr-2">
+                            <label for="transparentQrBackground" class="text-sm text-gray-300">Transparent QR BG</label>
+                        </div>
+                    </div>
+                    <div>
+                        <label for="qrLogo" class="form-label">Center Logo (Optional):</label>
+                        <input type="file" id="qrLogo" accept="image/png, image/jpeg, image/svg+xml" class="form-input file:text-xs">
+                        <img id="logoPreview" src="#" alt="Logo Preview" class="hidden mt-2 max-h-16 mx-auto rounded-lg border border-gray-700"/>
+                    </div>
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label for="logoSize" class="form-label">Logo Size (Ratio to QR):</label>
+                            <input type="range" id="logoSize" min="0.1" max="0.4" value="0.2" step="0.05" class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-purple-500">
+                            <p class="text-xs text-gray-400 text-center"><span id="logoSizeValue">0.20</span></p>
+                        </div>
+                        <div>
+                            <label for="logoMargin" class="form-label">Logo Margin (px):</label>
+                            <input type="number" id="logoMargin" value="5" min="0" step="1" class="form-input text-center">
+                        </div>
+                    </div>
+                     <div class="flex items-center mt-1">
+                        <input type="checkbox" id="logoHideBackgroundDots" class="form-checkbox mr-2" checked>
+                        <label for="logoHideBackgroundDots" class="text-sm text-gray-300">Hide QR dots behind logo</label>
+                    </div>
+                </div>
+
+                <div class="p-4 bg-gray-800 rounded-xl interactive-subtle-glow flex flex-col items-center">
+                    <h3 class="section-title">Live Preview</h3>
+                    <div id="qrcodeCanvasContainer" class="mb-4"></div>
+                    <p id="previewPlaceholder" class="text-gray-400 italic mb-4 text-center">Configure and generate QR</p>
+                    <div id="verificationStatus" class="verification-status verified-pending hidden">Verifying...</div>
+                    <div class="w-full space-y-3 mt-4">
+                        <button id="generateBtn" class="action-button w-full"><i class="fas fa-magic mr-2"></i>Generate & Verify QR</button>
+                        <button id="downloadBtn" class="action-button-secondary w-full hidden"><i class="fas fa-download mr-2"></i>Download QR Code</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="scannerSection" class="hidden space-y-5 lg:grid lg:grid-cols-2 lg:gap-6">
+            <div class="lg:col-span-2 p-3 text-center text-sm text-purple-300 bg-purple-900/30 rounded-lg">
+                <i class="fas fa-info-circle mr-1"></i>For best results: clear QR, good lighting, centered view.
+            </div>
+            <div class="lg:col-span-1 space-y-4 p-4 bg-gray-800 rounded-xl interactive-subtle-glow">
+                <h3 class="section-title">Scan with Camera</h3>
+                <div id="qrScannerPreviewContainer" class="w-full aspect-video bg-gray-700 rounded-lg overflow-hidden border border-gray-600">
+                    <div id="qrScannerPreview" class="w-full h-full flex items-center justify-center text-gray-400">Camera preview</div>
+                </div>
+                <div class="mt-4 flex items-center space-x-3">
+                    <button id="startScanBtn" class="action-button flex-1"><i class="fas fa-video mr-2"></i>Start</button>
+                    <button id="stopScanBtn" class="action-button-secondary flex-1 hidden"><i class="fas fa-stop-circle mr-2"></i>Stop</button>
+                    <button id="torchBtn" class="action-button-secondary p-3 rounded-full hidden" title="Toggle Torch"><i class="fas fa-bolt text-lg"></i></button>
+                </div>
+            </div>
+            <div class="lg:col-span-1 space-y-4 p-4 bg-gray-800 rounded-xl interactive-subtle-glow">
+                <h3 class="section-title">Scan from Image File</h3>
+                <div>
+                    <label for="qrFile" class="form-label">Upload QR Image:</label>
+                    <input type="file" id="qrFile" accept="image/*" class="form-input file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-purple-600 file:text-white hover:file:bg-purple-700 cursor-pointer">
+                </div>
+                <div id="uploadedImagePreviewContainer" class="mt-3 hidden">
+                     <img id="uploadedImagePreview" src="#" alt="Uploaded QR Code" class="mx-auto rounded-lg border border-gray-600"/>
+                </div>
+            </div>
+            <div id="scanResultCard" class="lg:col-span-2 hidden mt-4 p-4 bg-gray-800 rounded-xl border border-purple-700">
+                <h3 class="text-lg font-semibold text-gradient-purple-pink mb-2">Scan Result:</h3>
+                <p id="scanResultText" class="text-gray-100 break-all bg-gray-900 p-3 rounded-md"></p>
+                <button id="copyResultBtn" class="mt-4 text-sm text-purple-400 hover:text-purple-300 transition-colors flex items-center">
+                    <i class="fas fa-copy mr-2"></i> Copy to Clipboard
+                </button>
+            </div>
+        </div>
+
+        <footer class="text-center text-xs text-gray-600 mt-8 pt-4 border-t border-gray-800">
+            Artistic QR Hub &copy; 2025. Powered by arlabs.
+        </footer>
+    </div>
+
+    <script>
+        // --- DOM Elements ---
+        const tabGenerator = document.getElementById('tabGenerator');
+        const tabScanner = document.getElementById('tabScanner');
+        const generatorSection = document.getElementById('generatorSection');
+        const scannerSection = document.getElementById('scannerSection');
+        
+        // Generator Elements
+        const qrText = document.getElementById('qrText');
+        const qrSizeSelect = document.getElementById('qrSize');
+        const qrErrorCorrectionSelect = document.getElementById('qrErrorCorrection');
+        const dotsTypeSelect = document.getElementById('dotsType');
+        const dotsColorInput = document.getElementById('dotsColor');
+        const cornersSquareTypeSelect = document.getElementById('cornersSquareType');
+        const cornersDotTypeSelect = document.getElementById('cornersDotType');
+        
+        const qrBackgroundColorInput = document.getElementById('qrBackgroundColor');
+        const transparentQrBackgroundCheckbox = document.getElementById('transparentQrBackground');
+
+        const qrLogoInput = document.getElementById('qrLogo');
+        const logoPreviewImg = document.getElementById('logoPreview');
+        const logoSizeInput = document.getElementById('logoSize');
+        const logoSizeValueSpan = document.getElementById('logoSizeValue');
+        const logoMarginInput = document.getElementById('logoMargin');
+        const logoHideBackgroundDotsCheckbox = document.getElementById('logoHideBackgroundDots');
+        
+        const qrcodeCanvasContainer = document.getElementById('qrcodeCanvasContainer');
+        const previewPlaceholder = document.getElementById('previewPlaceholder');
+        const verificationStatusDiv = document.getElementById('verificationStatus');
+        const generateBtn = document.getElementById('generateBtn');
+        const downloadBtn = document.getElementById('downloadBtn');
+        
+        let qrCodeStylingInstance = null; // Instance of qr-code-styling
+        let centerLogoBase64 = null;
+
+        // Scanner Elements
+        const qrScannerPreview = document.getElementById('qrScannerPreview');
+        const startScanBtn = document.getElementById('startScanBtn');
+        const stopScanBtn = document.getElementById('stopScanBtn');
+        const torchBtn = document.getElementById('torchBtn');
+        const qrFileInput = document.getElementById('qrFile');
+        const uploadedImagePreviewContainer = document.getElementById('uploadedImagePreviewContainer');
+        const uploadedImagePreview = document.getElementById('uploadedImagePreview');
+        const scanResultCard = document.getElementById('scanResultCard');
+        const scanResultText = document.getElementById('scanResultText');
+        const copyResultBtn = document.getElementById('copyResultBtn');
+        let html5QrCodeScanner = null; // For html5-qrcode
+        let currentCameraStream = null;
+
+        // Alert Elements
+        const alertMessage = document.getElementById('alertMessage');
+        const alertIconArea = document.getElementById('alertIconArea');
+        const alertText = document.getElementById('alertText');
+
+
+        // --- Utility Functions ---
+        function showAlert(message, type = 'info', persistent = false) { 
+            alertText.textContent = message;
+            alertMessage.classList.remove('hidden', 'bg-red-500/80', 'text-red-100', 'bg-green-500/80', 'text-green-100', 'bg-blue-500/80', 'text-blue-100', 'border-red-700', 'border-green-700', 'border-blue-700');
+            alertMessage.classList.add('flex'); 
+            let iC = 'fas fa-info-circle', bC = 'bg-blue-500/80', tC = 'text-blue-100', brC = 'border-blue-700';
+            if (type === 'error' || persistent) { iC = 'fas fa-exclamation-triangle'; bC = 'bg-red-500/80'; tC = 'text-red-100'; brC = 'border-red-700'; }
+            else if (type === 'success') { iC = 'fas fa-check-circle'; bC = 'bg-green-500/80'; tC = 'text-green-100'; brC = 'border-green-700'; }
+            alertIconArea.innerHTML = `<i class="${iC} alert-icon"></i>`;
+            alertMessage.classList.add(bC, tC, `border-l-4`, brC);
+            if (!persistent) { setTimeout(() => { alertMessage.classList.add('hidden'); alertMessage.classList.remove('flex'); }, 6000); }
+        }
+        function applyTabStyles() { 
+            const activeClasses = ["bg-purple-600", "text-white", "shadow-md"];
+            const inactiveClasses = ["text-gray-400", "hover:bg-gray-700", "hover:text-white"];
+            
+            document.querySelectorAll('.tab-button').forEach(btn => {
+                // Remove all active and inactive classes first
+                btn.classList.remove(...activeClasses, ...inactiveClasses);
+                // Add inactive classes by default
+                btn.classList.add(...inactiveClasses);
+            });
+
+            if (generatorSection.classList.contains('hidden')) {
+                tabScanner.classList.remove(...inactiveClasses);
+                tabScanner.classList.add(...activeClasses);
+            } else {
+                tabGenerator.classList.remove(...inactiveClasses);
+                tabGenerator.classList.add(...activeClasses);
+            }
+        }
+        function applyDynamicStyles() {
+            document.querySelectorAll('.form-label').forEach(l => l.className = 'block mb-1 text-sm font-medium text-purple-300');
+            document.querySelectorAll('.form-input').forEach(i => i.classList.add('bg-gray-700', 'border', 'border-gray-700', 'text-gray-200', 'text-sm', 'rounded-lg', 'focus:ring-2', 'focus:ring-purple-500', 'focus:border-purple-500', 'block', 'w-full', 'p-2.5', 'placeholder-gray-400', 'transition-all', 'duration-300', 'interactive-subtle-glow'));
+            document.querySelectorAll('select.form-input').forEach(s => s.classList.add('appearance-none'));
+            document.querySelectorAll('.form-color-input').forEach(i => i.classList.add('interactive-subtle-glow', 'rounded-lg', 'p-0.5', 'border', 'border-gray-700'));
+            document.querySelectorAll('.form-checkbox').forEach(i => i.className = 'form-checkbox h-4 w-4 text-purple-600 bg-gray-700 border-gray-500 rounded focus:ring-purple-500 focus:ring-offset-gray-800 interactive-subtle-glow');
+            
+            const btnBase = "py-3 px-5 text-base font-medium rounded-lg transition-all duration-300 ease-in-out focus:outline-none focus:ring-4 transform hover:scale-[1.02] active:scale-[0.98]";
+            document.querySelectorAll('.action-button').forEach(b => b.className = `${btnBase} text-white bg-gradient-to-r from-purple-600 to-pink-500 hover:from-purple-700 hover:to-pink-600 focus:ring-purple-400/50 shadow-lg shadow-purple-500/30`);
+            document.querySelectorAll('.action-button-secondary').forEach(b => b.className = `${btnBase} text-purple-300 bg-gray-700 hover:bg-gray-600 border border-purple-500/70 focus:ring-purple-600/50 interactive-subtle-glow`);
+        }
+
+        // --- Tab Switching Logic ---
+        tabGenerator.addEventListener('click', () => { generatorSection.classList.remove('hidden'); scannerSection.classList.add('hidden'); stopActiveScan(); applyTabStyles(); showAlert('Switched to QR Code Generator.', 'info'); });
+        tabScanner.addEventListener('click', () => { scannerSection.classList.remove('hidden'); generatorSection.classList.add('hidden'); applyTabStyles(); showAlert('Switched to QR Code Scanner.', 'info'); });
+
+        // --- File to Base64 Converter ---
+        function fileToBase64(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onload = () => resolve(reader.result);
+                reader.onerror = error => reject(error);
+            });
+        }
+
+        qrLogoInput.addEventListener('change', async (event) => {
+            const file = event.target.files[0];
+            if (file) {
+                try {
+                    centerLogoBase64 = await fileToBase64(file);
+                    logoPreviewImg.src = centerLogoBase64;
+                    logoPreviewImg.classList.remove('hidden');
+                } catch (error) {
+                    showAlert('Error loading logo image.', 'error');
+                    centerLogoBase64 = null;
+                    logoPreviewImg.classList.add('hidden');
+                }
+            } else {
+                centerLogoBase64 = null;
+                logoPreviewImg.classList.add('hidden');
+            }
+        });
+        
+        logoSizeInput.addEventListener('input', (e) => {
+            logoSizeValueSpan.textContent = parseFloat(e.target.value).toFixed(2);
+        });
+
+        transparentQrBackgroundCheckbox.addEventListener('change', (e) => {
+            qrBackgroundColorInput.disabled = e.target.checked;
+            if (e.target.checked) {
+                qrcodeCanvasContainer.classList.add('transparent-bg');
+                showAlert('QR background will be transparent. Color picker disabled.', 'info');
+            } else {
+                qrcodeCanvasContainer.classList.remove('transparent-bg');
+                showAlert('QR background color enabled.', 'info');
+            }
+        });
+
+
+        // --- QR Code Generation & Verification Logic (using qr-code-styling) ---
+        async function generateAndVerifyArtisticQr() {
+            generateBtn.disabled = true;
+            generateBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Generating...';
+            verificationStatusDiv.textContent = 'Initializing...';
+            verificationStatusDiv.className = 'verification-status verified-pending';
+            verificationStatusDiv.classList.remove('hidden');
+            downloadBtn.classList.add('hidden');
+            previewPlaceholder.classList.remove('hidden'); 
+            if(qrCodeStylingInstance) { 
+                 qrcodeCanvasContainer.innerHTML = ''; 
+            }
+
+            const data = qrText.value.trim();
+            if (!data) {
+                showAlert('QR Code data cannot be empty.', 'error');
+                resetGenerateButton();
+                return;
+            }
+
+            let errorCorrection = qrErrorCorrectionSelect.value;
+            // Force High EC if logo is used
+            if (centerLogoBase64) { 
+                if (errorCorrection !== 'H') {
+                    errorCorrection = 'H';
+                    qrErrorCorrectionSelect.value = 'H';
+                    showAlert('Error Correction auto-set to High (H) for logo.', 'info');
+                }
+            }
+            
+            const selectedSize = parseInt(qrSizeSelect.value);
+            qrcodeCanvasContainer.style.maxWidth = `${selectedSize}px`;
+
+            const options = {
+                width: selectedSize,
+                height: selectedSize,
+                data: data,
+                margin: 10, 
+                qrOptions: {
+                    typeNumber: 0, 
+                    mode: 'Byte', 
+                    errorCorrectionLevel: errorCorrection
+                },
+                imageOptions: {
+                    hideBackgroundDots: logoHideBackgroundDotsCheckbox.checked,
+                    imageSize: parseFloat(logoSizeInput.value), 
+                    margin: parseInt(logoMarginInput.value) || 0,
+                    crossOrigin: 'anonymous'
+                },
+                dotsOptions: {
+                    color: dotsColorInput.value,
+                    type: dotsTypeSelect.value
+                },
+                backgroundOptions: {
+                    color: transparentQrBackgroundCheckbox.checked ? 'transparent' : qrBackgroundColorInput.value,
+                },
+                cornersSquareOptions: {
+                    type: cornersSquareTypeSelect.value || undefined, 
+                    color: dotsColorInput.value 
+                },
+                cornersDotOptions: {
+                    type: cornersDotTypeSelect.value || undefined, 
+                    color: dotsColorInput.value 
+                }
+            };
+
+            if (centerLogoBase64) {
+                options.image = centerLogoBase64;
+            }
+            
+            // Visual cue for transparent background on container
+            if (transparentQrBackgroundCheckbox.checked) {
+                qrcodeCanvasContainer.classList.add('transparent-bg');
+            } else {
+                qrcodeCanvasContainer.classList.remove('transparent-bg');
+                // Ensure placeholder bg is set if not transparent and no image is used
+                qrcodeCanvasContainer.style.backgroundColor = '#1f2937'; 
+            }
+
+
+            try {
+                qrCodeStylingInstance = new QRCodeStyling(options);
+                qrcodeCanvasContainer.innerHTML = ''; 
+                qrCodeStylingInstance.append(qrcodeCanvasContainer);
+                previewPlaceholder.classList.add('hidden');
+                
+                verificationStatusDiv.textContent = 'Verifying QR Code...';
+                const canvasElement = qrcodeCanvasContainer.querySelector('canvas');
+                if (!canvasElement) throw new Error("Generated canvas not found for verification.");
+
+                await new Promise(resolve => setTimeout(resolve, 300)); 
+
+                const dataUrl = canvasElement.toDataURL('image/png');
+                const blob = await (await fetch(dataUrl)).blob();
+                const imageFile = new File([blob], "generated_qr_art.png", { type: "image/png" });
+
+                if (!html5QrCodeScanner) html5QrCodeScanner = new Html5Qrcode("qrScannerPreview", { verbose: false });
+
+                const decodedText = await html5QrCodeScanner.scanFile(imageFile, false);
+                
+                if (decodedText === data) {
+                    verificationStatusDiv.textContent = 'Verified Successfully!';
+                    verificationStatusDiv.className = 'verification-status verified-success';
+                    downloadBtn.classList.remove('hidden');
+                    showAlert('Artistic QR Code generated and verified!', 'success');
+                } else {
+                    throw new Error(`Verification Mismatch. Scanned: "${decodedText.substring(0,20)}..." Expected: "${data.substring(0,20)}..."`);
+                }
+            } catch (err) {
+                console.error("Generation/Verification Error:", err);
+                let errMsg = err.message;
+                if (err.message && err.message.includes("NotFoundException")) {
+                    errMsg = "Unscannable. Try simpler styles, higher contrast, or remove logo if complex.";
+                } else if (err.message && err.message.includes("Verification Mismatch")) {
+                     errMsg = err.message;
+                } else {
+                    errMsg = "Generation/Verification failed. Check console for details.";
+                }
+                verificationStatusDiv.textContent = `Verification Failed: ${errMsg}`;
+                verificationStatusDiv.className = 'verification-status verified-failure';
+                showAlert(`QR Generation or Verification Failed: ${errMsg}`, 'error', true);
+                previewPlaceholder.classList.remove('hidden'); 
+            } finally {
+                resetGenerateButton();
+            }
+        }
+        
+        function resetGenerateButton() {
+            generateBtn.disabled = false;
+            generateBtn.innerHTML = '<i class="fas fa-magic mr-2"></i>Generate & Verify QR';
+        }
+
+        generateBtn.addEventListener('click', generateAndVerifyArtisticQr);
+
+        downloadBtn.addEventListener('click', () => {
+            if (!qrCodeStylingInstance || verificationStatusDiv.classList.contains('verified-failure')) {
+                showAlert('Generate a valid & verified QR code first.', 'error'); return;
+            }
+            const extension = transparentQrBackgroundCheckbox.checked ? "png" : "png";
+            qrCodeStylingInstance.download({ name: "artistic-qr", extension: extension })
+                .then(() => showAlert(`QR Code download started as ${extension.toUpperCase()}.`, 'success'))
+                .catch(err => showAlert(`Download failed: ${err.message}`, 'error'));
+        });
+        
+        // --- QR Code Scanning Logic (with Torch - unchanged) ---
+        function onScanSuccessShared(decodedText) { 
+            scanResultText.innerHTML = ''; 
+            try { new URL(decodedText); const l = document.createElement('a'); l.href=decodedText; l.textContent=decodedText; l.target='_blank'; l.className='text-pink-400 hover:text-pink-300 underline'; scanResultText.appendChild(l); }
+            catch (_) { scanResultText.textContent = decodedText; }
+            scanResultCard.classList.remove('hidden'); showAlert(`QR Scanned!`, 'success');
+        }
+        function onCameraScanSuccess(decodedText, decodedResult) { onScanSuccessShared(decodedText); stopActiveScan(); }
+        function onCameraScanFailure(error) { /* console.warn(`Cam Scan Err: ${error}`); */ }
+        function stopActiveScan(clearStream = true) { 
+            if (html5QrCodeScanner && html5QrCodeScanner.isScanning) {
+                html5QrCodeScanner.stop().then(() => {
+                    qrScannerPreview.innerHTML = '<p class="text-gray-400 p-4 text-center">Camera stopped.</p>';
+                    startScanBtn.classList.remove('hidden'); stopScanBtn.classList.add('hidden'); torchBtn.classList.add('hidden');
+                    if (clearStream && currentCameraStream) { currentCameraStream.getTracks().forEach(t => t.stop()); currentCameraStream = null; }
+                    torchBtn.classList.remove('active');
+                }).catch(err => console.error("Failed to stop camera.", err));
+            } else if (clearStream && currentCameraStream) { currentCameraStream.getTracks().forEach(t => t.stop()); currentCameraStream = null; torchBtn.classList.add('hidden'); torchBtn.classList.remove('active');}
+        }
+        startScanBtn.addEventListener('click', () => { 
+            scanResultCard.classList.add('hidden'); 
+            qrScannerPreview.innerHTML = '<p class="text-gray-400 p-4 text-center animate-pulse">Starting camera...</p>';
+            if (!html5QrCodeScanner) html5QrCodeScanner = new Html5Qrcode("qrScannerPreview", { verbose: false });
+            html5QrCodeScanner.start( { facingMode: "environment" }, { fps: 10, qrbox: (w, h) => { const s = Math.min(w, h) * 0.75; return { width: s, height: s }; }, aspectRatio: 1.0 },
+                (decodedText, result) => { onCameraScanSuccess(decodedText, result); }, onCameraScanFailure
+            ).then(() => {
+                showAlert('Camera started.', 'info'); startScanBtn.classList.add('hidden'); stopScanBtn.classList.remove('hidden');
+                qrScannerPreview.querySelector('p')?.remove(); // Remove "Starting camera..."
+                const videoElement = document.querySelector("#qrScannerPreview video");
+                if (videoElement && videoElement.srcObject) {
+                    currentCameraStream = videoElement.srcObject;
+                    const tracks = currentCameraStream.getVideoTracks();
+                    if (tracks.length > 0 && tracks[0].getCapabilities().torch) torchBtn.classList.remove('hidden'); else torchBtn.classList.add('hidden');
+                }
+            }).catch(err => { showAlert(`Error starting camera: ${err.message}. Check permissions.`, 'error', true); qrScannerPreview.innerHTML = '<p class="text-center text-red-400 p-4">Could not start camera.</p>'; stopActiveScan(); });
+        });
+        torchBtn.addEventListener('click', () => { 
+            if (currentCameraStream) { const track = currentCameraStream.getVideoTracks()[0]; if (track && track.getCapabilities().torch) { try { const currentTorchState = track.getSettings().torch || false; track.applyConstraints({ advanced: [{ torch: !currentTorchState }] }).then(() => { torchBtn.classList.toggle('active', !currentTorchState); showAlert(`Torch ${!currentTorchState ? 'ON' : 'OFF'}.`, 'info'); }).catch(e => showAlert('Failed to toggle torch.', 'error')); } catch (e) { showAlert('Torch control not available on this device/browser.', 'error');}}}
+        });
+        stopScanBtn.addEventListener('click', () => { stopActiveScan(); showAlert('Camera scanner stopped.', 'info'); });
+        qrFileInput.addEventListener('change', (event) => { 
+            const file = event.target.files[0]; if (!file) return;
+            scanResultCard.classList.add('hidden'); uploadedImagePreviewContainer.classList.remove('hidden'); uploadedImagePreview.src = URL.createObjectURL(file);
+            if (!html5QrCodeScanner) html5QrCodeScanner = new Html5Qrcode("qrScannerPreview", {verbose: false}); // ID doesn't matter for scanFile
+            html5QrCodeScanner.scanFile(file, false) // showImage=false as we have our own preview
+                .then(decodedText => { onScanSuccessShared(decodedText); })
+                .catch(err => { showAlert('Could not scan QR from file: ' + (err.message || err), 'error'); scanResultCard.classList.add('hidden'); uploadedImagePreviewContainer.classList.add('hidden');})
+                .finally(() => { qrFileInput.value = ''; }); // Clear file input
+        });
+        copyResultBtn.addEventListener('click', () => { 
+            const textToCopy = scanResultText.textContent; if (!textToCopy) { showAlert('Nothing to copy.', 'error'); return; }
+            const textArea = document.createElement("textarea"); textArea.value = textToCopy; textArea.style.position = "fixed"; document.body.appendChild(textArea);
+            textArea.focus(); textArea.select();
+            try { document.execCommand('copy'); showAlert('Scan result copied!', 'success'); } catch (err) { showAlert('Failed to copy.', 'error'); }
+            document.body.removeChild(textArea);
+        });
+
+        // --- Initial Setup ---
+        document.addEventListener('DOMContentLoaded', () => {
+            applyTabStyles();
+            applyDynamicStyles();
+            showAlert('Welcome to the Artistic QR Code Hub!', 'info');
+            qrScannerPreview.innerHTML = '<p class="text-gray-400 p-4 text-center">Click "Start" or upload an image.</p>';
+            verificationStatusDiv.classList.add('hidden');
+            qrErrorCorrectionSelect.value = 'H'; // Default to High
+            logoSizeValueSpan.textContent = parseFloat(logoSizeInput.value).toFixed(2);
+            
+            // Set initial canvas container size
+            qrcodeCanvasContainer.style.maxWidth = `${qrSizeSelect.value}px`;
+            qrSizeSelect.addEventListener('change', (e) => {
+                 qrcodeCanvasContainer.style.maxWidth = `${e.target.value}px`;
+            });
+
+            // Initialize transparent BG checkbox state
+            qrBackgroundColorInput.disabled = transparentQrBackgroundCheckbox.checked;
+            if (transparentQrBackgroundCheckbox.checked) {
+                qrcodeCanvasContainer.classList.add('transparent-bg');
+            }
+        });
+    </script>
+</body>
+</html>
