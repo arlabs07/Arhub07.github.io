@@ -3,737 +3,413 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ArHub Placeholder Generator</title>
-    <!-- Tailwind CSS CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Font Awesome CDN -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Highlight.js CDN -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/xml.min.js"></script> <!-- For HTML highlighting -->
-    <!-- Particles.js CDN -->
-    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
-
+    <title>AR Labs Library</title>
     <style>
+        /* Reset and base styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         body {
-            font-family: 'Inter', sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            overflow-x: hidden; /* Prevent horizontal scroll on small screens */
-            position: relative; /* For particles.js background */
-        }
-        .glass {
-            backdrop-filter: blur(10px);
-            background: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-        }
-        .card {
-            background: white;
-            border-radius: 16px;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
-        }
-        .demo-item {
-            transition: all 0.3s ease;
-        }
-        .demo-item:hover {
-            transform: translateY(-5px);
-        }
-        .gradient-text {
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-        .icon-canvas {
-            border-radius: 8px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-        }
-        /* Page transition styles */
-        .page-section {
-            display: none;
-            opacity: 0;
-            transform: translateY(20px);
-            transition: opacity 0.5s ease, transform 0.5s ease;
-            min-height: calc(100vh - 8rem); /* Adjust based on header/footer */
-            padding-bottom: 4rem; /* Ensure space for FAB */
-        }
-        .page-section.active {
-            display: block;
-            opacity: 1;
-            transform: translateY(0);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f8f9fa;
         }
 
-        /* Floating action button (FAB) styles */
-        .fab-container {
-            position: fixed;
-            bottom: 2rem;
-            right: 2rem;
-            z-index: 1000;
-        }
-        .fab-button {
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
+        /* Header styles */
+        .header {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.5rem;
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-            cursor: pointer;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-        .fab-button:hover {
-            transform: scale(1.05);
-            box-shadow: 0 12px 20px rgba(0, 0, 0, 0.3);
-        }
-        .fab-menu {
-            position: absolute;
-            bottom: 70px; /* Adjust based on button size */
-            right: 0;
-            display: flex;
-            flex-direction: column;
-            align-items: flex-end;
-            gap: 15px;
-        }
-        .fab-menu-item {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.9);
-            color: #667eea;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.2rem;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            cursor: pointer;
-            transition: transform 0.3s ease, opacity 0.3s ease, background 0.3s ease;
-            opacity: 0; /* Start hidden */
-            transform: translateY(20px); /* Start below */
-        }
-        .fab-menu-item:hover {
-            transform: scale(1.1);
-            background: #e0e0e0;
-        }
-        .fab-menu.open .fab-menu-item {
-            opacity: 1;
-            transform: translateY(0);
-        }
-        /* Delay for staggered animation */
-        .fab-menu.open .fab-menu-item:nth-child(1) { transition-delay: 0.05s; }
-        .fab-menu.open .fab-menu-item:nth-child(2) { transition-delay: 0.10s; }
-        .fab-menu.open .fab-menu-item:nth-child(3) { transition-delay: 0.15s; }
-        .fab-menu.open .fab-menu-item:nth-child(4) { transition-delay: 0.20s; }
-
-        .copy-button {
-            position: absolute;
-            top: 0.5rem;
-            right: 0.5rem;
-            background: rgba(255, 255, 255, 0.2);
-            color: white;
-            padding: 0.3rem 0.6rem;
-            border-radius: 0.375rem;
-            font-size: 0.8rem;
-            cursor: pointer;
-            transition: background 0.2s ease;
-        }
-        .copy-button:hover {
-            background: rgba(255, 255, 255, 0.4);
-        }
-        .copied-message {
-            position: fixed;
-            bottom: 1rem;
-            left: 50%;
-            transform: translateX(-50%);
-            background-color: #4CAF50;
-            color: white;
-            padding: 10px 20px;
-            border-radius: 5px;
-            z-index: 9999;
-            opacity: 0;
-            transition: opacity 0.3s ease-in-out;
-        }
-        .copied-message.show {
-            opacity: 1;
-        }
-
-        /* Particles.js container */
-        #particles-js {
-            position: absolute;
-            width: 100%;
-            height: 100%;
+            padding: 1rem 0;
+            position: sticky;
             top: 0;
-            left: 0;
-            z-index: -1;
-            background-color: transparent; /* Ensure background gradient shows */
+            z-index: 100;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
         }
 
-        /* Custom animations for intro page */
-        @keyframes fade-in-down {
-            from { opacity: 0; transform: translateY(-20px); }
-            to { opacity: 1; transform: translateY(0); }
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
-        .animate-fade-in-down { animation: fade-in-down 1s ease-out forwards; }
 
-        @keyframes fade-in-up {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
+        .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+            text-decoration: none;
+            color: white;
         }
-        .animate-fade-in-up { animation: fade-in-up 1s ease-out forwards; }
 
-        @keyframes fade-in {
-            from { opacity: 0; }
-            to { opacity: 1; }
+        .nav-menu {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
         }
-        .animate-fade-in { animation: fade-in 1s ease-out forwards; }
 
-        @keyframes slide-in-left {
-            from { opacity: 0; transform: translateX(-50px); }
-            to { opacity: 1; transform: translateX(0); }
+        .nav-link {
+            color: white;
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
         }
-        .animate-slide-in-left { animation: slide-in-left 0.8s ease-out forwards; }
 
-        @keyframes slide-in-right {
-            from { opacity: 0; transform: translateX(50px); }
-            to { opacity: 1; transform: translateX(0); }
+        .nav-link:hover {
+            background-color: rgba(255,255,255,0.2);
         }
-        .animate-slide-in-right { animation: slide-in-right 0.8s ease-out forwards; }
 
-        @keyframes pulse-fab {
-            0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.7); }
-            70% { transform: scale(1.05); box-shadow: 0 0 0 15px rgba(255, 255, 255, 0); }
-            100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255, 255, 255, 0); }
+        .nav-toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
         }
-        .animate-pulse-fab { animation: pulse-fab 2s infinite; }
 
-        .intro-section {
-            padding: 4rem 0;
-            opacity: 0;
-            transform: translateY(30px);
-            animation: fade-in-up 1s ease-out forwards;
-            animation-delay: var(--delay, 0s);
+        /* Hero section */
+        .hero {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+            text-align: center;
         }
-        .intro-icon {
+
+        .hero h1 {
             font-size: 3rem;
             margin-bottom: 1rem;
-            color: #ffffff;
-            opacity: 0.8;
+            color: #2c3e50;
         }
 
-        /* Ensure canvas draws Font Awesome icons correctly */
-        @font-face {
-            font-family: 'Font Awesome 6 Free';
-            font-style: normal;
-            font-weight: 900;
-            font-display: block;
-            src: url(https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/webfonts/fa-solid-900.woff2) format('woff2'),
-                 url(https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/webfonts/fa-solid-900.ttf) format('truetype');
+        .hero p {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+            color: #7f8c8d;
         }
-        @font-face {
-            font-family: 'Font Awesome 6 Brands';
-            font-style: normal;
-            font-weight: 400;
-            font-display: block;
-            src: url(https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/webfonts/fa-brands-400.woff2) format('woff2'),
-                 url(https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/webfonts/fa-brands-400.ttf) format('truetype');
+
+        .hero-image {
+            width: 100%;
+            max-width: 1200px;
+            height: 400px;
+            object-fit: cover;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        /* Cards section */
+        .cards-section {
+            max-width: 1200px;
+            margin: 4rem auto;
+            padding: 0 1rem;
+        }
+
+        .section-title {
+            font-size: 2.5rem;
+            text-align: center;
+            margin-bottom: 3rem;
+            color: #2c3e50;
+        }
+
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+        }
+
+        .card {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+        }
+
+        .card-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+
+        .card-content {
+            padding: 1.5rem;
+        }
+
+        .card-title {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+            color: #2c3e50;
+        }
+
+        .card-description {
+            color: #7f8c8d;
+            margin-bottom: 1.5rem;
+            line-height: 1.6;
+        }
+
+        .card-button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 0.8rem 1.5rem;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 500;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .card-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        /* Footer */
+        .footer {
+            background: #2c3e50;
+            color: white;
+            text-align: center;
+            padding: 2rem 0;
+            margin-top: 4rem;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+
+        .social-links {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .social-link {
+            color: white;
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+        }
+
+        .social-link:hover {
+            background-color: rgba(255,255,255,0.1);
+        }
+
+        /* Mobile responsive */
+        @media (max-width: 768px) {
+            .nav-menu {
+                position: fixed;
+                top: 70px;
+                left: -100%;
+                width: 100%;
+                height: calc(100vh - 70px);
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                flex-direction: column;
+                justify-content: flex-start;
+                align-items: center;
+                padding-top: 2rem;
+                transition: left 0.3s ease;
+            }
+
+            .nav-menu.active {
+                left: 0;
+            }
+
+            .nav-toggle {
+                display: block;
+            }
+
+            .hero h1 {
+                font-size: 2rem;
+            }
+
+            .hero p {
+                font-size: 1rem;
+            }
+
+            .cards-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .section-title {
+                font-size: 2rem;
+            }
+
+            .social-links {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .hero-image {
+                height: 250px;
+            }
         }
     </style>
 </head>
-<body class="min-h-screen flex flex-col items-center justify-center">
-    <!-- Particles.js container -->
-    <div id="particles-js"></div>
-
-    <div class="container mx-auto px-4 py-8 max-w-6xl flex-grow relative z-10">
-
-        <!-- Intro Page -->
-        <section id="intro-page" class="page-section active text-center mb-12">
-            <h1 class="text-5xl md:text-6xl font-bold text-white mb-4 animate-fade-in-down">ArHub Placeholder</h1>
-            <p class="text-xl md:text-2xl text-white/90 animate-fade-in-up">Generate beautiful placeholder images with icons & shapes</p>
-
-            <div class="mt-12 p-6 md:p-8 rounded-2xl glass text-white text-lg md:text-xl leading-relaxed animate-fade-in" style="--delay: 0.5s;">
-                <p>Welcome to ArHub Placeholder! This tool is your go-to solution for creating dynamic and customizable placeholder images for all your web development needs. Whether you're mocking up a new design, testing responsive layouts, or simply need a quick visual element, ArHub provides a flexible and powerful way to generate images on the fly.</p>
-                <p class="mt-4">Say goodbye to static placeholder images and hello to a world where your placeholders adapt to your design, featuring custom dimensions, colors, and even Font Awesome icons. Streamline your workflow and bring your designs to life with ease.</p>
-            </div>
-
-            <div class="intro-section text-white" style="--delay: 1s;">
-                <h2 class="text-4xl font-bold mb-6 animate-slide-in-left">Why Choose ArHub Placeholder?</h2>
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-left">
-                    <div class="flex flex-col items-center text-center p-4 rounded-lg bg-white/10 animate-fade-in" style="--delay: 1.2s;">
-                        <i class="fas fa-magic intro-icon"></i>
-                        <h3 class="text-2xl font-semibold mb-2">Dynamic Generation</h3>
-                        <p class="text-white/80">Generate images on-the-fly directly from your URL, adapting to your specific requirements without needing image files.</p>
-                    </div>
-                    <div class="flex flex-col items-center text-center p-4 rounded-lg bg-white/10 animate-fade-in" style="--delay: 1.4s;">
-                        <i class="fas fa-palette intro-icon"></i>
-                        <h3 class="text-2xl font-semibold mb-2">Full Customization</h3>
-                        <p class="text-white/80">Control dimensions, background and text colors, shapes (rectangle or circle), and even add custom text or Font Awesome icons.</p>
-                    </div>
-                    <div class="flex flex-col items-center text-center p-4 rounded-lg bg-white/10 animate-fade-in" style="--delay: 1.6s;">
-                        <i class="fas fa-code intro-icon"></i>
-                        <h3 class="text-2xl font-semibold mb-2">Developer Friendly</h3>
-                        <p class="text-white/80">Simple URL structure and clear API documentation make integration into any project a breeze.</p>
-                    </div>
-                </div>
-            </div>
-
-            <div class="intro-section text-white" style="--delay: 2s;">
-                <h2 class="text-4xl font-bold mb-6 animate-slide-in-right">Key Features</h2>
-                <ul class="list-none space-y-4 text-left max-w-2xl mx-auto">
-                    <li class="flex items-center bg-white/10 p-3 rounded-lg animate-fade-in" style="--delay: 2.2s;">
-                        <i class="fas fa-ruler-combined text-2xl mr-4 text-purple-300"></i>
-                        <p class="text-lg"><strong>Flexible Sizing:</strong> Define any width and height to fit your design perfectly.</p>
-                    </li>
-                    <li class="flex items-center bg-white/10 p-3 rounded-lg animate-fade-in" style="--delay: 2.4s;">
-                        <i class="fas fa-fill-drip text-2xl mr-4 text-blue-300"></i>
-                        <p class="text-lg"><strong>Color Control:</strong> Specify exact hex codes for both background and foreground elements.</p>
-                    </li>
-                    <li class="flex items-center bg-white/10 p-3 rounded-lg animate-fade-in" style="--delay: 2.6s;">
-                        <i class="fas fa-shapes text-2xl mr-4 text-pink-300"></i>
-                        <p class="text-lg"><strong>Shape Options:</strong> Choose between standard rectangles or elegant circles.</p>
-                    </li>
-                    <li class="flex items-center bg-white/10 p-3 rounded-lg animate-fade-in" style="--delay: 2.8s;">
-                        <i class="fas fa-icons text-2xl mr-4 text-green-300"></i>
-                        <p class="text-lg"><strong>Icon Support:</strong> Integrate any Font Awesome icon directly into your placeholder.</p>
-                    </li>
-                    <li class="flex items-center bg-white/10 p-3 rounded-lg animate-fade-in" style="--delay: 3s;">
-                        <i class="fas fa-font text-2xl mr-4 text-yellow-300"></i>
-                        <p class="text-lg"><strong>Custom Text:</strong> Add your own descriptive text to the placeholder image.</p>
-                    </li>
+<body>
+    <!-- Header Section -->
+    <header class="header">
+        <div class="nav-container">
+            <a href="#" class="logo">AR Labs Library</a>
+            <nav>
+                <ul class="nav-menu" id="navMenu">
+                    <li><a href="#home" class="nav-link">Home</a></li>
+                    <li><a href="#about" class="nav-link">About</a></li>
+                    <li><a href="#resources" class="nav-link">Resources</a></li>
+                    <li><a href="#contact" class="nav-link">Contact</a></li>
                 </ul>
-            </div>
-
-            <div class="intro-section text-white text-center mt-12" style="--delay: 3.5s;">
-                <p class="text-xl md:text-2xl font-semibold animate-fade-in-up">Ready to get started?</p>
-                <p class="text-lg mt-4 animate-fade-in" style="--delay: 3.8s;">
-                    Click the <span class="font-bold text-yellow-300">menu button</span> <i class="fas fa-arrow-down animate-bounce-y text-yellow-300"></i> at the bottom right of your screen to explore the features!
-                </p>
-            </div>
-        </section>
-
-        <!-- Demo Gallery Page -->
-        <section id="demo-gallery-page" class="page-section">
-            <div class="card p-6 md:p-8 mb-8">
-                <h2 class="text-3xl md:text-4xl font-bold gradient-text mb-6 text-center">🎨 Demo Gallery</h2>
-                <div class="demo-grid grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-                    <div class="demo-item p-6 bg-gray-50 rounded-lg text-center hover:bg-gray-100 flex flex-col items-center">
-                        <img src="https://arlabs07.github.io/Arhub07.github.io/library/placeholder.html/250x150/667eea/ffffff/250x150" alt="250x150 placeholder" class="icon-canvas mx-auto mb-4 w-full h-auto">
-                        <code class="text-sm bg-gray-200 px-3 py-1 rounded">250x150</code>
-                    </div>
-                    <div class="demo-item p-6 bg-gray-50 rounded-lg text-center hover:bg-gray-100 flex flex-col items-center">
-                        <img src="https://arlabs07.github.io/Arhub07.github.io/library/placeholder.html/200x200/circle/764ba2/ffffff/200x200" alt="200x200 circle placeholder" class="icon-canvas mx-auto mb-4 w-full h-auto">
-                        <code class="text-sm bg-gray-200 px-3 py-1 rounded">200x200/circle</code>
-                    </div>
-                    <div class="demo-item p-6 bg-gray-50 rounded-lg text-center hover:bg-gray-100 flex flex-col items-center">
-                        <img src="https://arlabs07.github.io/Arhub07.github.io/library/placeholder.html/250x150/rect/f093fb/ffffff/fa-solid%20fa-heart" alt="250x150 heart icon placeholder" class="icon-canvas mx-auto mb-4 w-full h-auto">
-                        <code class="text-sm bg-gray-200 px-3 py-1 rounded">250x150/heart</code>
-                    </div>
-                    <div class="demo-item p-6 bg-gray-50 rounded-lg text-center hover:bg-gray-100 flex flex-col items-center">
-                        <img src="https://arlabs07.github.io/Arhub07.github.io/library/placeholder.html/200x200/circle/4facfe/ffffff/fa-solid%20fa-star" alt="200x200 circle star icon placeholder" class="icon-canvas mx-auto mb-4 w-full h-auto">
-                        <code class="text-sm bg-gray-200 px-3 py-1 rounded">200x200/circle/star</code>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- URL Generator Page -->
-        <section id="url-generator-page" class="page-section">
-            <div class="card p-6 md:p-8 mb-8">
-                <h2 class="text-3xl md:text-4xl font-bold gradient-text mb-6 text-center">🔧 URL Generator</h2>
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
-                    <div>
-                        <label for="width" class="block text-sm font-medium mb-2">Width</label>
-                        <input type="number" id="width" class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-purple-500" value="300" min="50" max="1000">
-                    </div>
-                    <div>
-                        <label for="height" class="block text-sm font-medium mb-2">Height</label>
-                        <input type="number" id="height" class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-purple-500" value="200" min="50" max="1000">
-                    </div>
-                    <div>
-                        <label for="shape" class="block text-sm font-medium mb-2">Shape</label>
-                        <select id="shape" class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-purple-500">
-                            <option value="rect">Rectangle</option>
-                            <option value="circle">Circle</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label for="bgcolor" class="block text-sm font-medium mb-2">Background Color</label>
-                        <input type="color" id="bgcolor" class="w-full p-3 border rounded-lg h-12 focus:ring-2 focus:ring-purple-500" value="#667eea">
-                    </div>
-                    <div>
-                        <label for="textcolor" class="block text-sm font-medium mb-2">Text Color</label>
-                        <input type="color" id="textcolor" class="w-full p-3 border rounded-lg h-12 focus:ring-2 focus:ring-purple-500" value="#ffffff">
-                    </div>
-                    <div>
-                        <label for="icontext" class="block text-sm font-medium mb-2">Icon/Text</label>
-                        <input type="text" id="icontext" class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-purple-500" placeholder="fa-solid fa-heart or Custom Text">
-                    </div>
-                </div>
-                <div class="bg-gradient-to-r from-blue-500 to-purple-600 p-6 rounded-lg text-white relative">
-                    <h3 class="text-xl font-semibold mb-3">Generated URL:</h3>
-                    <pre id="generated-url" class="bg-black/30 p-4 rounded text-sm overflow-x-auto word-break-all pr-12 relative"></pre>
-                    <button class="copy-button" onclick="copyToClipboard('generated-url')">Copy</button>
-                    <div class="text-center mt-6">
-                        <canvas id="preview-canvas" width="300" height="200" class="icon-canvas mx-auto bg-white"></canvas>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- API Documentation Page -->
-        <section id="api-docs-page" class="page-section">
-            <div class="glass p-6 md:p-8 rounded-2xl mb-8 text-white">
-                <h2 class="text-3xl md:text-4xl font-bold mb-6 text-center">🚀 How to Use</h2>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div class="bg-white/10 p-6 rounded-lg relative">
-                        <h3 class="text-xl font-semibold mb-3">Basic Rectangle</h3>
-                        <pre><code class="language-xml">&lt;img src="https://arlabs07.github.io/Arhub07.github.io/library/placeholder.html/300x200" alt="placeholder"&gt;</code></pre>
-                        <button class="copy-button" onclick="copyCodeFromPre(this)">Copy</button>
-                    </div>
-                    <div class="bg-white/10 p-6 rounded-lg relative">
-                        <h3 class="text-xl font-semibold mb-3">Circle with Icon</h3>
-                        <pre><code class="language-xml">&lt;img src="https://arlabs07.github.io/Arhub07.github.io/library/placeholder.html/200x200/circle/667eea/ffffff/fa-solid%20fa-heart" alt="placeholder"&gt;</code></pre>
-                        <button class="copy-button" onclick="copyCodeFromPre(this)">Copy</button>
-                    </div>
-                    <div class="bg-white/10 p-6 rounded-lg relative">
-                        <h3 class="text-xl font-semibold mb-3">Custom Colors</h3>
-                        <pre><code class="language-xml">&lt;img src="https://arlabs07.github.io/Arhub07.github.io/library/placeholder.html/300x200/ff6b6b/ffffff/Custom%20Text" alt="placeholder"&gt;</code></pre>
-                        <button class="copy-button" onclick="copyCodeFromPre(this)">Copy</button>
-                    </div>
-                    <div class="bg-white/10 p-6 rounded-lg relative">
-                        <h3 class="text-xl font-semibold mb-3">Font Awesome Icons</h3>
-                        <pre><code class="language-xml">&lt;img src="https://arlabs07.github.io/Arhub07.github.io/library/placeholder.html/250x150/4ecdc4/ffffff/fa-brands%20fa-github" alt="placeholder"&gt;</code></pre>
-                        <button class="copy-button" onclick="copyCodeFromPre(this)">Copy</button>
-                    </div>
-                </div>
-            </div>
-
-            <div class="card p-6 md:p-8">
-                <h2 class="text-3xl md:text-4xl font-bold gradient-text mb-6 text-center">📖 URL Structure</h2>
-                <div class="bg-gray-50 p-6 rounded-lg mb-6 relative">
-                    <pre><code class="language-xml">https://arlabs07.github.io/Arhub07.github.io/library/placeholder.html/[width]x[height]/[shape]/[bgcolor]/[textcolor]/[icon-or-text]</code></pre>
-                    <button class="copy-button" onclick="copyCodeFromPre(this)">Copy</button>
-                </div>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div>
-                        <h3 class="text-xl font-semibold mb-3">Parameters:</h3>
-                        <ul class="space-y-2 text-gray-700">
-                            <li><strong>width x height:</strong> Dimensions in pixels</li>
-                            <li><strong>shape:</strong> 'rect' or 'circle' (optional)</li>
-                            <li><strong>bgcolor:</strong> Hex color without # (optional)</li>
-                            <li><strong>textcolor:</strong> Hex color without # (optional)</li>
-                            <li><strong>icon-or-text:</strong> Font Awesome class or custom text (URL-encoded)</li>
-                        </ul>
-                    </div>
-                    <div>
-                        <h3 class="text-xl font-semibold mb-3">Examples:</h3>
-                        <ul class="space-y-2 text-gray-700">
-                            <li>Basic: <code>/300x200</code></li>
-                            <li>Circle: <code>/200x200/circle</code></li>
-                            <li>With icon: <code>/250x150/rect/667eea/ffffff/fa-solid%20fa-star</code></li>
-                            <li>Custom text: <code>/300x200/ff6b6b/ffffff/Hello%20World</code></li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-    </div>
-
-    <!-- Floating Action Button Navigation -->
-    <div class="fab-container">
-        <div id="fab-menu" class="fab-menu">
-            <div class="fab-menu-item" data-page="intro-page" title="Intro"><i class="fas fa-home"></i></div>
-            <div class="fab-menu-item" data-page="demo-gallery-page" title="Demo Gallery"><i class="fas fa-images"></i></div>
-            <div class="fab-menu-item" data-page="url-generator-page" title="URL Generator"><i class="fas fa-cogs"></i></div>
-            <div class="fab-menu-item" data-page="api-docs-page" title="API Docs"><i class="fas fa-book"></i></div>
+                <button class="nav-toggle" id="navToggle">☰</button>
+            </nav>
         </div>
-        <div id="fab-button" class="fab-button animate-pulse-fab">
-            <i class="fas fa-bars"></i>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero" id="home">
+        <h1>Welcome to AR Labs Library</h1>
+        <p>Your gateway to cutting-edge augmented reality research and resources</p>
+        <img src="https://arlabs07.github.io/Arhub07.github.io/library/placeholder.html?w=1200&h=400&text=AR+Labs+Library" 
+             alt="AR Labs Library Hero Image" 
+             class="hero-image">
+    </section>
+
+    <!-- Cards Section -->
+    <section class="cards-section" id="resources">
+        <h2 class="section-title">Featured Resources</h2>
+        <div class="cards-grid">
+            <!-- Card 1 -->
+            <div class="card">
+                <img src="https://arlabs07.github.io/Arhub07.github.io/library/placeholder.html?w=300&h=200&text=AR+Fundamentals" 
+                     alt="AR Fundamentals" 
+                     class="card-image">
+                <div class="card-content">
+                    <h3 class="card-title">AR Fundamentals</h3>
+                    <p class="card-description">Learn the basics of augmented reality technology, including tracking, rendering, and user interaction principles.</p>
+                    <a href="#" class="card-button">Learn More</a>
+                </div>
+            </div>
+
+            <!-- Card 2 -->
+            <div class="card">
+                <img src="https://arlabs07.github.io/Arhub07.github.io/library/placeholder.html?w=300&h=200&text=3D+Modeling" 
+                     alt="3D Modeling" 
+                     class="card-image">
+                <div class="card-content">
+                    <h3 class="card-title">3D Modeling for AR</h3>
+                    <p class="card-description">Discover techniques for creating optimized 3D models specifically designed for augmented reality applications.</p>
+                    <a href="#" class="card-button">Learn More</a>
+                </div>
+            </div>
+
+            <!-- Card 3 -->
+            <div class="card">
+                <img src="https://arlabs07.github.io/Arhub07.github.io/library/placeholder.html?w=300&h=200&text=Mobile+AR" 
+                     alt="Mobile AR" 
+                     class="card-image">
+                <div class="card-content">
+                    <h3 class="card-title">Mobile AR Development</h3>
+                    <p class="card-description">Build immersive AR experiences for mobile devices using ARCore, ARKit, and cross-platform frameworks.</p>
+                    <a href="#" class="card-button">Learn More</a>
+                </div>
+            </div>
+
+            <!-- Card 4 -->
+            <div class="card">
+                <img src="https://arlabs07.github.io/Arhub07.github.io/library/placeholder.html?w=300&h=200&text=WebXR" 
+                     alt="WebXR" 
+                     class="card-image">
+                <div class="card-content">
+                    <h3 class="card-title">WebXR Technologies</h3>
+                    <p class="card-description">Explore browser-based AR and VR experiences using WebXR APIs and modern web technologies.</p>
+                    <a href="#" class="card-button">Learn More</a>
+                </div>
+            </div>
+
+            <!-- Card 5 -->
+            <div class="card">
+                <img src="https://arlabs07.github.io/Arhub07.github.io/library/placeholder.html?w=300&h=200&text=Computer+Vision" 
+                     alt="Computer Vision" 
+                     class="card-image">
+                <div class="card-content">
+                    <h3 class="card-title">Computer Vision</h3>
+                    <p class="card-description">Master the computer vision algorithms that power AR applications, from feature detection to object recognition.</p>
+                    <a href="#" class="card-button">Learn More</a>
+                </div>
+            </div>
+
+            <!-- Card 6 -->
+            <div class="card">
+                <img src="https://arlabs07.github.io/Arhub07.github.io/library/placeholder.html?w=300&h=200&text=AR+Research" 
+                     alt="AR Research" 
+                     class="card-image">
+                <div class="card-content">
+                    <h3 class="card-title">Latest AR Research</h3>
+                    <p class="card-description">Stay updated with cutting-edge research papers and breakthrough developments in augmented reality.</p>
+                    <a href="#" class="card-button">Learn More</a>
+                </div>
+            </div>
         </div>
-    </div>
+    </section>
 
-    <!-- Copied Message Toast -->
-    <div id="copied-message" class="copied-message">
-        Copied to clipboard!
-    </div>
-
-    <footer class="text-center mt-12 mb-4 text-white/80">
-        <p class="text-lg">Built with ❤️ by ArHub • Powered by Font Awesome & Tailwind CSS</p>
+    <!-- Footer Section -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="social-links">
+                <a href="#" class="social-link">GitHub</a>
+                <a href="#" class="social-link">Twitter</a>
+                <a href="#" class="social-link">LinkedIn</a>
+                <a href="#" class="social-link">YouTube</a>
+            </div>
+            <p>&copy; 2024 AR Labs Library. All rights reserved.</p>
+        </div>
     </footer>
 
     <script>
-        // Minified JavaScript code
-        const baseUrl = 'https://arlabs07.github.io/Arhub07.github.io/library/placeholder.html';
-        const faUnicodeMap = {
-            'fa-solid fa-heart': '\uf004', 'fa-solid fa-star': '\uf005', 'fa-solid fa-home': '\uf015', 'fa-solid fa-user': '\uf007',
-            'fa-solid fa-camera': '\uf030', 'fa-solid fa-phone': '\uf095', 'fa-solid fa-envelope': '\uf0e0', 'fa-solid fa-search': '\uf002',
-            'fa-solid fa-cog': '\uf013', 'fa-solid fa-bell': '\uf0f3', 'fa-solid fa-download': '\uf019', 'fa-solid fa-upload': '\uf093',
-            'fa-solid fa-play': '\uf04b', 'fa-solid fa-pause': '\uf04c', 'fa-solid fa-stop': '\uf04d', 'fa-solid fa-check': '\uf00c',
-            'fa-solid fa-times': '\uf00d', 'fa-solid fa-plus': '\uf067', 'fa-solid fa-minus': '\uf068', 'fa-solid fa-edit': '\uf044',
-            'fa-solid fa-trash': '\uf1f8', 'fa-solid fa-save': '\uf0c7', 'fa-solid fa-print': '\uf02f', 'fa-solid fa-copy': '\uf0c5',
-            'fa-solid fa-cut': '\uf0c4', 'fa-solid fa-paste': '\uf0ea', 'fa-solid fa-eye': '\uf06e', 'fa-solid fa-eye-slash': '\uf070',
-            'fa-solid fa-lock': '\uf023', 'fa-solid fa-unlock': '\uf09c', 'fa-solid fa-key': '\uf084', 'fa-solid fa-shield': '\uf132',
-            'fa-solid fa-crown': '\uf521', 'fa-solid fa-gem': '\uf3a5', 'fa-solid fa-fire': '\uf06d', 'fa-solid fa-bolt': '\uf0e7',
-            'fa-solid fa-sun': '\uf185', 'fa-solid fa-moon': '\uf186', 'fa-solid fa-cloud': '\uf0c2', 'fa-solid fa-umbrella': '\uf0e9',
-            'fa-solid fa-snowflake': '\uf2dc', 'fa-solid fa-tree': '\uf1bb', 'fa-solid fa-leaf': '\uf06c', 'fa-solid fa-flower': '\uf729',
-            'fa-solid fa-apple': '\uf179', 'fa-solid fa-coffee': '\uf0f4', 'fa-solid fa-wine': '\uf4b8', 'fa-solid fa-birthday-cake': '\uf1fd',
-            'fa-solid fa-gift': '\uf06b', 'fa-solid fa-music': '\uf001', 'fa-solid fa-headphones': '\uf025', 'fa-solid fa-microphone': '\uf130',
-            'fa-solid fa-video': '\uf03d', 'fa-solid fa-gamepad': '\uf11b', 'fa-solid fa-puzzle-piece': '\uf12e', 'fa-solid fa-dice': '\uf522',
-            'fa-solid fa-chess': '\uf439', 'fa-solid fa-trophy': '\uf091', 'fa-solid fa-medal': '\uf5a2', 'fa-solid fa-flag': '\uf024',
-            'fa-solid fa-map': '\uf279', 'fa-solid fa-compass': '\uf14e', 'fa-solid fa-rocket': '\uf135', 'fa-solid fa-plane': '\uf072',
-            'fa-solid fa-car': '\uf1b9', 'fa-solid fa-bicycle': '\uf206', 'fa-solid fa-bus': '\uf207', 'fa-solid fa-train': '\uf238',
-            'fa-solid fa-ship': '\uf21a', 'fa-solid fa-anchor': '\uf179',
-            'fa-brands fa-github': '\uf09b', 'fa-brands fa-twitter': '\uf099', 'fa-brands fa-facebook': '\uf09a', 'fa-brands fa-instagram': '\uf16d',
-            'fa-brands fa-linkedin': '\uf0e1', 'fa-brands fa-youtube': '\uf167', 'fa-brands fa-google': '\uf1a0', 'fa-brands fa-apple': '\uf179',
-            'fa-brands fa-microsoft': '\uf3ca', 'fa-brands fa-amazon': '\uf270', 'fa-brands fa-spotify': '\uf1bc', 'fa-brands fa-netflix': '\uf03d',
-            'fa-brands fa-discord': '\uf392', 'fa-brands fa-telegram': '\uf2c6', 'fa-brands fa-whatsapp': '\uf232', 'fa-brands fa-reddit': '\uf1a3',
-            'fa-brands fa-pinterest': '\uf0d2', 'fa-brands fa-tiktok': '\uf26b', 'fa-brands fa-snapchat': '\uf2ab', 'fa-brands fa-twitch': '\uf1e8',
-            'fa-brands fa-steam': '\uf1b6', 'fa-brands fa-playstation': '\uf3df', 'fa-brands fa-xbox': '\uf412', 'fa-brands fa-nintendo': '\uf800'
-        };
+        // Mobile navigation toggle functionality
+        const navToggle = document.getElementById('navToggle');
+        const navMenu = document.getElementById('navMenu');
 
-        function generateImage(canvas, width, height, bgColor, textColor, content, shape = 'rect') {
-            const ctx = canvas.getContext('2d');
-            canvas.width = width;
-            canvas.height = height;
-
-            ctx.clearRect(0, 0, width, height); // Clear canvas
-
-            ctx.fillStyle = bgColor;
-            if (shape === 'circle') {
-                const radius = Math.min(width, height) / 2;
-                const centerX = width / 2;
-                const centerY = height / 2;
-                ctx.beginPath();
-                ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI);
-                ctx.fill();
-                ctx.save();
-                ctx.beginPath();
-                ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI);
-                ctx.clip();
-            } else {
-                ctx.fillRect(0, 0, width, height);
-            }
-
-            ctx.fillStyle = textColor;
-            ctx.textAlign = 'center';
-            ctx.textBaseline = 'middle';
-            const centerX = width / 2;
-            const centerY = height / 2;
-
-            if (content && content.startsWith('fa-')) {
-                const faIcon = faUnicodeMap[content];
-                if (faIcon) {
-                    const fontSize = Math.min(width, height) * 0.4; // Larger font size for icons
-                    const fontWeight = content.includes('fa-solid') ? '900' : '400'; // Solid or Brands
-                    const fontFamily = content.includes('fa-solid') ? 'Font Awesome 6 Free' : 'Font Awesome 6 Brands';
-                    ctx.font = `${fontWeight} ${fontSize}px "${fontFamily}"`;
-                    ctx.fillText(faIcon, centerX, centerY + fontSize * 0.05); // Adjust for vertical alignment
-                } else {
-                    const fontSize = Math.min(width, height) * 0.08;
-                    ctx.font = `${fontSize}px Arial`;
-                    ctx.fillText('?', centerX, centerY); // Fallback for unknown icon
-                }
-            } else {
-                const fontSize = Math.min(width, height) * 0.08;
-                ctx.font = `${fontSize}px Arial`;
-                const text = content || `${width}x${height}`;
-                ctx.fillText(text, centerX, centerY);
-            }
-
-            if (shape === 'circle') {
-                ctx.restore();
-            }
-        }
-
-        function showToast(message) {
-            const toast = document.getElementById('copied-message');
-            toast.textContent = message;
-            toast.classList.add('show');
-            setTimeout(() => {
-                toast.classList.remove('show');
-            }, 2000);
-        }
-
-        function fallbackCopyTextToClipboard(text) {
-            const textArea = document.createElement("textarea");
-            textArea.value = text;
-            textArea.style.position = "fixed"; // Avoid scrolling to bottom of page in MS Edge.
-            textArea.style.left = "-999999px";
-            textArea.style.top = "-999999px";
-            document.body.appendChild(textArea);
-            textArea.focus();
-            textArea.select();
-            try {
-                document.execCommand('copy');
-                showToast('Copied to clipboard!');
-            } catch (err) {
-                console.error('Fallback: Oops, unable to copy', err);
-                showToast('Failed to copy!');
-            }
-            document.body.removeChild(textArea);
-        }
-
-        function copyToClipboard(elementId) {
-            const element = document.getElementById(elementId);
-            const textToCopy = element.textContent;
-            fallbackCopyTextToClipboard(textToCopy); // Always use fallback
-        }
-
-        function copyCodeFromPre(button) {
-            const preElement = button.previousElementSibling;
-            const textToCopy = preElement.textContent;
-            fallbackCopyTextToClipboard(textToCopy); // Always use fallback
-        }
-
-        function updateGenerator() {
-            const width = document.getElementById('width').value;
-            const height = document.getElementById('height').value;
-            const shape = document.getElementById('shape').value;
-            const bgcolor = document.getElementById('bgcolor').value.replace('#', '');
-            const textcolor = document.getElementById('textcolor').value.replace('#', '');
-            const icontext = document.getElementById('icontext').value.trim();
-
-            let url = `${baseUrl}/${width}x${height}`;
-            let pathParts = [];
-
-            if (shape !== 'rect') {
-                pathParts.push(shape);
-            }
-
-            const defaultBg = '667eea';
-            const defaultText = 'ffffff';
-
-            let currentBg = bgcolor;
-            let currentText = textcolor;
-
-            // Determine if bgcolor or textcolor are default and should be omitted or explicitly included
-            if (currentBg !== defaultBg || pathParts.length > 0) { // Include if not default OR if shape is present
-                pathParts.push(currentBg);
-            } else if (icontext && pathParts.length === 0) { // If icon/text is present but no shape/bg, add default bg
-                 pathParts.push(defaultBg);
-            }
-
-
-            if (currentText !== defaultText || (pathParts.length > 0 && pathParts[pathParts.length -1] === currentBg)) { // Include if not default OR if bgcolor is present
-                pathParts.push(currentText);
-            } else if (icontext && pathParts.length > 0 && pathParts[pathParts.length -1] === currentBg) { // If icon/text is present and bg is there, add default text
-                 pathParts.push(defaultText);
-            }
-
-
-            if (icontext) {
-                // Ensure all preceding optional parameters are present if icontext is used
-                if (pathParts.length === 0) { // No shape, no bg, no text color
-                    pathParts.push(defaultBg, defaultText);
-                } else if (pathParts.length === 1 && (pathParts[0] === 'rect' || pathParts[0] === 'circle')) { // Shape only
-                    pathParts.push(defaultBg, defaultText);
-                } else if (pathParts.length === 1 && pathParts[0] === currentBg) { // BG only
-                    pathParts.push(defaultText);
-                } else if (pathParts.length === 2 && (pathParts[0] === 'rect' || pathParts[0] === 'circle') && pathParts[1] === currentBg) { // Shape and BG
-                    pathParts.push(defaultText);
-                }
-                pathParts.push(encodeURIComponent(icontext));
-            }
-
-
-            url += pathParts.length > 0 ? '/' + pathParts.join('/') : '';
-
-
-            document.getElementById('generated-url').textContent = url;
-
-            const previewCanvas = document.getElementById('preview-canvas');
-            const displayContent = icontext || `${width}x${height}`;
-            generateImage(previewCanvas, parseInt(width), parseInt(height), `#${bgcolor}`, `#${textcolor}`, displayContent, shape);
-        }
-
-        // Page navigation logic
-        let currentPage = 'intro-page';
-        function showPage(pageId) {
-            document.querySelectorAll('.page-section').forEach(section => {
-                section.classList.remove('active');
-            });
-            const targetPage = document.getElementById(pageId);
-            if (targetPage) {
-                targetPage.classList.add('active');
-                currentPage = pageId;
-                // Scroll to top of the page content
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-            }
-        }
-
-        // FAB menu toggle
-        const fabButton = document.getElementById('fab-button');
-        const fabMenu = document.getElementById('fab-menu');
-        let isFabMenuOpen = false;
-
-        function toggleFabMenu() {
-            isFabMenuOpen = !isFabMenuOpen;
-            fabMenu.classList.toggle('open', isFabMenuOpen);
-            fabButton.querySelector('i').classList.toggle('fa-bars', !isFabMenuOpen);
-            fabButton.querySelector('i').classList.toggle('fa-times', isFabMenuOpen);
-            fabButton.classList.toggle('animate-pulse-fab', !isFabMenuOpen); // Stop pulse when open
-        }
-
-        fabButton.addEventListener('click', (event) => {
-            event.stopPropagation(); // Prevent document click from closing immediately
-            toggleFabMenu();
+        navToggle.addEventListener('click', function() {
+            navMenu.classList.toggle('active');
         });
 
-        document.addEventListener('click', (event) => {
-            if (isFabMenuOpen && !fabMenu.contains(event.target) && !fabButton.contains(event.target)) {
-                toggleFabMenu();
-            }
+        // Close mobile menu when clicking on a link
+        const navLinks = document.querySelectorAll('.nav-link');
+        navLinks.forEach(link => {
+            link.addEventListener('click', function() {
+                navMenu.classList.remove('active');
+            });
         });
 
-        // Initialize on DOMContentLoaded
-        document.addEventListener('DOMContentLoaded', function () {
-            // Initialize Highlight.js
-            hljs.highlightAll();
-
-            // Initialize particles.js
-            particlesJS('particles-js', {
-                "particles": {
-                    "number": { "value": 80, "density": { "enable": true, "value_area": 800 } },
-                    "color": { "value": "#ffffff" },
-                    "shape": { "type": "circle", "stroke": { "width": 0, "color": "#000000" }, "polygon": { "nb_sides": 5 }, "image": { "src": "img/github.svg", "width": 100, "height": 100 } },
-                    "opacity": { "value": 0.5, "random": false, "anim": { "enable": false, "speed": 1, "opacity_min": 0.1, "sync": false } },
-                    "size": { "value": 3, "random": true, "anim": { "enable": false, "speed": 40, "size_min": 0.1, "sync": false } },
-                    "line_linked": { "enable": true, "distance": 150, "color": "#ffffff", "opacity": 0.4, "width": 1 },
-                    "move": { "enable": true, "speed": 6, "direction": "none", "random": false, "straight": false, "out_mode": "out", "bounce": false, "attract": { "enable": false, "rotateX": 600, "rotateY": 1200 } }
-                },
-                "interactivity": {
-                    "detect_on": "canvas", "events": { "onhover": { "enable": true, "mode": "grab" }, "onclick": { "enable": true, "mode": "push" }, "resize": true },
-                    "modes": {
-                        "grab": { "distance": 140, "line_linked": { "opacity": 1 } },
-                        "bubble": { "distance": 400, "size": 40, "duration": 2, "opacity": 8, "speed": 3 },
-                        "repulse": { "distance": 200, "duration": 0.4 },
-                        "push": { "particles_nb": 4 },
-                        "remove": { "particles_nb": 2 }
-                    }
-                },
-                "retina_detect": true
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
             });
-
-            // Setup URL generator inputs
-            ['width', 'height', 'shape', 'bgcolor', 'textcolor', 'icontext'].forEach(id => {
-                document.getElementById(id).addEventListener('input', updateGenerator);
-            });
-            updateGenerator(); // Initial generation
-
-            // Setup FAB menu item clicks
-            document.querySelectorAll('.fab-menu-item').forEach(item => {
-                item.addEventListener('click', () => {
-                    const pageId = item.getAttribute('data-page');
-                    showPage(pageId);
-                    toggleFabMenu(); // Close menu after selection
-                });
-            });
-
-            // Ensure initial page is shown
-            showPage(currentPage);
         });
     </script>
 </body>
