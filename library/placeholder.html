@@ -434,24 +434,24 @@
             const hasParams = window.location.search.includes('width') || window.location.search.includes('height');
             
             if (hasParams) {
-                // Create a full-screen canvas for direct image access
-                document.body.innerHTML = `
-                    <div style="display: flex; justify-content: center; align-items: center; min-height: 100vh; background: #f0f0f0;">
-                        <canvas id="directCanvas" style="border: 2px solid #ddd; border-radius: 8px;"></canvas>
-                    </div>
-                `;
-                
-                const canvas = document.getElementById('directCanvas');
+                // Create a canvas and generate the image
+                const canvas = document.createElement('canvas');
                 createPlaceholderImage(canvas, params.width, params.height, params.bg, params.color, params.text, params.format);
                 
-                // Set up right-click to save
-                canvas.addEventListener('contextmenu', (e) => {
-                    e.preventDefault();
-                    const link = document.createElement('a');
-                    link.download = `placeholder-${params.width}x${params.height}.${params.format}`;
-                    link.href = canvas.toDataURL(`image/${params.format}`);
-                    link.click();
-                });
+                // Convert canvas to blob and create object URL
+                canvas.toBlob((blob) => {
+                    const url = URL.createObjectURL(blob);
+                    
+                    // Replace the entire page with just the image
+                    document.body.innerHTML = `
+                        <div style="margin: 0; padding: 0; display: flex; justify-content: center; align-items: center; min-height: 100vh; background: #f0f0f0;">
+                            <img src="${url}" style="max-width: 100%; max-height: 100vh; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);" alt="Placeholder ${params.width}x${params.height}">
+                        </div>
+                    `;
+                    
+                    // Clean up the object URL after a delay
+                    setTimeout(() => URL.revokeObjectURL(url), 5000);
+                }, `image/${params.format}`);
                 
                 return true;
             }
