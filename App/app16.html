@@ -1,1 +1,306 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Web Code Editor</title><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css"><style>body{margin:0;padding:0;overflow:;height:99vh;display:flex;flex-direction:column}*{box-sizing:border-box}.main-container{display:flex;flex:1;height:calc(100vh - 60px)}.editor-container{width:50%;display:flex;flex-direction:column;overflow:hidden;transition:width 0.3s ease}.preview-container{width:50%;display:flex;flex-direction:column;overflow:hidden;transition:width 0.3s ease}.editor-expanded{width:100%}.preview-expanded{width:100%}.editor-collapsed{width:0}.preview-collapsed{width:0}@media (max-width:768px){.main-container{flex-direction:column}.editor-container{width:100%;height:50vh;transition:height 0.3s ease}.preview-container{width:100%;height:50vh;transition:height 0.3s ease}.editor-expanded{height:100vh;width:100%}.preview-expanded{height:100vh;width:100%}.editor-collapsed{height:0;width:100%}.preview-collapsed{height:0;width:100%}}.editor-content{flex-grow:1;overflow:hidden}.preview-content{flex-grow:1;overflow:auto;background-color:white}.toolbar{display:flex;justify-content:flex-end;padding:5px 10px;background-color:#1e1e1e}.toolbar button{margin-left:8px;background:none;border:none;color:white;cursor:pointer;font-size:1rem;padding:5px;border-radius:3px}.toolbar button:hover{color:#66c0f4;background-color:#333}.tab-active{border-bottom:2px solid #66c0f4!important;color:#66c0f4!important}.preview-frame{width:100%;height:100%;border:none}.fade-opacity{opacity:0.5}.notification-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.7);display:flex;align-items:center;justify-content:center;z-index:10000;opacity:0;visibility:hidden;transition:opacity 0.3s ease,visibility 0.3s ease}.notification-overlay.show{opacity:1;visibility:visible}.notification{background:#1e1e1e;color:white;padding:20px;border-radius:10px;text-align:center;position:relative;max-width:80%;border:2px solid #66c0f4;box-shadow:0 10px 30px rgba(0,0,0,0.5)}.notification .close-btn{position:absolute;top:10px;right:15px;background:none;border:none;color:white;cursor:pointer;font-size:1.5rem}.notification .close-btn:hover{color:#66c0f4}.console-container{position:fixed;bottom:0;left:0;right:0;height:30vh;background:#1e1e1e;border-top:2px solid #66c0f4;transform:translateY(100%);transition:transform 0.3s ease;z-index:1000}.console-container.show{transform:translateY(0)}.console-header{display:flex;justify-content:space-between;align-items:center;padding:10px;background:#2d2d2d;border-bottom:1px solid #444}.console-content{height:calc(100% - 50px);overflow-y:auto;padding:10px;font-family:monospace;font-size:12px;color:#e0e0e0}.console-log{margin:2px 0;padding:2px 5px;border-radius:3px}.console-log.error{background-color:#4a1a1a;color:#ff6b6b}.console-log.warn{background-color:#4a3d1a;color:#ffd93d}.console-log.info{background-color:#1a1a4a;color:#6bb6ff}@media (max-width:768px){.toolbar{padding:3px 5px}.toolbar button{font-size:0.9rem;padding:3px;margin-left:5px}.toolbar button span{display:none}.notification{padding:15px;max-width:90%}}</style></head><body class="bg-gray-900 text-white font-mono"><nav class="bg-gray-800 p-2"><div class="flex justify-between items-center"><div class="flex space-x-4"><button id="html-tab" class="px-3 py-1 text-sm border-b-2 border-transparent hover:text-gray-300 tab-active">HTML</button><button id="css-tab" class="px-3 py-1 text-sm border-b-2 border-transparent hover:text-gray-300">CSS</button><button id="js-tab" class="px-3 py-1 text-sm border-b-2 border-transparent hover:text-gray-300">JS</button></div><div class="text-sm"><span>Code Editor</span></div></div></nav><div class="main-container"><div class="editor-container" id="editor-container"><div class="editor-content"><div id="html-editor" class="h-full"></div><div id="css-editor" class="h-full hidden"></div><div id="js-editor" class="h-full hidden"></div></div><div class="toolbar bg-gray-800"><button id="save-btn" class="fade-opacity" title="Save and Format"><i class="fas fa-save"></i><span> Save</span></button><button id="copy-btn" title="Copy All Code"><i class="fas fa-copy"></i><span> Copy</span></button><button id="download-btn" title="Download All Files"><i class="fas fa-download"></i><span> Download</span></button><button id="open-browser-btn" title="Open in New Tab"><i class="fas fa-external-link-alt"></i><span> Open</span></button><button id="console-btn" title="Toggle Console"><i class="fas fa-terminal"></i><span> Console</span></button><button id="maximize-editor" title="Maximize Editor"><i class="fas fa-expand"></i></button></div></div><div class="preview-container" id="preview-container"><div class="preview-content"><iframe id="preview-frame" class="preview-frame"></iframe></div><div class="toolbar bg-gray-800"><button id="refresh-preview" title="Refresh Preview"><i class="fas fa-sync-alt"></i><span> Refresh</span></button><button id="maximize-preview" title="Maximize Preview"><i class="fas fa-expand"></i></button></div></div></div><div id="notification-overlay" class="notification-overlay"><div class="notification"><button class="close-btn" id="notification-close">&times;</button><div id="notification-content"></div></div></div><div id="console-container" class="console-container"><div class="console-header"><span>Console</span><button id="console-close" title="Close Console"><i class="fas fa-times"></i></button></div><div class="console-content" id="console-content"></div></div><script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.33.0/min/vs/loader.min.js"></script><script src="editor.js"></script></body></html>
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Web Code Editor</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: ;
+            height: 99vh;
+            display: flex;
+            flex-direction: column
+        }
+
+        * {
+            box-sizing: border-box
+        }
+
+        .main-container {
+            display: flex;
+            flex: 1;
+            height: calc(100vh - 60px)
+        }
+
+        .editor-container {
+            width: 50%;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            transition: width 0.3s ease
+        }
+
+        .preview-container {
+            width: 50%;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            transition: width 0.3s ease
+        }
+
+        .editor-expanded {
+            width: 100%
+        }
+
+        .preview-expanded {
+            width: 100%
+        }
+
+        .editor-collapsed {
+            width: 0
+        }
+
+        .preview-collapsed {
+            width: 0
+        }
+
+        @media (max-width:768px) {
+            .main-container {
+                flex-direction: column
+            }
+            .editor-container {
+                width: 100%;
+                height: 50vh;
+                transition: height 0.3s ease
+            }
+            .preview-container {
+                width: 100%;
+                height: 50vh;
+                transition: height 0.3s ease
+            }
+            .editor-expanded {
+                height: 100vh;
+                width: 100%
+            }
+            .preview-expanded {
+                height: 100vh;
+                width: 100%
+            }
+            .editor-collapsed {
+                height: 0;
+                width: 100%
+            }
+            .preview-collapsed {
+                height: 0;
+                width: 100%
+            }
+        }
+
+        .editor-content {
+            flex-grow: 1;
+            overflow: hidden
+        }
+
+        .preview-content {
+            flex-grow: 1;
+            overflow: auto;
+            background-color: white
+        }
+
+        .toolbar {
+            display: flex;
+            justify-content: flex-end;
+            padding: 5px 10px;
+            background-color: #1e1e1e
+        }
+
+        .toolbar button {
+            margin-left: 8px;
+            background: none;
+            border: none;
+            color: white;
+            cursor: pointer;
+            font-size: 1rem;
+            padding: 5px;
+            border-radius: 3px
+        }
+
+        .toolbar button:hover {
+            color: #66c0f4;
+            background-color: #333
+        }
+
+        .tab-active {
+            border-bottom: 2px solid #66c0f4 !important;
+            color: #66c0f4 !important
+        }
+
+        .preview-frame {
+            width: 100%;
+            height: 100%;
+            border: none
+        }
+
+        .fade-opacity {
+            opacity: 0.5
+        }
+
+        .notification-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease
+        }
+
+        .notification-overlay.show {
+            opacity: 1;
+            visibility: visible
+        }
+
+        .notification {
+            background: #1e1e1e;
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            position: relative;
+            max-width: 80%;
+            border: 2px solid #66c0f4;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5)
+        }
+
+        .notification .close-btn {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            background: none;
+            border: none;
+            color: white;
+            cursor: pointer;
+            font-size: 1.5rem
+        }
+
+        .notification .close-btn:hover {
+            color: #66c0f4
+        }
+
+        .console-container {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 30vh;
+            background: #1e1e1e;
+            border-top: 2px solid #66c0f4;
+            transform: translateY(100%);
+            transition: transform 0.3s ease;
+            z-index: 1000
+        }
+
+        .console-container.show {
+            transform: translateY(0)
+        }
+
+        .console-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            background: #2d2d2d;
+            border-bottom: 1px solid #444
+        }
+
+        .console-content {
+            height: calc(100% - 50px);
+            overflow-y: auto;
+            padding: 10px;
+            font-family: monospace;
+            font-size: 12px;
+            color: #e0e0e0
+        }
+
+        .console-log {
+            margin: 2px 0;
+            padding: 2px 5px;
+            border-radius: 3px
+        }
+
+        .console-log.error {
+            background-color: #4a1a1a;
+            color: #ff6b6b
+        }
+
+        .console-log.warn {
+            background-color: #4a3d1a;
+            color: #ffd93d
+        }
+
+        .console-log.info {
+            background-color: #1a1a4a;
+            color: #6bb6ff
+        }
+
+        @media (max-width:768px) {
+            .toolbar {
+                padding: 3px 5px
+            }
+            .toolbar button {
+                font-size: 0.9rem;
+                padding: 3px;
+                margin-left: 5px
+            }
+            .toolbar button span {
+                display: none
+            }
+            .notification {
+                padding: 15px;
+                max-width: 90%
+            }
+        }
+    </style>
+</head>
+
+<body class="bg-gray-900 text-white font-mono">
+    <nav class="bg-gray-800 p-2">
+        <div class="flex justify-between items-center">
+            <div class="flex space-x-4"><button id="html-tab" class="px-3 py-1 text-sm border-b-2 border-transparent hover:text-gray-300 tab-active">HTML</button><button id="css-tab" class="px-3 py-1 text-sm border-b-2 border-transparent hover:text-gray-300">CSS</button>
+                <button
+                    id="js-tab" class="px-3 py-1 text-sm border-b-2 border-transparent hover:text-gray-300">JS</button>
+            </div>
+            <div class="text-sm"><span>Code Editor</span></div>
+        </div>
+    </nav>
+    <div class="main-container">
+        <div class="editor-container" id="editor-container">
+            <div class="editor-content">
+                <div id="html-editor" class="h-full"></div>
+                <div id="css-editor" class="h-full hidden"></div>
+                <div id="js-editor" class="h-full hidden"></div>
+            </div>
+            <div class="toolbar bg-gray-800"><button id="save-btn" class="fade-opacity" title="Save and Format"><i class="fas fa-save"></i><span> Save</span></button><button id="copy-btn" title="Copy All Code"><i class="fas fa-copy"></i><span> Copy</span></button><button id="download-btn"
+                    title="Download All Files"><i class="fas fa-download"></i><span> Download</span></button><button id="open-browser-btn" title="Open in New Tab"><i class="fas fa-external-link-alt"></i><span> Open</span></button><button id="console-btn"
+                    title="Toggle Console"><i class="fas fa-terminal"></i><span> Console</span></button><button id="maximize-editor" title="Maximize Editor"><i class="fas fa-expand"></i></button></div>
+        </div>
+        <div class="preview-container" id="preview-container">
+            <div class="preview-content"><iframe id="preview-frame" class="preview-frame"></iframe></div>
+            <div class="toolbar bg-gray-800"><button id="refresh-preview" title="Refresh Preview"><i class="fas fa-sync-alt"></i><span> Refresh</span></button><button id="maximize-preview" title="Maximize Preview"><i class="fas fa-expand"></i></button></div>
+        </div>
+    </div>
+    <div id="notification-overlay" class="notification-overlay">
+        <div class="notification"><button class="close-btn" id="notification-close">&times;</button>
+            <div id="notification-content"></div>
+        </div>
+    </div>
+    <div id="console-container" class="console-container">
+        <div class="console-header"><span>Console</span><button id="console-close" title="Close Console"><i class="fas fa-times"></i></button></div>
+        <div class="console-content" id="console-content"></div>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.33.0/min/vs/loader.min.js"></script>
+    <script src="App/editor.js"></script>
+</body>
+
+</html>
