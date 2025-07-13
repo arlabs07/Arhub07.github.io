@@ -1,1 +1,740 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>ArHub Placeholder Generator</title><script src="https://cdn.tailwindcss.com"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"><style>body{font-family:'Inter',sans-serif;background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);min-height:100vh}.glass{backdrop-filter:blur(10px);background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2)}.card{background:white;border-radius:16px;box-shadow:0 20px 40px rgba(0,0,0,0.1)}.demo-item{transition:all 0.3s ease}.demo-item:hover{transform:translateY(-5px)}.gradient-text{background:linear-gradient(135deg,#667eea,#764ba2);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}.icon-canvas{border-radius:8px;box-shadow:0 4px 12px rgba(0,0,0,0.15)}@media (max-width:768px){.demo-grid{grid-template-columns:1fr !important}}</style></head><body class="min-h-screen"><div class="container mx-auto px-4 py-8 max-w-6xl"><header class="text-center mb-12"><h1 class="text-5xl font-bold text-white mb-4">ArHub Placeholder</h1><p class="text-xl text-white/90">Generate beautiful placeholder images with icons & shapes</p></header><div class="card p-8 mb-8"><h2 class="text-3xl font-bold gradient-text mb-6">🎨 Demo Gallery</h2><div class="demo-grid grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8"><div class="demo-item p-6 bg-gray-50 rounded-lg text-center hover:bg-gray-100"><canvas width="250" height="150" class="icon-canvas mx-auto mb-4" data-shape="rect" data-bg="#667eea" data-text="250x150" data-text-color="#ffffff"></canvas><code class="text-sm bg-gray-200 px-3 py-1 rounded">250x150</code></div><div class="demo-item p-6 bg-gray-50 rounded-lg text-center hover:bg-gray-100"><canvas width="200" height="200" class="icon-canvas mx-auto mb-4" data-shape="circle" data-bg="#764ba2" data-text="200x200" data-text-color="#ffffff"></canvas><code class="text-sm bg-gray-200 px-3 py-1 rounded">200x200/circle</code></div><div class="demo-item p-6 bg-gray-50 rounded-lg text-center hover:bg-gray-100"><canvas width="250" height="150" class="icon-canvas mx-auto mb-4" data-shape="rect" data-bg="#f093fb" data-icon="fa-solid fa-heart" data-text-color="#ffffff"></canvas><code class="text-sm bg-gray-200 px-3 py-1 rounded">250x150/heart</code></div><div class="demo-item p-6 bg-gray-50 rounded-lg text-center hover:bg-gray-100"><canvas width="200" height="200" class="icon-canvas mx-auto mb-4" data-shape="circle" data-bg="#4facfe" data-icon="fa-solid fa-star" data-text-color="#ffffff"></canvas><code class="text-sm bg-gray-200 px-3 py-1 rounded">200x200/circle/star</code></div></div></div><div class="glass p-8 rounded-2xl mb-8 text-white"><h2 class="text-3xl font-bold mb-6">🚀 How to Use</h2><div class="grid grid-cols-1 md:grid-cols-2 gap-6"><div class="bg-white/10 p-6 rounded-lg"><h3 class="text-xl font-semibold mb-3">Basic Rectangle</h3><pre class="bg-black/30 p-4 rounded text-sm overflow-x-auto">&lt;img src="https://arlabs07.github.io/Arhub07.github.io/library/placeholder.html/300x200" alt="placeholder"&gt;</pre></div><div class="bg-white/10 p-6 rounded-lg"><h3 class="text-xl font-semibold mb-3">Circle with Icon</h3><pre class="bg-black/30 p-4 rounded text-sm overflow-x-auto">&lt;img src="https://arlabs07.github.io/Arhub07.github.io/library/placeholder.html/200x200/circle/667eea/ffffff/fa-solid fa-heart" alt="placeholder"&gt;</pre></div><div class="bg-white/10 p-6 rounded-lg"><h3 class="text-xl font-semibold mb-3">Custom Colors</h3><pre class="bg-black/30 p-4 rounded text-sm overflow-x-auto">&lt;img src="https://arlabs07.github.io/Arhub07.github.io/library/placeholder.html/300x200/ff6b6b/ffffff/Custom Text" alt="placeholder"&gt;</pre></div><div class="bg-white/10 p-6 rounded-lg"><h3 class="text-xl font-semibold mb-3">Font Awesome Icons</h3><pre class="bg-black/30 p-4 rounded text-sm overflow-x-auto">&lt;img src="https://arlabs07.github.io/Arhub07.github.io/library/placeholder.html/250x150/4ecdc4/ffffff/fa-brands fa-github" alt="placeholder"&gt;</pre></div></div></div><div class="card p-8 mb-8"><h2 class="text-3xl font-bold gradient-text mb-6">🔧 URL Generator</h2><div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6"><div><label class="block text-sm font-medium mb-2">Width</label><input type="number" id="width" class="w-full p-3 border rounded-lg" value="300" min="50" max="1000"></div><div><label class="block text-sm font-medium mb-2">Height</label><input type="number" id="height" class="w-full p-3 border rounded-lg" value="200" min="50" max="1000"></div><div><label class="block text-sm font-medium mb-2">Shape</label><select id="shape" class="w-full p-3 border rounded-lg"><option value="rect">Rectangle</option><option value="circle">Circle</option></select></div><div><label class="block text-sm font-medium mb-2">Background Color</label><input type="color" id="bgcolor" class="w-full p-3 border rounded-lg h-12" value="#667eea"></div><div><label class="block text-sm font-medium mb-2">Text Color</label><input type="color" id="textcolor" class="w-full p-3 border rounded-lg h-12" value="#ffffff"></div><div><label class="block text-sm font-medium mb-2">Icon/Text</label><input type="text" id="icontext" class="w-full p-3 border rounded-lg" placeholder="fa-solid fa-heart or Custom Text"></div></div><div class="bg-gradient-to-r from-blue-500 to-purple-600 p-6 rounded-lg text-white"><h3 class="text-xl font-semibold mb-3">Generated URL:</h3><pre id="generated-url" class="bg-black/30 p-4 rounded text-sm overflow-x-auto word-break-all">https://arlabs07.github.io/Arhub07.github.io/library/placeholder.html/300x200</pre><div class="text-center mt-6"><canvas id="preview-canvas" width="300" height="200" class="icon-canvas mx-auto bg-white"></canvas></div></div></div><div class="card p-8"><h2 class="text-3xl font-bold gradient-text mb-6">📖 URL Structure</h2><div class="bg-gray-50 p-6 rounded-lg mb-6"><code class="text-lg font-mono">https://arlabs07.github.io/Arhub07.github.io/library/placeholder.html/[width]x[height]/[shape]/[bgcolor]/[textcolor]/[icon-or-text]</code></div><div class="grid grid-cols-1 md:grid-cols-2 gap-6"><div><h3 class="text-xl font-semibold mb-3">Parameters:</h3><ul class="space-y-2 text-gray-700"><li><strong>width x height:</strong> Dimensions in pixels</li><li><strong>shape:</strong> 'rect' or 'circle' (optional)</li><li><strong>bgcolor:</strong> Hex color without # (optional)</li><li><strong>textcolor:</strong> Hex color without # (optional)</li><li><strong>icon-or-text:</strong> Font Awesome class or custom text</li></ul></div><div><h3 class="text-xl font-semibold mb-3">Examples:</h3><ul class="space-y-2 text-gray-700"><li>Basic: <code>/300x200</code></li><li>Circle: <code>/200x200/circle</code></li><li>With icon: <code>/250x150/rect/667eea/ffffff/fa-solid fa-star</code></li><li>Custom text: <code>/300x200/ff6b6b/ffffff/Hello World</code></li></ul></div></div></div><footer class="text-center mt-12 text-white/80"><p class="text-lg">Built with ❤️ by ArHub • Powered by Font Awesome & Tailwind CSS</p></footer></div><script>const baseUrl='https://arlabs07.github.io/Arhub07.github.io/library/placeholder.html';function generateImage(canvas,width,height,bgColor,textColor,content,shape='rect'){const ctx=canvas.getContext('2d');canvas.width=width;canvas.height=height;ctx.fillStyle=bgColor;if(shape==='circle'){const radius=Math.min(width,height)/2;const centerX=width/2;const centerY=height/2;ctx.beginPath();ctx.arc(centerX,centerY,radius,0,2*Math.PI);ctx.fill();ctx.save();ctx.beginPath();ctx.arc(centerX,centerY,radius,0,2*Math.PI);ctx.clip()}else{ctx.fillRect(0,0,width,height)}ctx.fillStyle=textColor;ctx.textAlign='center';ctx.textBaseline='middle';const centerX=width/2;const centerY=height/2;if(content&&content.startsWith('fa-')){const fontSize=Math.min(width,height)*0.3;const iconCode=getFontAwesomeIcon(content);if(iconCode){ctx.font=`${fontSize}px "Font Awesome 6 Free", "Font Awesome 6 Brands"`;ctx.fillText(iconCode,centerX,centerY)}}else{const fontSize=Math.min(width,height)*0.08;ctx.font=`${fontSize}px Arial`;const text=content||`${width}x${height}`;ctx.fillText(text,centerX,centerY)}if(shape==='circle'){ctx.restore()}}function getFontAwesomeIcon(className){const iconMap={'fa-solid fa-heart':'♥','fa-solid fa-star':'★','fa-solid fa-home':'🏠','fa-solid fa-user':'👤','fa-solid fa-camera':'📷','fa-solid fa-phone':'📞','fa-solid fa-envelope':'✉','fa-solid fa-search':'🔍','fa-solid fa-cog':'⚙','fa-solid fa-bell':'🔔','fa-solid fa-download':'⬇','fa-solid fa-upload':'⬆','fa-solid fa-play':'▶','fa-solid fa-pause':'⏸','fa-solid fa-stop':'⏹','fa-solid fa-check':'✓','fa-solid fa-times':'✗','fa-solid fa-plus':'➕','fa-solid fa-minus':'➖','fa-solid fa-edit':'✏','fa-solid fa-trash':'🗑','fa-solid fa-save':'💾','fa-solid fa-print':'🖨','fa-solid fa-copy':'📋','fa-solid fa-cut':'✂','fa-solid fa-paste':'📄','fa-solid fa-eye':'👁','fa-solid fa-eye-slash':'🙈','fa-solid fa-lock':'🔒','fa-solid fa-unlock':'🔓','fa-solid fa-key':'🔑','fa-solid fa-shield':'🛡','fa-solid fa-crown':'👑','fa-solid fa-gem':'💎','fa-solid fa-fire':'🔥','fa-solid fa-bolt':'⚡','fa-solid fa-sun':'☀','fa-solid fa-moon':'🌙','fa-solid fa-cloud':'☁','fa-solid fa-umbrella':'☂','fa-solid fa-snowflake':'❄','fa-solid fa-tree':'🌳','fa-solid fa-leaf':'🍃','fa-solid fa-flower':'🌸','fa-solid fa-apple':'🍎','fa-solid fa-coffee':'☕','fa-solid fa-wine':'🍷','fa-solid fa-birthday-cake':'🎂','fa-solid fa-gift':'🎁','fa-solid fa-music':'🎵','fa-solid fa-headphones':'🎧','fa-solid fa-microphone':'🎤','fa-solid fa-video':'🎥','fa-solid fa-gamepad':'🎮','fa-solid fa-puzzle-piece':'🧩','fa-solid fa-dice':'🎲','fa-solid fa-chess':'♟','fa-solid fa-trophy':'🏆','fa-solid fa-medal':'🏅','fa-solid fa-flag':'🏳','fa-solid fa-map':'🗺','fa-solid fa-compass':'🧭','fa-solid fa-rocket':'🚀','fa-solid fa-plane':'✈','fa-solid fa-car':'🚗','fa-solid fa-bicycle':'🚲','fa-solid fa-bus':'🚌','fa-solid fa-train':'🚊','fa-solid fa-ship':'🚢','fa-solid fa-anchor':'⚓','fa-brands fa-github':'🐙','fa-brands fa-twitter':'🐦','fa-brands fa-facebook':'📘','fa-brands fa-instagram':'📷','fa-brands fa-linkedin':'💼','fa-brands fa-youtube':'📺','fa-brands fa-google':'🔍','fa-brands fa-apple':'🍎','fa-brands fa-microsoft':'🪟','fa-brands fa-amazon':'📦','fa-brands fa-spotify':'🎵','fa-brands fa-netflix':'🎬','fa-brands fa-discord':'💬','fa-brands fa-telegram':'✈','fa-brands fa-whatsapp':'💬','fa-brands fa-reddit':'🤖','fa-brands fa-pinterest':'📌','fa-brands fa-tiktok':'🎵','fa-brands fa-snapchat':'👻','fa-brands fa-twitch':'🎮','fa-brands fa-steam':'🎮','fa-brands fa-playstation':'🎮','fa-brands fa-xbox':'🎮','fa-brands fa-nintendo':'🎮'};return iconMap[className]||'?'}function initDemoImages(){document.querySelectorAll('[data-bg]').forEach(canvas=>{const width=parseInt(canvas.getAttribute('width'));const height=parseInt(canvas.getAttribute('height'));const shape=canvas.getAttribute('data-shape')||'rect';const bgColor=canvas.getAttribute('data-bg');const textColor=canvas.getAttribute('data-text-color');const text=canvas.getAttribute('data-text');const icon=canvas.getAttribute('data-icon');generateImage(canvas,width,height,bgColor,textColor,icon||text,shape)})}function updateGenerator(){const width=document.getElementById('width').value;const height=document.getElementById('height').value;const shape=document.getElementById('shape').value;const bgcolor=document.getElementById('bgcolor').value.replace('#','');const textcolor=document.getElementById('textcolor').value.replace('#','');const icontext=document.getElementById('icontext').value.trim();let url=`${baseUrl}/${width}x${height}`;if(shape!=='rect')url+=`/${shape}`;if(bgcolor!=='667eea')url+=`/${shape==='rect'?'':shape==='circle'?'circle/':''}${bgcolor}`;if(textcolor!=='ffffff'){if(bgcolor==='667eea')url+=`/${shape==='rect'?'':shape==='circle'?'circle/':''}667eea`;url+=`/${textcolor}`}if(icontext){if(bgcolor==='667eea'&&textcolor==='ffffff')url+=`/${shape==='rect'?'':shape==='circle'?'circle/':''}667eea/ffffff`;else if(textcolor==='ffffff'&&bgcolor!=='667eea')url+=`/ffffff`;url+=`/${encodeURIComponent(icontext)}`}document.getElementById('generated-url').textContent=url;const previewCanvas=document.getElementById('preview-canvas');const displayContent=icontext||`${width}x${height}`;generateImage(previewCanvas,parseInt(width),parseInt(height),`#${bgcolor}`,`#${textcolor}`,displayContent,shape)}function handlePlaceholderRequest(){const path=window.location.pathname;const hash=window.location.hash.substring(1);const params=hash?hash.split('/'):path.includes('/placeholder.html/')?path.split('/placeholder.html/')[1]?.split('/'):null;if(params&&params.length>0){const dimensions=params[0];if(!dimensions.includes('x'))return false;const[width,height]=dimensions.split('x').map(Number);if(isNaN(width)||isNaN(height)||width<1||height<1||width>2000||height>2000)return false;let shape='rect';let bgColor='#667eea';let textColor='#ffffff';let content='';let paramIndex=1;if(params[paramIndex]==='circle'||params[paramIndex]==='rect'){shape=params[paramIndex];paramIndex++}if(params[paramIndex]&&/^[0-9A-Fa-f]{6}$/.test(params[paramIndex])){bgColor=`#${params[paramIndex]}`;paramIndex++}if(params[paramIndex]&&/^[0-9A-Fa-f]{6}$/.test(params[paramIndex])){textColor=`#${params[paramIndex]}`;paramIndex++}if(params[paramIndex]){content=decodeURIComponent(params[paramIndex])}generateAndServeImage(width,height,bgColor,textColor,content,shape);return true}return false}function generateAndServeImage(width,height,bgColor,textColor,content,shape){document.body.innerHTML='';document.body.style.cssText='margin:0;padding:0;background:#f0f0f0;display:flex;align-items:center;justify-content:center;min-height:100vh;font-family:Arial,sans-serif';const container=document.createElement('div');container.style.cssText='text-align:center;padding:20px';const canvas=document.createElement('canvas');generateImage(canvas,width,height,bgColor,textColor,content,shape);canvas.style.cssText='max-width:100%;max-height:90vh;box-shadow:0 8px 32px rgba(0,0,0,0.15);border-radius:8px;border:1px solid #ddd';const info=document.createElement('div');info.style.cssText='margin-top:20px;color:#666;font-size:14px';info.innerHTML=`<p><strong>ArHub Placeholder</strong></p><p>Size: ${width}x${height} • Shape: ${shape} • ${content?`Content: ${content}`:''}</p>`;container.appendChild(canvas);container.appendChild(info);document.body.appendChild(container)}document.addEventListener('DOMContentLoaded',function(){if(!handlePlaceholderRequest()){initDemoImages();updateGenerator();['width','height','shape','bgcolor','textcolor','icontext'].forEach(id=>{document.getElementById(id).addEventListener('input',updateGenerator)})}});window.addEventListener('hashchange',function(){if(handlePlaceholderRequest()){console.log('Placeholder generated from hash change')}});</script></body></html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ArHub Placeholder Generator</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Highlight.js CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/xml.min.js"></script> <!-- For HTML highlighting -->
+    <!-- Particles.js CDN -->
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            overflow-x: hidden; /* Prevent horizontal scroll on small screens */
+            position: relative; /* For particles.js background */
+        }
+        .glass {
+            backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .card {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+        .demo-item {
+            transition: all 0.3s ease;
+        }
+        .demo-item:hover {
+            transform: translateY(-5px);
+        }
+        .gradient-text {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .icon-canvas {
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+        /* Page transition styles */
+        .page-section {
+            display: none;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.5s ease, transform 0.5s ease;
+            min-height: calc(100vh - 8rem); /* Adjust based on header/footer */
+            padding-bottom: 4rem; /* Ensure space for FAB */
+        }
+        .page-section.active {
+            display: block;
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Floating action button (FAB) styles */
+        .fab-container {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            z-index: 1000;
+        }
+        .fab-button {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+            cursor: pointer;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .fab-button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 12px 20px rgba(0, 0, 0, 0.3);
+        }
+        .fab-menu {
+            position: absolute;
+            bottom: 70px; /* Adjust based on button size */
+            right: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 15px;
+        }
+        .fab-menu-item {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.9);
+            color: #667eea;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+            transition: transform 0.3s ease, opacity 0.3s ease, background 0.3s ease;
+            opacity: 0; /* Start hidden */
+            transform: translateY(20px); /* Start below */
+        }
+        .fab-menu-item:hover {
+            transform: scale(1.1);
+            background: #e0e0e0;
+        }
+        .fab-menu.open .fab-menu-item {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        /* Delay for staggered animation */
+        .fab-menu.open .fab-menu-item:nth-child(1) { transition-delay: 0.05s; }
+        .fab-menu.open .fab-menu-item:nth-child(2) { transition-delay: 0.10s; }
+        .fab-menu.open .fab-menu-item:nth-child(3) { transition-delay: 0.15s; }
+        .fab-menu.open .fab-menu-item:nth-child(4) { transition-delay: 0.20s; }
+
+        .copy-button {
+            position: absolute;
+            top: 0.5rem;
+            right: 0.5rem;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 0.3rem 0.6rem;
+            border-radius: 0.375rem;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: background 0.2s ease;
+        }
+        .copy-button:hover {
+            background: rgba(255, 255, 255, 0.4);
+        }
+        .copied-message {
+            position: fixed;
+            bottom: 1rem;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            z-index: 9999;
+            opacity: 0;
+            transition: opacity 0.3s ease-in-out;
+        }
+        .copied-message.show {
+            opacity: 1;
+        }
+
+        /* Particles.js container */
+        #particles-js {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: -1;
+            background-color: transparent; /* Ensure background gradient shows */
+        }
+
+        /* Custom animations for intro page */
+        @keyframes fade-in-down {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fade-in-down { animation: fade-in-down 1s ease-out forwards; }
+
+        @keyframes fade-in-up {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fade-in-up { animation: fade-in-up 1s ease-out forwards; }
+
+        @keyframes fade-in {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        .animate-fade-in { animation: fade-in 1s ease-out forwards; }
+
+        @keyframes slide-in-left {
+            from { opacity: 0; transform: translateX(-50px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        .animate-slide-in-left { animation: slide-in-left 0.8s ease-out forwards; }
+
+        @keyframes slide-in-right {
+            from { opacity: 0; transform: translateX(50px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        .animate-slide-in-right { animation: slide-in-right 0.8s ease-out forwards; }
+
+        @keyframes pulse-fab {
+            0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.7); }
+            70% { transform: scale(1.05); box-shadow: 0 0 0 15px rgba(255, 255, 255, 0); }
+            100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255, 255, 255, 0); }
+        }
+        .animate-pulse-fab { animation: pulse-fab 2s infinite; }
+
+        .intro-section {
+            padding: 4rem 0;
+            opacity: 0;
+            transform: translateY(30px);
+            animation: fade-in-up 1s ease-out forwards;
+            animation-delay: var(--delay, 0s);
+        }
+        .intro-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            color: #ffffff;
+            opacity: 0.8;
+        }
+
+        /* Ensure canvas draws Font Awesome icons correctly */
+        @font-face {
+            font-family: 'Font Awesome 6 Free';
+            font-style: normal;
+            font-weight: 900;
+            font-display: block;
+            src: url(https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/webfonts/fa-solid-900.woff2) format('woff2'),
+                 url(https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/webfonts/fa-solid-900.ttf) format('truetype');
+        }
+        @font-face {
+            font-family: 'Font Awesome 6 Brands';
+            font-style: normal;
+            font-weight: 400;
+            font-display: block;
+            src: url(https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/webfonts/fa-brands-400.woff2) format('woff2'),
+                 url(https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/webfonts/fa-brands-400.ttf) format('truetype');
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col items-center justify-center">
+    <!-- Particles.js container -->
+    <div id="particles-js"></div>
+
+    <div class="container mx-auto px-4 py-8 max-w-6xl flex-grow relative z-10">
+
+        <!-- Intro Page -->
+        <section id="intro-page" class="page-section active text-center mb-12">
+            <h1 class="text-5xl md:text-6xl font-bold text-white mb-4 animate-fade-in-down">ArHub Placeholder</h1>
+            <p class="text-xl md:text-2xl text-white/90 animate-fade-in-up">Generate beautiful placeholder images with icons & shapes</p>
+
+            <div class="mt-12 p-6 md:p-8 rounded-2xl glass text-white text-lg md:text-xl leading-relaxed animate-fade-in" style="--delay: 0.5s;">
+                <p>Welcome to ArHub Placeholder! This tool is your go-to solution for creating dynamic and customizable placeholder images for all your web development needs. Whether you're mocking up a new design, testing responsive layouts, or simply need a quick visual element, ArHub provides a flexible and powerful way to generate images on the fly.</p>
+                <p class="mt-4">Say goodbye to static placeholder images and hello to a world where your placeholders adapt to your design, featuring custom dimensions, colors, and even Font Awesome icons. Streamline your workflow and bring your designs to life with ease.</p>
+            </div>
+
+            <div class="intro-section text-white" style="--delay: 1s;">
+                <h2 class="text-4xl font-bold mb-6 animate-slide-in-left">Why Choose ArHub Placeholder?</h2>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-left">
+                    <div class="flex flex-col items-center text-center p-4 rounded-lg bg-white/10 animate-fade-in" style="--delay: 1.2s;">
+                        <i class="fas fa-magic intro-icon"></i>
+                        <h3 class="text-2xl font-semibold mb-2">Dynamic Generation</h3>
+                        <p class="text-white/80">Generate images on-the-fly directly from your URL, adapting to your specific requirements without needing image files.</p>
+                    </div>
+                    <div class="flex flex-col items-center text-center p-4 rounded-lg bg-white/10 animate-fade-in" style="--delay: 1.4s;">
+                        <i class="fas fa-palette intro-icon"></i>
+                        <h3 class="text-2xl font-semibold mb-2">Full Customization</h3>
+                        <p class="text-white/80">Control dimensions, background and text colors, shapes (rectangle or circle), and even add custom text or Font Awesome icons.</p>
+                    </div>
+                    <div class="flex flex-col items-center text-center p-4 rounded-lg bg-white/10 animate-fade-in" style="--delay: 1.6s;">
+                        <i class="fas fa-code intro-icon"></i>
+                        <h3 class="text-2xl font-semibold mb-2">Developer Friendly</h3>
+                        <p class="text-white/80">Simple URL structure and clear API documentation make integration into any project a breeze.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="intro-section text-white" style="--delay: 2s;">
+                <h2 class="text-4xl font-bold mb-6 animate-slide-in-right">Key Features</h2>
+                <ul class="list-none space-y-4 text-left max-w-2xl mx-auto">
+                    <li class="flex items-center bg-white/10 p-3 rounded-lg animate-fade-in" style="--delay: 2.2s;">
+                        <i class="fas fa-ruler-combined text-2xl mr-4 text-purple-300"></i>
+                        <p class="text-lg"><strong>Flexible Sizing:</strong> Define any width and height to fit your design perfectly.</p>
+                    </li>
+                    <li class="flex items-center bg-white/10 p-3 rounded-lg animate-fade-in" style="--delay: 2.4s;">
+                        <i class="fas fa-fill-drip text-2xl mr-4 text-blue-300"></i>
+                        <p class="text-lg"><strong>Color Control:</strong> Specify exact hex codes for both background and foreground elements.</p>
+                    </li>
+                    <li class="flex items-center bg-white/10 p-3 rounded-lg animate-fade-in" style="--delay: 2.6s;">
+                        <i class="fas fa-shapes text-2xl mr-4 text-pink-300"></i>
+                        <p class="text-lg"><strong>Shape Options:</strong> Choose between standard rectangles or elegant circles.</p>
+                    </li>
+                    <li class="flex items-center bg-white/10 p-3 rounded-lg animate-fade-in" style="--delay: 2.8s;">
+                        <i class="fas fa-icons text-2xl mr-4 text-green-300"></i>
+                        <p class="text-lg"><strong>Icon Support:</strong> Integrate any Font Awesome icon directly into your placeholder.</p>
+                    </li>
+                    <li class="flex items-center bg-white/10 p-3 rounded-lg animate-fade-in" style="--delay: 3s;">
+                        <i class="fas fa-font text-2xl mr-4 text-yellow-300"></i>
+                        <p class="text-lg"><strong>Custom Text:</strong> Add your own descriptive text to the placeholder image.</p>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="intro-section text-white text-center mt-12" style="--delay: 3.5s;">
+                <p class="text-xl md:text-2xl font-semibold animate-fade-in-up">Ready to get started?</p>
+                <p class="text-lg mt-4 animate-fade-in" style="--delay: 3.8s;">
+                    Click the <span class="font-bold text-yellow-300">menu button</span> <i class="fas fa-arrow-down animate-bounce-y text-yellow-300"></i> at the bottom right of your screen to explore the features!
+                </p>
+            </div>
+        </section>
+
+        <!-- Demo Gallery Page -->
+        <section id="demo-gallery-page" class="page-section">
+            <div class="card p-6 md:p-8 mb-8">
+                <h2 class="text-3xl md:text-4xl font-bold gradient-text mb-6 text-center">🎨 Demo Gallery</h2>
+                <div class="demo-grid grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                    <div class="demo-item p-6 bg-gray-50 rounded-lg text-center hover:bg-gray-100 flex flex-col items-center">
+                        <img src="https://arlabs07.github.io/Arhub07.github.io/library/placeholder.html/250x150/667eea/ffffff/250x150" alt="250x150 placeholder" class="icon-canvas mx-auto mb-4 w-full h-auto">
+                        <code class="text-sm bg-gray-200 px-3 py-1 rounded">250x150</code>
+                    </div>
+                    <div class="demo-item p-6 bg-gray-50 rounded-lg text-center hover:bg-gray-100 flex flex-col items-center">
+                        <img src="https://arlabs07.github.io/Arhub07.github.io/library/placeholder.html/200x200/circle/764ba2/ffffff/200x200" alt="200x200 circle placeholder" class="icon-canvas mx-auto mb-4 w-full h-auto">
+                        <code class="text-sm bg-gray-200 px-3 py-1 rounded">200x200/circle</code>
+                    </div>
+                    <div class="demo-item p-6 bg-gray-50 rounded-lg text-center hover:bg-gray-100 flex flex-col items-center">
+                        <img src="https://arlabs07.github.io/Arhub07.github.io/library/placeholder.html/250x150/rect/f093fb/ffffff/fa-solid%20fa-heart" alt="250x150 heart icon placeholder" class="icon-canvas mx-auto mb-4 w-full h-auto">
+                        <code class="text-sm bg-gray-200 px-3 py-1 rounded">250x150/heart</code>
+                    </div>
+                    <div class="demo-item p-6 bg-gray-50 rounded-lg text-center hover:bg-gray-100 flex flex-col items-center">
+                        <img src="https://arlabs07.github.io/Arhub07.github.io/library/placeholder.html/200x200/circle/4facfe/ffffff/fa-solid%20fa-star" alt="200x200 circle star icon placeholder" class="icon-canvas mx-auto mb-4 w-full h-auto">
+                        <code class="text-sm bg-gray-200 px-3 py-1 rounded">200x200/circle/star</code>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- URL Generator Page -->
+        <section id="url-generator-page" class="page-section">
+            <div class="card p-6 md:p-8 mb-8">
+                <h2 class="text-3xl md:text-4xl font-bold gradient-text mb-6 text-center">🔧 URL Generator</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
+                    <div>
+                        <label for="width" class="block text-sm font-medium mb-2">Width</label>
+                        <input type="number" id="width" class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-purple-500" value="300" min="50" max="1000">
+                    </div>
+                    <div>
+                        <label for="height" class="block text-sm font-medium mb-2">Height</label>
+                        <input type="number" id="height" class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-purple-500" value="200" min="50" max="1000">
+                    </div>
+                    <div>
+                        <label for="shape" class="block text-sm font-medium mb-2">Shape</label>
+                        <select id="shape" class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-purple-500">
+                            <option value="rect">Rectangle</option>
+                            <option value="circle">Circle</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="bgcolor" class="block text-sm font-medium mb-2">Background Color</label>
+                        <input type="color" id="bgcolor" class="w-full p-3 border rounded-lg h-12 focus:ring-2 focus:ring-purple-500" value="#667eea">
+                    </div>
+                    <div>
+                        <label for="textcolor" class="block text-sm font-medium mb-2">Text Color</label>
+                        <input type="color" id="textcolor" class="w-full p-3 border rounded-lg h-12 focus:ring-2 focus:ring-purple-500" value="#ffffff">
+                    </div>
+                    <div>
+                        <label for="icontext" class="block text-sm font-medium mb-2">Icon/Text</label>
+                        <input type="text" id="icontext" class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-purple-500" placeholder="fa-solid fa-heart or Custom Text">
+                    </div>
+                </div>
+                <div class="bg-gradient-to-r from-blue-500 to-purple-600 p-6 rounded-lg text-white relative">
+                    <h3 class="text-xl font-semibold mb-3">Generated URL:</h3>
+                    <pre id="generated-url" class="bg-black/30 p-4 rounded text-sm overflow-x-auto word-break-all pr-12 relative"></pre>
+                    <button class="copy-button" onclick="copyToClipboard('generated-url')">Copy</button>
+                    <div class="text-center mt-6">
+                        <canvas id="preview-canvas" width="300" height="200" class="icon-canvas mx-auto bg-white"></canvas>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- API Documentation Page -->
+        <section id="api-docs-page" class="page-section">
+            <div class="glass p-6 md:p-8 rounded-2xl mb-8 text-white">
+                <h2 class="text-3xl md:text-4xl font-bold mb-6 text-center">🚀 How to Use</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="bg-white/10 p-6 rounded-lg relative">
+                        <h3 class="text-xl font-semibold mb-3">Basic Rectangle</h3>
+                        <pre><code class="language-xml">&lt;img src="https://arlabs07.github.io/Arhub07.github.io/library/placeholder.html/300x200" alt="placeholder"&gt;</code></pre>
+                        <button class="copy-button" onclick="copyCodeFromPre(this)">Copy</button>
+                    </div>
+                    <div class="bg-white/10 p-6 rounded-lg relative">
+                        <h3 class="text-xl font-semibold mb-3">Circle with Icon</h3>
+                        <pre><code class="language-xml">&lt;img src="https://arlabs07.github.io/Arhub07.github.io/library/placeholder.html/200x200/circle/667eea/ffffff/fa-solid%20fa-heart" alt="placeholder"&gt;</code></pre>
+                        <button class="copy-button" onclick="copyCodeFromPre(this)">Copy</button>
+                    </div>
+                    <div class="bg-white/10 p-6 rounded-lg relative">
+                        <h3 class="text-xl font-semibold mb-3">Custom Colors</h3>
+                        <pre><code class="language-xml">&lt;img src="https://arlabs07.github.io/Arhub07.github.io/library/placeholder.html/300x200/ff6b6b/ffffff/Custom%20Text" alt="placeholder"&gt;</code></pre>
+                        <button class="copy-button" onclick="copyCodeFromPre(this)">Copy</button>
+                    </div>
+                    <div class="bg-white/10 p-6 rounded-lg relative">
+                        <h3 class="text-xl font-semibold mb-3">Font Awesome Icons</h3>
+                        <pre><code class="language-xml">&lt;img src="https://arlabs07.github.io/Arhub07.github.io/library/placeholder.html/250x150/4ecdc4/ffffff/fa-brands%20fa-github" alt="placeholder"&gt;</code></pre>
+                        <button class="copy-button" onclick="copyCodeFromPre(this)">Copy</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card p-6 md:p-8">
+                <h2 class="text-3xl md:text-4xl font-bold gradient-text mb-6 text-center">📖 URL Structure</h2>
+                <div class="bg-gray-50 p-6 rounded-lg mb-6 relative">
+                    <pre><code class="language-xml">https://arlabs07.github.io/Arhub07.github.io/library/placeholder.html/[width]x[height]/[shape]/[bgcolor]/[textcolor]/[icon-or-text]</code></pre>
+                    <button class="copy-button" onclick="copyCodeFromPre(this)">Copy</button>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <h3 class="text-xl font-semibold mb-3">Parameters:</h3>
+                        <ul class="space-y-2 text-gray-700">
+                            <li><strong>width x height:</strong> Dimensions in pixels</li>
+                            <li><strong>shape:</strong> 'rect' or 'circle' (optional)</li>
+                            <li><strong>bgcolor:</strong> Hex color without # (optional)</li>
+                            <li><strong>textcolor:</strong> Hex color without # (optional)</li>
+                            <li><strong>icon-or-text:</strong> Font Awesome class or custom text (URL-encoded)</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-semibold mb-3">Examples:</h3>
+                        <ul class="space-y-2 text-gray-700">
+                            <li>Basic: <code>/300x200</code></li>
+                            <li>Circle: <code>/200x200/circle</code></li>
+                            <li>With icon: <code>/250x150/rect/667eea/ffffff/fa-solid%20fa-star</code></li>
+                            <li>Custom text: <code>/300x200/ff6b6b/ffffff/Hello%20World</code></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </div>
+
+    <!-- Floating Action Button Navigation -->
+    <div class="fab-container">
+        <div id="fab-menu" class="fab-menu">
+            <div class="fab-menu-item" data-page="intro-page" title="Intro"><i class="fas fa-home"></i></div>
+            <div class="fab-menu-item" data-page="demo-gallery-page" title="Demo Gallery"><i class="fas fa-images"></i></div>
+            <div class="fab-menu-item" data-page="url-generator-page" title="URL Generator"><i class="fas fa-cogs"></i></div>
+            <div class="fab-menu-item" data-page="api-docs-page" title="API Docs"><i class="fas fa-book"></i></div>
+        </div>
+        <div id="fab-button" class="fab-button animate-pulse-fab">
+            <i class="fas fa-bars"></i>
+        </div>
+    </div>
+
+    <!-- Copied Message Toast -->
+    <div id="copied-message" class="copied-message">
+        Copied to clipboard!
+    </div>
+
+    <footer class="text-center mt-12 mb-4 text-white/80">
+        <p class="text-lg">Built with ❤️ by ArHub • Powered by Font Awesome & Tailwind CSS</p>
+    </footer>
+
+    <script>
+        // Minified JavaScript code
+        const baseUrl = 'https://arlabs07.github.io/Arhub07.github.io/library/placeholder.html';
+        const faUnicodeMap = {
+            'fa-solid fa-heart': '\uf004', 'fa-solid fa-star': '\uf005', 'fa-solid fa-home': '\uf015', 'fa-solid fa-user': '\uf007',
+            'fa-solid fa-camera': '\uf030', 'fa-solid fa-phone': '\uf095', 'fa-solid fa-envelope': '\uf0e0', 'fa-solid fa-search': '\uf002',
+            'fa-solid fa-cog': '\uf013', 'fa-solid fa-bell': '\uf0f3', 'fa-solid fa-download': '\uf019', 'fa-solid fa-upload': '\uf093',
+            'fa-solid fa-play': '\uf04b', 'fa-solid fa-pause': '\uf04c', 'fa-solid fa-stop': '\uf04d', 'fa-solid fa-check': '\uf00c',
+            'fa-solid fa-times': '\uf00d', 'fa-solid fa-plus': '\uf067', 'fa-solid fa-minus': '\uf068', 'fa-solid fa-edit': '\uf044',
+            'fa-solid fa-trash': '\uf1f8', 'fa-solid fa-save': '\uf0c7', 'fa-solid fa-print': '\uf02f', 'fa-solid fa-copy': '\uf0c5',
+            'fa-solid fa-cut': '\uf0c4', 'fa-solid fa-paste': '\uf0ea', 'fa-solid fa-eye': '\uf06e', 'fa-solid fa-eye-slash': '\uf070',
+            'fa-solid fa-lock': '\uf023', 'fa-solid fa-unlock': '\uf09c', 'fa-solid fa-key': '\uf084', 'fa-solid fa-shield': '\uf132',
+            'fa-solid fa-crown': '\uf521', 'fa-solid fa-gem': '\uf3a5', 'fa-solid fa-fire': '\uf06d', 'fa-solid fa-bolt': '\uf0e7',
+            'fa-solid fa-sun': '\uf185', 'fa-solid fa-moon': '\uf186', 'fa-solid fa-cloud': '\uf0c2', 'fa-solid fa-umbrella': '\uf0e9',
+            'fa-solid fa-snowflake': '\uf2dc', 'fa-solid fa-tree': '\uf1bb', 'fa-solid fa-leaf': '\uf06c', 'fa-solid fa-flower': '\uf729',
+            'fa-solid fa-apple': '\uf179', 'fa-solid fa-coffee': '\uf0f4', 'fa-solid fa-wine': '\uf4b8', 'fa-solid fa-birthday-cake': '\uf1fd',
+            'fa-solid fa-gift': '\uf06b', 'fa-solid fa-music': '\uf001', 'fa-solid fa-headphones': '\uf025', 'fa-solid fa-microphone': '\uf130',
+            'fa-solid fa-video': '\uf03d', 'fa-solid fa-gamepad': '\uf11b', 'fa-solid fa-puzzle-piece': '\uf12e', 'fa-solid fa-dice': '\uf522',
+            'fa-solid fa-chess': '\uf439', 'fa-solid fa-trophy': '\uf091', 'fa-solid fa-medal': '\uf5a2', 'fa-solid fa-flag': '\uf024',
+            'fa-solid fa-map': '\uf279', 'fa-solid fa-compass': '\uf14e', 'fa-solid fa-rocket': '\uf135', 'fa-solid fa-plane': '\uf072',
+            'fa-solid fa-car': '\uf1b9', 'fa-solid fa-bicycle': '\uf206', 'fa-solid fa-bus': '\uf207', 'fa-solid fa-train': '\uf238',
+            'fa-solid fa-ship': '\uf21a', 'fa-solid fa-anchor': '\uf179',
+            'fa-brands fa-github': '\uf09b', 'fa-brands fa-twitter': '\uf099', 'fa-brands fa-facebook': '\uf09a', 'fa-brands fa-instagram': '\uf16d',
+            'fa-brands fa-linkedin': '\uf0e1', 'fa-brands fa-youtube': '\uf167', 'fa-brands fa-google': '\uf1a0', 'fa-brands fa-apple': '\uf179',
+            'fa-brands fa-microsoft': '\uf3ca', 'fa-brands fa-amazon': '\uf270', 'fa-brands fa-spotify': '\uf1bc', 'fa-brands fa-netflix': '\uf03d',
+            'fa-brands fa-discord': '\uf392', 'fa-brands fa-telegram': '\uf2c6', 'fa-brands fa-whatsapp': '\uf232', 'fa-brands fa-reddit': '\uf1a3',
+            'fa-brands fa-pinterest': '\uf0d2', 'fa-brands fa-tiktok': '\uf26b', 'fa-brands fa-snapchat': '\uf2ab', 'fa-brands fa-twitch': '\uf1e8',
+            'fa-brands fa-steam': '\uf1b6', 'fa-brands fa-playstation': '\uf3df', 'fa-brands fa-xbox': '\uf412', 'fa-brands fa-nintendo': '\uf800'
+        };
+
+        function generateImage(canvas, width, height, bgColor, textColor, content, shape = 'rect') {
+            const ctx = canvas.getContext('2d');
+            canvas.width = width;
+            canvas.height = height;
+
+            ctx.clearRect(0, 0, width, height); // Clear canvas
+
+            ctx.fillStyle = bgColor;
+            if (shape === 'circle') {
+                const radius = Math.min(width, height) / 2;
+                const centerX = width / 2;
+                const centerY = height / 2;
+                ctx.beginPath();
+                ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI);
+                ctx.fill();
+                ctx.save();
+                ctx.beginPath();
+                ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI);
+                ctx.clip();
+            } else {
+                ctx.fillRect(0, 0, width, height);
+            }
+
+            ctx.fillStyle = textColor;
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            const centerX = width / 2;
+            const centerY = height / 2;
+
+            if (content && content.startsWith('fa-')) {
+                const faIcon = faUnicodeMap[content];
+                if (faIcon) {
+                    const fontSize = Math.min(width, height) * 0.4; // Larger font size for icons
+                    const fontWeight = content.includes('fa-solid') ? '900' : '400'; // Solid or Brands
+                    const fontFamily = content.includes('fa-solid') ? 'Font Awesome 6 Free' : 'Font Awesome 6 Brands';
+                    ctx.font = `${fontWeight} ${fontSize}px "${fontFamily}"`;
+                    ctx.fillText(faIcon, centerX, centerY + fontSize * 0.05); // Adjust for vertical alignment
+                } else {
+                    const fontSize = Math.min(width, height) * 0.08;
+                    ctx.font = `${fontSize}px Arial`;
+                    ctx.fillText('?', centerX, centerY); // Fallback for unknown icon
+                }
+            } else {
+                const fontSize = Math.min(width, height) * 0.08;
+                ctx.font = `${fontSize}px Arial`;
+                const text = content || `${width}x${height}`;
+                ctx.fillText(text, centerX, centerY);
+            }
+
+            if (shape === 'circle') {
+                ctx.restore();
+            }
+        }
+
+        function showToast(message) {
+            const toast = document.getElementById('copied-message');
+            toast.textContent = message;
+            toast.classList.add('show');
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 2000);
+        }
+
+        function fallbackCopyTextToClipboard(text) {
+            const textArea = document.createElement("textarea");
+            textArea.value = text;
+            textArea.style.position = "fixed"; // Avoid scrolling to bottom of page in MS Edge.
+            textArea.style.left = "-999999px";
+            textArea.style.top = "-999999px";
+            document.body.appendChild(textArea);
+            textArea.focus();
+            textArea.select();
+            try {
+                document.execCommand('copy');
+                showToast('Copied to clipboard!');
+            } catch (err) {
+                console.error('Fallback: Oops, unable to copy', err);
+                showToast('Failed to copy!');
+            }
+            document.body.removeChild(textArea);
+        }
+
+        function copyToClipboard(elementId) {
+            const element = document.getElementById(elementId);
+            const textToCopy = element.textContent;
+            fallbackCopyTextToClipboard(textToCopy); // Always use fallback
+        }
+
+        function copyCodeFromPre(button) {
+            const preElement = button.previousElementSibling;
+            const textToCopy = preElement.textContent;
+            fallbackCopyTextToClipboard(textToCopy); // Always use fallback
+        }
+
+        function updateGenerator() {
+            const width = document.getElementById('width').value;
+            const height = document.getElementById('height').value;
+            const shape = document.getElementById('shape').value;
+            const bgcolor = document.getElementById('bgcolor').value.replace('#', '');
+            const textcolor = document.getElementById('textcolor').value.replace('#', '');
+            const icontext = document.getElementById('icontext').value.trim();
+
+            let url = `${baseUrl}/${width}x${height}`;
+            let pathParts = [];
+
+            if (shape !== 'rect') {
+                pathParts.push(shape);
+            }
+
+            const defaultBg = '667eea';
+            const defaultText = 'ffffff';
+
+            let currentBg = bgcolor;
+            let currentText = textcolor;
+
+            // Determine if bgcolor or textcolor are default and should be omitted or explicitly included
+            if (currentBg !== defaultBg || pathParts.length > 0) { // Include if not default OR if shape is present
+                pathParts.push(currentBg);
+            } else if (icontext && pathParts.length === 0) { // If icon/text is present but no shape/bg, add default bg
+                 pathParts.push(defaultBg);
+            }
+
+
+            if (currentText !== defaultText || (pathParts.length > 0 && pathParts[pathParts.length -1] === currentBg)) { // Include if not default OR if bgcolor is present
+                pathParts.push(currentText);
+            } else if (icontext && pathParts.length > 0 && pathParts[pathParts.length -1] === currentBg) { // If icon/text is present and bg is there, add default text
+                 pathParts.push(defaultText);
+            }
+
+
+            if (icontext) {
+                // Ensure all preceding optional parameters are present if icontext is used
+                if (pathParts.length === 0) { // No shape, no bg, no text color
+                    pathParts.push(defaultBg, defaultText);
+                } else if (pathParts.length === 1 && (pathParts[0] === 'rect' || pathParts[0] === 'circle')) { // Shape only
+                    pathParts.push(defaultBg, defaultText);
+                } else if (pathParts.length === 1 && pathParts[0] === currentBg) { // BG only
+                    pathParts.push(defaultText);
+                } else if (pathParts.length === 2 && (pathParts[0] === 'rect' || pathParts[0] === 'circle') && pathParts[1] === currentBg) { // Shape and BG
+                    pathParts.push(defaultText);
+                }
+                pathParts.push(encodeURIComponent(icontext));
+            }
+
+
+            url += pathParts.length > 0 ? '/' + pathParts.join('/') : '';
+
+
+            document.getElementById('generated-url').textContent = url;
+
+            const previewCanvas = document.getElementById('preview-canvas');
+            const displayContent = icontext || `${width}x${height}`;
+            generateImage(previewCanvas, parseInt(width), parseInt(height), `#${bgcolor}`, `#${textcolor}`, displayContent, shape);
+        }
+
+        // Page navigation logic
+        let currentPage = 'intro-page';
+        function showPage(pageId) {
+            document.querySelectorAll('.page-section').forEach(section => {
+                section.classList.remove('active');
+            });
+            const targetPage = document.getElementById(pageId);
+            if (targetPage) {
+                targetPage.classList.add('active');
+                currentPage = pageId;
+                // Scroll to top of the page content
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        }
+
+        // FAB menu toggle
+        const fabButton = document.getElementById('fab-button');
+        const fabMenu = document.getElementById('fab-menu');
+        let isFabMenuOpen = false;
+
+        function toggleFabMenu() {
+            isFabMenuOpen = !isFabMenuOpen;
+            fabMenu.classList.toggle('open', isFabMenuOpen);
+            fabButton.querySelector('i').classList.toggle('fa-bars', !isFabMenuOpen);
+            fabButton.querySelector('i').classList.toggle('fa-times', isFabMenuOpen);
+            fabButton.classList.toggle('animate-pulse-fab', !isFabMenuOpen); // Stop pulse when open
+        }
+
+        fabButton.addEventListener('click', (event) => {
+            event.stopPropagation(); // Prevent document click from closing immediately
+            toggleFabMenu();
+        });
+
+        document.addEventListener('click', (event) => {
+            if (isFabMenuOpen && !fabMenu.contains(event.target) && !fabButton.contains(event.target)) {
+                toggleFabMenu();
+            }
+        });
+
+        // Initialize on DOMContentLoaded
+        document.addEventListener('DOMContentLoaded', function () {
+            // Initialize Highlight.js
+            hljs.highlightAll();
+
+            // Initialize particles.js
+            particlesJS('particles-js', {
+                "particles": {
+                    "number": { "value": 80, "density": { "enable": true, "value_area": 800 } },
+                    "color": { "value": "#ffffff" },
+                    "shape": { "type": "circle", "stroke": { "width": 0, "color": "#000000" }, "polygon": { "nb_sides": 5 }, "image": { "src": "img/github.svg", "width": 100, "height": 100 } },
+                    "opacity": { "value": 0.5, "random": false, "anim": { "enable": false, "speed": 1, "opacity_min": 0.1, "sync": false } },
+                    "size": { "value": 3, "random": true, "anim": { "enable": false, "speed": 40, "size_min": 0.1, "sync": false } },
+                    "line_linked": { "enable": true, "distance": 150, "color": "#ffffff", "opacity": 0.4, "width": 1 },
+                    "move": { "enable": true, "speed": 6, "direction": "none", "random": false, "straight": false, "out_mode": "out", "bounce": false, "attract": { "enable": false, "rotateX": 600, "rotateY": 1200 } }
+                },
+                "interactivity": {
+                    "detect_on": "canvas", "events": { "onhover": { "enable": true, "mode": "grab" }, "onclick": { "enable": true, "mode": "push" }, "resize": true },
+                    "modes": {
+                        "grab": { "distance": 140, "line_linked": { "opacity": 1 } },
+                        "bubble": { "distance": 400, "size": 40, "duration": 2, "opacity": 8, "speed": 3 },
+                        "repulse": { "distance": 200, "duration": 0.4 },
+                        "push": { "particles_nb": 4 },
+                        "remove": { "particles_nb": 2 }
+                    }
+                },
+                "retina_detect": true
+            });
+
+            // Setup URL generator inputs
+            ['width', 'height', 'shape', 'bgcolor', 'textcolor', 'icontext'].forEach(id => {
+                document.getElementById(id).addEventListener('input', updateGenerator);
+            });
+            updateGenerator(); // Initial generation
+
+            // Setup FAB menu item clicks
+            document.querySelectorAll('.fab-menu-item').forEach(item => {
+                item.addEventListener('click', () => {
+                    const pageId = item.getAttribute('data-page');
+                    showPage(pageId);
+                    toggleFabMenu(); // Close menu after selection
+                });
+            });
+
+            // Ensure initial page is shown
+            showPage(currentPage);
+        });
+    </script>
+</body>
+</html>
