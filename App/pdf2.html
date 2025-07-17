@@ -687,9 +687,6 @@
                 <div class="flex items-center space-x-3">
                     <div class="pulse-dot"></div>
                     <span class="text-sm text-gray-400">Premium PDF Library</span>
-                    <button id="shareWebsiteBtn" class="p-2 text-gray-400 hover:text-white transition-colors rounded-full" title="Share PageFlow">
-                        <i class="fas fa-share-alt"></i>
-                    </button>
                 </div>
             </div>
         </div>
@@ -763,12 +760,7 @@
                     <p id="pdfCategory" class="text-sm text-gray-400 mt-1 inline-block ml-2"></p>
                 </div>
                 <div class="flex items-center space-x-2 md:space-x-4">
-                    <button id="downloadPdfBtn" class="p-2 hover:bg-gray-700 rounded transition-colors" title="Download PDF">
-                        <i class="fas fa-download"></i>
-                    </button>
-                    <button id="sharePdfBtn" class="p-2 hover:bg-gray-700 rounded transition-colors" title="Share PDF">
-                        <i class="fas fa-share-alt"></i>
-                    </button>
+                    <!-- Removed Merge PDF, Share, and Download buttons -->
                     <button id="openPresentationBtn" class="p-2 hover:bg-gray-700 rounded transition-colors" title="Open Presentation Mode">
                         <i class="fas fa-play"></i>
                     </button>
@@ -814,9 +806,6 @@
                 </button>
                 <button id="resetZoom" class="p-2 text-white hover:bg-gray-600 rounded transition-colors" title="Reset Zoom">
                     <i class="fas fa-expand-arrows-alt"></i>
-                </button>
-                <button id="downloadPageBtn" class="p-2 text-white hover:bg-gray-600 rounded transition-colors" title="Download This Page">
-                    <i class="fas fa-file-download"></i>
                 </button>
             </div>
             <button id="closeModal" class="absolute top-4 right-4 z-10 p-2 text-white hover:bg-gray-600 rounded transition-colors" title="Close">
@@ -927,7 +916,6 @@
         </div>
     </div>
     <div id="notificationContainer"></div>
-
     <div id="bottomNavBar">
         <div id="navTools" class="nav-item active">
             <i class="fas fa-tools"></i>
@@ -1006,7 +994,7 @@
                 this.pdfFiles = []; // Stores metadata for all PDFs
                 this.filteredFiles = []; // For search results
                 this.currentPdf = null; // Currently opened PDF object (includes data)
-                this.currentPage = 1; // Current page in PDF viewer
+                this.currentPage = 1;
                 this.totalPages = 0;
                 this.zoomLevel = 1;
                 this.pages = []; // Stores PDFPageProxy objects and their canvases for current PDF
@@ -1033,13 +1021,14 @@
                     pdfViewer: document.getElementById('pdfViewer'),
                     searchInput: document.getElementById('searchInput'),
                     fileUpload: document.getElementById('fileUpload'),
+                    // Removed mergePdfInput
                     backBtn: document.getElementById('backBtn'),
                     pdfTitle: document.getElementById('pdfTitle'),
                     pdfCategory: document.getElementById('pdfCategory'),
                     pageInput: document.getElementById('pageInput'),
                     goToPage: document.getElementById('goToPage'),
-                    downloadPdfBtn: document.getElementById('downloadPdfBtn'),
-                    sharePdfBtn: document.getElementById('sharePdfBtn'),
+                    // Removed sharePdfViewerBtn
+                    // Removed downloadBtn
                     prevPage: document.getElementById('prevPage'),
                     nextPage: document.getElementById('nextPage'),
                     pdfGrid: document.getElementById('pdfGrid'),
@@ -1056,7 +1045,6 @@
                     zoomIn: document.getElementById('zoomIn'),
                     zoomOut: document.getElementById('zoomOut'),
                     resetZoom: document.getElementById('resetZoom'),
-                    downloadPageBtn: document.getElementById('downloadPageBtn'), // New: Download Page Button
                     openPresentationBtn: document.getElementById('openPresentationBtn'),
                     historyGrid: document.getElementById('historyGrid'),
                     noHistory: document.getElementById('noHistory'),
@@ -1070,6 +1058,8 @@
                     toggleAutoplayBtn: document.getElementById('toggleAutoplayBtn'),
                     togglePointerBtn: document.getElementById('togglePointerBtn'),
                     togglePenBtn: document.getElementById('togglePenBtn'),
+                    // Removed colorPickerContainer
+                    // Removed colorSwatches
                     openCreatePdfModalBtn: document.getElementById('openCreatePdfModalBtn'),
                     createPdfScreen: document.getElementById('createPdfScreen'),
                     backToMainFromCreatePdfBtn: document.getElementById('backToMainFromCreatePdfBtn'),
@@ -1077,7 +1067,7 @@
                     imagePreviews: document.getElementById('imagePreviews'),
                     noImageSelected: document.getElementById('noImageSelected'),
                     newPdfNameInput: document.getElementById('newPdfNameInput'),
-                    newPdfPasswordInput: document.getElementById('newPdfPasswordInput'),
+                    newPdfPasswordInput: document.getElementById('newPdfPasswordInput'), // Still exists in HTML, but not used for locking
                     createPdfFromImagesBtn: document.getElementById('createPdfFromImagesBtn'),
                     cancelCreatePdfBtn: document.getElementById('cancelCreatePdfBtn'),
                     openScanToPdfScreenBtn: document.getElementById('openScanToPdfScreenBtn'),
@@ -1094,16 +1084,16 @@
                     createPdfFromScanBtn: document.getElementById('createPdfFromScanBtn'),
                     bottomNavBar: document.getElementById('bottomNavBar'),
                     navTools: document.getElementById('navTools'),
-                    navFiles: document.getElementById('navFiles'),
-                    shareWebsiteBtn: document.getElementById('shareWebsiteBtn')
+                    navFiles: document.getElementById('navFiles')
                 };
-                this.addDefaultPdf();
+                this.addDefaultPdf(); // Load default PDF on start
                 this.initializeEventListeners();
                 this.showToolsScreen();
             }
             initializeEventListeners() {
                 this.elements.searchInput.addEventListener('input', (e) => this.handleSearch(e.target.value));
                 this.elements.fileUpload.addEventListener('change', (e) => this.handleFileUpload(e));
+                // Removed this.elements.mergePdfInput.addEventListener
                 this.elements.backBtn.addEventListener('click', () => this.showActiveScreenBeforeViewer());
                 this.elements.goToPage.addEventListener('click', () => this.goToPage());
                 this.elements.pageInput.addEventListener('keypress', (e) => {
@@ -1111,18 +1101,18 @@
                         this.goToPage();
                     }
                 });
-                this.elements.downloadPdfBtn.addEventListener('click', () => this.downloadPdf());
-                this.elements.sharePdfBtn.addEventListener('click', () => this.sharePdf());
+                // Removed this.elements.sharePdfViewerBtn.addEventListener
+                // Removed this.elements.downloadBtn.addEventListener
                 this.elements.prevPage.addEventListener('click', () => this.navigatePage(-1));
                 this.elements.nextPage.addEventListener('click', () => this.navigatePage(1));
                 this.elements.closeModal.addEventListener('click', () => this.closeModal());
                 this.elements.zoomIn.addEventListener('click', () => this.adjustZoom(0.2));
                 this.elements.zoomOut.addEventListener('click', () => this.adjustZoom(-0.2));
                 this.elements.resetZoom.addEventListener('click', () => this.resetZoom());
-                this.elements.downloadPageBtn.addEventListener('click', () => this.downloadCurrentModalPage()); // New listener
                 this.elements.openPresentationBtn.addEventListener('click', () => this.openPresentationMode());
                 
-                this.elements.togglePenBtn.addEventListener('click', this.togglePenMode.bind(this));
+                // Pen button logic (simplified)
+                this.elements.togglePenBtn.addEventListener('click', this.togglePenMode.bind(this)); // Bound explicitly
 
                 this.elements.prevPresentationPageBtn.addEventListener('click', () => {
                     this.stopAutoplay();
@@ -1142,6 +1132,7 @@
                 this.elements.createPdfFromImagesBtn.addEventListener('click', () => this.createPdfFromImages());
                 this.elements.cancelCreatePdfBtn.addEventListener('click', () => this.closeCreatePdfScreen());
                 
+                // Fixed: Ensure openScanToPdfScreenBtn exists before adding listener
                 if (this.elements.openScanToPdfScreenBtn) {
                     this.elements.openScanToPdfScreenBtn.addEventListener('click', this.openScanToPdfScreen); 
                 } else {
@@ -1149,10 +1140,10 @@
                 }
 
                 this.elements.backToMainFromScanBtn.addEventListener('click', () => this.closeScanToPdfScreen());
-                this.elements.toggleFlashBtn.addEventListener('click', this.toggleFlash);
-                this.elements.switchCameraBtn.addEventListener('click', this.switchCamera);
-                this.elements.captureButton.addEventListener('click', this.capturePhoto);
-                this.elements.createPdfFromScanBtn.addEventListener('click', this.createPdfFromScannedImages);
+                this.elements.toggleFlashBtn.addEventListener('click', this.toggleFlash); // No bind needed, now arrow function
+                this.elements.switchCameraBtn.addEventListener('click', this.switchCamera); // No bind needed, now arrow function
+                this.elements.captureButton.addEventListener('click', this.capturePhoto); // No bind needed, now arrow function
+                this.elements.createPdfFromScanBtn.addEventListener('click', this.createPdfFromScannedImages); // No bind needed, now arrow function
                 this.elements.navTools.addEventListener('click', () => this.showToolsScreen());
                 this.elements.navFiles.addEventListener('click', () => this.showFilesScreen());
                 document.addEventListener('keydown', (e) => this.handleKeyboard(e));
@@ -1165,9 +1156,10 @@
                 this.elements.drawingCanvas.addEventListener('touchend', (e) => this.handleDrawingEnd(e.changedTouches[0]));
                 this.elements.drawingCanvas.addEventListener('mouseleave', () => this.clearPointer());
                 this.elements.drawingCanvas.addEventListener('touchcancel', () => this.clearPointer());
-
-                this.elements.shareWebsiteBtn.addEventListener('click', () => this.shareWebsite());
             }
+            // Removed handleGlobalClick
+            // Removed showColorPicker
+            // Removed hideColorPicker
             handleKeyboard(e) {
                 if ((e.metaKey || e.ctrlKey) && e.key === 'k' && !this.elements.filesScreen.classList.contains('hidden')) {
                     e.preventDefault();
@@ -1232,6 +1224,7 @@
                         break;
                 }
             }
+            // No local storage for pdfFiles or history
             addPdfToList(newPdf) {
                 const existingIndex = this.pdfFiles.findIndex(p => p.id === newPdf.id);
                 if (existingIndex > -1) {
@@ -1252,16 +1245,18 @@
                     name: 'Fmm class 10',
                     category: 'Education',
                     description: 'Financial Market Management for Class 10 (NSQF Level-2) by CBSE.',
-                    data: null,
+                    data: null, // Data will be fetched on first open
                     pages: 0,
                     tags: ['finance', 'education', 'CBSE']
                 };
+                // Check if default PDF already exists in memory
                 const existingDefaultPdf = this.pdfFiles.find(p => p.id === defaultPdf.id);
                 if (!existingDefaultPdf) {
                     this.pdfFiles.push(defaultPdf);
                     this.notificationManager.showInfo('Default sample PDF added to library. It will load on first open.');
                 }
             }
+            // No local storage for history
             addPdfToHistory(file) {
                 const historyItem = {
                     id: file.id,
@@ -1315,6 +1310,7 @@
                     e.target.value = '';
                 }
             }
+            // Removed handleMergePdf
             handleSearch(query) {
                 const searchLower = query.toLowerCase().trim();
                 if (!searchLower) {
@@ -1403,15 +1399,15 @@
                     a.download = fileName;
                     document.body.appendChild(a);
                     a.click();
-                    // To ensure the download is initiated before the URL is potentially revoked
-                    // A small delay helps, though modern browsers handle this better.
-                    setTimeout(() => URL.revokeObjectURL(url), 100); 
+                    document.body.removeChild(a);
+                    URL.revokeObjectURL(url);
                     this.notificationManager.showSuccess(`Downloading "${fileName}"...`);
                 } catch (error) {
                     console.error('Error initiating download:', error);
                     this.notificationManager.showError(`Failed to initiate download: ${error.message}.`);
                 }
             }
+            // Changed to arrow function property to ensure 'this' context
             openScanToPdfScreen = async () => {
                 this.hideAllScreens();
                 this.elements.scanToPdfScreen.classList.remove('hidden');
@@ -1424,7 +1420,7 @@
                 this.stopCamera();
                 this.showToolsScreen();
             }
-            startCamera = async () => {
+            startCamera = async () => { // Converted to arrow function
                 this.notificationManager.showInfo('Requesting camera access...');
                 try {
                     const constraints = {
@@ -1448,7 +1444,7 @@
                     }
                 }
             }
-            stopCamera = () => {
+            stopCamera = () => { // Converted to arrow function
                 if (this.cameraStream) {
                     this.cameraStream.getTracks().forEach(track => track.stop());
                     this.elements.videoFeed.srcObject = null;
@@ -1456,19 +1452,19 @@
                     this.notificationManager.showInfo('Camera stopped.');
                 }
             }
-            toggleFlash = () => {
+            toggleFlash = () => { // Converted to arrow function
                 this.elements.flashOverlay.classList.toggle('active');
                 const isActive = this.elements.flashOverlay.classList.contains('active');
                 this.notificationManager.showInfo(`Flash: ${isActive ? 'On' : 'Off'}`);
             }
-            switchCamera = async () => {
+            switchCamera = async () => { // Converted to arrow function
                 this.stopCamera();
                 this.facingMode = (this.facingMode === 'environment') ? 'user' : 'environment';
                 this.elements.videoFeed.style.transform = (this.facingMode === 'user') ? 'scaleX(-1)' : 'scaleX(1)';
                 await this.startCamera();
                 this.notificationManager.showInfo(`Switched to ${this.facingMode} camera.`);
             }
-            capturePhoto = () => {
+            capturePhoto = () => { // Converted to arrow function
                 if (!this.elements.videoFeed.srcObject) {
                     this.notificationManager.show('Camera not active. Cannot capture photo.', 'warning');
                     return;
@@ -1519,7 +1515,7 @@
                 this.renderCapturedImages();
                 this.notificationManager.showInfo('Photo removed.');
             }
-            createPdfFromScannedImages = async () => {
+            createPdfFromScannedImages = async () => { // Converted to arrow function
                 if (this.capturedImages.length === 0) {
                     this.notificationManager.show('Please capture some photos first to create a PDF.', 'warning');
                     return;
@@ -1556,15 +1552,15 @@
                     const card = document.createElement('div');
                     card.className = 'glass glass-hover card-float rounded-2xl p-6 cursor-pointer fade-in';
                     card.style.animationDelay = `${index * 0.1}s`;
-                    const actionButtonHtml = ``;
+                    const actionButtonHtml = ``; // Removed share button from card
                     card.innerHTML = `
                         <div class="flex items-start justify-between mb-4">
                             <div class="flex items-center space-x-3">
                                 <div class="w-12 h-12 bg-gradient-to-r from-purple-500 to-pink-500 rounded-xl flex items-center justify-content-center flex-shrink-0">
                                     <i class="fas fa-file-pdf text-white text-lg"></i>
                                 </div>
-                                <div class="flex-1 min-w-0 overflow-hidden">
-                                    <h3 class="text-lg font-semibold text-white mb-1 truncate" title="${file.name}">${file.name}</h3>
+                                <div>
+                                    <h3 class="text-lg font-semibold text-white mb-1">${file.name}</h3>
                                     <div class="category-badge">${file.category}</div>
                                 </div>
                             </div>
@@ -1579,10 +1575,12 @@
                         </div>
                     `;
                     card.addEventListener('click', (e) => {
+                        // No share button to check for, directly open PDF
                         this.openPdf(file);
                     });
                     grid.appendChild(card);
                 });
+                // Removed event listener for share-pdf-btn
             }
             renderHistory() {
                 const historyGrid = this.elements.historyGrid;
@@ -1596,20 +1594,21 @@
                     const card = document.createElement('div');
                     card.className = 'glass glass-hover rounded-2xl p-4 cursor-pointer relative fade-in';
                     card.style.animationDelay = `${index * 0.05}s`;
-                    const actionButtonHtml = ``;
+                    const actionButtonHtml = ``; // Removed share button from history card
                     card.innerHTML = `
                         <div class="flex items-center space-x-3 pr-8">
                             <div class="w-10 h-10 bg-gradient-to-r from-blue-500 to-teal-500 rounded-lg flex items-center justify-content-center flex-shrink-0">
                                 <i class="fas fa-file-pdf text-white text-md"></i>
                             </div>
-                            <div class="flex-grow min-w-0 overflow-hidden">
-                                <h3 class="text-md font-semibold text-white truncate" title="${file.name}">${file.name}</h3>
+                            <div class="flex-grow">
+                                <h3 class="text-md font-semibold text-white truncate">${file.name}</h3>
                                 <p class="text-gray-400 text-xs">${file.category}</p>
                             </div>
                             ${actionButtonHtml}
                         </div>
                     `;
                     card.addEventListener('click', (e) => {
+                        // No share button to check for, directly open PDF
                         const foundFile = this.pdfFiles.find(p => p.id === file.id);
                         if (foundFile) {
                             this.openPdf(foundFile);
@@ -1620,8 +1619,9 @@
                     });
                     historyGrid.appendChild(card);
                 });
+                // Removed event listener for share-history-btn
             }
-            async openPdf(file) {
+            async openPdf(file) { // Removed password parameter
                 const fullPdfObject = this.pdfFiles.find(p => p.id === file.id);
                 if (!fullPdfObject) {
                     this.notificationManager.showError(`PDF "${file.name}" not found in library.`);
@@ -1645,13 +1645,13 @@
                     if (!(pdfDataBytes instanceof Uint8Array) || pdfDataBytes.length === 0) {
                         if (this.currentPdf.id === 1 && this.currentPdf.name === 'Fmm class 10') {
                             this.notificationManager.showInfo('Fetching default PDF...');
-                            // Ensure the correct URL is used for the sample file
                             const response = await fetch('https://arlabs07.github.io/Arhub07.github.io/App/file1.pdf');
                             if (!response.ok) {
                                 throw new Error(`Network response was not ok: ${response.statusText}`);
                             }
                             pdfDataBytes = new Uint8Array(await response.arrayBuffer());
                             this.currentPdf.data = pdfDataBytes;
+                            // Update the pdfFiles entry with data for the default PDF (in-memory)
                             const pdfIndex = this.pdfFiles.findIndex(p => p.id === this.currentPdf.id);
                             if (pdfIndex !== -1) {
                                 this.pdfFiles[pdfIndex].data = pdfDataBytes;
@@ -1669,6 +1669,7 @@
                     this.elements.pageInput.max = this.totalPages;
                     this.elements.pageInput.value = 1;
                     
+                    // Update page count in pdfFiles metadata (in-memory)
                     const pdfIndex = this.pdfFiles.findIndex(p => p.id === this.currentPdf.id);
                     if (pdfIndex !== -1) {
                         this.pdfFiles[pdfIndex].pages = this.totalPages;
@@ -1800,7 +1801,7 @@
                 this.elements.pageModal.classList.remove('hidden');
                 this.elements.pageModal.classList.add('slide-up');
                 this.zoomLevel = 1;
-                this.currentPage = pageNum; // Set currentPage for modal context
+                this.currentPage = pageNum;
                 await this.renderModalPage(page, this.elements.modalCanvas);
             }
             async renderModalPage(page, canvas) {
@@ -1825,10 +1826,9 @@
                 const newZoom = Math.max(0.5, Math.min(3, this.zoomLevel + delta));
                 if (newZoom !== this.zoomLevel) {
                     this.zoomLevel = newZoom;
-                    // Ensure the page object is available for rendering
-                    const currentPageObject = this.pages.find(p => p.pageNum === this.currentPage);
-                    if (currentPageObject && currentPageObject.page) {
-                        this.renderModalPage(currentPageObject.page, this.elements.modalCanvas);
+                    const currentPageData = this.pages[this.currentPage - 1];
+                    if (currentPageData && currentPageData.page) {
+                        this.renderModalPage(currentPageData.page, this.elements.modalCanvas);
                     } else {
                         this.notificationManager.showError('Cannot adjust zoom: current page data is unavailable.');
                     }
@@ -1836,36 +1836,13 @@
             }
             resetZoom() {
                 this.zoomLevel = 1;
-                // Ensure the page object is available for rendering
-                const currentPageObject = this.pages.find(p => p.pageNum === this.currentPage);
-                if (currentPageObject && currentPageObject.page) {
-                    this.renderModalPage(currentPageObject.page, this.elements.modalCanvas);
+                const currentPageData = this.pages[this.currentPage - 1];
+                if (currentPageData && currentPageData.page) {
+                    this.renderModalPage(currentPageData.page, this.elements.modalCanvas);
                 } else {
                     this.notificationManager.showError('Cannot reset zoom: current page data is unavailable.');
                 }
             }
-            // New: Download current page from modal
-            async downloadCurrentModalPage() {
-                if (!this.pdfDoc || !this.currentPage) {
-                    this.notificationManager.show('No page loaded to download.', 'warning');
-                    return;
-                }
-                this.notificationManager.showInfo(`Preparing page ${this.currentPage} for download...`);
-                try {
-                    const originalPage = await this.pdfDoc.getPage(this.currentPage);
-                    const newPdfDoc = await PDFDocument.create();
-                    const [copiedPage] = await newPdfDoc.copyPages(this.pdfDoc, [this.currentPage - 1]); // Page numbers are 0-indexed for copyPages
-                    newPdfDoc.addPage(copiedPage);
-
-                    const pdfBytes = await newPdfDoc.save();
-                    const fileName = `${this.currentPdf.name}_page${this.currentPage}.pdf`;
-                    this.downloadBytes(pdfBytes, fileName, 'application/pdf');
-                } catch (error) {
-                    console.error('Error downloading single page:', error);
-                    this.notificationManager.showError(`Failed to download page ${this.currentPage}: ${error.message}`);
-                }
-            }
-
             goToPage() {
                 const pageNumStr = this.elements.pageInput.value;
                 const pageNum = parseInt(pageNumStr, 10);
@@ -1929,7 +1906,7 @@
                 this.isDrawing = false;
                 this.isPointerActive = false;
                 this.isPenActive = false;
-                this.penColorIndex = -1;
+                this.penColorIndex = -1; // Reset pen color index
                 window.removeEventListener('resize', this.resizeDrawingCanvas.bind(this));
             }
             async renderPresentationPage(pageNum) {
@@ -2047,9 +2024,9 @@
             }
             togglePointerMode() {
                 this.isPointerActive = !this.isPointerActive;
-                this.isPenActive = false;
+                this.isPenActive = false; // Turn off pen mode if pointer is activated
                 this.isDrawing = false;
-                this.penColorIndex = -1;
+                this.penColorIndex = -1; // Reset pen color index
                 this.elements.togglePointerBtn.classList.toggle('bg-blue-600', this.isPointerActive);
                 this.elements.togglePenBtn.classList.remove('bg-blue-600');
                 this.clearDrawingCanvas();
@@ -2059,10 +2036,10 @@
                 this.notificationManager.showInfo(`Pointer mode: ${this.isPointerActive ? 'On' : 'Off'}`);
             }
             togglePenMode() {
-                this.isPointerActive = false;
+                this.isPointerActive = false; // Turn off pointer mode
                 this.elements.togglePointerBtn.classList.remove('bg-blue-600');
 
-                this.penColorIndex++;
+                this.penColorIndex++; // Increment index for next color
                 
                 if (this.penColorIndex < this.penColors.length) {
                     this.isPenActive = true;
@@ -2071,17 +2048,18 @@
                     this.elements.drawingCanvas.style.cursor = 'crosshair';
                     this.notificationManager.showInfo(`Pen mode: On, Color: ${this.penColor}`);
                 } else {
+                    // Cycle complete, turn off pen mode
                     this.isPenActive = false;
-                    this.penColorIndex = -1;
+                    this.penColorIndex = -1; // Reset for next activation
                     this.elements.togglePenBtn.classList.remove('bg-blue-600');
                     this.elements.drawingCanvas.style.cursor = '';
                     this.clearDrawingCanvas();
-                    this.allPageDrawings.clear();
+                    this.allPageDrawings.clear(); // Clear all drawings when pen mode is turned off
                     this.notificationManager.showInfo('Pen mode: Off');
                 }
-                this.isDrawing = false;
-                this.currentStroke = [];
-                this.redrawCurrentPageDrawings();
+                this.isDrawing = false; // Reset drawing state
+                this.currentStroke = []; // Clear current stroke
+                this.redrawCurrentPageDrawings(); // Redraw with new state
             }
             getScaledCoordinates(e) {
                 const rect = this.elements.drawingCanvas.getBoundingClientRect();
@@ -2164,103 +2142,8 @@
                     ctx.stroke();
                 }
             }
-            downloadPdf() {
-                if (!this.currentPdf || !this.currentPdf.data) {
-                    this.notificationManager.show('No PDF loaded to download.', 'warning');
-                    return;
-                }
-                const fileName = `${this.currentPdf.name}.pdf`;
-                this.downloadBytes(this.currentPdf.data, fileName, 'application/pdf');
-            }
-
-            async sharePdf() {
-                if (!this.currentPdf) {
-                    this.notificationManager.show('No PDF loaded to share.', 'warning');
-                    return;
-                }
-                const shareLink = `https://arlabs07.github.io/Arhub07.github.io/App/pdf2.html?pdfId=${this.currentPdf.id}`; 
-                const shareText = `Check out this PDF on PageFlow: "${this.currentPdf.name}" - ${shareLink}`;
-
-                try {
-                    if (navigator.share) {
-                        await navigator.share({
-                            title: this.currentPdf.name,
-                            text: `Check out this PDF on PageFlow!`,
-                            url: shareLink,
-                        });
-                        this.notificationManager.showSuccess('PDF shared successfully!');
-                    } else {
-                        // Fallback to clipboard copy if native share is not available or fails
-                        const success = this.copyTextToClipboard(shareText);
-                        if (success) {
-                            this.notificationManager.showSuccess('Share link copied to clipboard!');
-                        } else {
-                            this.notificationManager.showInfo(`Failed to copy link. Please manually copy: ${shareText}`);
-                        }
-                    }
-                } catch (error) {
-                    // This catch block handles cases where navigator.share exists but fails (e.g., Permission denied)
-                    console.error('Error sharing PDF:', error);
-                    const success = this.copyTextToClipboard(shareText);
-                    if (success) {
-                        this.notificationManager.showSuccess('Share link copied to clipboard (native share failed)!');
-                    } else {
-                        this.notificationManager.showInfo(`Failed to share. Please manually copy: ${shareText}`);
-                    }
-                }
-            }
-
-            async shareWebsite() {
-                const websiteLink = "https://arlabs07.github.io/Arhub07.github.io/App/pdf2.html"; // Explicitly set website URL
-                const websiteText = `Check out PageFlow, your premium PDF library for viewing, creating, scanning, and sharing documents! ${websiteLink}`;
-
-                try {
-                    if (navigator.share) {
-                        await navigator.share({
-                            title: 'PageFlow - Premium PDF Library',
-                            text: 'Check out this amazing PDF library!',
-                            url: websiteLink,
-                        });
-                        this.notificationManager.showSuccess('Website shared successfully!');
-                    } else {
-                        const success = this.copyTextToClipboard(websiteText);
-                        if (success) {
-                            this.notificationManager.showSuccess('Website link copied to clipboard!');
-                        } else {
-                            this.notificationManager.showInfo(`Failed to copy link. Please manually copy: ${websiteText}`);
-                        }
-                    }
-                } catch (error) {
-                    console.error('Error sharing website:', error);
-                    const success = this.copyTextToClipboard(websiteText);
-                    if (success) {
-                        this.notificationManager.showSuccess('Website link copied to clipboard (native share failed)!');
-                    } else {
-                        this.notificationManager.showInfo(`Failed to share. Please manually copy: ${websiteText}`);
-                    }
-                }
-            }
-
-            copyTextToClipboard(text) {
-                const textArea = document.createElement("textarea");
-                textArea.value = text;
-                textArea.style.position = "fixed";
-                textArea.style.left = "-9999px";
-                textArea.style.top = "0";
-                document.body.appendChild(textArea);
-                textArea.focus();
-                textArea.select();
-                try {
-                    const successful = document.execCommand('copy');
-                    document.body.removeChild(textArea);
-                    return successful;
-                } catch (err) {
-                    console.error('Fallback: Unable to copy to clipboard', err);
-                    document.body.removeChild(textArea);
-                    return false;
-                }
-            }
-
+            // Removed sharePdf
+            // Removed downloadPdf
             handleImageUpload(e) {
                 const files = Array.from(e.target.files);
                 if (files.length === 0) return;
@@ -2352,6 +2235,7 @@
                     }
                     let pdfBytes = await pdfDoc.save();
                     
+                    // Automatically download the created PDF
                     this.downloadBytes(pdfBytes, `${pdfName}.pdf`, 'application/pdf');
 
                     this.closeCreatePdfScreen();
