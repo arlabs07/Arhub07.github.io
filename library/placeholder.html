@@ -352,103 +352,208 @@ https://arlabs07.github.io/Arhub07.github.io/library/placeholder.html#/400x300
         // Global variables
         let currentCanvas = null;
         let currentDataURL = '';
+        let isInitialized = false;
 
         // Initialize the app
         document.addEventListener('DOMContentLoaded', function() {
             initializeEventListeners();
-            generateImage();
+            // Handle hash parameters first, then generate image
+            if (window.location.hash) {
+                handleHashParameters();
+            } else {
+                generateImage();
+            }
             generateHeroImage();
             generateExamples();
-            handleHashParameters();
+            isInitialized = true;
         });
 
         // Event listeners
         function initializeEventListeners() {
-            // Color inputs sync
+            // Color inputs sync with validation
             document.getElementById('bgColor').addEventListener('input', function() {
                 document.getElementById('bgColorText').value = this.value.substring(1);
-                generateImage();
+                if (isInitialized) generateImage();
             });
 
             document.getElementById('bgColorText').addEventListener('input', function() {
-                let color = this.value.replace('#', '');
-                if (color.length === 6 && /^[0-9A-Fa-f]+$/.test(color)) {
-                    document.getElementById('bgColor').value = '#' + color;
-                    generateImage();
+                let color = this.value.replace('#', '').toLowerCase();
+                // Allow 3-character hex codes
+                if (color.length === 3) {
+                    color = color.split('').map(c => c + c).join('');
+                }
+                if ((color.length === 6 || color.length === 3) && /^[0-9a-f]+$/i.test(color)) {
+                    if (color.length === 6) {
+                        document.getElementById('bgColor').value = '#' + color;
+                        if (isInitialized) generateImage();
+                    }
                 }
             });
 
             document.getElementById('textColor').addEventListener('input', function() {
                 document.getElementById('textColorText').value = this.value.substring(1);
-                generateImage();
+                if (isInitialized) generateImage();
             });
 
             document.getElementById('textColorText').addEventListener('input', function() {
-                let color = this.value.replace('#', '');
-                if (color.length === 6 && /^[0-9A-Fa-f]+$/.test(color)) {
-                    document.getElementById('textColor').value = '#' + color;
-                    generateImage();
+                let color = this.value.replace('#', '').toLowerCase();
+                // Allow 3-character hex codes
+                if (color.length === 3) {
+                    color = color.split('').map(c => c + c).join('');
+                }
+                if ((color.length === 6 || color.length === 3) && /^[0-9a-f]+$/i.test(color)) {
+                    if (color.length === 6) {
+                        document.getElementById('textColor').value = '#' + color;
+                        if (isInitialized) generateImage();
+                    }
                 }
             });
 
+            // Size validation
+            ['width', 'height'].forEach(id => {
+                document.getElementById(id).addEventListener('input', function() {
+                    let value = parseInt(this.value);
+                    if (isNaN(value) || value < 1) {
+                        this.value = 1;
+                    } else if (value > 2000) {
+                        this.value = 2000;
+                    }
+                    if (isInitialized) generateImage();
+                });
+            });
+
             // Other input listeners
-            ['width', 'height', 'customText', 'fontSize', 'format'].forEach(id => {
-                document.getElementById(id).addEventListener('input', generateImage);
+            ['customText', 'fontSize', 'format'].forEach(id => {
+                document.getElementById(id).addEventListener('input', function() {
+                    if (isInitialized) generateImage();
+                });
             });
 
             // Font size slider
             document.getElementById('fontSize').addEventListener('input', function() {
                 document.getElementById('fontSizeValue').textContent = this.value;
-                generateImage();
+                if (isInitialized) generateImage();
             });
 
             // Hash change listener
             window.addEventListener('hashchange', handleHashParameters);
         }
 
-        // Generate image
+        // Generate image with proper error handling and validation
         function generateImage() {
-            const width = parseInt(document.getElementById('width').value) || 400;
-            const height = parseInt(document.getElementById('height').value) || 300;
-            const bgColor = '#' + document.getElementById('bgColorText').value;
-            const textColor = '#' + document.getElementById('textColorText').value;
-            const customText = document.getElementById('customText').value;
-            const fontSize = parseInt(document.getElementById('fontSize').value);
-            const format = document.getElementById('format').value;
+            try {
+                const width = Math.max(1, Math.min(2000, parseInt(document.getElementById('width').value) || 400));
+                const height = Math.max(1, Math.min(2000, parseInt(document.getElementById('height').value) || 300));
+                
+                let bgColorValue = document.getElementById('bgColorText').value.replace('#', '').toLowerCase();
+                let textColorValue = document.getElementById('textColorText').value.replace('#', '').toLowerCase();
+                
+                // Handle 3-character hex codes
+                if (bgColorValue.length === 3) {
+                    bgColorValue = bgColorValue.split('').map(c => c + c).join('');
+                }
+                if (textColorValue.length === 3) {
+                    textColorValue = textColorValue.split('').map(c => c + c).join('');
+                }
+                
+                // Validate hex colors
+                if (!/^[0-9a-f]{6}$/i.test(bgColorValue)) {
+                    bgColorValue = 'cccccc';
+                    document.getElementById('bgColorText').value = bgColorValue;
+                    document.getElementById('bgColor').value = '#' + bgColorValue;
+                }
+                
+                if (!/^[0-9a-f]{6}$/i.test(textColorValue)) {
+                    textColorValue = '333333';
+                    document.getElementById('textColorText').value = textColorValue;
+                    document.getElementById('textColor').value = '#' + textColorValue;
+                }
 
-            const canvas = document.getElementById('previewCanvas');
-            const ctx = canvas.getContext('2d');
+                const bgColor = '#' + bgColorValue;
+                const textColor = '#' + textColorValue;
+                const customText = document.getElementById('customText').value;
+                const fontSize = Math.max(8, Math.min(72, parseInt(document.getElementById('fontSize').value) || 24));
+                const format = document.getElementById('format').value || 'png';
 
-            // Set canvas size
-            canvas.width = width;
-            canvas.height = height;
+                const canvas = document.getElementById('previewCanvas');
+                const ctx = canvas.getContext('2d');
 
-            // Fill background
-            ctx.fillStyle = bgColor;
-            ctx.fillRect(0, 0, width, height);
+                // Set canvas size
+                canvas.width = width;
+                canvas.height = height;
 
-            // Draw text
-            const text = customText || `${width} × ${height}`;
-            ctx.fillStyle = textColor;
-            ctx.font = `${fontSize}px Arial, sans-serif`;
-            ctx.textAlign = 'center';
-            ctx.textBaseline = 'middle';
+                // Fill background
+                ctx.fillStyle = bgColor;
+                ctx.fillRect(0, 0, width, height);
 
-            // Multi-line text support
-            const lines = text.split('\\n');
-            const lineHeight = fontSize * 1.2;
-            const startY = height / 2 - ((lines.length - 1) * lineHeight) / 2;
+                // Calculate optimal font size based on canvas size if not custom text
+                let actualFontSize = fontSize;
+                if (!customText) {
+                    const minDimension = Math.min(width, height);
+                    actualFontSize = Math.max(12, Math.min(fontSize, minDimension / 8));
+                }
 
-            lines.forEach((line, index) => {
-                ctx.fillText(line, width / 2, startY + (index * lineHeight));
-            });
+                // Draw text
+                const text = customText || `${width} × ${height}`;
+                ctx.fillStyle = textColor;
+                ctx.font = `${actualFontSize}px Arial, sans-serif`;
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
 
-            // Store current canvas and data URL
-            currentCanvas = canvas;
-            currentDataURL = canvas.toDataURL(`image/${format === 'jpg' ? 'jpeg' : format}`);
+                // Handle multi-line text (both \n and actual line breaks)
+                const lines = text.split(/\\n|\n/);
+                const lineHeight = actualFontSize * 1.3;
+                const totalHeight = lines.length * lineHeight;
+                const startY = (height - totalHeight) / 2 + lineHeight / 2;
 
-            // Update URL
-            updateGeneratedURL();
+                lines.forEach((line, index) => {
+                    const y = startY + (index * lineHeight);
+                    
+                    // Check if text fits horizontally
+                    const metrics = ctx.measureText(line);
+                    if (metrics.width > width - 20) {
+                        // Scale font size to fit
+                        const scaleFactor = (width - 20) / metrics.width;
+                        const scaledFont = Math.max(8, actualFontSize * scaleFactor);
+                        ctx.font = `${scaledFont}px Arial, sans-serif`;
+                    }
+                    
+                    ctx.fillText(line, width / 2, y);
+                    
+                    // Reset font size for next line
+                    ctx.font = `${actualFontSize}px Arial, sans-serif`;
+                });
+
+                // Store current canvas and data URL
+                currentCanvas = canvas;
+                
+                // Generate data URL with proper format and quality
+                if (format === 'jpg' || format === 'jpeg') {
+                    currentDataURL = canvas.toDataURL('image/jpeg', 0.9);
+                } else if (format === 'webp') {
+                    currentDataURL = canvas.toDataURL('image/webp', 0.9);
+                } else {
+                    currentDataURL = canvas.toDataURL('image/png');
+                }
+
+                // Update URL
+                updateGeneratedURL();
+                
+            } catch (error) {
+                console.error('Error generating image:', error);
+                // Fallback to basic image generation
+                const canvas = document.getElementById('previewCanvas');
+                const ctx = canvas.getContext('2d');
+                canvas.width = 400;
+                canvas.height = 300;
+                ctx.fillStyle = '#cccccc';
+                ctx.fillRect(0, 0, 400, 300);
+                ctx.fillStyle = '#333333';
+                ctx.font = '24px Arial, sans-serif';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText('400 × 300', 200, 150);
+            }
         }
 
         // Generate hero image
@@ -472,107 +577,205 @@ https://arlabs07.github.io/Arhub07.github.io/library/placeholder.html#/400x300
             ctx.fillText('400 × 300', 200, 150);
         }
 
-        // Update generated URL
+        // Update generated URL with proper encoding
         function updateGeneratedURL() {
-            const width = document.getElementById('width').value;
-            const height = document.getElementById('height').value;
-            const bgColor = document.getElementById('bgColorText').value;
-            const textColor = document.getElementById('textColorText').value;
-            const customText = document.getElementById('customText').value;
+            try {
+                const width = document.getElementById('width').value;
+                const height = document.getElementById('height').value;
+                const bgColor = document.getElementById('bgColorText').value.toLowerCase();
+                const textColor = document.getElementById('textColorText').value.toLowerCase();
+                const customText = document.getElementById('customText').value.trim();
 
-            let url = `${window.location.origin}${window.location.pathname}#/${width}x${height}`;
-            
-            if (bgColor !== 'cccccc' || textColor !== '333333' || customText) {
-                url += `/${bgColor}/${textColor}`;
-                if (customText) {
-                    url += `/${encodeURIComponent(customText)}`;
+                const baseURL = `${window.location.origin}${window.location.pathname}`;
+                let url = `${baseURL}#/${width}x${height}`;
+                
+                // Only add colors if they're different from defaults
+                const hasCustomColors = bgColor !== 'cccccc' || textColor !== '333333';
+                const hasCustomText = customText.length > 0;
+                
+                if (hasCustomColors || hasCustomText) {
+                    url += `/${bgColor}/${textColor}`;
+                    
+                    if (hasCustomText) {
+                        // Proper URL encoding for text
+                        const encodedText = encodeURIComponent(customText)
+                            .replace(/'/g, '%27')
+                            .replace(/"/g, '%22');
+                        url += `/${encodedText}`;
+                    }
                 }
+
+                document.getElementById('generatedURL').value = url;
+            } catch (error) {
+                console.error('Error updating URL:', error);
+                const baseURL = `${window.location.origin}${window.location.pathname}`;
+                document.getElementById('generatedURL').value = `${baseURL}#/400x300`;
+            }
+        }
+
+        // Set predefined size with validation
+        function setSize(width, height) {
+            if (width > 0 && height > 0 && width <= 2000 && height <= 2000) {
+                document.getElementById('width').value = width;
+                document.getElementById('height').value = height;
+                generateImage();
+            }
+        }
+
+        // Download image with proper filename and format
+        function downloadImage() {
+            if (!currentCanvas || !currentDataURL) {
+                generateImage();
+                if (!currentDataURL) return;
             }
 
-            document.getElementById('generatedURL').value = url;
+            try {
+                const format = document.getElementById('format').value;
+                const width = document.getElementById('width').value;
+                const height = document.getElementById('height').value;
+                const customText = document.getElementById('customText').value;
+                
+                // Create descriptive filename
+                let filename = `placeholder-${width}x${height}`;
+                if (customText) {
+                    const safeText = customText.replace(/[^a-zA-Z0-9]/g, '-').substring(0, 20);
+                    filename += `-${safeText}`;
+                }
+                filename += `.${format}`;
+                
+                const link = document.createElement('a');
+                link.download = filename;
+                link.href = currentDataURL;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            } catch (error) {
+                console.error('Error downloading image:', error);
+            }
         }
 
-        // Set predefined size
-        function setSize(width, height) {
-            document.getElementById('width').value = width;
-            document.getElementById('height').value = height;
-            generateImage();
-        }
-
-        // Download image
-        function downloadImage() {
-            if (!currentCanvas) return;
-
-            const format = document.getElementById('format').value;
-            const width = document.getElementById('width').value;
-            const height = document.getElementById('height').value;
-            
-            const link = document.createElement('a');
-            link.download = `placeholder-${width}x${height}.${format}`;
-            link.href = currentDataURL;
-            link.click();
-        }
-
-        // Copy URL to clipboard
+        // Copy URL to clipboard with better error handling
         async function copyURL() {
             const url = document.getElementById('generatedURL').value;
+            if (!url) return;
+            
             try {
-                await navigator.clipboard.writeText(url);
-                showToast();
+                if (navigator.clipboard && navigator.clipboard.writeText) {
+                    await navigator.clipboard.writeText(url);
+                    showToast('URL copied to clipboard!', 'success');
+                } else {
+                    throw new Error('Clipboard API not available');
+                }
             } catch (err) {
-                // Fallback for older browsers
-                const textArea = document.createElement('textarea');
-                textArea.value = url;
-                document.body.appendChild(textArea);
-                textArea.select();
-                document.execCommand('copy');
-                document.body.removeChild(textArea);
-                showToast();
+                try {
+                    // Fallback for older browsers
+                    const textArea = document.createElement('textarea');
+                    textArea.value = url;
+                    textArea.style.position = 'fixed';
+                    textArea.style.left = '-999999px';
+                    textArea.style.top = '-999999px';
+                    document.body.appendChild(textArea);
+                    textArea.focus();
+                    textArea.select();
+                    
+                    if (document.execCommand('copy')) {
+                        showToast('URL copied to clipboard!', 'success');
+                    } else {
+                        showToast('Copy failed. Please copy manually.', 'error');
+                    }
+                    
+                    document.body.removeChild(textArea);
+                } catch (fallbackError) {
+                    showToast('Copy not supported. Please copy manually.', 'error');
+                }
             }
         }
 
-        // Show toast notification
-        function showToast() {
+        // Enhanced toast notification
+        function showToast(message = 'URL copied to clipboard!', type = 'success') {
             const toastElement = document.getElementById('toast');
+            const toastBody = toastElement.querySelector('.toast-body');
+            
+            // Update message and style based on type
+            if (type === 'error') {
+                toastElement.className = 'toast align-items-center text-white bg-danger border-0';
+                toastBody.innerHTML = `<i class="fas fa-exclamation-triangle me-2"></i>${message}`;
+            } else {
+                toastElement.className = 'toast align-items-center text-white bg-success border-0';
+                toastBody.innerHTML = `<i class="fas fa-check-circle me-2"></i>${message}`;
+            }
+            
             const toast = new bootstrap.Toast(toastElement);
             toast.show();
         }
 
-        // Handle hash parameters
+        // Handle hash parameters with complete URL parsing
         function handleHashParameters() {
             const hash = window.location.hash.substring(1);
             if (!hash || !hash.startsWith('/')) return;
 
-            const parts = hash.substring(1).split('/');
-            if (parts.length < 1) return;
+            try {
+                const parts = hash.substring(1).split('/');
+                if (parts.length < 1) return;
 
-            // Parse size
-            const sizeParts = parts[0].split('x');
-            if (sizeParts.length === 2) {
-                const width = parseInt(sizeParts[0]);
-                const height = parseInt(sizeParts[1]);
-                if (width && height) {
+                // Reset to defaults first
+                document.getElementById('bgColorText').value = 'cccccc';
+                document.getElementById('bgColor').value = '#cccccc';
+                document.getElementById('textColorText').value = '333333';
+                document.getElementById('textColor').value = '#333333';
+                document.getElementById('customText').value = '';
+
+                // Parse size (required)
+                const sizeMatch = parts[0].match(/^(\d+)x(\d+)$/i);
+                if (sizeMatch) {
+                    const width = Math.max(1, Math.min(2000, parseInt(sizeMatch[1])));
+                    const height = Math.max(1, Math.min(2000, parseInt(sizeMatch[2])));
                     document.getElementById('width').value = width;
                     document.getElementById('height').value = height;
                 }
-            }
 
-            // Parse colors and text
-            if (parts.length >= 2 && parts[1]) {
-                document.getElementById('bgColorText').value = parts[1];
-                document.getElementById('bgColor').value = '#' + parts[1];
-            }
+                // Parse background color (optional)
+                if (parts.length >= 2 && parts[1]) {
+                    let bgColor = parts[1].replace('#', '').toLowerCase();
+                    // Handle 3-character hex codes
+                    if (bgColor.length === 3 && /^[0-9a-f]{3}$/i.test(bgColor)) {
+                        bgColor = bgColor.split('').map(c => c + c).join('');
+                    }
+                    if (/^[0-9a-f]{6}$/i.test(bgColor)) {
+                        document.getElementById('bgColorText').value = bgColor;
+                        document.getElementById('bgColor').value = '#' + bgColor;
+                    }
+                }
 
-            if (parts.length >= 3 && parts[2]) {
-                document.getElementById('textColorText').value = parts[2];
-                document.getElementById('textColor').value = '#' + parts[2];
-            }
+                // Parse text color (optional)
+                if (parts.length >= 3 && parts[2]) {
+                    let textColor = parts[2].replace('#', '').toLowerCase();
+                    // Handle 3-character hex codes
+                    if (textColor.length === 3 && /^[0-9a-f]{3}$/i.test(textColor)) {
+                        textColor = textColor.split('').map(c => c + c).join('');
+                    }
+                    if (/^[0-9a-f]{6}$/i.test(textColor)) {
+                        document.getElementById('textColorText').value = textColor;
+                        document.getElementById('textColor').value = '#' + textColor;
+                    }
+                }
 
-            if (parts.length >= 4 && parts[3]) {
-                document.getElementById('customText').value = decodeURIComponent(parts[3]);
-            }
+                // Parse custom text (optional)
+                if (parts.length >= 4 && parts[3]) {
+                    const customText = decodeURIComponent(parts[3])
+                        .replace(/\+/g, ' ') // Handle + as space
+                        .replace(/%20/g, ' '); // Handle %20 as space
+                    document.getElementById('customText').value = customText;
+                }
 
-            generateImage();
+                // Generate image after parsing all parameters
+                generateImage();
+                
+            } catch (error) {
+                console.error('Error parsing URL parameters:', error);
+                // Fallback to default generation
+                generateImage();
+            }
         }
 
         // Generate examples
@@ -628,26 +831,131 @@ https://arlabs07.github.io/Arhub07.github.io/library/placeholder.html#/400x300
             });
         }
 
-        // Load example
+        // Load example with proper validation
         function loadExample(size, bg, text) {
-            const [width, height] = size.split('x');
-            document.getElementById('width').value = width;
-            document.getElementById('height').value = height;
-            document.getElementById('bgColorText').value = bg;
-            document.getElementById('bgColor').value = '#' + bg;
-            document.getElementById('textColorText').value = text;
-            document.getElementById('textColor').value = '#' + text;
-            document.getElementById('customText').value = '';
-            
-            generateImage();
-            
-            // Scroll to generator
-            document.getElementById('generator').scrollIntoView({ behavior: 'smooth' });
+            try {
+                const [width, height] = size.split('x').map(num => parseInt(num));
+                
+                if (width > 0 && height > 0) {
+                    document.getElementById('width').value = width;
+                    document.getElementById('height').value = height;
+                }
+                
+                if (bg && /^[0-9a-f]{6}$/i.test(bg)) {
+                    document.getElementById('bgColorText').value = bg.toLowerCase();
+                    document.getElementById('bgColor').value = '#' + bg.toLowerCase();
+                }
+                
+                if (text && /^[0-9a-f]{6}$/i.test(text)) {
+                    document.getElementById('textColorText').value = text.toLowerCase();
+                    document.getElementById('textColor').value = '#' + text.toLowerCase();
+                }
+                
+                document.getElementById('customText').value = '';
+                
+                generateImage();
+                
+                // Smooth scroll to generator
+                const targetElement = document.getElementById('generator');
+                if (targetElement) {
+                    targetElement.scrollIntoView({ 
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            } catch (error) {
+                console.error('Error loading example:', error);
+            }
         }
 
-        // Responsive canvas sizing
+        // Responsive canvas sizing and window resize handler
+        function handleResize() {
+            // Regenerate image to ensure proper scaling
+            if (isInitialized) {
+                generateImage();
+            }
+        }
+
+        // Debounced resize handler
+        let resizeTimeout;
         window.addEventListener('resize', function() {
-            generateImage();
+            clearTimeout(resizeTimeout);
+            resizeTimeout = setTimeout(handleResize, 250);
+        });
+
+        // Additional utility functions for better functionality
+
+        // Validate and sanitize hex color input
+        function validateHexColor(color, defaultColor = 'cccccc') {
+            if (!color) return defaultColor;
+            
+            color = color.replace('#', '').toLowerCase();
+            
+            // Handle 3-character hex codes
+            if (color.length === 3 && /^[0-9a-f]{3}$/i.test(color)) {
+                color = color.split('').map(c => c + c).join('');
+            }
+            
+            // Validate 6-character hex code
+            if (color.length === 6 && /^[0-9a-f]{6}$/i.test(color)) {
+                return color;
+            }
+            
+            return defaultColor;
+        }
+
+        // Generate random placeholder for demo
+        function generateRandomPlaceholder() {
+            const sizes = ['300x200', '400x300', '500x350', '600x400', '800x600'];
+            const colors = ['ff6b6b', '4ecdc4', '45b7d1', 'f9ca24', '6c5ce7', 'a29bfe', '00b894', 'fdcb6e'];
+            const textColors = ['ffffff', '333333', '000000', '2d3436'];
+            
+            const randomSize = sizes[Math.floor(Math.random() * sizes.length)];
+            const randomBg = colors[Math.floor(Math.random() * colors.length)];
+            const randomText = textColors[Math.floor(Math.random() * textColors.length)];
+            
+            loadExample(randomSize, randomBg, randomText);
+        }
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', function(e) {
+            // Ctrl/Cmd + Enter to generate
+            if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+                e.preventDefault();
+                generateImage();
+            }
+            
+            // Ctrl/Cmd + C to copy URL (when not in input field)
+            if ((e.ctrlKey || e.metaKey) && e.key === 'c' && 
+                !['INPUT', 'TEXTAREA'].includes(e.target.tagName)) {
+                e.preventDefault();
+                copyURL();
+            }
+            
+            // Ctrl/Cmd + D to download
+            if ((e.ctrlKey || e.metaKey) && e.key === 'd') {
+                e.preventDefault();
+                downloadImage();
+            }
+        });
+
+        // Add accessibility improvements
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add ARIA labels and roles
+            const canvas = document.getElementById('previewCanvas');
+            canvas.setAttribute('role', 'img');
+            canvas.setAttribute('aria-label', 'Generated placeholder image preview');
+            
+            // Add keyboard navigation for quick size buttons
+            const quickSizeButtons = document.querySelectorAll('button[onclick*="setSize"]');
+            quickSizeButtons.forEach(button => {
+                button.addEventListener('keydown', function(e) {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        this.click();
+                    }
+                });
+            });
         });
     </script>
 </body>
