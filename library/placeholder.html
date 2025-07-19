@@ -4,55 +4,44 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SVG Placeholder - Custom Image Generator</title>
-    <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Font Awesome for icons -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <!-- Highlight.js for code highlighting styles -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.3.1/styles/github-dark.min.css" rel="stylesheet">
-    <!-- Highlight.js library -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.3.1/highlight.min.js"></script>
     <style>
-        /* Custom styles for the body and scrollbar */
         body {
-            background: #000000; /* Solid black background */
+            background: #000000;
             font-family: 'Inter', sans-serif;
-            color: #e2e8f0; /* Light gray for default text on black background */
-            overflow-x: hidden; /* Prevent horizontal scrolling on all devices */
-            overflow-y: auto; /* Allow vertical scrolling */
+            color: #e2e8f0;
+            overflow-x: hidden;
+            overflow-y: auto;
         }
-        /* Custom scrollbar styles for better aesthetics */
         ::-webkit-scrollbar {
             width: 8px;
         }
         ::-webkit-scrollbar-track {
-            background: #1a202c; /* Dark track */
+            background: #1a202c;
         }
         ::-webkit-scrollbar-thumb {
-            background: linear-gradient(135deg, #667eea, #764ba2); /* Gradient thumb */
+            background: linear-gradient(135deg, #667eea, #764ba2);
             border-radius: 4px;
         }
-        /* Glassmorphism effect for cards and sections */
         .glass {
             background: rgba(255, 255, 255, 0.1);
             backdrop-filter: blur(10px);
             border: 1px solid rgba(255, 255, 255, 0.2);
         }
-        /* Hover lift effect for interactive elements */
         .hover-lift:hover {
             transform: translateY(-5px);
         }
-        /* Slow pulse animation for main heading */
         .pulse-slow {
             animation: pulse 3s infinite;
         }
-        /* Gradient text effect for headings */
         .gradient-text {
             background: linear-gradient(135deg, #667eea, #764ba2);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
-        /* Floating animation for decorative background elements */
         @keyframes float {
             0%, 100% { transform: translateY(0px); }
             50% { transform: translateY(-20px); }
@@ -60,49 +49,42 @@
         .float {
             animation: float 6s ease-in-out infinite;
         }
-
-        /* Ensure code blocks in footer wrap */
         footer .api-formats code {
-            display: inline-block; /* Allows wrapping */
-            word-break: break-all; /* Breaks long words */
-            white-space: normal; /* Allows normal wrapping */
-            margin-bottom: 0.25rem; /* Small margin for stacked codes */
+            display: inline-block;
+            word-break: break-all;
+            white-space: normal;
+            margin-bottom: 0.25rem;
         }
         footer .api-formats ul {
             display: flex;
             flex-direction: column;
-            gap: 0.5rem; /* Space between list items */
+            gap: 0.5rem;
         }
         footer .api-formats li {
-            display: flex; /* Use flex to align bullet and code */
-            align-items: flex-start; /* Align items to the top */
+            display: flex;
+            align-items: flex-start;
         }
         footer .api-formats li::before {
-            content: '•'; /* Custom bullet point */
-            color: #a78bfa; /* Purple color for bullet */
-            margin-right: 0.5rem; /* Space between bullet and code */
-            flex-shrink: 0; /* Prevent bullet from shrinking */
+            content: '•';
+            color: #a78bfa;
+            margin-right: 0.5rem;
+            flex-shrink: 0;
         }
     </style>
 </head>
 <body class="overflow-x-hidden">
-    <!-- Skip to main content link for accessibility -->
     <a href="#main-content" class="sr-only focus:not-sr-only fixed top-0 left-0 bg-purple-600 text-white p-3 z-50">Skip to main content</a>
 
-    <!-- Navigation Bar -->
     <nav class="fixed top-0 w-full z-50 glass shadow-lg" aria-label="Main navigation">
         <div class="container mx-auto px-6 py-4 flex justify-center items-center">
             <div class="text-2xl font-bold text-white gradient-text">
                 <i class="fas fa-image mr-2" aria-hidden="true"></i>SVGPlaceholder
             </div>
-            <!-- Navigation Links removed from header as per request -->
         </div>
     </nav>
 
     <main id="main-content" role="main">
-        <!-- Home Section -->
         <section id="home" class="min-h-screen flex items-center justify-center relative overflow-hidden pt-20 px-4 sm:px-6 lg:px-8">
-            <!-- Decorative floating elements for visual appeal -->
             <div class="absolute inset-0 opacity-20">
                 <div class="absolute top-20 left-10 w-32 h-32 bg-white rounded-full opacity-10 float"></div>
                 <div class="absolute bottom-20 right-10 w-48 h-48 bg-purple-300 rounded-full opacity-10 float" style="animation-delay:-2s"></div>
@@ -119,7 +101,6 @@
                         <i class="fas fa-eye mr-2" aria-hidden="true"></i>View Examples
                     </button>
                 </div>
-                <!-- Feature Cards -->
                 <div class="mt-12 sm:mt-16 grid grid-cols-2 md:grid-cols-4 gap-4 max-w-2xl mx-auto">
                     <div class="glass p-3 sm:p-4 rounded-lg text-center hover-lift transition-all duration-300" role="region" aria-label="Lightning Fast Feature">
                         <i class="fas fa-bolt text-2xl sm:text-3xl mb-1 sm:mb-2 text-yellow-300" aria-hidden="true"></i>
@@ -141,7 +122,6 @@
             </div>
         </section>
 
-        <!-- Generator Section -->
         <section id="generator" class="min-h-screen flex items-center py-12 sm:py-20 px-4 sm:px-6 lg:px-8" role="region" aria-labelledby="generator-heading">
             <div class="container mx-auto">
                 <div class="text-center mb-10 sm:mb-16">
@@ -152,7 +132,6 @@
                 </div>
                 <div class="max-w-6xl mx-auto">
                     <div class="grid lg:grid-cols-2 gap-8 sm:gap-12 items-start">
-                        <!-- Customization Form -->
                         <div class="glass p-6 sm:p-8 rounded-2xl">
                             <h3 class="text-xl sm:text-2xl font-bold text-white mb-4 sm:mb-6">
                                 <i class="fas fa-sliders-h mr-2" aria-hidden="true"></i>Customize Your Image
@@ -212,7 +191,6 @@
                             </div>
                         </div>
 
-                        <!-- Created Preview and Output -->
                         <div class="glass p-6 sm:p-8 rounded-2xl">
                             <h3 class="text-xl sm:text-2xl font-bold text-white mb-4 sm:mb-6">
                                 <i class="fas fa-eye mr-2" aria-hidden="true"></i>Created
@@ -244,7 +222,6 @@
                         </div>
                     </div>
 
-                    <!-- Usage Examples Code Blocks -->
                     <div class="mt-8 sm:mt-12 glass p-6 rounded-2xl">
                         <h3 class="text-xl font-bold text-white mb-4">
                             <i class="fas fa-code mr-2" aria-hidden="true"></i>Usage Examples
@@ -272,7 +249,6 @@
             </div>
         </section>
 
-        <!-- Documentation Section -->
         <section id="documentation" class="min-h-screen py-12 sm:py-20 px-4 sm:px-6 lg:px-8" role="region" aria-labelledby="documentation-heading">
             <div class="container mx-auto max-w-4xl">
                 <div class="text-center mb-10 sm:mb-16">
@@ -310,13 +286,12 @@
                     </ul>
                     <p class="text-gray-300 leading-relaxed">Example URL for a 400x300 image with custom text and colors:</p>
                     <pre class="bg-gray-900 p-4 rounded-lg text-sm overflow-x-auto mb-6"><code class="language-html">https://arlabs07.github.io/Arhub07.github.io/library/placeholder.html#/400/300/667eea/ffffff/24/Hello%20World/svg</code></pre>
-                    <p class="text-gray-300 leading-relaxed">When this URL is visited, the page will load and automatically configure the generator with these parameters, displaying the image in the "Created" preview.</p>
+                    <p class="text-gray-300 leading-relaxed mt-4">When this URL is visited, the page will load and automatically configure the generator with these parameters, displaying the image in the "Created" preview.</p>
                     <p class="text-gray-300 leading-relaxed mt-4"><strong>Note:</strong> Due to hosting limitations on static files (like GitHub Pages), this service cannot directly serve *only* the image content when you visit a URL with parameters. The URL will always load the full generator page, which then renders the image based on the parameters in the hash. If you require a service that serves only the image directly, a server-side component would be necessary.</p>
                 </div>
             </div>
         </section>
 
-        <!-- Help Section -->
         <section id="help" class="min-h-screen py-12 sm:py-20 px-4 sm:px-6 lg:px-8" role="region" aria-labelledby="help-heading">
             <div class="container mx-auto max-w-4xl">
                 <div class="text-center mb-10 sm:mb-16">
@@ -353,7 +328,6 @@
             </div>
         </section>
 
-        <!-- Example Library Section -->
         <section id="examples" class="min-h-screen py-12 sm:py-20 px-4 sm:px-6 lg:px-8" role="region" aria-labelledby="examples-heading">
             <div class="container mx-auto">
                 <div class="text-center mb-10 sm:mb-16">
@@ -363,7 +337,6 @@
                     <p class="text-lg sm:text-xl text-white max-w-2xl mx-auto">Explore our collection of pre-made placeholder templates. Click any example to copy its URL or customize it further.</p>
                 </div>
                 <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 sm:gap-8" id="examplesGrid">
-                    <!-- Examples will be loaded here by JavaScript -->
                 </div>
                 <div class="text-center mt-8 sm:mt-12">
                     <button id="loadMore" class="glass hover-lift px-6 py-3 sm:px-8 sm:py-4 rounded-full text-base sm:text-lg font-semibold text-white transition-all duration-300 hover:bg-white hover:text-purple-600 focus:outline-none focus:ring-2 focus:ring-purple-400" aria-label="Load more example images">
@@ -374,7 +347,6 @@
         </section>
     </main>
 
-    <!-- Footer -->
     <footer class="bg-gray-900 bg-opacity-90 py-12 sm:py-16 px-4 sm:px-6 lg:px-8" role="contentinfo">
         <div class="container mx-auto">
             <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
@@ -429,13 +401,11 @@
         </div>
     </footer>
 
-    <!-- Custom Notification Message Box -->
     <div id="notificationBox" class="fixed top-20 right-4 p-4 rounded-lg text-white font-semibold z-50 transform translate-x-full transition-transform duration-300 opacity-0" role="alert" aria-live="polite">
         <i id="notificationIcon" class="mr-2" aria-hidden="true"></i><span id="notificationMessage"></span>
     </div>
 
     <script>
-        // Array to store example templates for the library
         let examples = [];
         let currentExampleIndex = 0;
         const exampleTemplates = [
@@ -444,7 +414,7 @@
             { width: 375, height: 812, bg: 'ff6b6b', text: 'Mobile', textColor: 'ffffff', fontSize: 28 },
             { width: 1920, height: 1080, bg: '4ecdc4', text: 'Full HD', textColor: 'ffffff', fontSize: 48 },
             { width: 300, height: 250, bg: '45b7d1', text: 'Banner', textColor: 'ffffff', fontSize: 20 },
-            { width: 150, height: 150, bg: 'f39c12', text: 'Avatar', textColor: '333333', fontSize: 18 }, /* Changed text color for contrast */
+            { width: 150, height: 150, bg: 'f39c12', text: 'Avatar', textColor: '333333', fontSize: 18 },
             { width: 1200, height: 630, bg: 'e74c3c', text: 'Social Media', textColor: 'ffffff', fontSize: 36 },
             { width: 500, height: 500, bg: '9b59b6', text: 'Square', textColor: 'ffffff', fontSize: 32 },
             { width: 728, height: 90, bg: '2ecc71', text: 'Leaderboard', textColor: 'ffffff', fontSize: 16 },
@@ -454,41 +424,19 @@
             { width: 1024, height: 768, bg: '8e44ad', text: 'Tablet', textColor: 'ffffff', fontSize: 30 },
             { width: 100, height: 100, bg: 'd35400', text: 'Icon', textColor: 'ffffff', fontSize: 12 },
             { width: 1600, height: 900, bg: '27ae60', text: 'Widescreen', textColor: 'ffffff', fontSize: 40 },
-            { width: 250, height: 250, bg: 'f1c40f', text: 'Thumbnail', textColor: '333333', fontSize: 18 } /* Changed text color for contrast */
+            { width: 250, height: 250, bg: 'f1c40f', text: 'Thumbnail', textColor: '333333', fontSize: 18 }
         ];
 
-        /**
-         * Generates an SVG string based on provided parameters.
-         * Ensures valid positive dimensions and cleans hex colors.
-         * @param {number} width - The width of the SVG.
-         * @param {number} height - The height of the SVG.
-         * @param {string} text - The text to display in the SVG.
-         * @param {string} bgColor - The background color (hex, e.g., '#RRGGBB').
-         * @param {string} textColor - The text color (hex, e.g., '#RRGGBB').
-         * @param {number} fontSize - The font size of the text.
-         * @returns {string} The SVG string.
-         */
         function generateSVG(width, height, text, bgColor, textColor, fontSize) {
-            // Ensure width and height are numbers and positive, default to 400x300 if invalid
             width = Math.max(1, parseInt(width) || 400);
             height = Math.max(1, parseInt(height) || 300);
-            // Remove '#' from hex colors for SVG fill attribute for consistency
             const cleanBgColor = bgColor.startsWith('#') ? bgColor.substring(1) : bgColor;
             const cleanTextColor = textColor.startsWith('#') ? textColor.substring(1) : textColor;
 
-            // Basic SVG structure with a rectangle for background and centered text
-            return `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}">
-                <rect width="100%" height="100%" fill="#${cleanBgColor}"/>
-                <text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" font-family="Arial, sans-serif" font-size="${fontSize}" fill="#${cleanTextColor}">${text}</text>
-            </svg>`;
+            return `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}"><rect width="100%" height="100%" fill="#${cleanBgColor}"/><text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" font-family="Arial, sans-serif" font-size="${fontSize}" fill="#${cleanTextColor}">${text}</text></svg>`;
         }
 
-        /**
-         * Updates the live preview image and generated URL/code examples.
-         * This function is debounced for input events to improve performance.
-         */
         function updatePreview() {
-            // Retrieve current values from form inputs, providing defaults if empty or invalid
             const width = document.getElementById('width').value || 400;
             const height = document.getElementById('height').value || 300;
             const text = document.getElementById('text').value || `${width} × ${height}`;
@@ -497,22 +445,17 @@
             const fontSize = document.getElementById('fontSize').value;
             const format = document.getElementById('format').value;
 
-            // Update the displayed font size value
             document.getElementById('fontSizeValue').textContent = fontSize + 'px';
 
-            // Generate the SVG string
             const svg = generateSVG(width, height, text, bgColor, textColor, fontSize);
             
-            // Encode SVG to UTF-8 then base64
-            // btoa only works for Latin-1 characters. For full Unicode support,
-            // encodeURIComponent + unescape is a common workaround.
             let encodedSvg;
             try {
                 encodedSvg = btoa(unescape(encodeURIComponent(svg)));
             } catch (e) {
                 console.error("Error encoding SVG for data URL:", e);
                 showNotification("Error generating image preview. Text might contain unsupported characters.", "error");
-                document.getElementById('previewImg').src = ""; // Clear broken image
+                document.getElementById('previewImg').src = "";
                 document.getElementById('generatedUrl').value = "Error: Encoding failed";
                 document.getElementById('htmlCode').textContent = "Error: Encoding failed";
                 document.getElementById('cssCode').textContent = "Error: Encoding failed";
@@ -523,39 +466,29 @@
             }
 
             const dataUrl = `data:image/svg+xml;base64,${encodedSvg}`;
-            // Set the preview image source
             document.getElementById('previewImg').src = dataUrl;
 
-            // Construct the URL for external usage (hash parameters)
             const baseUrl = 'https://arlabs07.github.io/Arhub07.github.io/library/placeholder.html';
-            const encodedText = encodeURIComponent(text); // Encode text to be URL-safe
+            const encodedText = encodeURIComponent(text);
             const url = `${baseUrl}#/${width}/${height}/${bgColor.replace('#', '')}/${textColor.replace('#', '')}/${fontSize}/${encodedText}/${format}`;
             document.getElementById('generatedUrl').value = url;
 
-            // Update the code examples in the respective blocks
             document.getElementById('htmlCode').textContent = `<img src="${url}" alt="${text}">`;
             document.getElementById('cssCode').textContent = `background-image: url('${url}');`;
             document.getElementById('markdownCode').textContent = `![${text}](${url})`;
             document.getElementById('reactCode').textContent = `<img src="${url}" alt="${text}" />`;
 
-            // Re-highlight code blocks to reflect changes
             hljs.highlightAll();
         }
 
-        /**
-         * Copies the generated URL (hash-based) to the clipboard.
-         * Provides a fallback for older browsers using `document.execCommand`.
-         */
         async function copyToClipboard() {
             const urlInput = document.getElementById('generatedUrl');
-            urlInput.select(); // Select the text in the input field
+            urlInput.select();
 
             try {
-                // Attempt to use the modern Clipboard API
                 await navigator.clipboard.writeText(urlInput.value);
                 showNotification('URL copied to clipboard!', 'success');
             } catch (err) {
-                // Fallback for environments where Clipboard API might not be available or permitted (e.g., iframes)
                 console.warn('Clipboard.writeText failed, falling back to execCommand:', err);
                 try {
                     document.execCommand('copy');
@@ -567,10 +500,6 @@
             }
         }
 
-        /**
-         * Downloads the generated image in the selected format (SVG, PNG, or JPG).
-         * For PNG/JPG, it converts the SVG to a canvas image first.
-         */
         function downloadImage() {
             const width = document.getElementById('width').value || 400;
             const height = document.getElementById('height').value || 300;
@@ -584,7 +513,6 @@
             let dataUrl, filename;
 
             if (format === 'svg') {
-                // For SVG, directly create a data URL and trigger download
                 let encodedSvg;
                 try {
                     encodedSvg = btoa(unescape(encodeURIComponent(svg)));
@@ -598,11 +526,10 @@
                 const a = document.createElement('a');
                 a.href = dataUrl;
                 a.download = filename;
-                document.body.appendChild(a); // Temporarily append to body to ensure click works
+                document.body.appendChild(a);
                 a.click();
-                document.body.removeChild(a); // Clean up
+                document.body.removeChild(a);
             } else {
-                // For PNG/JPG, draw the SVG onto a canvas
                 const canvas = document.createElement('canvas');
                 const ctx = canvas.getContext('2d');
                 const img = new Image();
@@ -611,23 +538,21 @@
                 canvas.height = height;
 
                 img.onload = function() {
-                    ctx.drawImage(img, 0, 0, width, height); // Draw the SVG image onto the canvas
+                    ctx.drawImage(img, 0, 0, width, height);
                     const mimeType = format === 'png' ? 'image/png' : 'image/jpeg';
-                    dataUrl = canvas.toDataURL(mimeType); // Get data URL from canvas
+                    dataUrl = canvas.toDataURL(mimeType);
                     filename = `placeholder-${width}x${height}.${format}`;
 
                     const a = document.createElement('a');
                     a.href = dataUrl;
                     a.download = filename;
-                    document.body.appendChild(a); // Temporarily append to body
+                    document.body.appendChild(a);
                     a.click();
-                    document.body.removeChild(a); // Clean up
+                    document.body.removeChild(a);
                 };
                 img.onerror = function() {
-                    // Handle errors if SVG image fails to load onto canvas
                     showNotification('Failed to load SVG for conversion. Please try again.', 'error');
                 };
-                // Load the SVG as an image source. Use the same encoding fix.
                 let encodedSvg;
                 try {
                     encodedSvg = btoa(unescape(encodeURIComponent(svg)));
@@ -640,54 +565,39 @@
             }
         }
 
-        /**
-         * Shares the generated URL (hash-based) using the Web Share API.
-         * Falls back to copying to clipboard if Web Share API is not supported.
-         */
         function shareImage() {
             const url = document.getElementById('generatedUrl').value;
             if (navigator.share) {
-                // Use Web Share API if available
                 navigator.share({
                     title: 'SVG Placeholder',
                     text: 'Check out this custom placeholder image generated by SVGPlaceholder!',
                     url: url
                 }).catch((error) => {
-                    // Handle cases where sharing is cancelled by user or fails
                     if (error.name !== 'AbortError') {
                         console.error('Error sharing:', error);
                         showNotification('Failed to share. URL copied instead.', 'error');
-                        copyToClipboard(); // Fallback to copy if share fails
+                        copyToClipboard();
                     } else {
                         showNotification('Sharing cancelled.', 'info');
                     }
                 });
             } else {
-                // Fallback for browsers that don't support Web Share API
                 copyToClipboard();
                 showNotification('URL copied to clipboard for sharing!', 'info');
             }
         }
 
         let notificationTimeout;
-        /**
-         * Displays a temporary notification message to the user.
-         * @param {string} message - The message content.
-         * @param {'success'|'info'|'error'} type - The type of notification (influences color and icon).
-         */
         function showNotification(message, type = 'info') {
             const notificationBox = document.getElementById('notificationBox');
             const notificationMessage = document.getElementById('notificationMessage');
             const notificationIcon = document.getElementById('notificationIcon');
 
-            // Clear any existing timeout to prevent multiple notifications from overlapping
             clearTimeout(notificationTimeout);
 
-            // Reset classes to ensure clean state for new notification
             notificationBox.className = 'fixed top-20 right-4 p-4 rounded-lg text-white font-semibold z-50 transform translate-x-full transition-transform duration-300 opacity-0';
-            notificationIcon.className = ''; // Clear existing icon classes
+            notificationIcon.className = '';
 
-            // Set message text and apply type-specific styling and icon
             notificationMessage.textContent = message;
             if (type === 'success') {
                 notificationBox.classList.add('bg-green-500');
@@ -695,40 +605,32 @@
             } else if (type === 'error') {
                 notificationBox.classList.add('bg-red-500');
                 notificationIcon.classList.add('fas', 'fa-times');
-            } else { // Default to info
+            } else {
                 notificationBox.classList.add('bg-blue-500');
                 notificationIcon.classList.add('fas', 'fa-info');
             }
 
-            // Trigger the transition to show the notification
             setTimeout(() => {
                 notificationBox.classList.remove('translate-x-full', 'opacity-0');
                 notificationBox.classList.add('translate-x-0', 'opacity-100');
-            }, 100); // Small delay to ensure transition starts
+            }, 100);
 
-            // Set a timeout to hide the notification after 3 seconds
             notificationTimeout = setTimeout(() => {
                 notificationBox.classList.remove('translate-x-0', 'opacity-100');
                 notificationBox.classList.add('translate-x-full', 'opacity-0');
             }, 3000);
         }
 
-        /**
-         * Loads a batch of example images into the examples grid.
-         * Loads 8 examples at a time.
-         */
         function loadExamples() {
             const grid = document.getElementById('examplesGrid');
             const nextBatch = exampleTemplates.slice(currentExampleIndex, currentExampleIndex + 8);
 
-            // If no more examples, hide the "Load More" button
             if (nextBatch.length === 0) {
                 document.getElementById('loadMore').style.display = 'none';
                 return;
             }
 
             nextBatch.forEach((template) => {
-                // Generate SVG and data URL for the example
                 const svg = generateSVG(template.width, template.height, template.text, template.bg, template.textColor, template.fontSize);
                 
                 let encodedSvg;
@@ -736,12 +638,10 @@
                     encodedSvg = btoa(unescape(encodeURIComponent(svg)));
                 } catch (e) {
                     console.error("Error encoding example SVG for display:", e);
-                    // Skip this example if encoding fails
-                    return; 
+                    return;
                 }
                 const dataUrl = `data:image/svg+xml;base64,${encodedSvg}`;
 
-                // Construct the URL that pre-fills the generator with this example's parameters
                 const baseUrl = 'https://arlabs07.github.io/Arhub07.github.io/library/placeholder.html';
                 const encodedText = encodeURIComponent(template.text);
                 const urlToCopy = `${baseUrl}#/${template.width}/${template.height}/${template.bg}/${template.textColor}/${template.fontSize}/${encodedText}/svg`;
@@ -765,17 +665,12 @@
                 `;
                 grid.appendChild(exampleDiv);
             });
-            currentExampleIndex += nextBatch.length; // Update the index by the number of examples just loaded
-            // Hide "Load More" button if all examples have been loaded
+            currentExampleIndex += nextBatch.length;
             if (currentExampleIndex >= exampleTemplates.length) {
                 document.getElementById('loadMore').style.display = 'none';
             }
         }
 
-        /**
-         * Copies an example URL (hash-based) to the clipboard.
-         * @param {string} url - The URL string to copy.
-         */
         async function copyExampleUrl(url) {
             try {
                 await navigator.clipboard.writeText(url);
@@ -786,49 +681,34 @@
             }
         }
 
-        /**
-         * Populates the generator form with values from a selected example template
-         * and scrolls the view to the generator section.
-         * @param {object} template - The example template object containing properties like width, height, text, etc.
-         */
         function customizeExample(template) {
-            // Set the values of the generator input fields
             document.getElementById('width').value = template.width;
             document.getElementById('height').value = template.height;
             document.getElementById('text').value = template.text;
-            document.getElementById('bgColor').value = '#' + template.bg; // Add '#' back for color input
-            document.getElementById('textColor').value = '#' + template.textColor; // Add '#' back for color input
+            document.getElementById('bgColor').value = '#' + template.bg;
+            document.getElementById('textColor').value = '#' + template.textColor;
             document.getElementById('fontSize').value = template.fontSize;
-            document.getElementById('format').value = 'svg'; // Default to SVG when customizing from an example
+            document.getElementById('format').value = 'svg';
 
-            updatePreview(); // Update the live preview with the new values
-            document.getElementById('generator').scrollIntoView({ behavior: 'smooth' }); // Smooth scroll to the generator section
-            document.getElementById('width').focus(); // Set focus to the first input for improved accessibility
+            updatePreview();
+            document.getElementById('generator').scrollIntoView({ behavior: 'smooth' });
+            document.getElementById('width').focus();
         }
 
-        /**
-         * Parses URL hash parameters on page load and pre-fills the generator inputs.
-         * This allows users to share specific configurations via URL.
-         */
         function handleUrlParameters() {
-            const hash = window.location.hash.substring(1); // Get the hash part of the URL, removing the leading '#'
+            const hash = window.location.hash.substring(1);
             if (hash) {
-                // Remove leading '/' if present, then split the hash by '/'
                 const parts = hash.startsWith('/') ? hash.substring(1).split('/') : hash.split('/');
 
-                // Ensure at least width and height are present
                 if (parts.length >= 2) {
-                    // Parse parameters, providing default values if missing or invalid
                     const width = parseInt(parts[0]) || 400;
                     const height = parseInt(parts[1]) || 300;
                     const bg = parts[2] || '667eea';
                     const textColor = parts[3] || 'ffffff';
                     const fontSize = parseInt(parts[4]) || 24;
-                    // Decode URI component for text, as it might contain encoded characters
                     const text = parts[5] ? decodeURIComponent(parts[5]) : `${width} × ${height}`;
                     const format = parts[6] || 'svg';
 
-                    // Populate the form fields with the parsed parameters
                     document.getElementById('width').value = width;
                     document.getElementById('height').value = height;
                     document.getElementById('text').value = text;
@@ -837,18 +717,11 @@
                     document.getElementById('fontSize').value = fontSize;
                     document.getElementById('format').value = format;
 
-                    // Immediately update the preview based on these pre-filled parameters
                     updatePreview();
                 }
             }
         }
 
-        /**
-         * Debounce function to limit how often a function is called in response to rapid events (e.g., typing).
-         * @param {Function} func - The function to debounce.
-         * @param {number} delay - The delay in milliseconds before the function is executed.
-         * @returns {Function} A debounced version of the original function.
-         */
         function debounce(func, delay) {
             let timeout;
             return function(...args) {
@@ -858,17 +731,11 @@
             };
         }
 
-        // Create a debounced version of updatePreview for performance-sensitive input events
-        const debouncedUpdatePreview = debounce(updatePreview, 300); // 300ms delay
+        const debouncedUpdatePreview = debounce(updatePreview, 300);
 
-        // Event listeners to initialize the application and handle user interactions
         document.addEventListener('DOMContentLoaded', function() {
-            // Handle URL parameters on initial page load
             handleUrlParameters();
 
-            // Add event listeners for generator input fields.
-            // 'input' events for text/number/range fields use debounced function.
-            // 'change' events for color pickers and select (dropdown) can call updatePreview directly.
             document.getElementById('width').addEventListener('input', debouncedUpdatePreview);
             document.getElementById('height').addEventListener('input', debouncedUpdatePreview);
             document.getElementById('text').addEventListener('input', debouncedUpdatePreview);
@@ -877,13 +744,10 @@
             document.getElementById('fontSize').addEventListener('input', debouncedUpdatePreview);
             document.getElementById('format').addEventListener('change', updatePreview);
 
-            // Event listener for the "Load More Examples" button
             document.getElementById('loadMore').addEventListener('click', loadExamples);
             
-            // Initialize Highlight.js to format code blocks
             hljs.highlightAll();
 
-            // Perform an initial update of the preview and load the first batch of examples
             updatePreview();
             loadExamples();
         });
