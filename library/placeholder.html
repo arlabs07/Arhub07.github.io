@@ -60,6 +60,29 @@
         .float {
             animation: float 6s ease-in-out infinite;
         }
+
+        /* Ensure code blocks in footer wrap */
+        footer .api-formats code {
+            display: inline-block; /* Allows wrapping */
+            word-break: break-all; /* Breaks long words */
+            white-space: normal; /* Allows normal wrapping */
+            margin-bottom: 0.25rem; /* Small margin for stacked codes */
+        }
+        footer .api-formats ul {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem; /* Space between list items */
+        }
+        footer .api-formats li {
+            display: flex; /* Use flex to align bullet and code */
+            align-items: flex-start; /* Align items to the top */
+        }
+        footer .api-formats li::before {
+            content: '•'; /* Custom bullet point */
+            color: #a78bfa; /* Purple color for bullet */
+            margin-right: 0.5rem; /* Space between bullet and code */
+            flex-shrink: 0; /* Prevent bullet from shrinking */
+        }
     </style>
 </head>
 <body class="overflow-x-hidden">
@@ -229,19 +252,19 @@
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div>
                                 <h4 class="text-white font-semibold mb-2">HTML</h4>
-                                <pre class="bg-gray-900 p-4 rounded-lg text-sm overflow-x-auto"><code class="language-html" id="htmlCode">&lt;img src="https://arlabs07.github.io/Arhub07.github.io/library/placeholder.html#/400/300" alt="placeholder"&gt;</code></pre>
+                                <pre class="bg-gray-900 p-4 rounded-lg text-sm overflow-x-auto"><code class="language-html" id="htmlCode">&lt;img src="https://arlabs07.github.io/Arhub07.github.io/library/placeholder.html#/400/300/667eea/ffffff/24/400%20%C3%97%20300/svg" alt="placeholder"&gt;</code></pre>
                             </div>
                             <div>
                                 <h4 class="text-white font-semibold mb-2">CSS</h4>
-                                <pre class="bg-gray-900 p-4 rounded-lg text-sm overflow-x-auto"><code class="language-css" id="cssCode">background-image: url('https://arlabs07.github.io/Arhub07.github.io/library/placeholder.html#/400/300');</code></pre>
+                                <pre class="bg-gray-900 p-4 rounded-lg text-sm overflow-x-auto"><code class="language-css" id="cssCode">background-image: url('https://arlabs07.github.io/Arhub07.github.io/library/placeholder.html#/400/300/667eea/ffffff/24/400%20%C3%97%20300/svg');</code></pre>
                             </div>
                             <div>
                                 <h4 class="text-white font-semibold mb-2">Markdown</h4>
-                                <pre class="bg-gray-900 p-4 rounded-lg text-sm overflow-x-auto"><code class="language-markdown" id="markdownCode">![Placeholder](https://arlabs07.github.io/Arhub07.github.io/library/placeholder.html#/400/300)</code></pre>
+                                <pre class="bg-gray-900 p-4 rounded-lg text-sm overflow-x-auto"><code class="language-markdown" id="markdownCode">![Placeholder](https://arlabs07.github.io/Arhub07.github.io/library/placeholder.html#/400/300/667eea/ffffff/24/400%20%C3%97%20300/svg)</code></pre>
                             </div>
                             <div>
                                 <h4 class="text-white font-semibold mb-2">React</h4>
-                                <pre class="bg-gray-900 p-4 rounded-lg text-sm overflow-x-auto"><code class="language-jsx" id="reactCode">&lt;img src="https://arlabs07.github.io/Arhub07.github.io/library/placeholder.html#/400/300" /&gt;</code></pre>
+                                <pre class="bg-gray-900 p-4 rounded-lg text-sm overflow-x-auto"><code class="language-jsx" id="reactCode">&lt;img src="https://arlabs07.github.io/Arhub07.github.io/library/placeholder.html#/400/300/667eea/ffffff/24/400%20%C3%97%20300/svg" /&gt;</code></pre>
                             </div>
                         </div>
                     </div>
@@ -266,33 +289,29 @@
                     <ol class="list-decimal list-inside text-gray-300 space-y-2">
                         <li><strong>Access the Generator:</strong> Navigate to the <a href="#generator" class="text-purple-300 hover:underline focus:outline-none focus:ring-2 focus:ring-purple-400">Image Generator</a> section on this page.</li>
                         <li><strong>Customize Parameters:</strong> Adjust the width, height, text, background color, text color, and font size using the provided controls.</li>
-                        <li><strong>Preview & Copy URL:</strong> The live preview will update instantly. Copy the generated URL from the "Generated URL" field.</li>
+                        <li><strong>Preview & Copy URL:</strong> The "Created" preview will update instantly. Copy the generated URL from the "Generated URL" field.</li>
                         <li><strong>Download or Share:</strong> You can download the image in SVG, PNG, or JPG format, or share the URL directly.</li>
                     </ol>
 
-                    <h3 class="text-2xl font-bold text-white mb-4">API Reference</h3>
-                    <p class="text-gray-300 leading-relaxed mb-4">The core functionality of SVG Placeholder is exposed via simple URL parameters. The base URL is:</p>
+                    <h3 class="text-2xl font-bold text-white mb-4">API Reference (Hash Parameters)</h3>
+                    <p class="text-gray-300 leading-relaxed mb-4">The core functionality of SVG Placeholder is controlled via URL hash parameters. The base URL is:</p>
                     <pre class="bg-gray-900 p-4 rounded-lg text-sm overflow-x-auto mb-6"><code class="language-html">https://arlabs07.github.io/Arhub07.github.io/library/placeholder.html#</code></pre>
+                    <p class="text-gray-300 leading-relaxed mb-4">Append parameters in the following order, separated by <code>/</code>. Text should be URL-encoded (e.g., <code>%20</code> for space).</p>
 
-                    <h4 class="text-xl font-bold text-white mb-2">Available Formats:</h4>
-                    <ul class="list-disc list-inside text-gray-300 space-y-2 mb-6">
-                        <li><code>/{width}/{height}</code>: Basic image with default text and colors.
-                            <pre class="bg-gray-900 p-2 rounded-lg text-xs overflow-x-auto"><code class="language-html">...#/400/300</code></pre>
-                        </li>
-                        <li><code>/{width}/{height}/{bgColorHex}/{textColorHex}</code>: Custom background and text colors.
-                            <pre class="bg-gray-900 p-2 rounded-lg text-xs overflow-x-auto"><code class="language-html">...#/400/300/ff0000/00ff00</code></pre>
-                        </li>
-                        <li><code>/{width}/{height}/{bgColorHex}/{textColorHex}/{fontSize}</code>: Custom font size.
-                            <pre class="bg-gray-900 p-2 rounded-lg text-xs overflow-x-auto"><code class="language-html">...#/400/300/ff0000/00ff00/36</code></pre>
-                        </li>
-                        <li><code>/{width}/{height}/{bgColorHex}/{textColorHex}/{fontSize}/{encodedText}</code>: Custom text. Use <code>encodeURIComponent()</code> for text.
-                            <pre class="bg-gray-900 p-2 rounded-lg text-xs overflow-x-auto"><code class="language-html">...#/400/300/667eea/ffffff/24/Hello%20World</code></pre>
-                        </li>
-                        <li><code>/{width}/{height}/{bgColorHex}/{textColorHex}/{fontSize}/{encodedText}/{format}</code>: Specify output format (<code>svg</code>, <code>png</code>, <code>jpg</code>).
-                            <pre class="bg-gray-900 p-2 rounded-lg text-xs overflow-x-auto"><code class="language-html">...#/400/300/667eea/ffffff/24/Hello%20World/png</code></pre>
-                        </li>
+                    <h4 class="text-xl font-bold text-white mb-2">Available Hash Parameters:</h4>
+                    <ul class="list-disc list-inside text-gray-300 space-y-2 mb-6 api-formats">
+                        <li><code>/{width}</code></li>
+                        <li><code>/{height}</code></li>
+                        <li><code>/{bgColorHex}</code> (e.g., <code>667eea</code>, no <code>#</code>)</li>
+                        <li><code>/{textColorHex}</code> (e.g., <code>ffffff</code>, no <code>#</code>)</li>
+                        <li><code>/{fontSize}</code></li>
+                        <li><code>/{encodedText}</code> (e.g., <code>Hello%20World</code>)</li>
+                        <li><code>/{format}</code> (<code>svg</code>, <code>png</code>, <code>jpg</code>)</li>
                     </ul>
-                    <p class="text-gray-300 leading-relaxed">For more advanced usage or integration into your build process, refer to the code examples in the <a href="#generator" class="text-purple-300 hover:underline focus:outline-none focus:ring-2 focus:ring-purple-400">Image Generator</a> section.</p>
+                    <p class="text-gray-300 leading-relaxed">Example URL for a 400x300 image with custom text and colors:</p>
+                    <pre class="bg-gray-900 p-4 rounded-lg text-sm overflow-x-auto mb-6"><code class="language-html">https://arlabs07.github.io/Arhub07.github.io/library/placeholder.html#/400/300/667eea/ffffff/24/Hello%20World/svg</code></pre>
+                    <p class="text-gray-300 leading-relaxed">When this URL is visited, the page will load and automatically configure the generator with these parameters, displaying the image in the "Created" preview.</p>
+                    <p class="text-gray-300 leading-relaxed mt-4"><strong>Note:</strong> Due to hosting limitations on static files (like GitHub Pages), this service cannot directly serve *only* the image content when you visit a URL with parameters. The URL will always load the full generator page, which then renders the image based on the parameters in the hash. If you require a service that serves only the image directly, a server-side component would be necessary.</p>
                 </div>
             </div>
         </section>
@@ -393,11 +412,14 @@
                 </div>
                 <div>
                     <h4 class="text-base sm:text-lg font-semibold text-white mb-4">API Formats</h4>
-                    <ul class="space-y-2 text-gray-300 text-xs sm:text-sm">
-                        <li><code class="bg-gray-800 px-2 py-1 rounded">/{width}/{height}</code></li>
-                        <li><code class="bg-gray-800 px-2 py-1 rounded">/{width}/{height}/{bg}/{text}</code></li>
-                        <li><code class="bg-gray-800 px-2 py-1 rounded">/{width}/{height}/{bg}/{text}/{format}</code></li>
-                        <li><code class="bg-gray-800 px-2 py-1 rounded">/{width}/{height}?text=Custom</code></li>
+                    <ul class="space-y-2 text-gray-300 text-xs sm:text-sm api-formats">
+                        <li><code class="bg-gray-800 px-2 py-1 rounded">/{width}</code></li>
+                        <li><code class="bg-gray-800 px-2 py-1 rounded">/{height}</code></li>
+                        <li><code class="bg-gray-800 px-2 py-1 rounded">/{bgColorHex}</code></li>
+                        <li><code class="bg-gray-800 px-2 py-1 rounded">/{textColorHex}</code></li>
+                        <li><code class="bg-gray-800 px-2 py-1 rounded">/{fontSize}</code></li>
+                        <li><code class="bg-gray-800 px-2 py-1 rounded">/{encodedText}</code></li>
+                        <li><code class="bg-gray-800 px-2 py-1 rounded">/{format}</code></li>
                     </ul>
                 </div>
             </div>
@@ -481,7 +503,7 @@
             // Generate the SVG string
             const svg = generateSVG(width, height, text, bgColor, textColor, fontSize);
             
-            // Fix for encoding error: encode SVG to UTF-8 then base64
+            // Encode SVG to UTF-8 then base64
             // btoa only works for Latin-1 characters. For full Unicode support,
             // encodeURIComponent + unescape is a common workaround.
             let encodedSvg;
@@ -504,10 +526,10 @@
             // Set the preview image source
             document.getElementById('previewImg').src = dataUrl;
 
-            // Construct the URL for external usage (placeholder service URL)
-            const baseUrl = 'https://arlabs07.github.io/Arhub07.github.io/library/placeholder.html#';
+            // Construct the URL for external usage (hash parameters)
+            const baseUrl = 'https://arlabs07.github.io/Arhub07.github.io/library/placeholder.html';
             const encodedText = encodeURIComponent(text); // Encode text to be URL-safe
-            const url = `${baseUrl}/${width}/${height}/${bgColor.replace('#', '')}/${textColor.replace('#', '')}/${fontSize}/${encodedText}/${format}`;
+            const url = `${baseUrl}#/${width}/${height}/${bgColor.replace('#', '')}/${textColor.replace('#', '')}/${fontSize}/${encodedText}/${format}`;
             document.getElementById('generatedUrl').value = url;
 
             // Update the code examples in the respective blocks
@@ -521,7 +543,7 @@
         }
 
         /**
-         * Copies the generated URL to the clipboard using the modern Clipboard API.
+         * Copies the generated URL (hash-based) to the clipboard.
          * Provides a fallback for older browsers using `document.execCommand`.
          */
         async function copyToClipboard() {
@@ -619,7 +641,7 @@
         }
 
         /**
-         * Shares the generated URL using the Web Share API.
+         * Shares the generated URL (hash-based) using the Web Share API.
          * Falls back to copying to clipboard if Web Share API is not supported.
          */
         function shareImage() {
@@ -720,7 +742,9 @@
                 const dataUrl = `data:image/svg+xml;base64,${encodedSvg}`;
 
                 // Construct the URL that pre-fills the generator with this example's parameters
-                const url = `https://arlabs07.github.io/Arhub07.github.io/library/placeholder.html#/${template.width}/${template.height}/${template.bg}/${template.textColor}/${template.fontSize}/${encodeURIComponent(template.text)}/svg`;
+                const baseUrl = 'https://arlabs07.github.io/Arhub07.github.io/library/placeholder.html';
+                const encodedText = encodeURIComponent(template.text);
+                const urlToCopy = `${baseUrl}#/${template.width}/${template.height}/${template.bg}/${template.textColor}/${template.fontSize}/${encodedText}/svg`;
 
                 const exampleDiv = document.createElement('div');
                 exampleDiv.className = 'glass p-4 sm:p-6 rounded-2xl hover-lift transition-all duration-300 cursor-pointer group';
@@ -731,7 +755,7 @@
                     <h3 class="text-white font-semibold mb-1 sm:mb-2 text-base sm:text-lg">${template.text}</h3>
                     <p class="text-gray-300 text-xs sm:text-sm mb-3 sm:mb-4">${template.width} × ${template.height}</p>
                     <div class="flex flex-col sm:flex-row gap-2">
-                        <button onclick="copyExampleUrl('${url}')" class="flex-1 bg-purple-600 hover:bg-purple-700 px-2 py-1 sm:px-3 sm:py-2 rounded text-white text-xs sm:text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-purple-400" aria-label="Copy URL for ${template.text} example">
+                        <button onclick="copyExampleUrl('${urlToCopy}')" class="flex-1 bg-purple-600 hover:bg-purple-700 px-2 py-1 sm:px-3 sm:py-2 rounded text-white text-xs sm:text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-purple-400" aria-label="Copy URL for ${template.text} example">
                             <i class="fas fa-copy mr-1" aria-hidden="true"></i>Copy
                         </button>
                         <button onclick="customizeExample(${JSON.stringify(template).replace(/"/g, '&quot;')})" class="flex-1 bg-blue-600 hover:bg-blue-700 px-2 py-1 sm:px-3 sm:py-2 rounded text-white text-xs sm:text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-blue-400" aria-label="Customize ${template.text} example in the generator">
@@ -749,7 +773,7 @@
         }
 
         /**
-         * Copies an example URL to the clipboard.
+         * Copies an example URL (hash-based) to the clipboard.
          * @param {string} url - The URL string to copy.
          */
         async function copyExampleUrl(url) {
