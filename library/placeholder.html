@@ -1,1 +1,868 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>SVG Placeholder - Custom Image Generator</title><link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet"><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet"><link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.3.1/styles/github-dark.min.css" rel="stylesheet"><script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.3.1/highlight.min.js"></script><style>body{background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);font-family:'Inter',sans-serif}::-webkit-scrollbar{width:8px}::-webkit-scrollbar-track{background:#1a202c}::-webkit-scrollbar-thumb{background:linear-gradient(135deg,#667eea,#764ba2);border-radius:4px}.glass{background:rgba(255,255,255,0.1);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,0.2)}.hover-lift:hover{transform:translateY(-5px)}.pulse-slow{animation:pulse 3s infinite}.gradient-text{background:linear-gradient(135deg,#667eea,#764ba2);-webkit-background-clip:text;-webkit-text-fill-color:transparent}@keyframes float{0%,100%{transform:translateY(0px)}50%{transform:translateY(-20px)}}.float{animation:float 6s ease-in-out infinite}</style></head><body class="overflow-x-hidden"><nav class="fixed top-0 w-full z-50 glass"><div class="container mx-auto px-6 py-4 flex justify-between items-center"><div class="text-2xl font-bold text-white gradient-text"><i class="fas fa-image mr-2"></i>SVGPlaceholder</div><div class="hidden md:flex space-x-6"><a href="#home" class="text-white hover:text-purple-300 transition-colors"><i class="fas fa-home mr-1"></i>Home</a><a href="#generator" class="text-white hover:text-purple-300 transition-colors"><i class="fas fa-tools mr-1"></i>Generator</a><a href="#examples" class="text-white hover:text-purple-300 transition-colors"><i class="fas fa-images mr-1"></i>Examples</a></div><button id="mobileMenu" class="md:hidden text-white"><i class="fas fa-bars"></i></button></div></nav><section id="home" class="min-h-screen flex items-center justify-center relative overflow-hidden"><div class="absolute inset-0 opacity-20"><div class="absolute top-20 left-10 w-32 h-32 bg-white rounded-full opacity-10 float"></div><div class="absolute bottom-20 right-10 w-48 h-48 bg-purple-300 rounded-full opacity-10 float" style="animation-delay:-2s"></div><div class="absolute top-1/2 left-1/3 w-24 h-24 bg-blue-300 rounded-full opacity-10 float" style="animation-delay:-4s"></div></div><div class="text-center text-white z-10 px-6"><h1 class="text-6xl md:text-8xl font-extrabold mb-8 gradient-text pulse-slow">SVG Placeholder</h1><p class="text-xl md:text-2xl mb-12 max-w-3xl mx-auto leading-relaxed">Generate beautiful, lightweight SVG placeholder images with custom dimensions, colors, and text. Perfect for web development, design mockups, and prototyping.</p><div class="flex flex-col sm:flex-row gap-4 justify-center"><button onclick="document.getElementById('generator').scrollIntoView({behavior:'smooth'})" class="glass hover-lift px-8 py-4 rounded-full text-lg font-semibold transition-all duration-300 hover:bg-white hover:text-purple-600"><i class="fas fa-rocket mr-2"></i>Start Creating</button><button onclick="document.getElementById('examples').scrollIntoView({behavior:'smooth'})" class="border-2 border-white hover-lift px-8 py-4 rounded-full text-lg font-semibold transition-all duration-300 hover:bg-white hover:text-purple-600"><i class="fas fa-eye mr-2"></i>View Examples</button></div><div class="mt-16 grid grid-cols-2 md:grid-cols-4 gap-4 max-w-2xl mx-auto"><div class="glass p-4 rounded-lg text-center hover-lift transition-all duration-300"><i class="fas fa-bolt text-3xl mb-2 text-yellow-300"></i><p class="font-semibold">Lightning Fast</p></div><div class="glass p-4 rounded-lg text-center hover-lift transition-all duration-300"><i class="fas fa-mobile-alt text-3xl mb-2 text-green-300"></i><p class="font-semibold">Responsive</p></div><div class="glass p-4 rounded-lg text-center hover-lift transition-all duration-300"><i class="fas fa-palette text-3xl mb-2 text-pink-300"></i><p class="font-semibold">Customizable</p></div><div class="glass p-4 rounded-lg text-center hover-lift transition-all duration-300"><i class="fas fa-code text-3xl mb-2 text-blue-300"></i><p class="font-semibold">Developer Friendly</p></div></div></div></section><section id="generator" class="min-h-screen flex items-center py-20"><div class="container mx-auto px-6"><div class="text-center mb-16"><h2 class="text-5xl font-bold text-white mb-6 gradient-text"><i class="fas fa-tools mr-4"></i>Image Generator</h2><p class="text-xl text-white max-w-2xl mx-auto">Create custom SVG placeholders with our powerful generator. Adjust dimensions, colors, and text to match your needs perfectly.</p></div><div class="max-w-6xl mx-auto"><div class="grid lg:grid-cols-2 gap-12 items-start"><div class="glass p-8 rounded-2xl"><h3 class="text-2xl font-bold text-white mb-6"><i class="fas fa-sliders-h mr-2"></i>Customize Your Image</h3><div class="space-y-6"><div class="grid grid-cols-2 gap-4"><div><label class="block text-white mb-2 font-semibold"><i class="fas fa-arrows-alt-h mr-1"></i>Width</label><input type="number" id="width" value="400" class="w-full p-3 rounded-lg bg-white bg-opacity-20 text-white placeholder-gray-300 border border-white border-opacity-30 focus:border-purple-400 focus:outline-none transition-colors"></div><div><label class="block text-white mb-2 font-semibold"><i class="fas fa-arrows-alt-v mr-1"></i>Height</label><input type="number" id="height" value="300" class="w-full p-3 rounded-lg bg-white bg-opacity-20 text-white placeholder-gray-300 border border-white border-opacity-30 focus:border-purple-400 focus:outline-none transition-colors"></div></div><div><label class="block text-white mb-2 font-semibold"><i class="fas fa-font mr-1"></i>Text</label><input type="text" id="text" value="400 × 300" placeholder="Custom text..." class="w-full p-3 rounded-lg bg-white bg-opacity-20 text-white placeholder-gray-300 border border-white border-opacity-30 focus:border-purple-400 focus:outline-none transition-colors"></div><div class="grid grid-cols-2 gap-4"><div><label class="block text-white mb-2 font-semibold"><i class="fas fa-fill-drip mr-1"></i>Background</label><input type="color" id="bgColor" value="#667eea" class="w-full h-12 rounded-lg border border-white border-opacity-30 cursor-pointer"></div><div><label class="block text-white mb-2 font-semibold"><i class="fas fa-pen mr-1"></i>Text Color</label><input type="color" id="textColor" value="#ffffff" class="w-full h-12 rounded-lg border border-white border-opacity-30 cursor-pointer"></div></div><div><label class="block text-white mb-2 font-semibold"><i class="fas fa-text-height mr-1"></i>Font Size</label><input type="range" id="fontSize" min="12" max="72" value="24" class="w-full accent-purple-500"><span id="fontSizeValue" class="text-white font-semibold">24px</span></div><div><label class="block text-white mb-2 font-semibold"><i class="fas fa-shapes mr-1"></i>Format</label><select id="format" class="w-full p-3 rounded-lg bg-white bg-opacity-20 text-white border border-white border-opacity-30 focus:border-purple-400 focus:outline-none transition-colors"><option value="svg">SVG (Recommended)</option><option value="png">PNG</option><option value="jpg">JPG</option></select></div></div></div><div class="glass p-8 rounded-2xl"><h3 class="text-2xl font-bold text-white mb-6"><i class="fas fa-eye mr-2"></i>Live Preview</h3><div id="preview" class="bg-white bg-opacity-10 rounded-lg p-4 mb-6 flex items-center justify-center min-h-[200px]"><img id="previewImg" src="" alt="Preview" class="max-w-full max-h-full rounded-lg shadow-lg"></div><div class="space-y-4"><div><label class="block text-white mb-2 font-semibold"><i class="fas fa-link mr-1"></i>Generated URL</label><div class="flex"><input type="text" id="generatedUrl" readonly class="flex-1 p-3 rounded-l-lg bg-white bg-opacity-20 text-white border border-white border-opacity-30"><button onclick="copyToClipboard()" class="px-6 py-3 bg-purple-600 hover:bg-purple-700 rounded-r-lg text-white font-semibold transition-colors"><i class="fas fa-copy"></i></button></div></div><div class="flex gap-3"><button onclick="downloadImage()" class="flex-1 bg-green-600 hover:bg-green-700 px-6 py-3 rounded-lg text-white font-semibold transition-colors"><i class="fas fa-download mr-2"></i>Download</button><button onclick="shareImage()" class="flex-1 bg-blue-600 hover:bg-blue-700 px-6 py-3 rounded-lg text-white font-semibold transition-colors"><i class="fas fa-share-alt mr-2"></i>Share</button></div></div></div></div><div class="mt-12 glass p-6 rounded-2xl"><h3 class="text-xl font-bold text-white mb-4"><i class="fas fa-code mr-2"></i>Usage Examples</h3><div class="grid md:grid-cols-2 gap-6"><div><h4 class="text-white font-semibold mb-2">HTML</h4><pre class="bg-gray-900 p-4 rounded-lg text-sm overflow-x-auto"><code class="language-html" id="htmlCode">&lt;img src="https://arlabs07.github.io/Arhub07.github.io/library/placeholder.html#/400/300" alt="placeholder"&gt;</code></pre></div><div><h4 class="text-white font-semibold mb-2">CSS</h4><pre class="bg-gray-900 p-4 rounded-lg text-sm overflow-x-auto"><code class="language-css" id="cssCode">background-image: url('https://arlabs07.github.io/Arhub07.github.io/library/placeholder.html#/400/300');</code></pre></div><div><h4 class="text-white font-semibold mb-2">Markdown</h4><pre class="bg-gray-900 p-4 rounded-lg text-sm overflow-x-auto"><code class="language-markdown" id="markdownCode">![Placeholder](https://arlabs07.github.io/Arhub07.github.io/library/placeholder.html#/400/300)</code></pre></div><div><h4 class="text-white font-semibold mb-2">React</h4><pre class="bg-gray-900 p-4 rounded-lg text-sm overflow-x-auto"><code class="language-jsx" id="reactCode">&lt;img src="https://arlabs07.github.io/Arhub07.github.io/library/placeholder.html#/400/300" /&gt;</code></pre></div></div></div></div></div></section><section id="examples" class="min-h-screen py-20"><div class="container mx-auto px-6"><div class="text-center mb-16"><h2 class="text-5xl font-bold text-white mb-6 gradient-text"><i class="fas fa-images mr-4"></i>Example Library</h2><p class="text-xl text-white max-w-2xl mx-auto">Explore our collection of pre-made placeholder templates. Click any example to copy its URL or customize it further.</p></div><div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8" id="examplesGrid"></div><div class="text-center mt-12"><button id="loadMore" class="glass hover-lift px-8 py-4 rounded-full text-lg font-semibold text-white transition-all duration-300 hover:bg-white hover:text-purple-600"><i class="fas fa-plus mr-2"></i>Load More Examples</button></div></div></section><footer class="bg-gray-900 bg-opacity-90 py-16"><div class="container mx-auto px-6"><div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8"><div><h3 class="text-2xl font-bold text-white mb-4 gradient-text"><i class="fas fa-image mr-2"></i>SVGPlaceholder</h3><p class="text-gray-300 mb-4">The ultimate SVG placeholder generator for developers and designers. Fast, customizable, and always free.</p><div class="flex space-x-4"><a href="#" class="text-white hover:text-purple-300 transition-colors"><i class="fab fa-github text-2xl"></i></a><a href="#" class="text-white hover:text-purple-300 transition-colors"><i class="fab fa-twitter text-2xl"></i></a><a href="#" class="text-white hover:text-purple-300 transition-colors"><i class="fab fa-linkedin text-2xl"></i></a></div></div><div><h4 class="text-lg font-semibold text-white mb-4">Quick Links</h4><ul class="space-y-2 text-gray-300"><li><a href="#home" class="hover:text-white transition-colors"><i class="fas fa-home mr-2"></i>Home</a></li><li><a href="#generator" class="hover:text-white transition-colors"><i class="fas fa-tools mr-2"></i>Generator</a></li><li><a href="#examples" class="hover:text-white transition-colors"><i class="fas fa-images mr-2"></i>Examples</a></li></ul></div><div><h4 class="text-lg font-semibold text-white mb-4">Resources</h4><ul class="space-y-2 text-gray-300"><li><a href="#" class="hover:text-white transition-colors"><i class="fas fa-book mr-2"></i>Documentation</a></li><li><a href="#" class="hover:text-white transition-colors"><i class="fas fa-question-circle mr-2"></i>Help</a></li><li><a href="#" class="hover:text-white transition-colors"><i class="fas fa-bug mr-2"></i>Report Bug</a></li></ul></div><div><h4 class="text-lg font-semibold text-white mb-4">API Formats</h4><ul class="space-y-2 text-gray-300 text-sm"><li><code class="bg-gray-800 px-2 py-1 rounded">/{width}/{height}</code></li><li><code class="bg-gray-800 px-2 py-1 rounded">/{width}/{height}/{bg}/{text}</code></li><li><code class="bg-gray-800 px-2 py-1 rounded">/{width}/{height}/{bg}/{text}/{format}</code></li><li><code class="bg-gray-800 px-2 py-1 rounded">/{width}/{height}?text=Custom</code></li></ul></div></div><div class="border-t border-gray-700 pt-8 text-center"><p class="text-gray-400">&copy; 2024 SVGPlaceholder. Made with <i class="fas fa-heart text-red-500"></i> for developers worldwide.</p></div></div></footer><script>let examples=[];let currentExampleIndex=0;const exampleTemplates=[{width:400,height:300,bg:'667eea',text:'400 × 300',textColor:'ffffff',fontSize:24},{width:800,height:600,bg:'764ba2',text:'Desktop',textColor:'ffffff',fontSize:32},{width:375,height:812,bg:'ff6b6b',text:'Mobile',textColor:'ffffff',fontSize:28},{width:1920,height:1080,bg:'4ecdc4',text:'Full HD',textColor:'ffffff',fontSize:48},{width:300,height:250,bg:'45b7d1',text:'Banner',textColor:'ffffff',fontSize:20},{width:150,height:150,bg:'f39c12',text:'Avatar',textColor:'ffffff',fontSize:18},{width:1200,height:630,bg:'e74c3c',text:'Social Media',textColor:'ffffff',fontSize:36},{width:500,height:500,bg:'9b59b6',text:'Square',textColor:'ffffff',fontSize:32},{width:728,height:90,bg:'2ecc71',text:'Leaderboard',textColor:'ffffff',fontSize:16},{width:320,height:480,bg:'34495e',text:'Portrait',textColor:'ffffff',fontSize:24},{width:640,height:360,bg:'e67e22',text:'16:9',textColor:'ffffff',fontSize:28},{width:200,height:300,bg:'1abc9c',text:'Card',textColor:'ffffff',fontSize:20},{width:1024,height:768,bg:'8e44ad',text:'Tablet',textColor:'ffffff',fontSize:30},{width:100,height:100,bg:'d35400',text:'Icon',textColor:'ffffff',fontSize:12},{width:1600,height:900,bg:'27ae60',text:'Widescreen',textColor:'ffffff',fontSize:40},{width:250,height:250,bg:'f1c40f',text:'Thumbnail',textColor:'333333',fontSize:18}];function generateSVG(width,height,text,bgColor,textColor,fontSize){const svg=`<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}"><rect width="100%" height="100%" fill="#${bgColor.replace('#','')}"/><text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" font-family="Arial, sans-serif" font-size="${fontSize}" fill="#${textColor.replace('#','')}">${text}</text></svg>`;return svg;}function updatePreview(){const width=document.getElementById('width').value||400;const height=document.getElementById('height').value||300;const text=document.getElementById('text').value||`${width} × ${height}`;const bgColor=document.getElementById('bgColor').value;const textColor=document.getElementById('textColor').value;const fontSize=document.getElementById('fontSize').value;const format=document.getElementById('format').value;document.getElementById('fontSizeValue').textContent=fontSize+'px';const svg=generateSVG(width,height,text,bgColor,textColor,fontSize);const dataUrl=`data:image/svg+xml;base64,${btoa(svg)}`;document.getElementById('previewImg').src=dataUrl;const baseUrl='https://arlabs07.github.io/Arhub07.github.io/library/placeholder.html#';const url=`${baseUrl}/${width}/${height}/${bgColor.replace('#','')}/${textColor.replace('#','')}/${fontSize}/${encodeURIComponent(text)}/${format}`;document.getElementById('generatedUrl').value=url;document.getElementById('htmlCode').textContent=`<img src="${url}" alt="${text}">`;document.getElementById('cssCode').textContent=`background-image: url('${url}');`;document.getElementById('markdownCode').textContent=`![${text}](${url})`;document.getElementById('reactCode').textContent=`<img src="${url}" alt="${text}" />`;}function copyToClipboard(){const url=document.getElementById('generatedUrl');url.select();document.execCommand('copy');showNotification('URL copied to clipboard!','success');}function downloadImage(){const width=document.getElementById('width').value||400;const height=document.getElementById('height').value||300;const text=document.getElementById('text').value||`${width} × ${height}`;const bgColor=document.getElementById('bgColor').value;const textColor=document.getElementById('textColor').value;const fontSize=document.getElementById('fontSize').value;const format=document.getElementById('format').value||'svg';const svg=generateSVG(width,height,text,bgColor,textColor,fontSize);let dataUrl,filename;if(format==='svg'){dataUrl=`data:image/svg+xml;base64,${btoa(svg)}`;filename=`placeholder-${width}x${height}.svg`;}else{const canvas=document.createElement('canvas');const ctx=canvas.getContext('2d');const img=new Image();canvas.width=width;canvas.height=height;img.onload=function(){ctx.drawImage(img,0,0);const mimeType=format==='png'?'image/png':'image/jpeg';dataUrl=canvas.toDataURL(mimeType);filename=`placeholder-${width}x${height}.${format}`;const a=document.createElement('a');a.href=dataUrl;a.download=filename;a.click();};img.src=`data:image/svg+xml;base64,${btoa(svg)}`;return;}const a=document.createElement('a');a.href=dataUrl;a.download=filename;a.click();}function shareImage(){if(navigator.share){const url=document.getElementById('generatedUrl').value;navigator.share({title:'SVG Placeholder',text:'Check out this custom placeholder image!',url:url}).catch(console.error);}else{copyToClipboard();showNotification('URL copied to clipboard for sharing!','info');}}function showNotification(message,type='info'){const notification=document.createElement('div');notification.className=`fixed top-20 right-4 p-4 rounded-lg text-white font-semibold z-50 transform translate-x-full transition-transform duration-300 ${type==='success'?'bg-green-500':type==='error'?'bg-red-500':'bg-blue-500'}`;notification.innerHTML=`<i class="fas fa-${type==='success'?'check':'info'} mr-2"></i>${message}`;document.body.appendChild(notification);setTimeout(()=>notification.style.transform='translateX(0)',100);setTimeout(()=>{notification.style.transform='translateX(full)';setTimeout(()=>document.body.removeChild(notification),300);},3000);}function loadExamples(){const grid=document.getElementById('examplesGrid');const nextBatch=exampleTemplates.slice(currentExampleIndex,currentExampleIndex+8);nextBatch.forEach((template,index)=>{const svg=generateSVG(template.width,template.height,template.text,template.bg,template.textColor,template.fontSize);const dataUrl=`data:image/svg+xml;base64,${btoa(svg)}`;const url=`https://arlabs07.github.io/Arhub07.github.io/library/placeholder.html#/${template.width}/${template.height}/${template.bg}/${template.textColor}/${template.fontSize}/${encodeURIComponent(template.text)}/svg`;const exampleDiv=document.createElement('div');exampleDiv.className='glass p-6 rounded-2xl hover-lift transition-all duration-300 cursor-pointer group';exampleDiv.innerHTML=`<div class="mb-4 overflow-hidden rounded-lg"><img src="${dataUrl}" alt="${template.text}" class="w-full h-32 object-cover group-hover:scale-110 transition-transform duration-300"></div><h3 class="text-white font-semibold mb-2">${template.text}</h3><p class="text-gray-300 text-sm mb-4">${template.width} × ${template.height}</p><div class="flex gap-2"><button onclick="copyExampleUrl('${url}')" class="flex-1 bg-purple-600 hover:bg-purple-700 px-3 py-2 rounded text-white text-sm transition-colors"><i class="fas fa-copy mr-1"></i>Copy</button><button onclick="customizeExample(${JSON.stringify(template).replace(/"/g,'&quot;')})" class="flex-1 bg-blue-600 hover:bg-blue-700 px-3 py-2 rounded text-white text-sm transition-colors"><i class="fas fa-edit mr-1"></i>Edit</button></div>`;grid.appendChild(exampleDiv);});currentExampleIndex+=8;if(currentExampleIndex>=exampleTemplates.length){document.getElementById('loadMore').style.display='none';}}function copyExampleUrl(url){navigator.clipboard.writeText(url).then(()=>showNotification('Example URL copied!','success'));}function customizeExample(template){document.getElementById('width').value=template.width;document.getElementById('height').value=template.height;document.getElementById('text').value=template.text;document.getElementById('bgColor').value='#'+template.bg;document.getElementById('textColor').value='#'+template.textColor;document.getElementById('fontSize').value=template.fontSize;updatePreview();document.getElementById('generator').scrollIntoView({behavior:'smooth'});}function handleUrlParameters(){const hash=window.location.hash.substring(2);if(hash){const parts=hash.split('/');if(parts.length>=2){const width=parts[0]||400;const height=parts[1]||300;const bg=parts[2]||'667eea';const textColor=parts[3]||'ffffff';const fontSize=parts[4]||'24';const text=parts[5]?decodeURIComponent(parts[5]):`${width} × ${height}`;const format=parts[6]||'svg';const svg=generateSVG(width,height,text,bg,textColor,fontSize);if(window.location.pathname.includes('placeholder.html')){document.body.innerHTML=svg;document.contentType='image/svg+xml';return;}}}}document.addEventListener('DOMContentLoaded',function(){handleUrlParameters();document.getElementById('width').addEventListener('input',updatePreview);document.getElementById('height').addEventListener('input',updatePreview);document.getElementById('text').addEventListener('input',updatePreview);document.getElementById('bgColor').addEventListener('change',updatePreview);document.getElementById('textColor').addEventListener('change',updatePreview);document.getElementById('fontSize').addEventListener('input',updatePreview);document.getElementById('format').addEventListener('change',updatePreview);document.getElementById('loadMore').addEventListener('click',loadExamples);document.getElementById('mobileMenu').addEventListener('click',function(){const nav=document.querySelector('nav div div:last-child');nav.classList.toggle('hidden');});hljs.highlightAll();updatePreview();loadExamples();});</script></body></html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SVG Placeholder - Custom Image Generator</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome for icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <!-- Highlight.js for code highlighting styles -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.3.1/styles/github-dark.min.css" rel="stylesheet">
+    <!-- Highlight.js library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.3.1/highlight.min.js"></script>
+    <style>
+        /* Custom styles for the body and scrollbar */
+        body {
+            background: #000000; /* Solid black background */
+            font-family: 'Inter', sans-serif;
+            color: #e2e8f0; /* Light gray for default text on black background */
+            overflow-x: hidden; /* Prevent horizontal scrolling on all devices */
+            overflow-y: auto; /* Allow vertical scrolling */
+        }
+        /* Custom scrollbar styles for better aesthetics */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #1a202c; /* Dark track */
+        }
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(135deg, #667eea, #764ba2); /* Gradient thumb */
+            border-radius: 4px;
+        }
+        /* Glassmorphism effect for cards and sections */
+        .glass {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        /* Hover lift effect for interactive elements */
+        .hover-lift:hover {
+            transform: translateY(-5px);
+        }
+        /* Slow pulse animation for main heading */
+        .pulse-slow {
+            animation: pulse 3s infinite;
+        }
+        /* Gradient text effect for headings */
+        .gradient-text {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        /* Floating animation for decorative background elements */
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+        .float {
+            animation: float 6s ease-in-out infinite;
+        }
+    </style>
+</head>
+<body class="overflow-x-hidden">
+    <!-- Skip to main content link for accessibility -->
+    <a href="#main-content" class="sr-only focus:not-sr-only fixed top-0 left-0 bg-purple-600 text-white p-3 z-50">Skip to main content</a>
+
+    <!-- Navigation Bar -->
+    <nav class="fixed top-0 w-full z-50 glass shadow-lg" aria-label="Main navigation">
+        <div class="container mx-auto px-6 py-4 flex justify-center items-center">
+            <div class="text-2xl font-bold text-white gradient-text">
+                <i class="fas fa-image mr-2" aria-hidden="true"></i>SVGPlaceholder
+            </div>
+            <!-- Navigation Links removed from header as per request -->
+        </div>
+    </nav>
+
+    <main id="main-content" role="main">
+        <!-- Home Section -->
+        <section id="home" class="min-h-screen flex items-center justify-center relative overflow-hidden pt-20 px-4 sm:px-6 lg:px-8">
+            <!-- Decorative floating elements for visual appeal -->
+            <div class="absolute inset-0 opacity-20">
+                <div class="absolute top-20 left-10 w-32 h-32 bg-white rounded-full opacity-10 float"></div>
+                <div class="absolute bottom-20 right-10 w-48 h-48 bg-purple-300 rounded-full opacity-10 float" style="animation-delay:-2s"></div>
+                <div class="absolute top-1/2 left-1/3 w-24 h-24 bg-blue-300 rounded-full opacity-10 float" style="animation-delay:-4s"></div>
+            </div>
+            <div class="text-center text-white z-10 max-w-4xl mx-auto py-12">
+                <h1 class="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-extrabold mb-6 sm:mb-8 gradient-text pulse-slow">SVG Placeholder</h1>
+                <p class="text-lg sm:text-xl md:text-2xl mb-8 sm:mb-12 max-w-3xl mx-auto leading-relaxed">Generate beautiful, lightweight SVG placeholder images with custom dimensions, colors, and text. Perfect for web development, design mockups, and prototyping.</p>
+                <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                    <button onclick="document.getElementById('generator').scrollIntoView({behavior:'smooth'})" class="glass hover-lift px-6 py-3 sm:px-8 sm:py-4 rounded-full text-base sm:text-lg font-semibold transition-all duration-300 hover:bg-white hover:text-purple-600 focus:outline-none focus:ring-2 focus:ring-purple-400" aria-label="Start creating images by navigating to the generator section">
+                        <i class="fas fa-rocket mr-2" aria-hidden="true"></i>Start Creating
+                    </button>
+                    <button onclick="document.getElementById('examples').scrollIntoView({behavior:'smooth'})" class="border-2 border-white hover-lift px-6 py-3 sm:px-8 sm:py-4 rounded-full text-base sm:text-lg font-semibold transition-all duration-300 hover:bg-white hover:text-purple-600 focus:outline-none focus:ring-2 focus:ring-purple-400" aria-label="View examples of placeholder images by navigating to the examples section">
+                        <i class="fas fa-eye mr-2" aria-hidden="true"></i>View Examples
+                    </button>
+                </div>
+                <!-- Feature Cards -->
+                <div class="mt-12 sm:mt-16 grid grid-cols-2 md:grid-cols-4 gap-4 max-w-2xl mx-auto">
+                    <div class="glass p-3 sm:p-4 rounded-lg text-center hover-lift transition-all duration-300" role="region" aria-label="Lightning Fast Feature">
+                        <i class="fas fa-bolt text-2xl sm:text-3xl mb-1 sm:mb-2 text-yellow-300" aria-hidden="true"></i>
+                        <p class="font-semibold text-sm sm:text-base">Lightning Fast</p>
+                    </div>
+                    <div class="glass p-3 sm:p-4 rounded-lg text-center hover-lift transition-all duration-300" role="region" aria-label="Responsive Feature">
+                        <i class="fas fa-mobile-alt text-2xl sm:text-3xl mb-1 sm:mb-2 text-green-300" aria-hidden="true"></i>
+                        <p class="font-semibold text-sm sm:text-base">Responsive</p>
+                    </div>
+                    <div class="glass p-3 sm:p-4 rounded-lg text-center hover-lift transition-all duration-300" role="region" aria-label="Customizable Feature">
+                        <i class="fas fa-palette text-2xl sm:text-3xl mb-1 sm:mb-2 text-pink-300" aria-hidden="true"></i>
+                        <p class="font-semibold text-sm sm:text-base">Customizable</p>
+                    </div>
+                    <div class="glass p-3 sm:p-4 rounded-lg text-center hover-lift transition-all duration-300" role="region" aria-label="Developer Friendly Feature">
+                        <i class="fas fa-code text-2xl sm:text-3xl mb-1 sm:mb-2 text-blue-300" aria-hidden="true"></i>
+                        <p class="font-semibold text-sm sm:text-base">Developer Friendly</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Generator Section -->
+        <section id="generator" class="min-h-screen flex items-center py-12 sm:py-20 px-4 sm:px-6 lg:px-8" role="region" aria-labelledby="generator-heading">
+            <div class="container mx-auto">
+                <div class="text-center mb-10 sm:mb-16">
+                    <h2 id="generator-heading" class="text-4xl sm:text-5xl font-bold text-white mb-4 sm:mb-6 gradient-text">
+                        <i class="fas fa-tools mr-4" aria-hidden="true"></i>Image Generator
+                    </h2>
+                    <p class="text-lg sm:text-xl text-white max-w-2xl mx-auto">Create custom SVG placeholders with our powerful generator. Adjust dimensions, colors, and text to match your needs perfectly.</p>
+                </div>
+                <div class="max-w-6xl mx-auto">
+                    <div class="grid lg:grid-cols-2 gap-8 sm:gap-12 items-start">
+                        <!-- Customization Form -->
+                        <div class="glass p-6 sm:p-8 rounded-2xl">
+                            <h3 class="text-xl sm:text-2xl font-bold text-white mb-4 sm:mb-6">
+                                <i class="fas fa-sliders-h mr-2" aria-hidden="true"></i>Customize Your Image
+                            </h3>
+                            <div class="space-y-4 sm:space-y-6">
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                    <div>
+                                        <label for="width" class="block text-white mb-2 font-semibold">
+                                            <i class="fas fa-arrows-alt-h mr-1" aria-hidden="true"></i>Width
+                                        </label>
+                                        <input type="number" id="width" value="400" class="w-full p-2 sm:p-3 rounded-lg bg-white bg-opacity-20 text-white placeholder-gray-300 border border-white border-opacity-30 focus:border-purple-400 focus:outline-none transition-colors" aria-label="Image width in pixels" min="1">
+                                    </div>
+                                    <div>
+                                        <label for="height" class="block text-white mb-2 font-semibold">
+                                            <i class="fas fa-arrows-alt-v mr-1" aria-hidden="true"></i>Height
+                                        </label>
+                                        <input type="number" id="height" value="300" class="w-full p-2 sm:p-3 rounded-lg bg-white bg-opacity-20 text-white placeholder-gray-300 border border-white border-opacity-30 focus:border-purple-400 focus:outline-none transition-colors" aria-label="Image height in pixels" min="1">
+                                    </div>
+                                </div>
+                                <div>
+                                    <label for="text" class="block text-white mb-2 font-semibold">
+                                        <i class="fas fa-font mr-1" aria-hidden="true"></i>Text
+                                    </label>
+                                    <input type="text" id="text" value="400 × 300" placeholder="Custom text..." class="w-full p-2 sm:p-3 rounded-lg bg-white bg-opacity-20 text-white placeholder-gray-300 border border-white border-opacity-30 focus:border-purple-400 focus:outline-none transition-colors" aria-label="Text to display on the image">
+                                </div>
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                    <div>
+                                        <label for="bgColor" class="block text-white mb-2 font-semibold">
+                                            <i class="fas fa-fill-drip mr-1" aria-hidden="true"></i>Background
+                                        </label>
+                                        <input type="color" id="bgColor" value="#667eea" class="w-full h-10 sm:h-12 rounded-lg border border-white border-opacity-30 cursor-pointer focus:outline-none focus:ring-2 focus:ring-purple-400" aria-label="Background color of the image">
+                                    </div>
+                                    <div>
+                                        <label for="textColor" class="block text-white mb-2 font-semibold">
+                                            <i class="fas fa-pen mr-1" aria-hidden="true"></i>Text Color
+                                        </label>
+                                        <input type="color" id="textColor" value="#ffffff" class="w-full h-10 sm:h-12 rounded-lg border border-white border-opacity-30 cursor-pointer focus:outline-none focus:ring-2 focus:ring-purple-400" aria-label="Text color on the image">
+                                    </div>
+                                </div>
+                                <div>
+                                    <label for="fontSize" class="block text-white mb-2 font-semibold">
+                                        <i class="fas fa-text-height mr-1" aria-hidden="true"></i>Font Size
+                                    </label>
+                                    <input type="range" id="fontSize" min="12" max="72" value="24" class="w-full accent-purple-500 focus:outline-none focus:ring-2 focus:ring-purple-400" aria-label="Font size of the text on the image">
+                                    <span id="fontSizeValue" class="text-white font-semibold text-sm sm:text-base" aria-live="polite">24px</span>
+                                </div>
+                                <div>
+                                    <label for="format" class="block text-white mb-2 font-semibold">
+                                        <i class="fas fa-shapes mr-1" aria-hidden="true"></i>Format
+                                    </label>
+                                    <select id="format" class="w-full p-2 sm:p-3 rounded-lg bg-white bg-opacity-20 text-white border border-white border-opacity-30 focus:border-purple-400 focus:outline-none transition-colors" aria-label="Output image format">
+                                        <option value="svg">SVG (Recommended)</option>
+                                        <option value="png">PNG</option>
+                                        <option value="jpg">JPG</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Created Preview and Output -->
+                        <div class="glass p-6 sm:p-8 rounded-2xl">
+                            <h3 class="text-xl sm:text-2xl font-bold text-white mb-4 sm:mb-6">
+                                <i class="fas fa-eye mr-2" aria-hidden="true"></i>Created
+                            </h3>
+                            <div id="preview" class="bg-white bg-opacity-10 rounded-lg p-4 mb-6 flex items-center justify-center min-h-[150px] sm:min-h-[200px]" aria-live="polite" aria-atomic="true">
+                                <img id="previewImg" src="" alt="Generated image preview" class="max-w-full max-h-full rounded-lg shadow-lg">
+                            </div>
+                            <div class="space-y-4">
+                                <div>
+                                    <label for="generatedUrl" class="block text-white mb-2 font-semibold">
+                                        <i class="fas fa-link mr-1" aria-hidden="true"></i>Generated URL
+                                    </label>
+                                    <div class="flex">
+                                        <input type="text" id="generatedUrl" readonly class="flex-1 p-2 sm:p-3 rounded-l-lg bg-white bg-opacity-20 text-white border border-white border-opacity-30" aria-label="Generated image URL">
+                                        <button onclick="copyToClipboard()" class="px-4 py-2 sm:px-6 sm:py-3 bg-purple-600 hover:bg-purple-700 rounded-r-lg text-white font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-purple-400" aria-label="Copy URL to clipboard">
+                                            <i class="fas fa-copy" aria-hidden="true"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="flex flex-col sm:flex-row gap-3">
+                                    <button onclick="downloadImage()" class="flex-1 bg-green-600 hover:bg-green-700 px-4 py-2 sm:px-6 sm:py-3 rounded-lg text-white font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-green-400" aria-label="Download generated image">
+                                        <i class="fas fa-download mr-2" aria-hidden="true"></i>Download
+                                    </button>
+                                    <button onclick="shareImage()" class="flex-1 bg-blue-600 hover:bg-blue-700 px-4 py-2 sm:px-6 sm:py-3 rounded-lg text-white font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-blue-400" aria-label="Share generated image URL">
+                                        <i class="fas fa-share-alt mr-2" aria-hidden="true"></i>Share
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Usage Examples Code Blocks -->
+                    <div class="mt-8 sm:mt-12 glass p-6 rounded-2xl">
+                        <h3 class="text-xl font-bold text-white mb-4">
+                            <i class="fas fa-code mr-2" aria-hidden="true"></i>Usage Examples
+                        </h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <h4 class="text-white font-semibold mb-2">HTML</h4>
+                                <pre class="bg-gray-900 p-4 rounded-lg text-sm overflow-x-auto"><code class="language-html" id="htmlCode">&lt;img src="https://arlabs07.github.io/Arhub07.github.io/library/placeholder.html#/400/300" alt="placeholder"&gt;</code></pre>
+                            </div>
+                            <div>
+                                <h4 class="text-white font-semibold mb-2">CSS</h4>
+                                <pre class="bg-gray-900 p-4 rounded-lg text-sm overflow-x-auto"><code class="language-css" id="cssCode">background-image: url('https://arlabs07.github.io/Arhub07.github.io/library/placeholder.html#/400/300');</code></pre>
+                            </div>
+                            <div>
+                                <h4 class="text-white font-semibold mb-2">Markdown</h4>
+                                <pre class="bg-gray-900 p-4 rounded-lg text-sm overflow-x-auto"><code class="language-markdown" id="markdownCode">![Placeholder](https://arlabs07.github.io/Arhub07.github.io/library/placeholder.html#/400/300)</code></pre>
+                            </div>
+                            <div>
+                                <h4 class="text-white font-semibold mb-2">React</h4>
+                                <pre class="bg-gray-900 p-4 rounded-lg text-sm overflow-x-auto"><code class="language-jsx" id="reactCode">&lt;img src="https://arlabs07.github.io/Arhub07.github.io/library/placeholder.html#/400/300" /&gt;</code></pre>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Documentation Section -->
+        <section id="documentation" class="min-h-screen py-12 sm:py-20 px-4 sm:px-6 lg:px-8" role="region" aria-labelledby="documentation-heading">
+            <div class="container mx-auto max-w-4xl">
+                <div class="text-center mb-10 sm:mb-16">
+                    <h2 id="documentation-heading" class="text-4xl sm:text-5xl font-bold text-white mb-4 sm:mb-6 gradient-text">
+                        <i class="fas fa-book mr-4" aria-hidden="true"></i>Documentation
+                    </h2>
+                    <p class="text-lg sm:text-xl text-white max-w-2xl mx-auto">Learn how to effectively use SVG Placeholder for your projects.</p>
+                </div>
+                <div class="glass p-6 sm:p-8 rounded-2xl space-y-6">
+                    <h3 class="text-2xl font-bold text-white mb-4">Getting Started</h3>
+                    <p class="text-gray-300 leading-relaxed">SVG Placeholder allows you to quickly generate lightweight SVG images directly via URL parameters. This is ideal for development, prototyping, and mockups where you need a visual placeholder without creating actual image files.</p>
+
+                    <h3 class="text-2xl font-bold text-white mb-4">How to Use</h3>
+                    <ol class="list-decimal list-inside text-gray-300 space-y-2">
+                        <li><strong>Access the Generator:</strong> Navigate to the <a href="#generator" class="text-purple-300 hover:underline focus:outline-none focus:ring-2 focus:ring-purple-400">Image Generator</a> section on this page.</li>
+                        <li><strong>Customize Parameters:</strong> Adjust the width, height, text, background color, text color, and font size using the provided controls.</li>
+                        <li><strong>Preview & Copy URL:</strong> The live preview will update instantly. Copy the generated URL from the "Generated URL" field.</li>
+                        <li><strong>Download or Share:</strong> You can download the image in SVG, PNG, or JPG format, or share the URL directly.</li>
+                    </ol>
+
+                    <h3 class="text-2xl font-bold text-white mb-4">API Reference</h3>
+                    <p class="text-gray-300 leading-relaxed mb-4">The core functionality of SVG Placeholder is exposed via simple URL parameters. The base URL is:</p>
+                    <pre class="bg-gray-900 p-4 rounded-lg text-sm overflow-x-auto mb-6"><code class="language-html">https://arlabs07.github.io/Arhub07.github.io/library/placeholder.html#</code></pre>
+
+                    <h4 class="text-xl font-bold text-white mb-2">Available Formats:</h4>
+                    <ul class="list-disc list-inside text-gray-300 space-y-2 mb-6">
+                        <li><code>/{width}/{height}</code>: Basic image with default text and colors.
+                            <pre class="bg-gray-900 p-2 rounded-lg text-xs overflow-x-auto"><code class="language-html">...#/400/300</code></pre>
+                        </li>
+                        <li><code>/{width}/{height}/{bgColorHex}/{textColorHex}</code>: Custom background and text colors.
+                            <pre class="bg-gray-900 p-2 rounded-lg text-xs overflow-x-auto"><code class="language-html">...#/400/300/ff0000/00ff00</code></pre>
+                        </li>
+                        <li><code>/{width}/{height}/{bgColorHex}/{textColorHex}/{fontSize}</code>: Custom font size.
+                            <pre class="bg-gray-900 p-2 rounded-lg text-xs overflow-x-auto"><code class="language-html">...#/400/300/ff0000/00ff00/36</code></pre>
+                        </li>
+                        <li><code>/{width}/{height}/{bgColorHex}/{textColorHex}/{fontSize}/{encodedText}</code>: Custom text. Use <code>encodeURIComponent()</code> for text.
+                            <pre class="bg-gray-900 p-2 rounded-lg text-xs overflow-x-auto"><code class="language-html">...#/400/300/667eea/ffffff/24/Hello%20World</code></pre>
+                        </li>
+                        <li><code>/{width}/{height}/{bgColorHex}/{textColorHex}/{fontSize}/{encodedText}/{format}</code>: Specify output format (<code>svg</code>, <code>png</code>, <code>jpg</code>).
+                            <pre class="bg-gray-900 p-2 rounded-lg text-xs overflow-x-auto"><code class="language-html">...#/400/300/667eea/ffffff/24/Hello%20World/png</code></pre>
+                        </li>
+                    </ul>
+                    <p class="text-gray-300 leading-relaxed">For more advanced usage or integration into your build process, refer to the code examples in the <a href="#generator" class="text-purple-300 hover:underline focus:outline-none focus:ring-2 focus:ring-purple-400">Image Generator</a> section.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Help Section -->
+        <section id="help" class="min-h-screen py-12 sm:py-20 px-4 sm:px-6 lg:px-8" role="region" aria-labelledby="help-heading">
+            <div class="container mx-auto max-w-4xl">
+                <div class="text-center mb-10 sm:mb-16">
+                    <h2 id="help-heading" class="text-4xl sm:text-5xl font-bold text-white mb-4 sm:mb-6 gradient-text">
+                        <i class="fas fa-question-circle mr-4" aria-hidden="true"></i>Help & FAQ
+                    </h2>
+                    <p class="text-lg sm:text-xl text-white max-w-2xl mx-auto">Find answers to common questions and get support for SVG Placeholder.</p>
+                </div>
+                <div class="glass p-6 sm:p-8 rounded-2xl space-y-6">
+                    <h3 class="text-2xl font-bold text-white mb-4">Frequently Asked Questions</h3>
+
+                    <div class="space-y-4">
+                        <div class="border-b border-gray-700 pb-4">
+                            <h4 class="text-xl font-semibold text-white mb-2">Q: Why is my image not showing in the preview?</h4>
+                            <p class="text-gray-300">A: This can happen if the text contains special characters that are not properly encoded. Ensure your browser is up-to-date. If the issue persists, try simplifying the text or using only standard alphanumeric characters.</p>
+                        </div>
+                        <div class="border-b border-gray-700 pb-4">
+                            <h4 class="text-xl font-semibold text-white mb-2">Q: Can I use custom fonts?</h4>
+                            <p class="text-gray-300">A: Currently, SVG Placeholder uses a default web-safe font (Arial, sans-serif) to ensure broad compatibility across all browsers and environments. Custom font support is not available at this time.</p>
+                        </div>
+                        <div class="border-b border-gray-700 pb-4">
+                            <h4 class="text-xl font-semibold text-white mb-2">Q: What are the limitations on image size?</h4>
+                            <p class="text-gray-300">A: While there are no strict server-side limits, excessively large dimensions (e.g., thousands of pixels) may impact browser performance or cause rendering issues due to client-side SVG rendering capabilities. We recommend staying within reasonable web design dimensions.</p>
+                        </div>
+                        <div class="border-b border-gray-700 pb-4">
+                            <h4 class="text-xl font-semibold text-white mb-2">Q: Is it truly free to use?</h4>
+                            <p class="text-gray-300">A: Yes, SVG Placeholder is completely free to use for personal and commercial projects. There are no hidden fees or subscriptions.</p>
+                        </div>
+                    </div>
+
+                    <h3 class="text-2xl font-bold text-white mt-8 mb-4">Need More Help?</h3>
+                    <p class="text-gray-300 leading-relaxed">If you have further questions or encounter issues not covered here, please refer to our <a href="#documentation" class="text-purple-300 hover:underline focus:outline-none focus:ring-2 focus:ring-purple-400">Documentation</a> or check back later for expanded support options.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Example Library Section -->
+        <section id="examples" class="min-h-screen py-12 sm:py-20 px-4 sm:px-6 lg:px-8" role="region" aria-labelledby="examples-heading">
+            <div class="container mx-auto">
+                <div class="text-center mb-10 sm:mb-16">
+                    <h2 id="examples-heading" class="text-4xl sm:text-5xl font-bold text-white mb-4 sm:mb-6 gradient-text">
+                        <i class="fas fa-images mr-4" aria-hidden="true"></i>Example Library
+                    </h2>
+                    <p class="text-lg sm:text-xl text-white max-w-2xl mx-auto">Explore our collection of pre-made placeholder templates. Click any example to copy its URL or customize it further.</p>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 sm:gap-8" id="examplesGrid">
+                    <!-- Examples will be loaded here by JavaScript -->
+                </div>
+                <div class="text-center mt-8 sm:mt-12">
+                    <button id="loadMore" class="glass hover-lift px-6 py-3 sm:px-8 sm:py-4 rounded-full text-base sm:text-lg font-semibold text-white transition-all duration-300 hover:bg-white hover:text-purple-600 focus:outline-none focus:ring-2 focus:ring-purple-400" aria-label="Load more example images">
+                        <i class="fas fa-plus mr-2" aria-hidden="true"></i>Load More Examples
+                    </button>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 bg-opacity-90 py-12 sm:py-16 px-4 sm:px-6 lg:px-8" role="contentinfo">
+        <div class="container mx-auto">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
+                <div>
+                    <h3 class="text-xl sm:text-2xl font-bold text-white mb-4 gradient-text">
+                        <i class="fas fa-image mr-2" aria-hidden="true"></i>SVGPlaceholder
+                    </h3>
+                    <p class="text-gray-300 mb-4 text-sm sm:text-base">The ultimate SVG placeholder generator for developers and designers. Fast, customizable, and always free.</p>
+                    <div class="flex space-x-4">
+                        <a href="#" class="text-white hover:text-purple-300 transition-colors focus:outline-none focus:ring-2 focus:ring-purple-400 rounded-md p-1" aria-label="Visit our GitHub page">
+                            <i class="fab fa-github text-xl sm:text-2xl" aria-hidden="true"></i>
+                        </a>
+                        <a href="#" class="text-white hover:text-purple-300 transition-colors focus:outline-none focus:ring-2 focus:ring-purple-400 rounded-md p-1" aria-label="Visit our Twitter page">
+                            <i class="fab fa-twitter text-xl sm:text-2xl" aria-hidden="true"></i>
+                        </a>
+                        <a href="#" class="text-white hover:text-purple-300 transition-colors focus:outline-none focus:ring-2 focus:ring-purple-400 rounded-md p-1" aria-label="Visit our LinkedIn page">
+                            <i class="fab fa-linkedin text-xl sm:text-2xl" aria-hidden="true"></i>
+                        </a>
+                    </div>
+                </div>
+                <div>
+                    <h4 class="text-base sm:text-lg font-semibold text-white mb-4">Quick Links</h4>
+                    <ul class="space-y-2 text-gray-300 text-sm">
+                        <li><a href="#home" class="hover:text-white transition-colors focus:outline-none focus:ring-2 focus:ring-white rounded-md p-1 block"><i class="fas fa-home mr-2" aria-hidden="true"></i>Home</a></li>
+                        <li><a href="#generator" class="hover:text-white transition-colors focus:outline-none focus:ring-2 focus:ring-white rounded-md p-1 block"><i class="fas fa-tools mr-2" aria-hidden="true"></i>Generator</a></li>
+                        <li><a href="#examples" class="hover:text-white transition-colors focus:outline-none focus:ring-2 focus:ring-white rounded-md p-1 block"><i class="fas fa-images mr-2" aria-hidden="true"></i>Examples</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-base sm:text-lg font-semibold text-white mb-4">Resources</h4>
+                    <ul class="space-y-2 text-gray-300 text-sm">
+                        <li><a href="#documentation" class="hover:text-white transition-colors focus:outline-none focus:ring-2 focus:ring-white rounded-md p-1 block" aria-label="Documentation page"><i class="fas fa-book mr-2" aria-hidden="true"></i>Documentation</a></li>
+                        <li><a href="#help" class="hover:text-white transition-colors focus:outline-none focus:ring-2 focus:ring-white rounded-md p-1 block" aria-label="Help page"><i class="fas fa-question-circle mr-2" aria-hidden="true"></i>Help</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-base sm:text-lg font-semibold text-white mb-4">API Formats</h4>
+                    <ul class="space-y-2 text-gray-300 text-xs sm:text-sm">
+                        <li><code class="bg-gray-800 px-2 py-1 rounded">/{width}/{height}</code></li>
+                        <li><code class="bg-gray-800 px-2 py-1 rounded">/{width}/{height}/{bg}/{text}</code></li>
+                        <li><code class="bg-gray-800 px-2 py-1 rounded">/{width}/{height}/{bg}/{text}/{format}</code></li>
+                        <li><code class="bg-gray-800 px-2 py-1 rounded">/{width}/{height}?text=Custom</code></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="border-t border-gray-700 pt-8 text-center">
+                <p class="text-gray-400 text-sm">&copy; 2024 SVGPlaceholder. Made with <i class="fas fa-heart text-red-500" aria-hidden="true"></i> for developers worldwide.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Custom Notification Message Box -->
+    <div id="notificationBox" class="fixed top-20 right-4 p-4 rounded-lg text-white font-semibold z-50 transform translate-x-full transition-transform duration-300 opacity-0" role="alert" aria-live="polite">
+        <i id="notificationIcon" class="mr-2" aria-hidden="true"></i><span id="notificationMessage"></span>
+    </div>
+
+    <script>
+        // Array to store example templates for the library
+        let examples = [];
+        let currentExampleIndex = 0;
+        const exampleTemplates = [
+            { width: 400, height: 300, bg: '667eea', text: '400 × 300', textColor: 'ffffff', fontSize: 24 },
+            { width: 800, height: 600, bg: '764ba2', text: 'Desktop', textColor: 'ffffff', fontSize: 32 },
+            { width: 375, height: 812, bg: 'ff6b6b', text: 'Mobile', textColor: 'ffffff', fontSize: 28 },
+            { width: 1920, height: 1080, bg: '4ecdc4', text: 'Full HD', textColor: 'ffffff', fontSize: 48 },
+            { width: 300, height: 250, bg: '45b7d1', text: 'Banner', textColor: 'ffffff', fontSize: 20 },
+            { width: 150, height: 150, bg: 'f39c12', text: 'Avatar', textColor: '333333', fontSize: 18 }, /* Changed text color for contrast */
+            { width: 1200, height: 630, bg: 'e74c3c', text: 'Social Media', textColor: 'ffffff', fontSize: 36 },
+            { width: 500, height: 500, bg: '9b59b6', text: 'Square', textColor: 'ffffff', fontSize: 32 },
+            { width: 728, height: 90, bg: '2ecc71', text: 'Leaderboard', textColor: 'ffffff', fontSize: 16 },
+            { width: 320, height:480, bg: '34495e', text: 'Portrait', textColor: 'ffffff', fontSize: 24 },
+            { width: 640, height: 360, bg: 'e67e22', text: '16:9', textColor: 'ffffff', fontSize: 28 },
+            { width: 200, height: 300, bg: '1abc9c', text: 'Card', textColor: 'ffffff', fontSize: 20 },
+            { width: 1024, height: 768, bg: '8e44ad', text: 'Tablet', textColor: 'ffffff', fontSize: 30 },
+            { width: 100, height: 100, bg: 'd35400', text: 'Icon', textColor: 'ffffff', fontSize: 12 },
+            { width: 1600, height: 900, bg: '27ae60', text: 'Widescreen', textColor: 'ffffff', fontSize: 40 },
+            { width: 250, height: 250, bg: 'f1c40f', text: 'Thumbnail', textColor: '333333', fontSize: 18 } /* Changed text color for contrast */
+        ];
+
+        /**
+         * Generates an SVG string based on provided parameters.
+         * Ensures valid positive dimensions and cleans hex colors.
+         * @param {number} width - The width of the SVG.
+         * @param {number} height - The height of the SVG.
+         * @param {string} text - The text to display in the SVG.
+         * @param {string} bgColor - The background color (hex, e.g., '#RRGGBB').
+         * @param {string} textColor - The text color (hex, e.g., '#RRGGBB').
+         * @param {number} fontSize - The font size of the text.
+         * @returns {string} The SVG string.
+         */
+        function generateSVG(width, height, text, bgColor, textColor, fontSize) {
+            // Ensure width and height are numbers and positive, default to 400x300 if invalid
+            width = Math.max(1, parseInt(width) || 400);
+            height = Math.max(1, parseInt(height) || 300);
+            // Remove '#' from hex colors for SVG fill attribute for consistency
+            const cleanBgColor = bgColor.startsWith('#') ? bgColor.substring(1) : bgColor;
+            const cleanTextColor = textColor.startsWith('#') ? textColor.substring(1) : textColor;
+
+            // Basic SVG structure with a rectangle for background and centered text
+            return `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}">
+                <rect width="100%" height="100%" fill="#${cleanBgColor}"/>
+                <text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" font-family="Arial, sans-serif" font-size="${fontSize}" fill="#${cleanTextColor}">${text}</text>
+            </svg>`;
+        }
+
+        /**
+         * Updates the live preview image and generated URL/code examples.
+         * This function is debounced for input events to improve performance.
+         */
+        function updatePreview() {
+            // Retrieve current values from form inputs, providing defaults if empty or invalid
+            const width = document.getElementById('width').value || 400;
+            const height = document.getElementById('height').value || 300;
+            const text = document.getElementById('text').value || `${width} × ${height}`;
+            const bgColor = document.getElementById('bgColor').value;
+            const textColor = document.getElementById('textColor').value;
+            const fontSize = document.getElementById('fontSize').value;
+            const format = document.getElementById('format').value;
+
+            // Update the displayed font size value
+            document.getElementById('fontSizeValue').textContent = fontSize + 'px';
+
+            // Generate the SVG string
+            const svg = generateSVG(width, height, text, bgColor, textColor, fontSize);
+            
+            // Fix for encoding error: encode SVG to UTF-8 then base64
+            // btoa only works for Latin-1 characters. For full Unicode support,
+            // encodeURIComponent + unescape is a common workaround.
+            let encodedSvg;
+            try {
+                encodedSvg = btoa(unescape(encodeURIComponent(svg)));
+            } catch (e) {
+                console.error("Error encoding SVG for data URL:", e);
+                showNotification("Error generating image preview. Text might contain unsupported characters.", "error");
+                document.getElementById('previewImg').src = ""; // Clear broken image
+                document.getElementById('generatedUrl').value = "Error: Encoding failed";
+                document.getElementById('htmlCode').textContent = "Error: Encoding failed";
+                document.getElementById('cssCode').textContent = "Error: Encoding failed";
+                document.getElementById('markdownCode').textContent = "Error: Encoding failed";
+                document.getElementById('reactCode').textContent = "Error: Encoding failed";
+                hljs.highlightAll();
+                return;
+            }
+
+            const dataUrl = `data:image/svg+xml;base64,${encodedSvg}`;
+            // Set the preview image source
+            document.getElementById('previewImg').src = dataUrl;
+
+            // Construct the URL for external usage (placeholder service URL)
+            const baseUrl = 'https://arlabs07.github.io/Arhub07.github.io/library/placeholder.html#';
+            const encodedText = encodeURIComponent(text); // Encode text to be URL-safe
+            const url = `${baseUrl}/${width}/${height}/${bgColor.replace('#', '')}/${textColor.replace('#', '')}/${fontSize}/${encodedText}/${format}`;
+            document.getElementById('generatedUrl').value = url;
+
+            // Update the code examples in the respective blocks
+            document.getElementById('htmlCode').textContent = `<img src="${url}" alt="${text}">`;
+            document.getElementById('cssCode').textContent = `background-image: url('${url}');`;
+            document.getElementById('markdownCode').textContent = `![${text}](${url})`;
+            document.getElementById('reactCode').textContent = `<img src="${url}" alt="${text}" />`;
+
+            // Re-highlight code blocks to reflect changes
+            hljs.highlightAll();
+        }
+
+        /**
+         * Copies the generated URL to the clipboard using the modern Clipboard API.
+         * Provides a fallback for older browsers using `document.execCommand`.
+         */
+        async function copyToClipboard() {
+            const urlInput = document.getElementById('generatedUrl');
+            urlInput.select(); // Select the text in the input field
+
+            try {
+                // Attempt to use the modern Clipboard API
+                await navigator.clipboard.writeText(urlInput.value);
+                showNotification('URL copied to clipboard!', 'success');
+            } catch (err) {
+                // Fallback for environments where Clipboard API might not be available or permitted (e.g., iframes)
+                console.warn('Clipboard.writeText failed, falling back to execCommand:', err);
+                try {
+                    document.execCommand('copy');
+                    showNotification('URL copied to clipboard! (Fallback)', 'success');
+                } catch (execErr) {
+                    console.error('Failed to copy text using execCommand:', execErr);
+                    showNotification('Failed to copy URL. Please copy manually.', 'error');
+                }
+            }
+        }
+
+        /**
+         * Downloads the generated image in the selected format (SVG, PNG, or JPG).
+         * For PNG/JPG, it converts the SVG to a canvas image first.
+         */
+        function downloadImage() {
+            const width = document.getElementById('width').value || 400;
+            const height = document.getElementById('height').value || 300;
+            const text = document.getElementById('text').value || `${width} × ${height}`;
+            const bgColor = document.getElementById('bgColor').value;
+            const textColor = document.getElementById('textColor').value;
+            const fontSize = document.getElementById('fontSize').value;
+            const format = document.getElementById('format').value || 'svg';
+
+            const svg = generateSVG(width, height, text, bgColor, textColor, fontSize);
+            let dataUrl, filename;
+
+            if (format === 'svg') {
+                // For SVG, directly create a data URL and trigger download
+                let encodedSvg;
+                try {
+                    encodedSvg = btoa(unescape(encodeURIComponent(svg)));
+                } catch (e) {
+                    console.error("Error encoding SVG for download:", e);
+                    showNotification("Error downloading SVG. Text might contain unsupported characters.", "error");
+                    return;
+                }
+                dataUrl = `data:image/svg+xml;base64,${encodedSvg}`;
+                filename = `placeholder-${width}x${height}.svg`;
+                const a = document.createElement('a');
+                a.href = dataUrl;
+                a.download = filename;
+                document.body.appendChild(a); // Temporarily append to body to ensure click works
+                a.click();
+                document.body.removeChild(a); // Clean up
+            } else {
+                // For PNG/JPG, draw the SVG onto a canvas
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d');
+                const img = new Image();
+
+                canvas.width = width;
+                canvas.height = height;
+
+                img.onload = function() {
+                    ctx.drawImage(img, 0, 0, width, height); // Draw the SVG image onto the canvas
+                    const mimeType = format === 'png' ? 'image/png' : 'image/jpeg';
+                    dataUrl = canvas.toDataURL(mimeType); // Get data URL from canvas
+                    filename = `placeholder-${width}x${height}.${format}`;
+
+                    const a = document.createElement('a');
+                    a.href = dataUrl;
+                    a.download = filename;
+                    document.body.appendChild(a); // Temporarily append to body
+                    a.click();
+                    document.body.removeChild(a); // Clean up
+                };
+                img.onerror = function() {
+                    // Handle errors if SVG image fails to load onto canvas
+                    showNotification('Failed to load SVG for conversion. Please try again.', 'error');
+                };
+                // Load the SVG as an image source. Use the same encoding fix.
+                let encodedSvg;
+                try {
+                    encodedSvg = btoa(unescape(encodeURIComponent(svg)));
+                } catch (e) {
+                    console.error("Error encoding SVG for canvas conversion:", e);
+                    showNotification("Error preparing image for download. Text might contain unsupported characters.", "error");
+                    return;
+                }
+                img.src = `data:image/svg+xml;base64,${encodedSvg}`;
+            }
+        }
+
+        /**
+         * Shares the generated URL using the Web Share API.
+         * Falls back to copying to clipboard if Web Share API is not supported.
+         */
+        function shareImage() {
+            const url = document.getElementById('generatedUrl').value;
+            if (navigator.share) {
+                // Use Web Share API if available
+                navigator.share({
+                    title: 'SVG Placeholder',
+                    text: 'Check out this custom placeholder image generated by SVGPlaceholder!',
+                    url: url
+                }).catch((error) => {
+                    // Handle cases where sharing is cancelled by user or fails
+                    if (error.name !== 'AbortError') {
+                        console.error('Error sharing:', error);
+                        showNotification('Failed to share. URL copied instead.', 'error');
+                        copyToClipboard(); // Fallback to copy if share fails
+                    } else {
+                        showNotification('Sharing cancelled.', 'info');
+                    }
+                });
+            } else {
+                // Fallback for browsers that don't support Web Share API
+                copyToClipboard();
+                showNotification('URL copied to clipboard for sharing!', 'info');
+            }
+        }
+
+        let notificationTimeout;
+        /**
+         * Displays a temporary notification message to the user.
+         * @param {string} message - The message content.
+         * @param {'success'|'info'|'error'} type - The type of notification (influences color and icon).
+         */
+        function showNotification(message, type = 'info') {
+            const notificationBox = document.getElementById('notificationBox');
+            const notificationMessage = document.getElementById('notificationMessage');
+            const notificationIcon = document.getElementById('notificationIcon');
+
+            // Clear any existing timeout to prevent multiple notifications from overlapping
+            clearTimeout(notificationTimeout);
+
+            // Reset classes to ensure clean state for new notification
+            notificationBox.className = 'fixed top-20 right-4 p-4 rounded-lg text-white font-semibold z-50 transform translate-x-full transition-transform duration-300 opacity-0';
+            notificationIcon.className = ''; // Clear existing icon classes
+
+            // Set message text and apply type-specific styling and icon
+            notificationMessage.textContent = message;
+            if (type === 'success') {
+                notificationBox.classList.add('bg-green-500');
+                notificationIcon.classList.add('fas', 'fa-check');
+            } else if (type === 'error') {
+                notificationBox.classList.add('bg-red-500');
+                notificationIcon.classList.add('fas', 'fa-times');
+            } else { // Default to info
+                notificationBox.classList.add('bg-blue-500');
+                notificationIcon.classList.add('fas', 'fa-info');
+            }
+
+            // Trigger the transition to show the notification
+            setTimeout(() => {
+                notificationBox.classList.remove('translate-x-full', 'opacity-0');
+                notificationBox.classList.add('translate-x-0', 'opacity-100');
+            }, 100); // Small delay to ensure transition starts
+
+            // Set a timeout to hide the notification after 3 seconds
+            notificationTimeout = setTimeout(() => {
+                notificationBox.classList.remove('translate-x-0', 'opacity-100');
+                notificationBox.classList.add('translate-x-full', 'opacity-0');
+            }, 3000);
+        }
+
+        /**
+         * Loads a batch of example images into the examples grid.
+         * Loads 8 examples at a time.
+         */
+        function loadExamples() {
+            const grid = document.getElementById('examplesGrid');
+            const nextBatch = exampleTemplates.slice(currentExampleIndex, currentExampleIndex + 8);
+
+            // If no more examples, hide the "Load More" button
+            if (nextBatch.length === 0) {
+                document.getElementById('loadMore').style.display = 'none';
+                return;
+            }
+
+            nextBatch.forEach((template) => {
+                // Generate SVG and data URL for the example
+                const svg = generateSVG(template.width, template.height, template.text, template.bg, template.textColor, template.fontSize);
+                
+                let encodedSvg;
+                try {
+                    encodedSvg = btoa(unescape(encodeURIComponent(svg)));
+                } catch (e) {
+                    console.error("Error encoding example SVG for display:", e);
+                    // Skip this example if encoding fails
+                    return; 
+                }
+                const dataUrl = `data:image/svg+xml;base64,${encodedSvg}`;
+
+                // Construct the URL that pre-fills the generator with this example's parameters
+                const url = `https://arlabs07.github.io/Arhub07.github.io/library/placeholder.html#/${template.width}/${template.height}/${template.bg}/${template.textColor}/${template.fontSize}/${encodeURIComponent(template.text)}/svg`;
+
+                const exampleDiv = document.createElement('div');
+                exampleDiv.className = 'glass p-4 sm:p-6 rounded-2xl hover-lift transition-all duration-300 cursor-pointer group';
+                exampleDiv.innerHTML = `
+                    <div class="mb-3 sm:mb-4 overflow-hidden rounded-lg">
+                        <img src="${dataUrl}" alt="${template.text} placeholder" class="w-full h-24 sm:h-32 object-cover group-hover:scale-110 transition-transform duration-300">
+                    </div>
+                    <h3 class="text-white font-semibold mb-1 sm:mb-2 text-base sm:text-lg">${template.text}</h3>
+                    <p class="text-gray-300 text-xs sm:text-sm mb-3 sm:mb-4">${template.width} × ${template.height}</p>
+                    <div class="flex flex-col sm:flex-row gap-2">
+                        <button onclick="copyExampleUrl('${url}')" class="flex-1 bg-purple-600 hover:bg-purple-700 px-2 py-1 sm:px-3 sm:py-2 rounded text-white text-xs sm:text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-purple-400" aria-label="Copy URL for ${template.text} example">
+                            <i class="fas fa-copy mr-1" aria-hidden="true"></i>Copy
+                        </button>
+                        <button onclick="customizeExample(${JSON.stringify(template).replace(/"/g, '&quot;')})" class="flex-1 bg-blue-600 hover:bg-blue-700 px-2 py-1 sm:px-3 sm:py-2 rounded text-white text-xs sm:text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-blue-400" aria-label="Customize ${template.text} example in the generator">
+                            <i class="fas fa-edit mr-1" aria-hidden="true"></i>Edit
+                        </button>
+                    </div>
+                `;
+                grid.appendChild(exampleDiv);
+            });
+            currentExampleIndex += nextBatch.length; // Update the index by the number of examples just loaded
+            // Hide "Load More" button if all examples have been loaded
+            if (currentExampleIndex >= exampleTemplates.length) {
+                document.getElementById('loadMore').style.display = 'none';
+            }
+        }
+
+        /**
+         * Copies an example URL to the clipboard.
+         * @param {string} url - The URL string to copy.
+         */
+        async function copyExampleUrl(url) {
+            try {
+                await navigator.clipboard.writeText(url);
+                showNotification('Example URL copied!', 'success');
+            } catch (err) {
+                console.error('Failed to copy example URL:', err);
+                showNotification('Failed to copy URL. Please try again.', 'error');
+            }
+        }
+
+        /**
+         * Populates the generator form with values from a selected example template
+         * and scrolls the view to the generator section.
+         * @param {object} template - The example template object containing properties like width, height, text, etc.
+         */
+        function customizeExample(template) {
+            // Set the values of the generator input fields
+            document.getElementById('width').value = template.width;
+            document.getElementById('height').value = template.height;
+            document.getElementById('text').value = template.text;
+            document.getElementById('bgColor').value = '#' + template.bg; // Add '#' back for color input
+            document.getElementById('textColor').value = '#' + template.textColor; // Add '#' back for color input
+            document.getElementById('fontSize').value = template.fontSize;
+            document.getElementById('format').value = 'svg'; // Default to SVG when customizing from an example
+
+            updatePreview(); // Update the live preview with the new values
+            document.getElementById('generator').scrollIntoView({ behavior: 'smooth' }); // Smooth scroll to the generator section
+            document.getElementById('width').focus(); // Set focus to the first input for improved accessibility
+        }
+
+        /**
+         * Parses URL hash parameters on page load and pre-fills the generator inputs.
+         * This allows users to share specific configurations via URL.
+         */
+        function handleUrlParameters() {
+            const hash = window.location.hash.substring(1); // Get the hash part of the URL, removing the leading '#'
+            if (hash) {
+                // Remove leading '/' if present, then split the hash by '/'
+                const parts = hash.startsWith('/') ? hash.substring(1).split('/') : hash.split('/');
+
+                // Ensure at least width and height are present
+                if (parts.length >= 2) {
+                    // Parse parameters, providing default values if missing or invalid
+                    const width = parseInt(parts[0]) || 400;
+                    const height = parseInt(parts[1]) || 300;
+                    const bg = parts[2] || '667eea';
+                    const textColor = parts[3] || 'ffffff';
+                    const fontSize = parseInt(parts[4]) || 24;
+                    // Decode URI component for text, as it might contain encoded characters
+                    const text = parts[5] ? decodeURIComponent(parts[5]) : `${width} × ${height}`;
+                    const format = parts[6] || 'svg';
+
+                    // Populate the form fields with the parsed parameters
+                    document.getElementById('width').value = width;
+                    document.getElementById('height').value = height;
+                    document.getElementById('text').value = text;
+                    document.getElementById('bgColor').value = '#' + bg;
+                    document.getElementById('textColor').value = '#' + textColor;
+                    document.getElementById('fontSize').value = fontSize;
+                    document.getElementById('format').value = format;
+
+                    // Immediately update the preview based on these pre-filled parameters
+                    updatePreview();
+                }
+            }
+        }
+
+        /**
+         * Debounce function to limit how often a function is called in response to rapid events (e.g., typing).
+         * @param {Function} func - The function to debounce.
+         * @param {number} delay - The delay in milliseconds before the function is executed.
+         * @returns {Function} A debounced version of the original function.
+         */
+        function debounce(func, delay) {
+            let timeout;
+            return function(...args) {
+                const context = this;
+                clearTimeout(timeout);
+                timeout = setTimeout(() => func.apply(context, args), delay);
+            };
+        }
+
+        // Create a debounced version of updatePreview for performance-sensitive input events
+        const debouncedUpdatePreview = debounce(updatePreview, 300); // 300ms delay
+
+        // Event listeners to initialize the application and handle user interactions
+        document.addEventListener('DOMContentLoaded', function() {
+            // Handle URL parameters on initial page load
+            handleUrlParameters();
+
+            // Add event listeners for generator input fields.
+            // 'input' events for text/number/range fields use debounced function.
+            // 'change' events for color pickers and select (dropdown) can call updatePreview directly.
+            document.getElementById('width').addEventListener('input', debouncedUpdatePreview);
+            document.getElementById('height').addEventListener('input', debouncedUpdatePreview);
+            document.getElementById('text').addEventListener('input', debouncedUpdatePreview);
+            document.getElementById('bgColor').addEventListener('change', updatePreview);
+            document.getElementById('textColor').addEventListener('change', updatePreview);
+            document.getElementById('fontSize').addEventListener('input', debouncedUpdatePreview);
+            document.getElementById('format').addEventListener('change', updatePreview);
+
+            // Event listener for the "Load More Examples" button
+            document.getElementById('loadMore').addEventListener('click', loadExamples);
+            
+            // Initialize Highlight.js to format code blocks
+            hljs.highlightAll();
+
+            // Perform an initial update of the preview and load the first batch of examples
+            updatePreview();
+            loadExamples();
+        });
+    </script>
+</body>
+</html>
