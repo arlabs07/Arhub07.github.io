@@ -3,396 +3,652 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dynamic Placeholder Image Service</title>
-    <!-- Tailwind CSS CDN for modern styling and responsiveness -->
+    <title>Placeholder Generator - Free Image Placeholder Service</title>
+    <meta name="description" content="Generate custom placeholder images with various sizes, colors, and text. Free alternative to placehold.co">
+    
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    
+    <!-- Highlight.js -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/default.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+    
     <style>
-        /* Custom font for a clean, modern look */
-        body {
-            font-family: 'Inter', sans-serif;
+        .bg-gradient-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         }
-        /* Hide canvas elements by default, they are used for generation */
+        .preview-container {
+            min-height: 300px;
+            background: repeating-conic-gradient(#f8f9fa 0% 25%, #e9ecef 25% 50%) 50% / 20px 20px;
+        }
+        .code-block {
+            background: #1a1a1a;
+            border-radius: 8px;
+            overflow-x: auto;
+        }
+        .toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 9999;
+        }
         canvas {
-            display: none;
-        }
-        /* Ensure the main container takes full width on small screens */
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 1rem; /* Responsive padding */
-        }
-        /* Specific styling for the demo canvas elements to make them visible */
-        .demo-item canvas {
-            display: block; /* Make demo canvases visible */
-            border-radius: 0.5rem; /* Rounded corners */
-            margin-bottom: 1rem; /* Spacing below canvas */
-            max-width: 100%; /* Ensure it fits its container */
-            height: auto; /* Maintain aspect ratio */
-            border: 2px dashed #e2e8f0; /* Dashed border for demo */
-        }
-        /* Styling for the generated image canvas */
-        #generatedResult canvas {
-            display: block; /* Make generated canvas visible */
-            border-radius: 0.5rem;
-            margin: 1rem auto; /* Center it with margin */
             max-width: 100%;
             height: auto;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1); /* Subtle shadow */
+            border: 2px solid #dee2e6;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
         }
     </style>
 </head>
-<body class="bg-gradient-to-br from-indigo-600 to-purple-700 min-h-screen flex flex-col items-center justify-center text-gray-800">
-
-    <!-- Main content container for the interactive page -->
-    <div id="mainContent" class="container bg-white rounded-xl shadow-2xl p-6 md:p-10 lg:p-12 my-8 w-11/12 md:w-4/5 lg:w-3/4 xl:w-2/3 hidden">
-        <!-- Header Section -->
-        <header class="text-center mb-8">
-            <h1 class="text-4xl md:text-5xl font-extrabold text-indigo-700 mb-2">
-                🖼️ Dynamic Placeholder Images
-            </h1>
-            <p class="text-lg md:text-xl text-gray-600">
-                Generate custom placeholder images on the fly via URL or interactive form.
-            </p>
-        </header>
-
-        <!-- Live Examples Section -->
-        <section class="mb-10">
-            <h2 class="text-2xl md:text-3xl font-bold text-gray-700 mb-6">Live Examples</h2>
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                <!-- Example 1 -->
-                <div class="demo-item bg-blue-50 p-6 rounded-lg shadow-md flex flex-col items-center text-center transition-transform duration-300 hover:scale-105 hover:shadow-lg">
-                    <canvas id="demo1"></canvas>
-                    <div class="url bg-gray-800 text-white text-sm md:text-base p-2 rounded-md break-all font-mono mb-3 w-full">
-                        300x200/blue/white
-                    </div>
-                    <p class="text-gray-700 text-sm">Basic placeholder with custom colors.</p>
-                </div>
-                <!-- Example 2 -->
-                <div class="demo-item bg-red-50 p-6 rounded-lg shadow-md flex flex-col items-center text-center transition-transform duration-300 hover:scale-105 hover:shadow-lg">
-                    <canvas id="demo2"></canvas>
-                    <div class="url bg-gray-800 text-white text-sm md:text-base p-2 rounded-md break-all font-mono mb-3 w-full">
-                        400x300/ff6b6b/ffffff?text=Hello World
-                    </div>
-                    <p class="text-gray-700 text-sm">Custom text with hex colors.</p>
-                </div>
-                <!-- Example 3 -->
-                <div class="demo-item bg-purple-50 p-6 rounded-lg shadow-md flex flex-col items-center text-center transition-transform duration-300 hover:scale-105 hover:shadow-lg">
-                    <canvas id="demo3"></canvas>
-                    <div class="url bg-gray-800 text-white text-sm md:text-base p-2 rounded-md break-all font-mono mb-3 w-full">
-                        350x250/gradient/white
-                    </div>
-                    <p class="text-gray-700 text-sm">Gradient background example.</p>
-                </div>
+<body class="bg-light">
+    <!-- Toast Notification -->
+    <div id="toast" class="toast align-items-center text-white bg-success border-0" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="d-flex">
+            <div class="toast-body">
+                <i class="fas fa-check-circle me-2"></i>URL copied to clipboard!
             </div>
-        </section>
-
-        <!-- API Usage Section -->
-        <section class="bg-gray-100 p-6 rounded-lg shadow-inner mb-10">
-            <h3 class="text-xl md:text-2xl font-bold text-gray-700 mb-4">🔗 API Usage</h3>
-            <p class="text-gray-700 mb-4">Generate placeholder images by appending URL parameters to this page's URL:</p>
-            <pre class="bg-gray-800 text-green-300 p-4 rounded-md overflow-x-auto text-sm md:text-base mb-4">
-<span id="baseUrlDisplay"></span>?width=300&height=200&bg=blue&text=Hello&color=white
-            </pre>
-
-            <h4 class="text-lg md:text-xl font-semibold text-gray-700 mb-3">URL Parameters:</h4>
-            <ul class="list-disc list-inside text-gray-700 mb-4 space-y-1">
-                <li><code class="font-mono bg-gray-200 p-1 rounded">width</code> - Image width in pixels (default: 300)</li>
-                <li><code class="font-mono bg-gray-200 p-1 rounded">height</code> - Image height in pixels (default: 200)</li>
-                <li><code class="font-mono bg-gray-200 p-1 rounded">bg</code> - Background color (hex code like `ff00ff`, named color like `red`, or `gradient`)</li>
-                <li><code class="font-mono bg-gray-200 p-1 rounded">color</code> - Text color (hex code or named color, default: white)</li>
-                <li><code class="font-mono bg-gray-200 p-1 rounded">text</code> - Custom text to display (default: dimensions)</li>
-                <li><code class="font-mono bg-gray-200 p-1 rounded">format</code> - Image format: `png`, `jpg`, `webp` (default: `png`)</li>
-            </ul>
-
-            <h4 class="text-lg md:text-xl font-semibold text-gray-700 mb-3">Example URLs:</h4>
-            <pre class="bg-gray-800 text-green-300 p-4 rounded-md overflow-x-auto text-sm md:text-base">
-<span id="exampleUrl1"></span>
-<span id="exampleUrl2"></span>
-<span id="exampleUrl3"></span>
-            </pre>
-        </section>
-
-        <!-- Interactive Image Generator Section -->
-        <section class="bg-blue-50 p-6 rounded-lg shadow-md mb-10">
-            <h3 class="text-xl md:text-2xl font-bold text-blue-800 mb-6">🎨 Image Generator</h3>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4 mb-6">
-                <div class="form-group">
-                    <label for="width" class="block text-gray-700 font-semibold mb-1">Width (px)</label>
-                    <input type="number" id="width" value="300" min="50" max="2000" class="w-full p-2 border-2 border-blue-200 rounded-md focus:border-blue-500 focus:ring focus:ring-blue-200 transition duration-200">
-                </div>
-                <div class="form-group">
-                    <label for="height" class="block text-gray-700 font-semibold mb-1">Height (px)</label>
-                    <input type="number" id="height" value="200" min="50" max="2000" class="w-full p-2 border-2 border-blue-200 rounded-md focus:border-blue-500 focus:ring focus:ring-blue-200 transition duration-200">
-                </div>
-                <div class="form-group">
-                    <label for="bgColor" class="block text-gray-700 font-semibold mb-1">Background Color</label>
-                    <input type="text" id="bgColor" value="4a90e2" placeholder="hex, named color, or 'gradient'" class="w-full p-2 border-2 border-blue-200 rounded-md focus:border-blue-500 focus:ring focus:ring-blue-200 transition duration-200">
-                </div>
-                <div class="form-group">
-                    <label for="textColor" class="block text-gray-700 font-semibold mb-1">Text Color</label>
-                    <input type="text" id="textColor" value="white" placeholder="hex or named color" class="w-full p-2 border-2 border-blue-200 rounded-md focus:border-blue-500 focus:ring focus:ring-blue-200 transition duration-200">
-                </div>
-            </div>
-            <div class="form-group mb-6">
-                <label for="customText" class="block text-gray-700 font-semibold mb-1">Custom Text</label>
-                <input type="text" id="customText" placeholder="Leave empty for dimensions" class="w-full p-2 border-2 border-blue-200 rounded-md focus:border-blue-500 focus:ring focus:ring-blue-200 transition duration-200">
-            </div>
-            <div class="form-group mb-6">
-                <label for="format" class="block text-gray-700 font-semibold mb-1">Format</label>
-                <select id="format" class="w-full p-2 border-2 border-blue-200 rounded-md focus:border-blue-500 focus:ring focus:ring-blue-200 transition duration-200">
-                    <option value="png">PNG</option>
-                    <option value="jpg">JPG</option>
-                    <option value="webp">WebP</option>
-                </select>
-            </div>
-            <button onclick="generateImage()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-6 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
-                Generate Image
-            </button>
-            <div id="generatedResult" class="generated-result mt-6 p-4 bg-white border-2 border-blue-200 rounded-lg text-center hidden">
-                <!-- Generated image and URL will be inserted here -->
-            </div>
-        </section>
-
-        <!-- Footer Section -->
-        <footer class="text-center text-gray-500 text-sm mt-8">
-            <p>&copy; 2025 Dynamic Placeholder Image Service. All rights reserved.</p>
-            <p>Built with ❤️ for developers.</p>
-        </footer>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+        </div>
     </div>
 
+    <!-- Header -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-gradient-primary shadow-sm">
+        <div class="container">
+            <a class="navbar-brand fw-bold" href="#">
+                <i class="fas fa-image me-2"></i>Placeholder Generator
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#generator"><i class="fas fa-cogs me-1"></i>Generator</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#api"><i class="fas fa-code me-1"></i>API</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#examples"><i class="fas fa-images me-1"></i>Examples</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="bg-gradient-primary text-white py-5">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-6">
+                    <h1 class="display-4 fw-bold mb-3">Generate Perfect Placeholder Images</h1>
+                    <p class="lead mb-4">Create custom placeholder images with any size, color, and text. Perfect for web development, design mockups, and prototyping.</p>
+                    <a href="#generator" class="btn btn-light btn-lg">
+                        <i class="fas fa-play me-2"></i>Get Started
+                    </a>
+                </div>
+                <div class="col-lg-6 text-center">
+                    <canvas id="heroCanvas" width="400" height="300" class="shadow-lg"></canvas>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Generator Section -->
+    <section id="generator" class="py-5">
+        <div class="container">
+            <h2 class="text-center mb-5">
+                <i class="fas fa-cogs text-primary me-2"></i>Image Generator
+            </h2>
+            
+            <div class="row">
+                <!-- Controls -->
+                <div class="col-lg-4 mb-4">
+                    <div class="card shadow-sm">
+                        <div class="card-header bg-primary text-white">
+                            <h5 class="mb-0"><i class="fas fa-sliders-h me-2"></i>Customize</h5>
+                        </div>
+                        <div class="card-body">
+                            <!-- Size -->
+                            <div class="mb-3">
+                                <label class="form-label fw-semibold">
+                                    <i class="fas fa-expand-arrows-alt text-primary me-1"></i>Size
+                                </label>
+                                <div class="row">
+                                    <div class="col-6">
+                                        <input type="number" id="width" class="form-control" value="400" min="1" max="2000" placeholder="Width">
+                                    </div>
+                                    <div class="col-6">
+                                        <input type="number" id="height" class="form-control" value="300" min="1" max="2000" placeholder="Height">
+                                    </div>
+                                </div>
+                                <div class="mt-2">
+                                    <small class="text-muted">Quick sizes:</small>
+                                    <div class="btn-group-sm mt-1">
+                                        <button class="btn btn-outline-secondary btn-sm me-1" onclick="setSize(300,250)">300×250</button>
+                                        <button class="btn btn-outline-secondary btn-sm me-1" onclick="setSize(600,400)">600×400</button>
+                                        <button class="btn btn-outline-secondary btn-sm" onclick="setSize(800,600)">800×600</button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Background Color -->
+                            <div class="mb-3">
+                                <label class="form-label fw-semibold">
+                                    <i class="fas fa-fill-drip text-primary me-1"></i>Background Color
+                                </label>
+                                <div class="input-group">
+                                    <input type="color" id="bgColor" class="form-control form-control-color" value="#cccccc">
+                                    <input type="text" id="bgColorText" class="form-control" value="cccccc" placeholder="Hex color">
+                                </div>
+                            </div>
+
+                            <!-- Text Color -->
+                            <div class="mb-3">
+                                <label class="form-label fw-semibold">
+                                    <i class="fas fa-font text-primary me-1"></i>Text Color
+                                </label>
+                                <div class="input-group">
+                                    <input type="color" id="textColor" class="form-control form-control-color" value="#333333">
+                                    <input type="text" id="textColorText" class="form-control" value="333333" placeholder="Hex color">
+                                </div>
+                            </div>
+
+                            <!-- Text -->
+                            <div class="mb-3">
+                                <label class="form-label fw-semibold">
+                                    <i class="fas fa-comment text-primary me-1"></i>Custom Text
+                                </label>
+                                <input type="text" id="customText" class="form-control" placeholder="Enter custom text">
+                                <small class="text-muted">Leave empty to show dimensions</small>
+                            </div>
+
+                            <!-- Font Size -->
+                            <div class="mb-3">
+                                <label class="form-label fw-semibold">
+                                    <i class="fas fa-text-height text-primary me-1"></i>Font Size
+                                </label>
+                                <input type="range" id="fontSize" class="form-range" min="12" max="72" value="24">
+                                <small class="text-muted">Size: <span id="fontSizeValue">24</span>px</small>
+                            </div>
+
+                            <!-- Format -->
+                            <div class="mb-3">
+                                <label class="form-label fw-semibold">
+                                    <i class="fas fa-file-image text-primary me-1"></i>Format
+                                </label>
+                                <select id="format" class="form-select">
+                                    <option value="png">PNG</option>
+                                    <option value="jpg">JPEG</option>
+                                    <option value="webp">WebP</option>
+                                </select>
+                            </div>
+
+                            <div class="d-grid gap-2">
+                                <button class="btn btn-primary" onclick="generateImage()">
+                                    <i class="fas fa-magic me-2"></i>Generate Image
+                                </button>
+                                <button class="btn btn-outline-secondary" onclick="downloadImage()">
+                                    <i class="fas fa-download me-2"></i>Download
+                                </button>
+                                <button class="btn btn-outline-info" onclick="copyURL()">
+                                    <i class="fas fa-copy me-2"></i>Copy URL
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Preview -->
+                <div class="col-lg-8">
+                    <div class="card shadow-sm">
+                        <div class="card-header bg-success text-white">
+                            <h5 class="mb-0"><i class="fas fa-eye me-2"></i>Preview</h5>
+                        </div>
+                        <div class="card-body preview-container d-flex align-items-center justify-content-center">
+                            <canvas id="previewCanvas" width="400" height="300"></canvas>
+                        </div>
+                        <div class="card-footer">
+                            <div class="row">
+                                <div class="col-md-8">
+                                    <small class="text-muted">Generated URL:</small>
+                                    <input type="text" id="generatedURL" class="form-control form-control-sm" readonly>
+                                </div>
+                                <div class="col-md-4 d-flex align-items-end">
+                                    <button class="btn btn-sm btn-outline-primary w-100" onclick="copyURL()">
+                                        <i class="fas fa-copy me-1"></i>Copy
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- API Documentation -->
+    <section id="api" class="py-5 bg-white">
+        <div class="container">
+            <h2 class="text-center mb-5">
+                <i class="fas fa-code text-primary me-2"></i>API Documentation
+            </h2>
+            
+            <div class="row">
+                <div class="col-lg-6 mb-4">
+                    <div class="card h-100">
+                        <div class="card-header">
+                            <h5><i class="fas fa-link me-2"></i>Basic Usage</h5>
+                        </div>
+                        <div class="card-body">
+                            <p>Generate placeholder images using simple URL parameters:</p>
+                            <div class="code-block p-3 mb-3">
+                                <code class="text-white">
+https://arlabs07.github.io/Arhub07.github.io/library/placeholder.html#/400x300
+                                </code>
+                            </div>
+                            <p>This creates a 400×300 pixel placeholder image.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-6 mb-4">
+                    <div class="card h-100">
+                        <div class="card-header">
+                            <h5><i class="fas fa-palette me-2"></i>With Colors</h5>
+                        </div>
+                        <div class="card-body">
+                            <p>Add background and text colors:</p>
+                            <div class="code-block p-3 mb-3">
+                                <code class="text-white">
+#/400x300/ff6b6b/ffffff
+                                </code>
+                            </div>
+                            <p>Format: size/background-color/text-color</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-6 mb-4">
+                    <div class="card h-100">
+                        <div class="card-header">
+                            <h5><i class="fas fa-font me-2"></i>Custom Text</h5>
+                        </div>
+                        <div class="card-body">
+                            <p>Add custom text to your placeholder:</p>
+                            <div class="code-block p-3 mb-3">
+                                <code class="text-white">
+#/400x300/cccccc/333333/Hello%20World
+                                </code>
+                            </div>
+                            <p>Use URL encoding for spaces and special characters.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-6 mb-4">
+                    <div class="card h-100">
+                        <div class="card-header">
+                            <h5><i class="fas fa-cog me-2"></i>Parameters</h5>
+                        </div>
+                        <div class="card-body">
+                            <ul class="list-unstyled">
+                                <li><strong>Size:</strong> width×height (e.g., 300×200)</li>
+                                <li><strong>Background:</strong> Hex color without #</li>
+                                <li><strong>Text Color:</strong> Hex color without #</li>
+                                <li><strong>Text:</strong> URL encoded string</li>
+                                <li><strong>Format:</strong> png, jpg, webp</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Examples -->
+    <section id="examples" class="py-5 bg-light">
+        <div class="container">
+            <h2 class="text-center mb-5">
+                <i class="fas fa-images text-primary me-2"></i>Examples
+            </h2>
+            
+            <div class="row" id="examplesContainer">
+                <!-- Examples will be generated by JavaScript -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-white py-4">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6">
+                    <h5><i class="fas fa-image me-2"></i>Placeholder Generator</h5>
+                    <p>Free and open-source placeholder image service for developers and designers.</p>
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <p class="mb-0">Built with ❤️ using modern web technologies</p>
+                    <small class="text-muted">Tailwind CSS • Bootstrap • Font Awesome • Canvas API</small>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+
     <script>
-        /**
-         * Helper function to parse URL parameters from the current window location.
-         * @returns {object} An object containing parsed parameters.
-         */
-        function getUrlParams() {
-            const params = new URLSearchParams(window.location.search);
-            return {
-                width: parseInt(params.get('width')),
-                height: parseInt(params.get('height')),
-                bg: params.get('bg'),
-                color: params.get('color'),
-                text: params.get('text'),
-                format: params.get('format') || 'png' // Default to png if not specified
-            };
+        // Initialize highlight.js
+        hljs.highlightAll();
+
+        // Global variables
+        let currentCanvas = null;
+        let currentDataURL = '';
+
+        // Initialize the app
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeEventListeners();
+            generateImage();
+            generateHeroImage();
+            generateExamples();
+            handleHashParameters();
+        });
+
+        // Event listeners
+        function initializeEventListeners() {
+            // Color inputs sync
+            document.getElementById('bgColor').addEventListener('input', function() {
+                document.getElementById('bgColorText').value = this.value.substring(1);
+                generateImage();
+            });
+
+            document.getElementById('bgColorText').addEventListener('input', function() {
+                let color = this.value.replace('#', '');
+                if (color.length === 6 && /^[0-9A-Fa-f]+$/.test(color)) {
+                    document.getElementById('bgColor').value = '#' + color;
+                    generateImage();
+                }
+            });
+
+            document.getElementById('textColor').addEventListener('input', function() {
+                document.getElementById('textColorText').value = this.value.substring(1);
+                generateImage();
+            });
+
+            document.getElementById('textColorText').addEventListener('input', function() {
+                let color = this.value.replace('#', '');
+                if (color.length === 6 && /^[0-9A-Fa-f]+$/.test(color)) {
+                    document.getElementById('textColor').value = '#' + color;
+                    generateImage();
+                }
+            });
+
+            // Other input listeners
+            ['width', 'height', 'customText', 'fontSize', 'format'].forEach(id => {
+                document.getElementById(id).addEventListener('input', generateImage);
+            });
+
+            // Font size slider
+            document.getElementById('fontSize').addEventListener('input', function() {
+                document.getElementById('fontSizeValue').textContent = this.value;
+                generateImage();
+            });
+
+            // Hash change listener
+            window.addEventListener('hashchange', handleHashParameters);
         }
 
-        /**
-         * Converts a color string (hex, named, or hex without #) to a valid CSS color.
-         * Handles the special 'gradient' keyword.
-         * @param {string} color - The color string.
-         * @returns {string} The formatted CSS color or 'gradient'.
-         */
-        function formatColor(color) {
-            if (color === 'gradient') {
-                return 'gradient';
-            }
-            // If it's a named color or already has '#', return as is.
-            // Using CSS.supports to check for named colors is a robust way.
-            if (color && (CSS.supports('color', color) || color.startsWith('#'))) {
-                return color;
-            }
-            // Assume it's a hex without '#' if it's a valid hex string
-            if (color && /^[0-9a-fA-F]{3,6}$/.test(color)) {
-                return `#${color}`;
-            }
-            // Fallback for invalid or empty colors
-            return '#cccccc'; // A neutral grey
-        }
+        // Generate image
+        function generateImage() {
+            const width = parseInt(document.getElementById('width').value) || 400;
+            const height = parseInt(document.getElementById('height').value) || 300;
+            const bgColor = '#' + document.getElementById('bgColorText').value;
+            const textColor = '#' + document.getElementById('textColorText').value;
+            const customText = document.getElementById('customText').value;
+            const fontSize = parseInt(document.getElementById('fontSize').value);
+            const format = document.getElementById('format').value;
 
-        /**
-         * Draws a placeholder image onto a given canvas element.
-         * This function does not return a data URL; it modifies the canvas directly.
-         * @param {HTMLCanvasElement} canvas - The canvas element to draw on.
-         * @param {number} width - The width of the image.
-         * @param {number} height - The height of the image.
-         * @param {string} bgColor - The background color (hex, named, or 'gradient').
-         * @param {string} textColor - The text color (hex or named).
-         * @param {string} text - The custom text to display.
-         */
-        function drawPlaceholderOnCanvas(canvas, width, height, bgColor, textColor, text) {
+            const canvas = document.getElementById('previewCanvas');
             const ctx = canvas.getContext('2d');
+
+            // Set canvas size
             canvas.width = width;
             canvas.height = height;
 
-            // Set background
-            if (bgColor === 'gradient') {
-                const gradient = ctx.createLinearGradient(0, 0, width, height);
-                gradient.addColorStop(0, '#667eea'); // Start color of gradient
-                gradient.addColorStop(1, '#764ba2'); // End color of gradient
-                ctx.fillStyle = gradient;
-            } else {
-                ctx.fillStyle = formatColor(bgColor);
-            }
+            // Fill background
+            ctx.fillStyle = bgColor;
             ctx.fillRect(0, 0, width, height);
 
-            // Add text
-            const displayText = text || `${width} × ${height}`;
-            ctx.fillStyle = formatColor(textColor);
-
-            // Calculate font size dynamically based on the smaller dimension
-            const fontSize = Math.min(width, height) * 0.1; // 10% of the smaller dimension
-            ctx.font = `bold ${fontSize}px Inter, Arial, sans-serif`; // Use Inter, fallback to Arial
+            // Draw text
+            const text = customText || `${width} × ${height}`;
+            ctx.fillStyle = textColor;
+            ctx.font = `${fontSize}px Arial, sans-serif`;
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
 
-            // Add text shadow for better readability against various backgrounds
-            ctx.shadowColor = 'rgba(0,0,0,0.4)';
-            ctx.shadowBlur = 3;
-            ctx.shadowOffsetX = 1;
-            ctx.shadowOffsetY = 1;
+            // Multi-line text support
+            const lines = text.split('\\n');
+            const lineHeight = fontSize * 1.2;
+            const startY = height / 2 - ((lines.length - 1) * lineHeight) / 2;
 
-            ctx.fillText(displayText, width / 2, height / 2);
+            lines.forEach((line, index) => {
+                ctx.fillText(line, width / 2, startY + (index * lineHeight));
+            });
+
+            // Store current canvas and data URL
+            currentCanvas = canvas;
+            currentDataURL = canvas.toDataURL(`image/${format === 'jpg' ? 'jpeg' : format}`);
+
+            // Update URL
+            updateGeneratedURL();
         }
 
-        /**
-         * Initializes the demo images on the main page.
-         * This runs only when the page is loaded without URL parameters.
-         */
-        function initDemoImages() {
-            const demos = [
-                { id: 'demo1', width: 300, height: 200, bg: '4a90e2', color: 'white', text: '' },
-                { id: 'demo2', width: 400, height: 300, bg: 'ff6b6b', color: 'ffffff', text: 'Hello World' },
-                { id: 'demo3', width: 350, height: 250, bg: 'gradient', color: 'white', text: '' }
+        // Generate hero image
+        function generateHeroImage() {
+            const canvas = document.getElementById('heroCanvas');
+            const ctx = canvas.getContext('2d');
+
+            // Create gradient background
+            const gradient = ctx.createLinearGradient(0, 0, 400, 300);
+            gradient.addColorStop(0, '#667eea');
+            gradient.addColorStop(1, '#764ba2');
+
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, 400, 300);
+
+            // Draw text
+            ctx.fillStyle = '#ffffff';
+            ctx.font = '24px Arial, sans-serif';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText('400 × 300', 200, 150);
+        }
+
+        // Update generated URL
+        function updateGeneratedURL() {
+            const width = document.getElementById('width').value;
+            const height = document.getElementById('height').value;
+            const bgColor = document.getElementById('bgColorText').value;
+            const textColor = document.getElementById('textColorText').value;
+            const customText = document.getElementById('customText').value;
+
+            let url = `${window.location.origin}${window.location.pathname}#/${width}x${height}`;
+            
+            if (bgColor !== 'cccccc' || textColor !== '333333' || customText) {
+                url += `/${bgColor}/${textColor}`;
+                if (customText) {
+                    url += `/${encodeURIComponent(customText)}`;
+                }
+            }
+
+            document.getElementById('generatedURL').value = url;
+        }
+
+        // Set predefined size
+        function setSize(width, height) {
+            document.getElementById('width').value = width;
+            document.getElementById('height').value = height;
+            generateImage();
+        }
+
+        // Download image
+        function downloadImage() {
+            if (!currentCanvas) return;
+
+            const format = document.getElementById('format').value;
+            const width = document.getElementById('width').value;
+            const height = document.getElementById('height').value;
+            
+            const link = document.createElement('a');
+            link.download = `placeholder-${width}x${height}.${format}`;
+            link.href = currentDataURL;
+            link.click();
+        }
+
+        // Copy URL to clipboard
+        async function copyURL() {
+            const url = document.getElementById('generatedURL').value;
+            try {
+                await navigator.clipboard.writeText(url);
+                showToast();
+            } catch (err) {
+                // Fallback for older browsers
+                const textArea = document.createElement('textarea');
+                textArea.value = url;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                showToast();
+            }
+        }
+
+        // Show toast notification
+        function showToast() {
+            const toastElement = document.getElementById('toast');
+            const toast = new bootstrap.Toast(toastElement);
+            toast.show();
+        }
+
+        // Handle hash parameters
+        function handleHashParameters() {
+            const hash = window.location.hash.substring(1);
+            if (!hash || !hash.startsWith('/')) return;
+
+            const parts = hash.substring(1).split('/');
+            if (parts.length < 1) return;
+
+            // Parse size
+            const sizeParts = parts[0].split('x');
+            if (sizeParts.length === 2) {
+                const width = parseInt(sizeParts[0]);
+                const height = parseInt(sizeParts[1]);
+                if (width && height) {
+                    document.getElementById('width').value = width;
+                    document.getElementById('height').value = height;
+                }
+            }
+
+            // Parse colors and text
+            if (parts.length >= 2 && parts[1]) {
+                document.getElementById('bgColorText').value = parts[1];
+                document.getElementById('bgColor').value = '#' + parts[1];
+            }
+
+            if (parts.length >= 3 && parts[2]) {
+                document.getElementById('textColorText').value = parts[2];
+                document.getElementById('textColor').value = '#' + parts[2];
+            }
+
+            if (parts.length >= 4 && parts[3]) {
+                document.getElementById('customText').value = decodeURIComponent(parts[3]);
+            }
+
+            generateImage();
+        }
+
+        // Generate examples
+        function generateExamples() {
+            const examples = [
+                { size: '300x200', bg: 'ff6b6b', text: 'ffffff', label: 'Red Background' },
+                { size: '400x300', bg: '4ecdc4', text: '333333', label: 'Teal Background' },
+                { size: '500x250', bg: '45b7d1', text: 'ffffff', label: 'Blue Background' },
+                { size: '350x350', bg: 'f9ca24', text: '333333', label: 'Square Yellow' },
+                { size: '600x200', bg: '6c5ce7', text: 'ffffff', label: 'Purple Banner' },
+                { size: '250x300', bg: 'a29bfe', text: '333333', label: 'Tall Rectangle' }
             ];
 
-            demos.forEach(demo => {
-                const canvas = document.getElementById(demo.id);
-                if (canvas) { // Ensure canvas exists before drawing
-                    drawPlaceholderOnCanvas(canvas, demo.width, demo.height, demo.bg, demo.color, demo.text);
-                }
+            const container = document.getElementById('examplesContainer');
+            
+            examples.forEach(example => {
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d');
+                
+                const [width, height] = example.size.split('x').map(Number);
+                canvas.width = width;
+                canvas.height = height;
+                canvas.style.maxWidth = '100%';
+                canvas.style.height = 'auto';
+                canvas.className = 'img-thumbnail';
+
+                // Draw example
+                ctx.fillStyle = '#' + example.bg;
+                ctx.fillRect(0, 0, width, height);
+                
+                ctx.fillStyle = '#' + example.text;
+                ctx.font = '16px Arial, sans-serif';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText(`${width} × ${height}`, width / 2, height / 2);
+
+                const col = document.createElement('div');
+                col.className = 'col-lg-4 col-md-6 mb-4';
+                col.innerHTML = `
+                    <div class="card h-100">
+                        <div class="card-body text-center">
+                            ${canvas.outerHTML}
+                            <h6 class="card-title mt-3">${example.label}</h6>
+                            <p class="card-text text-muted">${example.size}</p>
+                            <button class="btn btn-sm btn-outline-primary" onclick="loadExample('${example.size}', '${example.bg}', '${example.text}')">
+                                <i class="fas fa-eye me-1"></i>Use This
+                            </button>
+                        </div>
+                    </div>
+                `;
+                
+                container.appendChild(col);
             });
         }
 
-        /**
-         * Handles image generation from the interactive form.
-         * Displays the generated image and its URL on the page.
-         */
-        function generateImage() {
-            // Get values from form inputs
-            const width = parseInt(document.getElementById('width').value);
-            const height = parseInt(document.getElementById('height').value);
-            const bgColor = document.getElementById('bgColor').value;
-            const textColor = document.getElementById('textColor').value;
-            const customText = document.getElementById('customText').value;
-            const format = document.getElementById('format').value;
-
-            // Validate inputs (basic validation)
-            if (isNaN(width) || isNaN(height) || width < 50 || height < 50) {
-                alert('Please enter valid width and height (minimum 50px).');
-                return;
-            }
-
-            // Create a temporary canvas to draw the image
-            const tempCanvas = document.createElement('canvas');
-            drawPlaceholderOnCanvas(tempCanvas, width, height, bgColor, textColor, customText);
-
-            // Get the data URL from the temporary canvas
-            const dataUrl = tempCanvas.toDataURL(`image/${format}`);
-
-            // Construct the URL for direct access (for copy-pasting)
-            const baseUrl = window.location.origin + window.location.pathname;
-            const params = new URLSearchParams();
-            params.append('width', width);
-            params.append('height', height);
-            params.append('bg', bgColor);
-            params.append('color', textColor);
-            if (customText) {
-                params.append('text', customText);
-            }
-            params.append('format', format);
-            const generatedUrl = `${baseUrl}?${params.toString()}`;
-
-            // Display the generated image and URL in the result section
-            const resultDiv = document.getElementById('generatedResult');
-            resultDiv.innerHTML = `
-                <img src="${dataUrl}" alt="Generated Placeholder" class="mx-auto rounded-md shadow-lg border-2 border-blue-300 mb-4 max-w-full h-auto">
-                <div class="bg-gray-800 text-white text-sm md:text-base p-3 rounded-md break-all font-mono mb-4">
-                    ${generatedUrl}
-                </div>
-                <button onclick="copyToClipboard('${generatedUrl}')" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-lg shadow-md hover:shadow-lg transition-all duration-300 mr-2">
-                    Copy URL
-                </button>
-                <button onclick="downloadImage('${dataUrl}', '${format}')" class="bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded-lg shadow-md hover:shadow-lg transition-all duration-300">
-                    Download Image
-                </button>
-            `;
-            resultDiv.classList.remove('hidden'); // Show the result section
+        // Load example
+        function loadExample(size, bg, text) {
+            const [width, height] = size.split('x');
+            document.getElementById('width').value = width;
+            document.getElementById('height').value = height;
+            document.getElementById('bgColorText').value = bg;
+            document.getElementById('bgColor').value = '#' + bg;
+            document.getElementById('textColorText').value = text;
+            document.getElementById('textColor').value = '#' + text;
+            document.getElementById('customText').value = '';
+            
+            generateImage();
+            
+            // Scroll to generator
+            document.getElementById('generator').scrollIntoView({ behavior: 'smooth' });
         }
 
-        /**
-         * Copies text to the clipboard.
-         * @param {string} text - The text to copy.
-         */
-        function copyToClipboard(text) {
-            const textarea = document.createElement('textarea');
-            textarea.value = text;
-            document.body.appendChild(textarea);
-            textarea.select();
-            try {
-                document.execCommand('copy');
-                alert('URL copied to clipboard!'); // Using alert for simplicity, consider custom modal for production
-            } catch (err) {
-                console.error('Failed to copy text: ', err);
-                alert('Failed to copy URL. Please copy manually: ' + text);
-            }
-            document.body.removeChild(textarea);
-        }
-
-        /**
-         * Downloads the generated image.
-         * @param {string} dataUrl - The data URL of the image.
-         * @param {string} format - The format of the image (e.g., 'png', 'jpg').
-         */
-        function downloadImage(dataUrl, format) {
-            const link = document.createElement('a');
-            link.download = `placeholder.${format}`;
-            link.href = dataUrl;
-            document.body.appendChild(link); // Required for Firefox
-            link.click();
-            document.body.removeChild(link); // Clean up
-        }
-
-        /**
-         * Handles the initial page load. If URL parameters are present, it generates
-         * the image and redirects the browser to the image data URL. Otherwise, it
-         * displays the interactive generator page.
-         */
-        function handleInitialLoad() {
-            const params = getUrlParams();
-            const hasImageParams = params.width || params.height || params.bg || params.text || params.color;
-
-            if (hasImageParams) {
-                // If image parameters are present, generate the image and redirect
-                const width = params.width || 300;
-                const height = params.height || 200;
-                const bg = params.bg || 'cccccc'; // Default grey background for direct image access
-                const color = params.color || 'white';
-                const text = params.text || '';
-                const format = params.format || 'png';
-
-                const tempCanvas = document.createElement('canvas');
-                drawPlaceholderOnCanvas(tempCanvas, width, height, bg, color, text);
-                const dataUrl = tempCanvas.toDataURL(`image/${format}`);
-
-                // Redirect the browser to the data URL. This makes the URL itself become the image.
-                window.location.replace(dataUrl);
-            } else {
-                // If no image parameters, show the interactive generator page
-                document.getElementById('mainContent').classList.remove('hidden');
-                initDemoImages(); // Initialize demo images for the interactive page
-
-                // Populate base URL and example URLs for the API section
-                const baseUrl = window.location.origin + window.location.pathname;
-                document.getElementById('baseUrlDisplay').textContent = baseUrl;
-                document.getElementById('exampleUrl1').textContent = `${baseUrl}?width=400&height=300&bg=ff6b6b&text=Placeholder`;
-                document.getElementById('exampleUrl2').textContent = `${baseUrl}?width=500&height=400&bg=gradient&color=black&text=Beautiful%20Image`;
-                document.getElementById('exampleUrl3').textContent = `${baseUrl}?width=600&height=200&bg=2196f3&color=white&format=jpg`;
-            }
-        }
-
-        // Run the initial load handler when the DOM is fully loaded
-        document.addEventListener('DOMContentLoaded', handleInitialLoad);
+        // Responsive canvas sizing
+        window.addEventListener('resize', function() {
+            generateImage();
+        });
     </script>
 </body>
 </html>
