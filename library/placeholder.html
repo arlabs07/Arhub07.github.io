@@ -8,6 +8,7 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.3.1/styles/github-dark.min.css" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.3.1/highlight.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.30.1/min/vs/loader.min.js"></script>
     <style>
         body {
             background: #000000;
@@ -70,6 +71,28 @@
             margin-right: 0.5rem;
             flex-shrink: 0;
         }
+        #monacoEditorContainer {
+            height: 300px;
+            width: 100%;
+            border-radius: 0.5rem;
+            overflow: hidden;
+        }
+        .btn-responsive-text {
+            font-size: 0.875rem; /* Default text-sm */
+            padding-left: 1rem;
+            padding-right: 1rem;
+            padding-top: 0.5rem;
+            padding-bottom: 0.5rem;
+        }
+        @media (min-width: 640px) { /* sm breakpoint */
+            .btn-responsive-text {
+                font-size: 1rem; /* text-base */
+                padding-left: 1.5rem;
+                padding-right: 1.5rem;
+                padding-top: 0.75rem;
+                padding-bottom: 0.75rem;
+            }
+        }
     </style>
 </head>
 <body class="overflow-x-hidden">
@@ -92,7 +115,7 @@
             </div>
             <div class="text-center text-white z-10 max-w-4xl mx-auto py-12">
                 <h1 class="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-extrabold mb-6 sm:mb-8 gradient-text pulse-slow">SVG Placeholder</h1>
-                <p class="text-lg sm:text-xl md:text-2xl mb-8 sm:mb-12 max-w-3xl mx-auto leading-relaxed">Generate beautiful, lightweight SVG placeholder images with custom dimensions, colors, and text. Perfect for web development, design mockups, and prototyping.</p>
+                <p class="text-lg sm:text-xl md:text-2xl mb-8 sm:mb-12 max-w-3xl mx-auto leading-relaxed">Instantly generate high-quality, lightweight SVG, PNG, and JPG placeholder images for your web projects. Customize dimensions, colors, text, and icons with ease.</p>
                 <div class="flex flex-col sm:flex-row gap-4 justify-center">
                     <button onclick="document.getElementById('generator').scrollIntoView({behavior:'smooth'})" class="glass hover-lift px-6 py-3 sm:px-8 sm:py-4 rounded-full text-base sm:text-lg font-semibold transition-all duration-300 hover:bg-white hover:text-purple-600 focus:outline-none focus:ring-2 focus:ring-purple-400" aria-label="Start creating images by navigating to the generator section">
                         <i class="fas fa-rocket mr-2" aria-hidden="true"></i>Start Creating
@@ -128,7 +151,7 @@
                     <h2 id="generator-heading" class="text-4xl sm:text-5xl font-bold text-white mb-4 sm:mb-6 gradient-text">
                         <i class="fas fa-tools mr-4" aria-hidden="true"></i>Image Generator
                     </h2>
-                    <p class="text-lg sm:text-xl text-white max-w-2xl mx-auto">Create custom SVG placeholders with our powerful generator. Adjust dimensions, colors, and text to match your needs perfectly.</p>
+                    <p class="text-lg sm:text-xl text-white max-w-2xl mx-auto">Craft custom placeholder images instantly. Adjust dimensions, colors, text, and icons to perfectly fit your design and development needs.</p>
                 </div>
                 <div class="max-w-6xl mx-auto">
                     <div class="grid lg:grid-cols-2 gap-8 sm:gap-12 items-start">
@@ -157,26 +180,85 @@
                                     </label>
                                     <input type="text" id="text" value="400 × 300" placeholder="Custom text..." class="w-full p-2 sm:p-3 rounded-lg bg-white bg-opacity-20 text-white placeholder-gray-300 border border-white border-opacity-30 focus:border-purple-400 focus:outline-none transition-colors" aria-label="Text to display on the image">
                                 </div>
-                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <div>
+                                    <label for="backgroundType" class="block text-white mb-2 font-semibold">
+                                        <i class="fas fa-fill-drip mr-1" aria-hidden="true"></i>Background Type
+                                    </label>
+                                    <select id="backgroundType" class="w-full p-2 sm:p-3 rounded-lg bg-white bg-opacity-20 text-white border border-white border-opacity-30 focus:border-purple-400 focus:outline-none transition-colors" aria-label="Select background type">
+                                        <option value="solid">Solid Color</option>
+                                        <option value="gradient">Linear Gradient</option>
+                                    </select>
+                                </div>
+                                <div id="solidBgColorGroup" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                     <div>
-                                        <label for="bgColor" class="block text-white mb-2 font-semibold">
-                                            <i class="fas fa-fill-drip mr-1" aria-hidden="true"></i>Background
-                                        </label>
-                                        <input type="color" id="bgColor" value="#667eea" class="w-full h-10 sm:h-12 rounded-lg border border-white border-opacity-30 cursor-pointer focus:outline-none focus:ring-2 focus:ring-purple-400" aria-label="Background color of the image">
-                                    </div>
-                                    <div>
-                                        <label for="textColor" class="block text-white mb-2 font-semibold">
-                                            <i class="fas fa-pen mr-1" aria-hidden="true"></i>Text Color
-                                        </label>
-                                        <input type="color" id="textColor" value="#ffffff" class="w-full h-10 sm:h-12 rounded-lg border border-white border-opacity-30 cursor-pointer focus:outline-none focus:ring-2 focus:ring-purple-400" aria-label="Text color on the image">
+                                        <label for="bgColor" class="block text-white mb-2 font-semibold">Background Color</label>
+                                        <input type="color" id="bgColor" value="#667eea" class="w-full h-10 sm:h-12 rounded-lg border border-white border-opacity-30 cursor-pointer focus:outline-none focus:ring-2 focus:ring-purple-400" aria-label="Solid background color of the image">
                                     </div>
                                 </div>
+                                <div id="gradientBgColorGroup" class="grid grid-cols-1 sm:grid-cols-2 gap-4 hidden">
+                                    <div>
+                                        <label for="gradientColor1" class="block text-white mb-2 font-semibold">Gradient Color 1</label>
+                                        <input type="color" id="gradientColor1" value="#667eea" class="w-full h-10 sm:h-12 rounded-lg border border-white border-opacity-30 cursor-pointer focus:outline-none focus:ring-2 focus:ring-purple-400" aria-label="First color of the gradient background">
+                                    </div>
+                                    <div>
+                                        <label for="gradientColor2" class="block text-white mb-2 font-semibold">Gradient Color 2</label>
+                                        <input type="color" id="gradientColor2" value="#764ba2" class="w-full h-10 sm:h-12 rounded-lg border border-white border-opacity-30 cursor-pointer focus:outline-none focus:ring-2 focus:ring-purple-400" aria-label="Second color of the gradient background">
+                                    </div>
+                                    <div class="col-span-full">
+                                        <label for="gradientAngle" class="block text-white mb-2 font-semibold">Gradient Angle</label>
+                                        <input type="range" id="gradientAngle" min="0" max="360" value="90" class="w-full accent-purple-500 focus:outline-none focus:ring-2 focus:ring-purple-400" aria-label="Angle of the linear gradient">
+                                        <span id="gradientAngleValue" class="text-white font-semibold text-sm sm:text-base" aria-live="polite">90°</span>
+                                    </div>
+                                </div>
+                                <div>
+                                    <label for="textColor" class="block text-white mb-2 font-semibold">
+                                        <i class="fas fa-pen mr-1" aria-hidden="true"></i>Text Color
+                                    </label>
+                                    <input type="color" id="textColor" value="#ffffff" class="w-full p-2 sm:p-3 rounded-lg bg-white bg-opacity-20 text-white placeholder-gray-300 border border-white border-opacity-30 focus:border-purple-400 focus:outline-none transition-colors" aria-label="Text color on the image">
+                                    </div>
                                 <div>
                                     <label for="fontSize" class="block text-white mb-2 font-semibold">
                                         <i class="fas fa-text-height mr-1" aria-hidden="true"></i>Font Size
                                     </label>
                                     <input type="range" id="fontSize" min="12" max="72" value="24" class="w-full accent-purple-500 focus:outline-none focus:ring-2 focus:ring-purple-400" aria-label="Font size of the text on the image">
                                     <span id="fontSizeValue" class="text-white font-semibold text-sm sm:text-base" aria-live="polite">24px</span>
+                                </div>
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                    <div>
+                                        <label for="iconClass" class="block text-white mb-2 font-semibold">
+                                            <i class="fas fa-icons mr-1" aria-hidden="true"></i>Icon (Predefined)
+                                        </label>
+                                        <select id="iconClass" class="w-full p-2 sm:p-3 rounded-lg bg-white bg-opacity-20 text-white border border-white border-opacity-30 focus:border-purple-400 focus:outline-none transition-colors" aria-label="Select an icon to display">
+                                            <option value="">None</option>
+                                            <option value="star">Star</option>
+                                            <option value="heart">Heart</option>
+                                            <option value="check">Check</option>
+                                            <option value="times">Times</option>
+                                            <option value="user">User</option>
+                                            <option value="gear">Gear</option>
+                                            <option value="cloud">Cloud</option>
+                                            <option value="home">Home</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label for="customIconUnicode" class="block text-white mb-2 font-semibold">
+                                            Custom Icon Unicode
+                                        </label>
+                                        <input type="text" id="customIconUnicode" placeholder="e.g. &#xf005; or \uf005" class="w-full p-2 sm:p-3 rounded-lg bg-white bg-opacity-20 text-white placeholder-gray-300 border border-white border-opacity-30 focus:border-purple-400 focus:outline-none transition-colors" aria-label="Enter custom icon unicode">
+                                    </div>
+                                </div>
+                                <div>
+                                    <label for="iconSize" class="block text-white mb-2 font-semibold">
+                                        <i class="fas fa-magnifying-glass-plus mr-1" aria-hidden="true"></i>Icon Size
+                                    </label>
+                                    <input type="range" id="iconSize" min="10" max="100" value="40" class="w-full accent-purple-500 focus:outline-none focus:ring-2 focus:ring-purple-400" aria-label="Font size of the icon">
+                                    <span id="iconSizeValue" class="text-white font-semibold text-sm sm:text-base" aria-live="polite">40px</span>
+                                </div>
+                                <div>
+                                    <label for="iconColor" class="block text-white mb-2 font-semibold">
+                                        <i class="fas fa-palette mr-1" aria-hidden="true"></i>Icon Color
+                                    </label>
+                                    <input type="color" id="iconColor" value="#ffffff" class="w-full h-10 sm:h-12 rounded-lg border border-white border-opacity-30 cursor-pointer focus:outline-none focus:ring-2 focus:ring-purple-400" aria-label="Color of the icon">
                                 </div>
                                 <div>
                                     <label for="format" class="block text-white mb-2 font-semibold">
@@ -201,20 +283,20 @@
                             <div class="space-y-4">
                                 <div>
                                     <label for="generatedUrl" class="block text-white mb-2 font-semibold">
-                                        <i class="fas fa-link mr-1" aria-hidden="true"></i>Generated URL
+                                        <i class="fas fa-link mr-1" aria-hidden="true"></i>Generated Data URL
                                     </label>
                                     <div class="flex">
                                         <input type="text" id="generatedUrl" readonly class="flex-1 p-2 sm:p-3 rounded-l-lg bg-white bg-opacity-20 text-white border border-white border-opacity-30" aria-label="Generated image URL">
-                                        <button onclick="copyToClipboard()" class="px-4 py-2 sm:px-6 sm:py-3 bg-purple-600 hover:bg-purple-700 rounded-r-lg text-white font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-purple-400" aria-label="Copy URL to clipboard">
-                                            <i class="fas fa-copy" aria-hidden="true"></i>
+                                        <button onclick="copyToClipboard()" class="px-4 py-2 sm:px-6 sm:py-3 bg-purple-600 hover:bg-purple-700 rounded-r-lg text-white font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-purple-400 btn-responsive-text" aria-label="Copy URL to clipboard">
+                                            <i class="fas fa-copy" aria-hidden="true"></i>Copy
                                         </button>
                                     </div>
                                 </div>
                                 <div class="flex flex-col sm:flex-row gap-3">
-                                    <button onclick="downloadImage()" class="flex-1 bg-green-600 hover:bg-green-700 px-4 py-2 sm:px-6 sm:py-3 rounded-lg text-white font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-green-400" aria-label="Download generated image">
+                                    <button onclick="downloadImage()" class="flex-1 bg-green-600 hover:bg-green-700 px-4 py-2 sm:px-6 sm:py-3 rounded-lg text-white font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-green-400 btn-responsive-text" aria-label="Download generated image">
                                         <i class="fas fa-download mr-2" aria-hidden="true"></i>Download
                                     </button>
-                                    <button onclick="shareImage()" class="flex-1 bg-blue-600 hover:bg-blue-700 px-4 py-2 sm:px-6 sm:py-3 rounded-lg text-white font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-blue-400" aria-label="Share generated image URL">
+                                    <button onclick="shareImage()" class="flex-1 bg-blue-600 hover:bg-blue-700 px-4 py-2 sm:px-6 sm:py-3 rounded-lg text-white font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-blue-400 btn-responsive-text" aria-label="Share generated image URL">
                                         <i class="fas fa-share-alt mr-2" aria-hidden="true"></i>Share
                                     </button>
                                 </div>
@@ -229,21 +311,61 @@
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div>
                                 <h4 class="text-white font-semibold mb-2">HTML</h4>
-                                <pre class="bg-gray-900 p-4 rounded-lg text-sm overflow-x-auto"><code class="language-html" id="htmlCode">&lt;img src="https://arlabs07.github.io/Arhub07.github.io/library/placeholder.html#/400/300/667eea/ffffff/24/400%20%C3%97%20300/svg" alt="placeholder"&gt;</code></pre>
+                                <pre class="bg-gray-900 p-4 rounded-lg text-sm overflow-x-auto"><code class="language-html" id="htmlCode">&lt;img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0MDAiIGhlaWdodD0iMzAwIiB2aWV3Qm94PSIwIDAgNDAwIDMwMCI+PHJlY3Qgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgZmlsbD0iIzY2N2VlYSIvPjx0ZXh0IHg9IjUwJSIgeT0iNTAlIiBkb21pbmFudC1iYXNlbGluZT0ibWlkZGxlIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LWZhbWlseT0iQXJpYWwsIHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMjQiIGZpbGw9IiNmZmZmZmYiPjQwMCAmIzAyMTU7IDMwMDwvdGV4dD48L2N2Zz4=" alt="placeholder"&gt;</code></pre>
                             </div>
                             <div>
                                 <h4 class="text-white font-semibold mb-2">CSS</h4>
-                                <pre class="bg-gray-900 p-4 rounded-lg text-sm overflow-x-auto"><code class="language-css" id="cssCode">background-image: url('https://arlabs07.github.io/Arhub07.github.io/library/placeholder.html#/400/300/667eea/ffffff/24/400%20%C3%97%20300/svg');</code></pre>
+                                <pre class="bg-gray-900 p-4 rounded-lg text-sm overflow-x-auto"><code class="language-css" id="cssCode">background-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0MDAiIGhlaWdodD0iMzAwIiB2aWV3Qm94PSIwIDAgNDAwIDMwMCI+PHJlY3Qgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgZmlsbD0iIzY2N2VlYSIvPjx0ZXh0IHg9IjUwJSIgeT0iNTAlIiBkb21pbmFudC1iYXNlbGluZT0ibWlkZGxlIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LWZhbWlseT0iQXJpYWwsIHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMjQiIGZpbGw9IiNmZmZmZmYiPjQwMCAmIzAyMTU7IDMwMDwvdHh0PjwvZ3ZzPg==');</code></pre>
                             </div>
                             <div>
                                 <h4 class="text-white font-semibold mb-2">Markdown</h4>
-                                <pre class="bg-gray-900 p-4 rounded-lg text-sm overflow-x-auto"><code class="language-markdown" id="markdownCode">![Placeholder](https://arlabs07.github.io/Arhub07.github.io/library/placeholder.html#/400/300/667eea/ffffff/24/400%20%C3%97%20300/svg)</code></pre>
+                                <pre class="bg-gray-900 p-4 rounded-lg text-sm overflow-x-auto"><code class="language-markdown" id="markdownCode">![Placeholder](data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0MDAiIGhlaWdodD0iMzAwIiB2aWV3Qm94PSIwIDAgNDAwIDMwMCI+PHJlY3Qgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgZmlsbD0iIzY2N2VlYSIvPjx0ZXh0IHg9IjUwJSIgeT0iNTAlIiBkb21pbmFudC1iYXNlbGluZT0ibWlkZGxlIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LWZhbWlseT0iQXJpYWwsIHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMjQiIGZpbGw9IiNmZmZmZmYiPjQwMCAmIzAyMTU7IDMwMDwvdGV4dD48L2N2Zz4=)</code></pre>
                             </div>
                             <div>
                                 <h4 class="text-white font-semibold mb-2">React</h4>
-                                <pre class="bg-gray-900 p-4 rounded-lg text-sm overflow-x-auto"><code class="language-jsx" id="reactCode">&lt;img src="https://arlabs07.github.io/Arhub07.github.io/library/placeholder.html#/400/300/667eea/ffffff/24/400%20%C3%97%20300/svg" /&gt;</code></pre>
+                                <pre class="bg-gray-900 p-4 rounded-lg text-sm overflow-x-auto"><code class="language-jsx" id="reactCode">&lt;img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0MDAiIGhlaWdodD0iMzAwIiB2aWV3Qm94PSIwIDAgNDAwIDMwMCI+PHJlY3Qgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgZmlsbD0iIzY2N2VlYSIvPjx0ZXh0IHg9IjUwJSIgeT0iNTAlIiBkb21pbmFudC1iYXNlbGluZT0ibWlkZGxlIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LWZhbWlseT0iQXJpYWwsIHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMjQiIGZpbGw9IiNmZmZmZmYiPjQwMCAmIzAyMTU7IDMwMDwvdGV4dD48L2N2Zz4=" /&gt;</code></pre>
                             </div>
                         </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="display" class="min-h-screen flex items-center py-12 sm:py-20 px-4 sm:px-6 lg:px-8" role="region" aria-labelledby="display-heading">
+            <div class="container mx-auto max-w-4xl">
+                <div class="text-center mb-10 sm:mb-16">
+                    <h2 id="display-heading" class="text-4xl sm:text-5xl font-bold text-white mb-4 sm:mb-6 gradient-text">
+                        <i class="fas fa-desktop mr-4" aria-hidden="true"></i>Live Embedded Preview
+                    </h2>
+                    <p class="text-lg sm:text-xl text-white max-w-2xl mx-auto">Edit the HTML code below and click "Run Code" to see your image embedded in a simulated webpage.</p>
+                </div>
+                <div class="glass p-6 sm:p-8 rounded-2xl space-y-6">
+                    <div id="monacoEditorContainer" class="w-full rounded-lg overflow-hidden"></div>
+                    <div class="flex flex-col sm:flex-row gap-3 mt-4">
+                        <button onclick="runEmbeddedCode()" class="flex-1 bg-purple-600 hover:bg-purple-700 px-4 py-2 sm:px-6 sm:py-3 rounded-lg text-white font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-purple-400 btn-responsive-text" aria-label="Run the HTML code in the editor">
+                            <i class="fas fa-play mr-2" aria-hidden="true"></i>Run Code
+                        </button>
+                        <button onclick="copyMonacoCode()" class="flex-1 bg-yellow-600 hover:bg-yellow-700 px-4 py-2 sm:px-6 sm:py-3 rounded-lg text-white font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-yellow-400 btn-responsive-text" aria-label="Copy the HTML code from the editor">
+                            <i class="fas fa-code mr-2" aria-hidden="true"></i>Copy Embedded HTML
+                        </button>
+                    </div>
+                    <div class="mt-4">
+                        <label for="newTabGeneratedUrl" class="block text-white mb-2 font-semibold">
+                            <i class="fas fa-link mr-1" aria-hidden="true"></i>Preview Link (Data URL)
+                        </label>
+                        <div class="flex">
+                            <input type="text" id="newTabGeneratedUrl" readonly class="flex-1 p-2 sm:p-3 rounded-l-lg bg-white bg-opacity-20 text-white border border-white border-opacity-30 text-sm sm:text-base" aria-label="Generated URL for new tab preview">
+                            <button onclick="copyNewTabUrlToClipboard()" class="px-4 py-2 sm:px-6 sm:py-3 bg-purple-600 hover:bg-purple-700 rounded-r-lg text-white font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-purple-400 btn-responsive-text" aria-label="Copy new tab URL to clipboard">
+                                <i class="fas fa-copy" aria-hidden="true"></i>Copy Link
+                            </button>
+                        </div>
+                        <button onclick="openNewTabPreview()" class="mt-3 w-full bg-blue-600 hover:bg-blue-700 px-4 py-2 sm:px-6 sm:py-3 rounded-lg text-white font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-blue-400 btn-responsive-text" aria-label="Open the embedded HTML in a new tab">
+                            <i class="fas fa-external-link-alt mr-2" aria-hidden="true"></i>Open Preview in New Tab
+                        </button>
+                    </div>
+                    <h3 class="text-xl font-bold text-white mb-4 mt-8">Preview Output</h3>
+                    <div class="bg-gray-800 rounded-lg p-4 flex justify-center items-center min-h-[200px] overflow-hidden">
+                        <iframe id="imageDisplayFrame" class="w-full h-auto min-h-[150px] border-0 rounded-lg shadow-md" style="aspect-ratio: 4/3;" sandbox="allow-scripts allow-same-origin"></iframe>
                     </div>
                 </div>
             </div>
@@ -259,35 +381,38 @@
                 </div>
                 <div class="glass p-6 sm:p-8 rounded-2xl space-y-6">
                     <h3 class="text-2xl font-bold text-white mb-4">Getting Started</h3>
-                    <p class="text-gray-300 leading-relaxed">SVG Placeholder allows you to quickly generate lightweight SVG images directly via URL parameters. This is ideal for development, prototyping, and mockups where you need a visual placeholder without creating actual image files.</p>
+                    <p class="text-gray-300 leading-relaxed">SVG Placeholder is a client-side tool designed to quickly generate lightweight placeholder images directly in your browser. This is ideal for web development, design mockups, and prototyping, allowing you to visualize layouts without needing actual image files or server-side dependencies.</p>
 
-                    <h3 class="text-2xl font-bold text-white mb-4">How to Use</h3>
+                    <h3 class="text-2xl font-bold text-white mb-4">How to Use the Generator</h3>
                     <ol class="list-decimal list-inside text-gray-300 space-y-2">
-                        <li><strong>Access the Generator:</strong> Navigate to the <a href="#generator" class="text-purple-300 hover:underline focus:outline-none focus:ring-2 focus:ring-purple-400">Image Generator</a> section on this page.</li>
-                        <li><strong>Customize Parameters:</strong> Adjust the width, height, text, background color, text color, and font size using the provided controls.</li>
-                        <li><strong>Preview & Copy URL:</strong> The "Created" preview will update instantly. Copy the generated URL from the "Generated URL" field.</li>
-                        <li><strong>Download or Share:</strong> You can download the image in SVG, PNG, or JPG format, or share the URL directly.</li>
+                        <li><strong>Customize Your Image:</strong> In the "Image Generator" section, use the controls to set your desired `width`, `height`, `text`, `background type` (solid or gradient), `colors`, `font size`, and choose a predefined `icon` or input a `custom icon unicode`.</li>
+                        <li><strong>Preview:</strong> The "Created" section provides an instant visual preview of your generated image.</li>
+                        <li><strong>Get Data URL:</strong> The "Generated Data URL" field will display the full `data:image/...` URL. You can copy this URL directly for use in your projects.</li>
+                        <li><strong>Download:</strong> Use the "Download" button to save your image in SVG, PNG, or JPG format.</li>
+                        <li><strong>Share:</strong> The "Share" button allows you to share the generated image's Data URL (if supported by your browser/OS).</li>
                     </ol>
 
-                    <h3 class="text-2xl font-bold text-white mb-4">API Reference (Hash Parameters)</h3>
-                    <p class="text-gray-300 leading-relaxed mb-4">The core functionality of SVG Placeholder is controlled via URL hash parameters. The base URL is:</p>
-                    <pre class="bg-gray-900 p-4 rounded-lg text-sm overflow-x-auto mb-6"><code class="language-html">https://arlabs07.github.io/Arhub07.github.io/library/placeholder.html#</code></pre>
-                    <p class="text-gray-300 leading-relaxed mb-4">Append parameters in the following order, separated by <code>/</code>. Text should be URL-encoded (e.g., <code>%20</code> for space).</p>
+                    <h3 class="text-2xl font-bold text-white mb-4">Using the Live Embedded Preview</h3>
+                    <p class="text-gray-300 leading-relaxed">The "Live Embedded Preview" section provides an interactive code editor (powered by Monaco Editor) where you can experiment with embedding your generated image into HTML. </p>
+                    <ol class="list-decimal list-inside text-gray-300 space-y-2">
+                        <li><strong>Edit Code:</strong> The editor is pre-populated with basic HTML to display your generated image. You can modify this HTML to test different layouts or attributes.</li>
+                        <li><strong>Run Code:</strong> Click the "Run Code" button to render the HTML from the editor in the iframe below it, showing a live preview of your changes.</li>
+                        <li><strong>Copy Embedded HTML:</strong> Use the "Copy Embedded HTML" button to copy the entire content of the Monaco editor to your clipboard, making it easy to transfer your tested HTML into your own development environment.</li>
+                        <li><strong>Get Preview Link:</strong> The "Preview Link (Data URL)" field provides a full `data:text/html;base64` URL representing the current content of the embedded preview.</li>
+                        <li><strong>Open Preview in New Tab:</strong> Click this button to open the `data:text/html;base64` URL in a new browser tab, allowing you to see the embedded HTML in a standalone browser window.</li>
+                    </ol>
 
-                    <h4 class="text-xl font-bold text-white mb-2">Available Hash Parameters:</h4>
-                    <ul class="list-disc list-inside text-gray-300 space-y-2 mb-6 api-formats">
-                        <li><code>/{width}</code></li>
-                        <li><code>/{height}</code></li>
-                        <li><code>/{bgColorHex}</code> (e.g., <code>667eea</code>, no <code>#</code>)</li>
-                        <li><code>/{textColorHex}</code> (e.g., <code>ffffff</code>, no <code>#</code>)</li>
-                        <li><code>/{fontSize}</code></li>
-                        <li><code>/{encodedText}</code> (e.g., <code>Hello%20World</code>)</li>
-                        <li><code>/{format}</code> (<code>svg</code>, <code>png</code>, <code>jpg</code>)</li>
+                    <h3 class="text-2xl font-bold text-white mb-4">Data URL Formats</h3>
+                    <p class="text-gray-300 leading-relaxed mb-4">The core output of this generator is a <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/Data_URLs" target="_blank" class="text-purple-300 hover:underline focus:outline-none focus:ring-2 focus:ring-purple-400">Data URL</a>. This format embeds the image data directly into the URL string itself, eliminating the need for separate image files or external server requests.</p>
+                    <pre class="bg-gray-900 p-4 rounded-lg text-sm overflow-x-auto mb-6"><code class="language-html">data:image/{format};base64,...</code></pre>
+                    <p class="text-gray-300 leading-relaxed mt-4">The `{format}` can be `svg+xml`, `png`, or `jpeg`, depending on your selection. The `base64,...` part is the base64-encoded representation of your image data.</p>
+                    <p class="text-gray-300 leading-relaxed mt-4">You can use these Data URLs directly in:</p>
+                    <ul class="list-disc list-inside text-gray-300 space-y-2">
+                        <li>HTML `&lt;img src="..."&gt;` tags</li>
+                        <li>CSS `background-image: url(...)` properties</li>
+                        <li>Markdown `![alt text](data:image/...)` syntax</li>
+                        <li>React `&lt;img src="..." /&gt;` components</li>
                     </ul>
-                    <p class="text-gray-300 leading-relaxed">Example URL for a 400x300 image with custom text and colors:</p>
-                    <pre class="bg-gray-900 p-4 rounded-lg text-sm overflow-x-auto mb-6"><code class="language-html">https://arlabs07.github.io/Arhub07.github.io/library/placeholder.html#/400/300/667eea/ffffff/24/Hello%20World/svg</code></pre>
-                    <p class="text-gray-300 leading-relaxed mt-4">When this URL is visited, the page will load and automatically configure the generator with these parameters, displaying the image in the "Created" preview.</p>
-                    <p class="text-gray-300 leading-relaxed mt-4"><strong>Note:</strong> Due to hosting limitations on static files (like GitHub Pages), this service cannot directly serve *only* the image content when you visit a URL with parameters. The URL will always load the full generator page, which then renders the image based on the parameters in the hash. If you require a service that serves only the image directly, a server-side component would be necessary.</p>
                 </div>
             </div>
         </section>
@@ -306,19 +431,19 @@
                     <div class="space-y-4">
                         <div class="border-b border-gray-700 pb-4">
                             <h4 class="text-xl font-semibold text-white mb-2">Q: Why is my image not showing in the preview?</h4>
-                            <p class="text-gray-300">A: This can happen if the text contains special characters that are not properly encoded. Ensure your browser is up-to-date. If the issue persists, try simplifying the text or using only standard alphanumeric characters.</p>
+                            <p class="text-gray-300">A: This can happen if the text contains special characters that are not properly encoded, or if the dimensions are extremely small. Ensure your browser is up-to-date and try simplifying the text or increasing dimensions if issues persist.</p>
                         </div>
                         <div class="border-b border-gray-700 pb-4">
                             <h4 class="text-xl font-semibold text-white mb-2">Q: Can I use custom fonts?</h4>
-                            <p class="text-gray-300">A: Currently, SVG Placeholder uses a default web-safe font (Arial, sans-serif) to ensure broad compatibility across all browsers and environments. Custom font support is not available at this time.</p>
+                            <p class="text-gray-300">A: Currently, SVG Placeholder uses a default web-safe font (Arial, sans-serif) for main text to ensure broad compatibility. Icons are embedded as SVG paths or Unicode characters, ensuring they render correctly without external font loading.</p>
                         </div>
                         <div class="border-b border-gray-700 pb-4">
                             <h4 class="text-xl font-semibold text-white mb-2">Q: What are the limitations on image size?</h4>
-                            <p class="text-gray-300">A: While there are no strict server-side limits, excessively large dimensions (e.g., thousands of pixels) may impact browser performance or cause rendering issues due to client-side SVG rendering capabilities. We recommend staying within reasonable web design dimensions.</p>
+                            <p class="text-gray-300">A: While there are no strict limitations on dimensions for client-side SVG generation, excessively large dimensions (e.g., thousands of pixels) may impact browser performance or cause rendering issues. We recommend staying within reasonable web design dimensions for optimal performance.</p>
                         </div>
                         <div class="border-b border-gray-700 pb-4">
-                            <h4 class="text-xl font-semibold text-white mb-2">Q: Is it truly free to use?</h4>
-                            <p class="text-gray-300">A: Yes, SVG Placeholder is completely free to use for personal and commercial projects. There are no hidden fees or subscriptions.</p>
+                            <h4 class="text-xl font-semibold text-white mb-2">Q: Is SVG Placeholder truly free to use?</h4>
+                            <p class="text-gray-300">A: Yes, SVG Placeholder is completely free to use for both personal and commercial projects. There are no hidden fees, subscriptions, or watermarks.</p>
                         </div>
                     </div>
 
@@ -339,7 +464,7 @@
                 <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 sm:gap-8" id="examplesGrid">
                 </div>
                 <div class="text-center mt-8 sm:mt-12">
-                    <button id="loadMore" class="glass hover-lift px-6 py-3 sm:px-8 sm:py-4 rounded-full text-base sm:text-lg font-semibold text-white transition-all duration-300 hover:bg-white hover:text-purple-600 focus:outline-none focus:ring-2 focus:ring-purple-400" aria-label="Load more example images">
+                    <button id="loadMore" class="glass hover-lift px-6 py-3 sm:px-8 sm:py-4 rounded-full text-base sm:text-lg font-semibold text-white transition-all duration-300 hover:bg-white hover:text-purple-600 focus:outline-none focus:ring-2 focus:ring-purple-400 btn-responsive-text" aria-label="Load more example images">
                         <i class="fas fa-plus mr-2" aria-hidden="true"></i>Load More Examples
                     </button>
                 </div>
@@ -356,14 +481,14 @@
                     </h3>
                     <p class="text-gray-300 mb-4 text-sm sm:text-base">The ultimate SVG placeholder generator for developers and designers. Fast, customizable, and always free.</p>
                     <div class="flex space-x-4">
-                        <a href="#" class="text-white hover:text-purple-300 transition-colors focus:outline-none focus:ring-2 focus:ring-purple-400 rounded-md p-1" aria-label="Visit our GitHub page">
-                            <i class="fab fa-github text-xl sm:text-2xl" aria-hidden="true"></i>
+                        <a href="#" class="text-white hover:text-purple-300 transition-colors focus:outline-none focus:ring-2 focus:ring-purple-400 rounded-md p-1" aria-label="Visit our YouTube channel">
+                            <i class="fab fa-youtube text-xl sm:text-2xl" aria-hidden="true"></i>
                         </a>
-                        <a href="#" class="text-white hover:text-purple-300 transition-colors focus:outline-none focus:ring-2 focus:ring-purple-400 rounded-md p-1" aria-label="Visit our Twitter page">
-                            <i class="fab fa-twitter text-xl sm:text-2xl" aria-hidden="true"></i>
+                        <a href="#" class="text-white hover:text-purple-300 transition-colors focus:outline-none focus:ring-2 focus:ring-purple-400 rounded-md p-1" aria-label="Visit our Blog">
+                            <i class="fas fa-blog text-xl sm:text-2xl" aria-hidden="true"></i>
                         </a>
-                        <a href="#" class="text-white hover:text-purple-300 transition-colors focus:outline-none focus:ring-2 focus:ring-purple-400 rounded-md p-1" aria-label="Visit our LinkedIn page">
-                            <i class="fab fa-linkedin text-xl sm:text-2xl" aria-hidden="true"></i>
+                        <a href="#" class="text-white hover:text-purple-300 transition-colors focus:outline-none focus:ring-2 focus:ring-purple-400 rounded-md p-1" aria-label="Visit our Articles/Archive">
+                            <i class="fas fa-book text-xl sm:text-2xl" aria-hidden="true"></i>
                         </a>
                     </div>
                 </div>
@@ -385,18 +510,14 @@
                 <div>
                     <h4 class="text-base sm:text-lg font-semibold text-white mb-4">API Formats</h4>
                     <ul class="space-y-2 text-gray-300 text-xs sm:text-sm api-formats">
-                        <li><code class="bg-gray-800 px-2 py-1 rounded">/{width}</code></li>
-                        <li><code class="bg-gray-800 px-2 py-1 rounded">/{height}</code></li>
-                        <li><code class="bg-gray-800 px-2 py-1 rounded">/{bgColorHex}</code></li>
-                        <li><code class="bg-gray-800 px-2 py-1 rounded">/{textColorHex}</code></li>
-                        <li><code class="bg-gray-800 px-2 py-1 rounded">/{fontSize}</code></li>
-                        <li><code class="bg-gray-800 px-2 py-1 rounded">/{encodedText}</code></li>
-                        <li><code class="bg-gray-800 px-2 py-1 rounded">/{format}</code></li>
+                        <li><code class="bg-gray-800 px-2 py-1 rounded">data:image/svg+xml;base64,...</code></li>
+                        <li><code class="bg-gray-800 px-2 py-1 rounded">data:image/png;base64,...</code></li>
+                        <li><code class="bg-gray-800 px-2 py-1 rounded">data:image/jpeg;base64,...</code></li>
                     </ul>
                 </div>
             </div>
             <div class="border-t border-gray-700 pt-8 text-center">
-                <p class="text-gray-400 text-sm">&copy; 2024 SVGPlaceholder. Made with <i class="fas fa-heart text-red-500" aria-hidden="true"></i> for developers worldwide.</p>
+                <p class="text-gray-400 text-sm">&copy; 2024 SVGPlaceholder. Made with <i class="fas fa-heart text-white" aria-hidden="true"></i> for developers worldwide.</p>
             </div>
         </div>
     </footer>
@@ -406,54 +527,123 @@
     </div>
 
     <script>
+        const faIconSvgMap = {
+            'star': '<path d="M50 0L61.8 35.3H98.2L68.2 57.7L79.9 92.9L50 70.6L20.1 92.9L31.8 57.7L1.8 35.3H38.2L50 0Z"/>',
+            'heart': '<path d="M50 90C25 70 0 50 0 30C0 15 15 0 30 0C40 0 50 10 50 10C50 10 60 0 70 0C85 0 100 15 100 30C100 50 75 70 50 90Z"/>',
+            'check': '<path d="M85 20L40 65L15 40L5 50L40 85L95 30Z"/>',
+            'times': '<path d="M85 15L50 50L85 85L75 95L40 60L5 95L-5 85L30 50L-5 15L5 5L40 40L75 5L85 15Z"/>',
+            'user': '<path d="M50 0A25 25 0 1 0 50 50A25 25 0 1 0 50 0ZM75 75C75 60 65 50 50 50C35 50 25 60 25 75V100H75V75Z"/>',
+            'gear': '<path d="M50 0L60 10L75 5L85 20L95 25L90 40L100 50L90 60L95 75L85 80L75 95L60 90L50 100L40 90L25 95L15 80L5 75L10 60L0 50L10 40L5 25L15 20L25 5L40 10L50 0ZM50 25A25 25 0 1 0 50 75A25 25 0 1 0 50 25Z"/>',
+            'cloud': '<path d="M85 50C85 35 70 25 55 25C45 10 30 10 20 25C5 25 0 40 0 50C0 65 15 75 30 75H85C95 75 100 65 100 50Z"/>',
+            'home': '<path d="M50 0L0 50H15V100H85V50H100L50 0ZM40 60V90H60V60H40Z"/>'
+        };
+
         let examples = [];
         let currentExampleIndex = 0;
         const exampleTemplates = [
-            { width: 400, height: 300, bg: '667eea', text: '400 × 300', textColor: 'ffffff', fontSize: 24 },
-            { width: 800, height: 600, bg: '764ba2', text: 'Desktop', textColor: 'ffffff', fontSize: 32 },
-            { width: 375, height: 812, bg: 'ff6b6b', text: 'Mobile', textColor: 'ffffff', fontSize: 28 },
-            { width: 1920, height: 1080, bg: '4ecdc4', text: 'Full HD', textColor: 'ffffff', fontSize: 48 },
-            { width: 300, height: 250, bg: '45b7d1', text: 'Banner', textColor: 'ffffff', fontSize: 20 },
-            { width: 150, height: 150, bg: 'f39c12', text: 'Avatar', textColor: '333333', fontSize: 18 },
-            { width: 1200, height: 630, bg: 'e74c3c', text: 'Social Media', textColor: 'ffffff', fontSize: 36 },
-            { width: 500, height: 500, bg: '9b59b6', text: 'Square', textColor: 'ffffff', fontSize: 32 },
-            { width: 728, height: 90, bg: '2ecc71', text: 'Leaderboard', textColor: 'ffffff', fontSize: 16 },
-            { width: 320, height:480, bg: '34495e', text: 'Portrait', textColor: 'ffffff', fontSize: 24 },
-            { width: 640, height: 360, bg: 'e67e22', text: '16:9', textColor: 'ffffff', fontSize: 28 },
-            { width: 200, height: 300, bg: '1abc9c', text: 'Card', textColor: 'ffffff', fontSize: 20 },
-            { width: 1024, height: 768, bg: '8e44ad', text: 'Tablet', textColor: 'ffffff', fontSize: 30 },
-            { width: 100, height: 100, bg: 'd35400', text: 'Icon', textColor: 'ffffff', fontSize: 12 },
-            { width: 1600, height: 900, bg: '27ae60', text: 'Widescreen', textColor: 'ffffff', fontSize: 40 },
-            { width: 250, height: 250, bg: 'f1c40f', text: 'Thumbnail', textColor: '333333', fontSize: 18 }
+            { width: 400, height: 300, bgType: 'solid', bgColor: '667eea', gradColor1: '', gradColor2: '', gradAngle: 90, text: '400 × 300', textColor: 'ffffff', fontSize: 24, iconClass: '', customIconUnicode: '', iconSize: 40, iconColor: '#ffffff' },
+            { width: 800, height: 600, bgType: 'gradient', bgColor: '', gradColor1: '764ba2', gradColor2: '4ecdc4', gradAngle: 45, text: 'Gradient BG', textColor: 'ffffff', fontSize: 32, iconClass: '', customIconUnicode: '', iconSize: 40, iconColor: '#ffffff' },
+            { width: 375, height: 812, bgType: 'solid', bgColor: 'ff6b6b', gradColor1: '', gradColor2: '', gradAngle: 90, text: 'Mobile', textColor: 'ffffff', fontSize: 28, iconClass: 'heart', customIconUnicode: '', iconSize: 50, iconColor: '#ffdd00' },
+            { width: 1920, height: 1080, bgType: 'solid', bgColor: '4ecdc4', gradColor1: '', gradColor2: '', gradAngle: 90, text: 'Full HD', textColor: 'ffffff', fontSize: 48, iconClass: '', customIconUnicode: '', iconSize: 40, iconColor: '#ffffff' },
+            { width: 300, height: 250, bgType: 'gradient', bgColor: '', gradColor1: '45b7d1', gradColor2: '2ecc71', gradAngle: 135, text: 'Banner', textColor: 'ffffff', fontSize: 20, iconClass: 'star', customIconUnicode: '', iconSize: 30, iconColor: '#ffff00' },
+            { width: 150, height: 150, bgType: 'solid', bgColor: 'f39c12', gradColor1: '', gradColor2: '', gradAngle: 90, text: 'Avatar', textColor: '333333', fontSize: 18, iconClass: 'user', customIconUnicode: '', iconSize: 30, iconColor: '#ffffff' },
+            { width: 1200, height: 630, bgType: 'solid', bgColor: 'e74c3c', gradColor1: '', gradColor2: '', gradAngle: 90, text: 'Social Media', textColor: 'ffffff', fontSize: 36, iconClass: 'check', customIconUnicode: '', iconSize: 45, iconColor: '#00ff00' },
+            { width: 500, height: 500, bgType: 'gradient', bgColor: '', gradColor1: '9b59b6', gradColor2: '8e44ad', gradAngle: 0, text: 'Square', textColor: 'ffffff', fontSize: 32, iconClass: '', customIconUnicode: '', iconSize: 40, iconColor: '#ffffff' },
+            { width: 728, height: 90, bgType: 'solid', bgColor: '2ecc71', gradColor1: '', gradColor2: '', gradAngle: 90, text: 'Leaderboard', textColor: 'ffffff', fontSize: 16, iconClass: '', customIconUnicode: '', iconSize: 40, iconColor: '#ffffff' },
+            { width: 320, height:480, bgType: 'solid', bgColor: '34495e', gradColor1: '', gradColor2: '', gradAngle: 90, text: 'Portrait', textColor: 'ffffff', fontSize: 24, iconClass: 'home', customIconUnicode: '', iconSize: 35, iconColor: '#eeeeee' },
+            { width: 640, height: 360, bgType: 'gradient', bgColor: '', gradColor1: 'e67e22', gradColor2: 'd35400', gradAngle: 270, text: '16:9', textColor: 'ffffff', fontSize: 28, iconClass: '', customIconUnicode: '', iconSize: 40, iconColor: '#ffffff' },
+            { width: 200, height: 300, bgType: 'solid', bgColor: '1abc9c', gradColor1: '', gradColor2: '', gradAngle: 90, text: 'Card', textColor: 'ffffff', fontSize: 20, iconClass: 'cloud', customIconUnicode: '', iconSize: 30, iconColor: '#ffffff' },
+            { width: 1024, height: 768, bgType: 'solid', bgColor: '8e44ad', gradColor1: '', gradColor2: '', gradAngle: 90, text: 'Tablet', textColor: 'ffffff', fontSize: 30, iconClass: '', customIconUnicode: '', iconSize: 40, iconColor: '#ffffff' },
+            { width: 100, height: 100, bgType: 'solid', bgColor: 'd35400', gradColor1: '', gradColor2: '', gradAngle: 90, text: 'Icon', textColor: 'ffffff', fontSize: 12, iconClass: 'gear', customIconUnicode: '', iconSize: 20, iconColor: '#cccccc' },
+            { width: 1600, height: 900, bgType: 'gradient', bgColor: '', gradColor1: '27ae60', gradColor2: '1abc9c', gradAngle: 90, text: 'Widescreen', textColor: 'ffffff', fontSize: 40, iconClass: '', customIconUnicode: '', iconSize: 40, iconColor: '#ffffff' },
+            { width: 250, height: 250, bgType: 'solid', bgColor: 'f1c40f', gradColor1: '', gradColor2: '', gradAngle: 90, text: 'Thumbnail', textColor: '333333', fontSize: 18, iconClass: 'times', customIconUnicode: '', iconSize: 30, iconColor: '#ff0000' }
         ];
 
-        function generateSVG(width, height, text, bgColor, textColor, fontSize) {
+        let monacoEditor;
+
+        function generateSVG(width, height, text, bgType, bgColor, gradColor1, gradColor2, gradAngle, textColor, fontSize, iconClass, customIconUnicode, iconSize, iconColor) {
             width = Math.max(1, parseInt(width) || 400);
             height = Math.max(1, parseInt(height) || 300);
             const cleanBgColor = bgColor.startsWith('#') ? bgColor.substring(1) : bgColor;
+            const cleanGradColor1 = gradColor1.startsWith('#') ? gradColor1.substring(1) : gradColor1;
+            const cleanGradColor2 = gradColor2.startsWith('#') ? gradColor2.substring(1) : gradColor2;
             const cleanTextColor = textColor.startsWith('#') ? textColor.substring(1) : textColor;
+            const cleanIconColor = iconColor.startsWith('#') ? iconColor.substring(1) : iconColor;
+            
+            let backgroundFill;
+            let defsContent = '';
+            if (bgType === 'gradient') {
+                const angleRad = gradAngle * Math.PI / 180;
+                const x1 = Math.round(50 + Math.sin(angleRad + Math.PI) * 50);
+                const y1 = Math.round(50 + Math.cos(angleRad + Math.PI) * 50);
+                const x2 = Math.round(50 + Math.sin(angleRad) * 50);
+                const y2 = Math.round(50 + Math.cos(angleRad) * 50);
 
-            return `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}"><rect width="100%" height="100%" fill="#${cleanBgColor}"/><text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" font-family="Arial, sans-serif" font-size="${fontSize}" fill="#${cleanTextColor}">${text}</text></svg>`;
+                defsContent = `<linearGradient id="bgGradient" x1="${x1}%" y1="${y1}%" x2="${x2}%" y2="${y2}%">
+                                <stop offset="0%" stop-color="#${cleanGradColor1}" />
+                                <stop offset="100%" stop-color="#${cleanGradColor2}" />
+                            </linearGradient>`;
+                backgroundFill = 'url(#bgGradient)';
+            } else {
+                backgroundFill = `#${cleanBgColor}`;
+            }
+
+            let svgContent = `<rect width="100%" height="100%" fill="${backgroundFill}"/>`;
+
+            let iconSvgPath = '';
+            let iconText = '';
+            if (customIconUnicode) {
+                iconText = customIconUnicode;
+            } else if (iconClass && faIconSvgMap[iconClass]) {
+                iconSvgPath = faIconSvgMap[iconClass];
+            }
+
+            if (iconSvgPath || iconText) {
+                const iconViewBoxSize = 100;
+                const scale = iconSize / iconViewBoxSize;
+                const translateX = (width / 2) - (iconSize / 2);
+                const translateY = (height / 2) - (iconSize / 2);
+                
+                svgContent += `<g transform="translate(${translateX}, ${translateY}) scale(${scale})">
+                                    <svg x="0" y="0" width="${iconViewBoxSize}" height="${iconViewBoxSize}" viewBox="0 0 ${iconViewBoxSize} ${iconViewBoxSize}">
+                                        ${iconSvgPath ? `<path fill="#${cleanIconColor}" d="${iconSvgPath.match(/d="([^"]*)"/)[1]}"/>` : `<text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" font-family="'Font Awesome 6 Free'" font-weight="900" font-size="${iconViewBoxSize}" fill="#${cleanIconColor}">${iconText}</text>`}
+                                    </svg>
+                                </g>`;
+            }
+            
+            svgContent += `<text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" font-family="Arial, sans-serif" font-size="${fontSize}" fill="#${cleanTextColor}">${text}</text>`;
+
+            return `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}">${defsContent ? `<defs>${defsContent}</defs>` : ''}${svgContent}</svg>`;
         }
 
-        function updatePreview() {
+        async function updatePreview() {
             const width = document.getElementById('width').value || 400;
             const height = document.getElementById('height').value || 300;
             const text = document.getElementById('text').value || `${width} × ${height}`;
+            const backgroundType = document.getElementById('backgroundType').value;
             const bgColor = document.getElementById('bgColor').value;
+            const gradientColor1 = document.getElementById('gradientColor1').value;
+            const gradientColor2 = document.getElementById('gradientColor2').value;
+            const gradientAngle = document.getElementById('gradientAngle').value;
             const textColor = document.getElementById('textColor').value;
             const fontSize = document.getElementById('fontSize').value;
+            const iconClass = document.getElementById('iconClass').value;
+            const customIconUnicode = document.getElementById('customIconUnicode').value;
+            const iconSize = document.getElementById('iconSize').value;
+            const iconColor = document.getElementById('iconColor').value;
             const format = document.getElementById('format').value;
 
             document.getElementById('fontSizeValue').textContent = fontSize + 'px';
+            document.getElementById('iconSizeValue').textContent = iconSize + 'px';
+            document.getElementById('gradientAngleValue').textContent = gradientAngle + '°';
 
-            const svg = generateSVG(width, height, text, bgColor, textColor, fontSize);
+            const svg = generateSVG(width, height, text, backgroundType, bgColor, gradientColor1, gradientColor2, gradientAngle, textColor, fontSize, iconClass, customIconUnicode, iconSize, iconColor);
             
-            let encodedSvg;
+            let dataUrlForPreview;
             try {
-                encodedSvg = btoa(unescape(encodeURIComponent(svg)));
+                dataUrlForPreview = `data:image/svg+xml;base64,${btoa(unescape(encodeURIComponent(svg)))}`;
             } catch (e) {
-                console.error("Error encoding SVG for data URL:", e);
+                console.error("Error encoding SVG for data URL preview:", e);
                 showNotification("Error generating image preview. Text might contain unsupported characters.", "error");
                 document.getElementById('previewImg').src = "";
                 document.getElementById('generatedUrl').value = "Error: Encoding failed";
@@ -461,24 +651,115 @@
                 document.getElementById('cssCode').textContent = "Error: Encoding failed";
                 document.getElementById('markdownCode').textContent = "Error: Encoding failed";
                 document.getElementById('reactCode').textContent = "Error: Encoding failed";
+                if (monacoEditor) monacoEditor.setValue("<!-- Error: Encoding failed -->");
                 hljs.highlightAll();
                 return;
             }
 
-            const dataUrl = `data:image/svg+xml;base64,${encodedSvg}`;
-            document.getElementById('previewImg').src = dataUrl;
+            document.getElementById('previewImg').src = dataUrlForPreview;
 
-            const baseUrl = 'https://arlabs07.github.io/Arhub07.github.io/library/placeholder.html';
-            const encodedText = encodeURIComponent(text);
-            const url = `${baseUrl}#/${width}/${height}/${bgColor.replace('#', '')}/${textColor.replace('#', '')}/${fontSize}/${encodedText}/${format}`;
-            document.getElementById('generatedUrl').value = url;
+            let finalDataUrl;
+            if (format === 'svg') {
+                finalDataUrl = dataUrlForPreview;
+            } else {
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d');
+                const img = new Image();
 
-            document.getElementById('htmlCode').textContent = `<img src="${url}" alt="${text}">`;
-            document.getElementById('cssCode').textContent = `background-image: url('${url}');`;
-            document.getElementById('markdownCode').textContent = `![${text}](${url})`;
-            document.getElementById('reactCode').textContent = `<img src="${url}" alt="${text}" />`;
+                canvas.width = width;
+                canvas.height = height;
+
+                const loadImage = new Promise((resolve, reject) => {
+                    img.onload = () => resolve();
+                    img.onerror = () => reject(new Error('Failed to load SVG onto canvas for conversion.'));
+                    img.src = dataUrlForPreview;
+                });
+
+                try {
+                    await loadImage;
+                    ctx.drawImage(img, 0, 0, width, height);
+                    const mimeType = format === 'png' ? 'image/png' : 'image/jpeg';
+                    finalDataUrl = canvas.toDataURL(mimeType);
+                } catch (error) {
+                    console.error('Error converting SVG to raster format:', error);
+                    showNotification(error.message, 'error');
+                    document.getElementById('generatedUrl').value = "Error: Conversion failed";
+                    document.getElementById('htmlCode').textContent = "Error: Conversion failed";
+                    document.getElementById('cssCode').textContent = "Error: Conversion failed";
+                    document.getElementById('markdownCode').textContent = "Error: Conversion failed";
+                    document.getElementById('reactCode').textContent = "Error: Conversion failed";
+                    if (monacoEditor) monacoEditor.setValue("<!-- Error: Conversion failed -->");
+                    hljs.highlightAll();
+                    return;
+                }
+            }
+            
+            document.getElementById('generatedUrl').value = finalDataUrl;
+
+            document.getElementById('htmlCode').textContent = `<img src="${finalDataUrl}" alt="${text}">`;
+            document.getElementById('cssCode').textContent = `background-image: url('${finalDataUrl}');`;
+            document.getElementById('markdownCode').textContent = `![${text}](${finalDataUrl})`;
+            document.getElementById('reactCode').textContent = `<img src="${finalDataUrl}" alt="${text}" />`;
+
+            const initialMonacoHtml = `<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Embedded Image Preview</title>
+    <style>
+        body {
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: #1a202c;
+            color: #e2e8f0;
+            font-family: 'Inter', sans-serif;
+            overflow: hidden;
+        }
+        img {
+            max-width: 90%;
+            max-height: 80vh;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+        h1 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <h1>Your Generated Image</h1>
+    <img src="${finalDataUrl}" alt="Generated Image">
+</body>
+</html>`;
+            if (monacoEditor) {
+                monacoEditor.setValue(initialMonacoHtml);
+                runEmbeddedCode();
+            }
+
+            const encodedHtmlForNewTab = btoa(unescape(encodeURIComponent(initialMonacoHtml)));
+            const dataHtmlUrlForNewTab = `data:text/html;base64,${encodedHtmlForNewTab}`;
+            document.getElementById('newTabGeneratedUrl').value = dataHtmlUrlForNewTab;
 
             hljs.highlightAll();
+        }
+
+        function runEmbeddedCode() {
+            if (monacoEditor) {
+                const htmlContent = monacoEditor.getValue();
+                const imageDisplayFrame = document.getElementById('imageDisplayFrame');
+                imageDisplayFrame.srcdoc = htmlContent;
+
+                const encodedHtmlForNewTab = btoa(unescape(encodeURIComponent(htmlContent)));
+                const dataHtmlUrlForNewTab = `data:text/html;base64,${encodedHtmlForNewTab}`;
+                document.getElementById('newTabGeneratedUrl').value = dataHtmlUrlForNewTab;
+            }
         }
 
         async function copyToClipboard() {
@@ -487,29 +768,69 @@
 
             try {
                 await navigator.clipboard.writeText(urlInput.value);
-                showNotification('URL copied to clipboard!', 'success');
+                showNotification('Data URL copied to clipboard!', 'success');
             } catch (err) {
                 console.warn('Clipboard.writeText failed, falling back to execCommand:', err);
                 try {
                     document.execCommand('copy');
-                    showNotification('URL copied to clipboard! (Fallback)', 'success');
+                    showNotification('Data URL copied to clipboard! (Fallback)', 'success');
                 } catch (execErr) {
                     console.error('Failed to copy text using execCommand:', execErr);
-                    showNotification('Failed to copy URL. Please copy manually.', 'error');
+                    showNotification('Failed to copy Data URL. Please copy manually.', 'error');
                 }
             }
         }
 
-        function downloadImage() {
+        async function copyNewTabUrlToClipboard() {
+            const urlInput = document.getElementById('newTabGeneratedUrl');
+            urlInput.select();
+
+            try {
+                await navigator.clipboard.writeText(urlInput.value);
+                showNotification('Preview Link copied!', 'success');
+            } catch (err) {
+                console.warn('Clipboard.writeText failed, falling back to execCommand:', err);
+                try {
+                    document.execCommand('copy');
+                    showNotification('Preview Link copied! (Fallback)', 'success');
+                } catch (execErr) {
+                    console.error('Failed to copy text using execCommand:', execErr);
+                    showNotification('Failed to copy Preview Link. Please copy manually.', 'error');
+                }
+            }
+        }
+
+        async function copyMonacoCode() {
+            if (monacoEditor) {
+                const code = monacoEditor.getValue();
+                try {
+                    await navigator.clipboard.writeText(code);
+                    showNotification('Embedded HTML copied to clipboard!', 'success');
+                } catch (err) {
+                    console.error('Failed to copy code from Monaco editor:', err);
+                    showNotification('Failed to copy code. Please copy manually.', 'error');
+                }
+            }
+        }
+
+        async function downloadImage() {
             const width = document.getElementById('width').value || 400;
             const height = document.getElementById('height').value || 300;
             const text = document.getElementById('text').value || `${width} × ${height}`;
+            const backgroundType = document.getElementById('backgroundType').value;
             const bgColor = document.getElementById('bgColor').value;
+            const gradientColor1 = document.getElementById('gradientColor1').value;
+            const gradientColor2 = document.getElementById('gradientColor2').value;
+            const gradientAngle = document.getElementById('gradientAngle').value;
             const textColor = document.getElementById('textColor').value;
             const fontSize = document.getElementById('fontSize').value;
+            const iconClass = document.getElementById('iconClass').value;
+            const customIconUnicode = document.getElementById('customIconUnicode').value;
+            const iconSize = document.getElementById('iconSize').value;
+            const iconColor = document.getElementById('iconColor').value;
             const format = document.getElementById('format').value || 'svg';
 
-            const svg = generateSVG(width, height, text, bgColor, textColor, fontSize);
+            const svg = generateSVG(width, height, text, backgroundType, bgColor, gradientColor1, gradientColor2, gradientAngle, textColor, fontSize, iconClass, customIconUnicode, iconSize, iconColor);
             let dataUrl, filename;
 
             if (format === 'svg') {
@@ -537,7 +858,14 @@
                 canvas.width = width;
                 canvas.height = height;
 
-                img.onload = function() {
+                const loadImage = new Promise((resolve, reject) => {
+                    img.onload = () => resolve();
+                    img.onerror = () => reject(new Error('Failed to load SVG onto canvas for conversion.'));
+                    img.src = `data:image/svg+xml;base64,${btoa(unescape(encodeURIComponent(svg)))}`;
+                });
+
+                try {
+                    await loadImage;
                     ctx.drawImage(img, 0, 0, width, height);
                     const mimeType = format === 'png' ? 'image/png' : 'image/jpeg';
                     dataUrl = canvas.toDataURL(mimeType);
@@ -549,19 +877,19 @@
                     document.body.appendChild(a);
                     a.click();
                     document.body.removeChild(a);
-                };
-                img.onerror = function() {
-                    showNotification('Failed to load SVG for conversion. Please try again.', 'error');
-                };
-                let encodedSvg;
-                try {
-                    encodedSvg = btoa(unescape(encodeURIComponent(svg)));
-                } catch (e) {
-                    console.error("Error encoding SVG for canvas conversion:", e);
-                    showNotification("Error preparing image for download. Text might contain unsupported characters.", "error");
-                    return;
+                } catch (error) {
+                    console.error('Download error:', error);
+                    showNotification(error.message, 'error');
                 }
-                img.src = `data:image/svg+xml;base64,${encodedSvg}`;
+            }
+        }
+
+        function openNewTabPreview() {
+            const url = document.getElementById('newTabGeneratedUrl').value;
+            if (url) {
+                window.open(url, '_blank');
+            } else {
+                showNotification('No preview link generated yet.', 'info');
             }
         }
 
@@ -575,7 +903,7 @@
                 }).catch((error) => {
                     if (error.name !== 'AbortError') {
                         console.error('Error sharing:', error);
-                        showNotification('Failed to share. URL copied instead.', 'error');
+                        showNotification('Failed to share. Data URL copied instead.', 'error');
                         copyToClipboard();
                     } else {
                         showNotification('Sharing cancelled.', 'info');
@@ -583,7 +911,7 @@
                 });
             } else {
                 copyToClipboard();
-                showNotification('URL copied to clipboard for sharing!', 'info');
+                showNotification('Data URL copied to clipboard for sharing!', 'info');
             }
         }
 
@@ -621,7 +949,7 @@
             }, 3000);
         }
 
-        function loadExamples() {
+        async function loadExamples() {
             const grid = document.getElementById('examplesGrid');
             const nextBatch = exampleTemplates.slice(currentExampleIndex, currentExampleIndex + 8);
 
@@ -630,21 +958,16 @@
                 return;
             }
 
-            nextBatch.forEach((template) => {
-                const svg = generateSVG(template.width, template.height, template.text, template.bg, template.textColor, template.fontSize);
+            for (const template of nextBatch) {
+                const svg = generateSVG(template.width, template.height, template.text, template.bgType, template.bgColor, template.gradColor1, template.gradColor2, template.gradAngle, template.textColor, template.fontSize, template.iconClass, template.customIconUnicode, template.iconSize, template.iconColor);
                 
-                let encodedSvg;
+                let dataUrl;
                 try {
-                    encodedSvg = btoa(unescape(encodeURIComponent(svg)));
+                    dataUrl = `data:image/svg+xml;base64,${btoa(unescape(encodeURIComponent(svg)))}`;
                 } catch (e) {
                     console.error("Error encoding example SVG for display:", e);
-                    return;
+                    continue;
                 }
-                const dataUrl = `data:image/svg+xml;base64,${encodedSvg}`;
-
-                const baseUrl = 'https://arlabs07.github.io/Arhub07.github.io/library/placeholder.html';
-                const encodedText = encodeURIComponent(template.text);
-                const urlToCopy = `${baseUrl}#/${template.width}/${template.height}/${template.bg}/${template.textColor}/${template.fontSize}/${encodedText}/svg`;
 
                 const exampleDiv = document.createElement('div');
                 exampleDiv.className = 'glass p-4 sm:p-6 rounded-2xl hover-lift transition-all duration-300 cursor-pointer group';
@@ -655,16 +978,16 @@
                     <h3 class="text-white font-semibold mb-1 sm:mb-2 text-base sm:text-lg">${template.text}</h3>
                     <p class="text-gray-300 text-xs sm:text-sm mb-3 sm:mb-4">${template.width} × ${template.height}</p>
                     <div class="flex flex-col sm:flex-row gap-2">
-                        <button onclick="copyExampleUrl('${urlToCopy}')" class="flex-1 bg-purple-600 hover:bg-purple-700 px-2 py-1 sm:px-3 sm:py-2 rounded text-white text-xs sm:text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-purple-400" aria-label="Copy URL for ${template.text} example">
+                        <button onclick="copyExampleUrl('${dataUrl}')" class="flex-1 bg-purple-600 hover:bg-purple-700 px-2 py-1 sm:px-3 sm:py-2 rounded text-white text-xs sm:text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-purple-400 btn-responsive-text" aria-label="Copy URL for ${template.text} example">
                             <i class="fas fa-copy mr-1" aria-hidden="true"></i>Copy
                         </button>
-                        <button onclick="customizeExample(${JSON.stringify(template).replace(/"/g, '&quot;')})" class="flex-1 bg-blue-600 hover:bg-blue-700 px-2 py-1 sm:px-3 sm:py-2 rounded text-white text-xs sm:text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-blue-400" aria-label="Customize ${template.text} example in the generator">
+                        <button onclick="customizeExample(${JSON.stringify(template).replace(/"/g, '&quot;')})" class="flex-1 bg-blue-600 hover:bg-blue-700 px-2 py-1 sm:px-3 sm:py-2 rounded text-white text-xs sm:text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-blue-400 btn-responsive-text" aria-label="Customize ${template.text} example in the generator">
                             <i class="fas fa-edit mr-1" aria-hidden="true"></i>Edit
                         </button>
                     </div>
                 `;
                 grid.appendChild(exampleDiv);
-            });
+            }
             currentExampleIndex += nextBatch.length;
             if (currentExampleIndex >= exampleTemplates.length) {
                 document.getElementById('loadMore').style.display = 'none';
@@ -685,40 +1008,33 @@
             document.getElementById('width').value = template.width;
             document.getElementById('height').value = template.height;
             document.getElementById('text').value = template.text;
-            document.getElementById('bgColor').value = '#' + template.bg;
+            document.getElementById('backgroundType').value = template.bgType;
+            document.getElementById('bgColor').value = '#' + template.bgColor;
+            document.getElementById('gradientColor1').value = '#' + template.gradColor1;
+            document.getElementById('gradientColor2').value = '#' + template.gradColor2;
+            document.getElementById('gradientAngle').value = template.gradAngle;
             document.getElementById('textColor').value = '#' + template.textColor;
             document.getElementById('fontSize').value = template.fontSize;
+            document.getElementById('iconClass').value = template.iconClass;
+            document.getElementById('customIconUnicode').value = template.customIconUnicode;
+            document.getElementById('iconSize').value = template.iconSize;
+            document.getElementById('iconColor').value = '#' + template.iconColor;
             document.getElementById('format').value = 'svg';
 
+            toggleBackgroundInputs();
             updatePreview();
             document.getElementById('generator').scrollIntoView({ behavior: 'smooth' });
             document.getElementById('width').focus();
         }
 
-        function handleUrlParameters() {
-            const hash = window.location.hash.substring(1);
-            if (hash) {
-                const parts = hash.startsWith('/') ? hash.substring(1).split('/') : hash.split('/');
-
-                if (parts.length >= 2) {
-                    const width = parseInt(parts[0]) || 400;
-                    const height = parseInt(parts[1]) || 300;
-                    const bg = parts[2] || '667eea';
-                    const textColor = parts[3] || 'ffffff';
-                    const fontSize = parseInt(parts[4]) || 24;
-                    const text = parts[5] ? decodeURIComponent(parts[5]) : `${width} × ${height}`;
-                    const format = parts[6] || 'svg';
-
-                    document.getElementById('width').value = width;
-                    document.getElementById('height').value = height;
-                    document.getElementById('text').value = text;
-                    document.getElementById('bgColor').value = '#' + bg;
-                    document.getElementById('textColor').value = '#' + textColor;
-                    document.getElementById('fontSize').value = fontSize;
-                    document.getElementById('format').value = format;
-
-                    updatePreview();
-                }
+        function toggleBackgroundInputs() {
+            const backgroundType = document.getElementById('backgroundType').value;
+            if (backgroundType === 'solid') {
+                document.getElementById('solidBgColorGroup').classList.remove('hidden');
+                document.getElementById('gradientBgColorGroup').classList.add('hidden');
+            } else {
+                document.getElementById('solidBgColorGroup').classList.add('hidden');
+                document.getElementById('gradientBgColorGroup').classList.remove('hidden');
             }
         }
 
@@ -734,22 +1050,43 @@
         const debouncedUpdatePreview = debounce(updatePreview, 300);
 
         document.addEventListener('DOMContentLoaded', function() {
-            handleUrlParameters();
+            require.config({ paths: { 'vs': 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.30.1/min/vs' }});
+            require(['vs/editor/editor.main'], function() {
+                monacoEditor = monaco.editor.create(document.getElementById('monacoEditorContainer'), {
+                    value: `<!-- HTML code will appear here -->`,
+                    language: 'html',
+                    theme: 'vs-dark',
+                    automaticLayout: true,
+                    minimap: { enabled: false }
+                });
 
-            document.getElementById('width').addEventListener('input', debouncedUpdatePreview);
-            document.getElementById('height').addEventListener('input', debouncedUpdatePreview);
-            document.getElementById('text').addEventListener('input', debouncedUpdatePreview);
-            document.getElementById('bgColor').addEventListener('change', updatePreview);
-            document.getElementById('textColor').addEventListener('change', updatePreview);
-            document.getElementById('fontSize').addEventListener('input', debouncedUpdatePreview);
-            document.getElementById('format').addEventListener('change', updatePreview);
+                document.getElementById('width').addEventListener('input', debouncedUpdatePreview);
+                document.getElementById('height').addEventListener('input', debouncedUpdatePreview);
+                document.getElementById('text').addEventListener('input', debouncedUpdatePreview);
+                document.getElementById('backgroundType').addEventListener('change', () => {
+                    toggleBackgroundInputs();
+                    updatePreview();
+                });
+                document.getElementById('bgColor').addEventListener('change', updatePreview);
+                document.getElementById('gradientColor1').addEventListener('change', updatePreview);
+                document.getElementById('gradientColor2').addEventListener('change', updatePreview);
+                document.getElementById('gradientAngle').addEventListener('input', debouncedUpdatePreview);
+                document.getElementById('textColor').addEventListener('change', updatePreview);
+                document.getElementById('fontSize').addEventListener('input', debouncedUpdatePreview);
+                document.getElementById('iconClass').addEventListener('change', debouncedUpdatePreview);
+                document.getElementById('customIconUnicode').addEventListener('input', debouncedUpdatePreview);
+                document.getElementById('iconSize').addEventListener('input', debouncedUpdatePreview);
+                document.getElementById('iconColor').addEventListener('change', updatePreview);
+                document.getElementById('format').addEventListener('change', debouncedUpdatePreview);
 
-            document.getElementById('loadMore').addEventListener('click', loadExamples);
-            
-            hljs.highlightAll();
+                document.getElementById('loadMore').addEventListener('click', loadExamples);
+                
+                hljs.highlightAll();
 
-            updatePreview();
-            loadExamples();
+                toggleBackgroundInputs();
+                updatePreview();
+                loadExamples();
+            });
         });
     </script>
 </body>
