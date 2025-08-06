@@ -11,28 +11,22 @@ class AuthSystem {
         this.initAuth();
         this.checkAuthRedirect();
         this.recordPageVisit();
-        this.adjustMainContentPadding(); // Ensure main content is below header
     }
 
     recordPageVisit() {
         const currentPage = window.location.pathname;
         const pageName = this.getPageTitle();
         const timestamp = new Date().toISOString();
-
-        // Update page history
         let history = JSON.parse(localStorage.getItem('page_history') || '[]');
+
         const existingIndex = history.findIndex(item => item.path === currentPage);
         if (existingIndex !== -1) {
             history.splice(existingIndex, 1);
         }
+
         history.unshift({ path: currentPage, name: pageName, timestamp });
         history = history.slice(0, 10); // Keep only the last 10 visits
         localStorage.setItem('page_history', JSON.stringify(history));
-
-        // Update visit counter
-        let visitCount = parseInt(localStorage.getItem('total_visits') || '0');
-        visitCount++;
-        localStorage.setItem('total_visits', visitCount.toString());
     }
 
     formatTime(timestamp) {
@@ -49,9 +43,6 @@ class AuthSystem {
     addCustomStyles() {
         const style = document.createElement('style');
         style.textContent = `
-            :root {
-                --header-height: 60px; /* Default for initial render, updated by JS */
-            }
             .huly-btn-enhanced {
                 position: relative;
                 overflow: hidden;
@@ -87,7 +78,7 @@ class AuthSystem {
                 height:200%;
                 background:linear-gradient(45deg,transparent,rgba(255,255,255,0.8),transparent);
                 transform:rotate(45deg);
-                transition:transform 0.6s ease;
+                transition:left 0.6s ease; /* Changed to left for shimmer */
                 opacity:0;
             }
             .huly-btn-enhanced:hover::after {
@@ -138,7 +129,7 @@ class AuthSystem {
                 height: 200%;
                 background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.6), transparent);
                 transform: rotate(45deg);
-                transition: transform 0.6s ease;
+                transition: left 0.6s ease;
                 opacity: 0;
             }
             .danger-huly-btn-enhanced:hover::after {
@@ -181,6 +172,7 @@ class AuthSystem {
 
         const header = document.createElement('div');
         header.id = 'auth-header';
+        // Apply glass effect and new border
         header.className = 'fixed top-0 left-0 right-0 glass-effect border-b border-white border-opacity-10 z-40 px-4 py-3';
         header.innerHTML = `
             <div class="flex items-center justify-between max-w-7xl mx-auto">
@@ -204,34 +196,14 @@ class AuthSystem {
             </div>
         `;
         document.body.insertBefore(header, document.body.firstChild);
-        
-        // Update CSS variable for header height
-        const updateHeaderHeight = () => {
-            const headerHeight = header.offsetHeight;
-            document.documentElement.style.setProperty('--header-height', `${headerHeight}px`);
-        };
-        updateHeaderHeight();
-        window.addEventListener('resize', updateHeaderHeight);
-
+        document.body.style.paddingTop = '60px'; // Adjust body padding for fixed header
         this.bindHeaderEvents();
-    }
-
-    // Adjusts padding-top for main content containers
-    adjustMainContentPadding() {
-        const containers = document.querySelectorAll('#auth-container, #profile-container');
-        containers.forEach(container => {
-            // Apply padding-top based on header height, with a small additional gap if desired
-            // Using 1rem (16px) as a minimal gap, adjust as needed
-            container.style.paddingTop = `calc(var(--header-height) + 1rem)`;
-        });
     }
 
     createSidebar() {
         if (document.getElementById('auth-sidebar')) return;
 
         const history = JSON.parse(localStorage.getItem('page_history') || '[]');
-        const totalVisits = localStorage.getItem('total_visits') || '0';
-
         const historyHTML = history.map(item => `
             <button onclick="window.location.href='${item.path}'" class="w-full flex items-center justify-between py-2 px-3 text-gray-400 hover:bg-white hover:bg-opacity-10 hover:text-white rounded-lg transition-all duration-200 text-sm group">
                 <div class="flex items-center space-x-2 min-w-0">
@@ -244,9 +216,8 @@ class AuthSystem {
 
         const sidebar = document.createElement('div');
         sidebar.id = 'auth-sidebar';
-        // Use CSS variable for padding-top to synchronize with header height
-        sidebar.className = 'fixed top-0 right-0 h-full w-72 glass-effect border-l border-white border-opacity-10 transform translate-x-full transition-transform duration-300 ease-in-out z-50 overflow-y-auto scrollbar-thin';
-        sidebar.style.paddingTop = 'var(--header-height)'; // Start right below the header
+        // Apply glass effect and new border
+        sidebar.className = 'fixed top-0 right-0 h-full w-72 glass-effect border-l border-white border-opacity-10 transform translate-x-full transition-transform duration-300 ease-in-out z-50 pt-16 overflow-y-auto scrollbar-thin';
         sidebar.innerHTML = `
             <div class="p-3 h-full flex flex-col">
                 <div class="mb-4">
@@ -272,43 +243,31 @@ class AuthSystem {
                 </div>
                 <div class="flex-1 space-y-1">
                     ${this.currentUser ?
-                        `
-                        <div class="main-buttons-scroll-container space-y-1 overflow-y-auto scrollbar-thin max-h-60 mb-3">
-                            <button id="sidebar-profile" class="w-full flex items-center space-x-3 py-2.5 px-3 text-gray-300 hover:bg-white hover:bg-opacity-10 hover:text-white rounded-lg transition-all duration-200 text-sm">
-                                <i class="fas fa-user text-amber-400 w-4"></i><span>Profile</span>
-                            </button>
-                            <button onclick="window.location.href='dashboard.html'" class="w-full flex items-center space-x-3 py-2.5 px-3 text-gray-300 hover:bg-white hover:bg-opacity-10 hover:text-white rounded-lg transition-all duration-200 text-sm">
-                                <i class="fas fa-home text-amber-400 w-4"></i><span>Dashboard</span>
-                            </button>
-                            <button onclick="window.location.href='messages.html'" class="w-full flex items-center space-x-3 py-2.5 px-3 text-gray-300 hover:bg-white hover:bg-opacity-10 hover:text-white rounded-lg transition-all duration-200 text-sm">
-                                <i class="fas fa-envelope text-amber-400 w-4"></i><span>Messages</span>
-                            </button>
-                            <button onclick="window.location.href='tasks.html'" class="w-full flex items-center space-x-3 py-2.5 px-3 text-gray-300 hover:bg-white hover:bg-opacity-10 hover:text-white rounded-lg transition-all duration-200 text-sm">
-                                <i class="fas fa-tasks text-amber-400 w-4"></i><span>Tasks</span>
-                            </button>
-                            <button onclick="window.location.href='settings.html'" class="w-full flex items-center space-x-3 py-2.5 px-3 text-gray-300 hover:bg-white hover:bg-opacity-10 hover:text-white rounded-lg transition-all duration-200 text-sm">
-                                <i class="fas fa-cog text-amber-400 w-4"></i><span>Settings</span>
-                            </button>
-                            <button onclick="window.location.href='projects.html'" class="w-full flex items-center space-x-3 py-2.5 px-3 text-gray-300 hover:bg-white hover:bg-opacity-10 hover:text-white rounded-lg transition-all duration-200 text-sm">
-                                <i class="fas fa-folder text-amber-400 w-4"></i><span>Projects</span>
-                            </button>
-                            <button onclick="window.location.href='analytics.html'" class="w-full flex items-center space-x-3 py-2.5 px-3 text-gray-300 hover:bg-white hover:bg-opacity-10 hover:text-white rounded-lg transition-all duration-200 text-sm">
-                                <i class="fas fa-chart-line text-amber-400 w-4"></i><span>Analytics</span>
-                            </button>
-                            <button onclick="window.location.href='support.html'" class="w-full flex items-center space-x-3 py-2.5 px-3 text-gray-300 hover:bg-white hover:bg-opacity-10 hover:text-white rounded-lg transition-all duration-200 text-sm">
-                                <i class="fas fa-life-ring text-amber-400 w-4"></i><span>Support</span>
-                            </button>
-                            <button onclick="window.location.href='about.html'" class="w-full flex items-center space-x-3 py-2.5 px-3 text-gray-300 hover:bg-white hover:bg-opacity-10 hover:text-white rounded-lg transition-all duration-200 text-sm">
-                                <i class="fas fa-info-circle text-amber-400 w-4"></i><span>About</span>
-                            </button>
-                        </div>
-                        <hr class="border-gray-700 border-opacity-50 my-3">
-                        `
+                        `<button id="sidebar-profile" class="w-full flex items-center space-x-3 py-2.5 px-3 text-gray-300 hover:bg-white hover:bg-opacity-10 hover:text-white rounded-lg transition-all duration-200 text-sm">
+                            <i class="fas fa-user text-amber-400 w-4"></i><span>Profile</span>
+                        </button>
+                        <hr class="border-gray-700 border-opacity-50 my-2">`
                         :
                         ``
                     }
+                    <!-- ADD MORE BUTTONS HERE -->
+                    <button onclick="window.location.href='dashboard.html'" class="w-full flex items-center space-x-3 py-2.5 px-3 text-gray-300 hover:bg-white hover:bg-opacity-10 hover:text-white rounded-lg transition-all duration-200 text-sm">
+                        <i class="fas fa-home text-amber-400 w-4"></i><span>Dashboard</span>
+                    </button>
+                    <button onclick="window.location.href='settings.html'" class="w-full flex items-center space-x-3 py-2.5 px-3 text-gray-300 hover:bg-white hover:bg-opacity-10 hover:text-white rounded-lg transition-all duration-200 text-sm">
+                        <i class="fas fa-cog text-amber-400 w-4"></i><span>Settings</span>
+                    </button>
+                    <button onclick="window.location.href='projects.html'" class="w-full flex items-center space-x-3 py-2.5 px-3 text-gray-300 hover:bg-white hover:bg-opacity-10 hover:text-white rounded-lg transition-all duration-200 text-sm">
+                        <i class="fas fa-folder text-amber-400 w-4"></i><span>Projects</span>
+                    </button>
+                    <button onclick="window.location.href='analytics.html'" class="w-full flex items-center space-x-3 py-2.5 px-3 text-gray-300 hover:bg-white hover:bg-opacity-10 hover:text-white rounded-lg transition-all duration-200 text-sm">
+                        <i class="fas fa-chart-line text-amber-400 w-4"></i><span>Analytics</span>
+                    </button>
+                    <button onclick="window.location.href='about.html'" class="w-full flex items-center space-x-3 py-2.5 px-3 text-gray-300 hover:bg-white hover:bg-opacity-10 hover:text-white rounded-lg transition-all duration-200 text-sm">
+                        <i class="fas fa-info-circle text-amber-400 w-4"></i><span>About</span>
+                    </button>
+                    <hr class="border-gray-700 border-opacity-50 my-3">
                     <div class="py-2">
-                        <div class="text-xs font-medium text-gray-500 mb-2 px-3">TOTAL VISITS: ${totalVisits}</div>
                         <div class="text-xs font-medium text-gray-500 mb-2 px-3">RECENT PAGES</div>
                         <div class="space-y-1 max-h-48 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-600 scrollbar-track-transparent">
                             ${historyHTML || '<div class="text-xs text-gray-500 px-3 py-2">No pages visited yet</div>'}
@@ -317,11 +276,11 @@ class AuthSystem {
                 </div>
                 <div class="mt-auto pt-3 border-t border-gray-700 border-opacity-50">
                     ${this.currentUser ?
-                        `<button id="sidebar-logout" class="w-full flex items-center justify-center space-x-3 py-2.5 px-3 danger-huly-btn-enhanced text-sm">
+                        `<button id="sidebar-logout" class="w-full flex items-center space-x-3 py-2.5 px-3 danger-huly-btn-enhanced text-sm">
                             <i class="fas fa-sign-out-alt w-4"></i><span>Logout</span>
                         </button>`
                         :
-                        `<button id="sidebar-login" class="w-full flex items-center justify-center space-x-3 py-2.5 px-3 huly-btn-enhanced text-sm">
+                        `<button id="sidebar-login" class="w-full flex items-center space-x-3 py-2.5 px-3 huly-btn-enhanced text-sm">
                             <i class="fas fa-sign-in-alt w-4"></i><span>Login</span>
                         </button>`
                     }
@@ -404,11 +363,16 @@ class AuthSystem {
     }
 
     initLoginPage() {
+        // These elements are no longer present as per the new design,
+        // but keeping the functions for completeness if they were to be re-added
+        // or if other parts of the app still reference them.
+        // The actual navigation is handled by the "New user? Create an account" text links.
         const signinForm = document.getElementById('signin-form');
         const signupForm = document.getElementById('signup-form');
         const signinBtn = document.getElementById('signin-btn');
         const signupBtn = document.getElementById('signup-btn');
 
+        // New navigation links
         const switchToSignupLink = document.getElementById('switch-to-signup');
         const switchToSigninLink = document.getElementById('switch-to-signin');
 
@@ -417,7 +381,7 @@ class AuthSystem {
                 e.preventDefault();
                 signinForm.classList.add('hidden');
                 signupForm.classList.remove('hidden');
-                this.updateHeaderForSignup();
+                this.updateHeaderForSignup(); // Update header text
             };
         }
 
@@ -426,7 +390,7 @@ class AuthSystem {
                 e.preventDefault();
                 signupForm.classList.add('hidden');
                 signinForm.classList.remove('hidden');
-                this.updateHeaderForSignin();
+                this.updateHeaderForSignin(); // Update header text
             };
         }
 
@@ -452,57 +416,21 @@ class AuthSystem {
         if (headerSubtitle) headerSubtitle.textContent = 'Access your account to continue';
     }
 
+
     initProfilePage() {
         const form = document.getElementById('profile-form');
         const logoutBtn = document.getElementById('logout-btn');
         const currentProfilePic = document.getElementById('current-profile-pic');
         const usernameInput = document.getElementById('profile-username');
-        const profilePicInput = document.getElementById('profile-pic-input'); // Merged input
-        const uploadIconBtn = document.getElementById('upload-icon-btn');
-        const profilePicFile = document.getElementById('profile-pic-file');
-        const fileNameDisplay = document.getElementById('file-name-display');
 
-        // Initialize fields as empty or with current user data
-        if (usernameInput) usernameInput.value = this.currentUser ? this.currentUser.username : '';
-        if (currentProfilePic) currentProfilePic.src = this.currentUser ? (this.currentUser.profilePic || '') : '';
-
-        // Profile Picture Input Logic (Merged)
-        if (uploadIconBtn && profilePicFile && profilePicInput && fileNameDisplay) {
-            uploadIconBtn.onclick = () => {
-                profilePicFile.click(); // Trigger the hidden file input
-            };
-
-            profilePicFile.onchange = () => {
-                if (profilePicFile.files.length > 0) {
-                    const file = profilePicFile.files[0];
-                    fileNameDisplay.textContent = `Selected: ${file.name}`;
-                    fileNameDisplay.classList.remove('hidden');
-                    profilePicInput.value = ''; // Clear URL if file is selected
-                    profilePicInput.readOnly = true; // Make URL input read-only
-                    profilePicInput.placeholder = 'File selected, clear to use URL';
-                    profilePicInput.type = 'text'; // Change type to text to prevent URL validation
-                } else {
-                    fileNameDisplay.classList.add('hidden');
-                    fileNameDisplay.textContent = 'No file selected.';
-                    profilePicInput.readOnly = false; // Make URL input editable
-                    profilePicInput.placeholder = 'Enter URL or upload file';
-                    profilePicInput.type = 'text'; // Keep as text
-                }
-            };
-
-            profilePicInput.oninput = () => {
-                // If user types in URL, clear file selection
-                if (profilePicInput.value !== '') {
-                    profilePicFile.value = ''; // Clear file input
-                    fileNameDisplay.classList.add('hidden');
-                    fileNameDisplay.textContent = 'No file selected.';
-                    profilePicInput.readOnly = false; // Ensure it's editable
-                    profilePicInput.placeholder = 'Enter URL or upload file';
-                    profilePicInput.type = 'text'; // Keep as text
-                }
-            };
+        if (this.currentUser) {
+            if (currentProfilePic) {
+                currentProfilePic.src = this.currentUser.profilePic || ''; // Keep empty if no pic
+            }
+            if (usernameInput) {
+                usernameInput.value = this.currentUser.username;
+            }
         }
-
 
         if (form) {
             form.onsubmit = (e) => { e.preventDefault(); this.updateProfile(); };
@@ -590,7 +518,7 @@ class AuthSystem {
             const updatedUser = {
                 username,
                 password: password || this.currentUser.password,
-                profilePic: newProfilePic !== undefined ? newProfilePic : this.currentUser.profilePic
+                profilePic: newProfilePic !== undefined ? newProfilePic : this.currentUser.profilePic // Handle explicit null/undefined
             };
 
             if (username !== oldUsername) {
@@ -611,6 +539,7 @@ class AuthSystem {
         } else if (profilePicInput.value.trim()) {
             updateUser(profilePicInput.value.trim());
         } else {
+            // If input is empty and no file, set profilePic to null
             updateUser(null);
         }
     }
@@ -627,7 +556,7 @@ class AuthSystem {
 
     checkAuthRedirect() {
         const path = window.location.pathname;
-        const protectedPages = ['dashboard.html', 'profile.html', 'messages.html', 'tasks.html', 'settings.html', 'projects.html', 'analytics.html', 'support.html', 'about.html']; // Added new pages to protected list
+        const protectedPages = ['dashboard.html', 'profile.html'];
         const isProtectedPage = protectedPages.some(page => path.includes(page));
 
         if (isProtectedPage && !this.currentUser) {
@@ -656,7 +585,8 @@ class AuthSystem {
     }
 
     showError(message) {
-        const errorDiv = document.getElementById('message-box');
+        // This is for the login/signup page's error message box
+        const errorDiv = document.getElementById('message-box'); // Use message-box
         if (errorDiv) {
             errorDiv.querySelector('span').textContent = message;
             errorDiv.classList.remove('hidden', 'bg-green-900', 'border-green-500', 'text-green-300');
@@ -667,28 +597,24 @@ class AuthSystem {
     }
 
     showProfileMessage(message, type) {
-        let messageDiv = document.getElementById('message-box');
-        if (!messageDiv) {
+        // This is for the profile page's message box
+        let messageDiv = document.getElementById('message-box'); // Use message-box
+        if (!messageDiv) { // Create if it doesn't exist (e.g., if page loaded without it)
             messageDiv = document.createElement('div');
             messageDiv.id = 'message-box';
             messageDiv.classList.add('mt-6', 'p-4', 'rounded-2xl', 'text-sm', 'hidden', 'shadow-lg', 'animate-slideIn');
             messageDiv.innerHTML = '<i class="mr-2"></i><span></span>';
-            const profileForm = document.getElementById('profile-form');
-            if (profileForm) {
-                profileForm.parentNode.appendChild(messageDiv);
-            } else {
-                document.body.appendChild(messageDiv);
-            }
+            document.getElementById('profile-form').parentNode.appendChild(messageDiv);
         }
 
         messageDiv.querySelector('span').textContent = message;
         messageDiv.classList.remove('hidden', 'bg-red-900', 'border-red-500', 'text-red-300', 'bg-green-900', 'border-green-500', 'text-green-300', 'bg-opacity-30', 'backdrop-blur-sm', 'border', 'border-opacity-30');
-        messageDiv.querySelector('i').className = '';
+        messageDiv.querySelector('i').className = ''; // Clear previous icon classes
 
         if (type === 'success') {
             messageDiv.classList.add('bg-green-900', 'bg-opacity-30', 'backdrop-blur-sm', 'border', 'border-green-500', 'border-opacity-30', 'text-green-300');
             messageDiv.querySelector('i').classList.add('fas', 'fa-check-circle');
-        } else {
+        } else { // default to error
             messageDiv.classList.add('bg-red-900', 'bg-opacity-30', 'backdrop-blur-sm', 'border', 'border-red-500', 'border-opacity-30', 'text-red-300');
             messageDiv.querySelector('i').classList.add('fas', 'fa-exclamation-triangle');
         }
