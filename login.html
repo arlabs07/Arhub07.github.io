@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Auth System</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+            
+            background-color: #000000; /* Solid black background */
+        }
+        @keyframes fadeInUp {
+            0% { opacity: 0; transform: translateY(30px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes slideIn {
+            0% { opacity: 0; transform: translateX(-20px); }
+            100% { opacity: 1; transform: translateX(0); }
+        }
+        .animate-fadeInUp { animation: fadeInUp 0.6s ease-out forwards; }
+        .animate-slideIn { animation: slideIn 0.4s ease-out forwards; }
+        .animate-delay-100 { animation-delay: 0.1s; }
+        .animate-delay-200 { animation-delay: 0.2s; }
+        .animate-delay-300 { animation-delay: 0.3s; }
+
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            
+        }
+        .input-glow:focus {
+            box-shadow: 0 0 0 3px rgba(251, 191, 36, 0.1), 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+
+        .huly-btn-enhanced {
+            position: relative;
+            overflow: hidden;
+            background: linear-gradient(135deg, #ffffff 0%, #fefefe 30%, #fff9e6 70%, #fef3c7 100%);
+            color: #1f2937;
+            border: 1px solid rgba(251, 191, 36, 0.2);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            transform-style: preserve-3d;
+            border-radius: 9999px; /* More rounded */
+        }
+        .huly-btn-enhanced::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0; /* Position to the right */
+            width: 20%; /* Approximately 1/5th */
+            height: 100%;
+            /* White to yellow gradient, blending with transparency */
+            background: linear-gradient(90deg, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.5) 20%, rgba(255, 255, 0, 0.7) 100%);
+            opacity: 0; /* Hidden by default */
+            transition: opacity 0.3s ease;
+            border-radius: 0 9999px 9999px 0; /* Rounded only on the right side */
+        }
+        .huly-btn-enhanced:hover::before {
+            opacity: 1; /* Visible on hover */
+        }
+        .huly-btn-enhanced::after {
+            content: '';
+            position: absolute;
+            top:-50%;
+            left:-50%;
+            width:200%;
+            height:200%;
+            background:linear-gradient(45deg,transparent,rgba(255,255,255,0.8),transparent);
+            transform:rotate(45deg);
+            transition:transform 0.6s ease;
+            opacity:0;
+        }
+        .huly-btn-enhanced:hover::after {
+            opacity:1;
+            transform:rotate(45deg) translate(100px,-100px);
+        }
+        .huly-btn-enhanced:hover {
+            transform:translateY(-2px) scale(1.02);
+            box-shadow:0 12px 40px rgba(0,0,0,0.15),0 4px 12px rgba(251,191,36,0.2);
+            border-color:rgba(251,191,36,0.3);
+        }
+        .huly-btn-enhanced:active {
+            transform:translateY(0) scale(0.98);
+        }
+
+        /* Updated Floating Orb Styles (Circular with Blue Gradient and Directional Orange Effects) */
+        .floating-orb-container {
+            position: absolute;
+            border-radius: 50%; /* Circular shape */
+            background: linear-gradient(135deg, #0a0a2e 0%, #1a1a5c 50%, #2a2a8d 100%); /* Blue gradient */
+            filter: blur(0.5px); /* Apply blur */
+            box-shadow:
+                0 0 15px rgba(0, 0, 255, 0.3),    /* Subtle blue glow */
+                0 0 30px rgba(0, 0, 255, 0.2),    /* Larger blue glow */
+                25px 5px 60px rgba(255, 215, 0, 0.5), /* Yellowish-orange shadow, more spread */
+                -15px -5px 30px rgba(255, 140, 0, 0.4), /* Deeper orange reflection from top-left */
+                inset -10px -5px 20px rgba(255, 200, 0, 0.6); /* Inner yellow reflection from top-left */
+            animation: floatAndBreathe 6s ease-in-out infinite;
+            transform-origin: center center; /* Ensure scaling is from center */
+        }
+
+        @keyframes floatAndBreathe {
+            0%, 100% { transform: translateY(0px) rotate(0deg) scale(1.0); opacity: 0.8; }
+            25% { transform: translateY(-20px) rotate(90deg) scale(1.05); opacity: 0.9; }
+            50% { transform: translateY(-10px) rotate(180deg) scale(1.0); opacity: 0.8; }
+            75% { transform: translateY(-30px) rotate(270deg) scale(1.05); opacity: 0.9; }
+        }
+
+        /* Responsive adjustments for glass effect margin */
+        @media (max-width: 640px) {
+            .glass-effect {
+                padding: 1.5rem; /* Reduce padding on small screens */
+                margin: 1rem; /* Add some margin to prevent sticking to edges */
+            }
+        }
+    </style>
+</head>
+<body class="min-h-screen relative overflow-hidden">
+    <!-- Orb Containers - will be dynamically generated by JavaScript -->
+
+    <div id="auth-container" class="min-h-screen flex flex-col items-center px-4 py-8 relative z-10 overflow-y-scroll">
+        <div class="glass-effect rounded-3xl shadow-2xl w-full max-w-md p-8 animate-fadeInUp">
+            <div class="text-center mb-8 animate-slideIn">
+                <h1 id="header-title" class="text-3xl font-bold text-white mb-2">Welcome Back</h1>
+                <p id="header-subtitle" class="text-gray-300">Access your account to continue</p>
+            </div>
+
+            <!-- Removed the tab navigation div -->
+
+            <div id="signin-form" class="space-y-5 animate-slideIn animate-delay-200">
+                <div class="space-y-2">
+                    <label class="block text-sm font-medium text-gray-300 ml-1">Username</label>
+                    <div class="relative">
+                        <i class="fas fa-user absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 z-10"></i>
+                        <input type="text" id="signin-username" class="w-full pl-12 pr-4 py-4 bg-white bg-opacity-10 border border-white border-opacity-20 rounded-2xl text-white placeholder-gray-400 focus:outline-none input-glow transition-all duration-300 hover:bg-opacity-15" placeholder="Enter your username">
+                    </div>
+                </div>
+                <div class="space-y-2">
+                    <label class="block text-sm font-medium text-gray-300 ml-1">Password</label>
+                    <div class="relative">
+                        <i class="fas fa-lock absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 z-10"></i>
+                        <input type="password" id="signin-password" class="w-full pl-12 pr-4 py-4 bg-white bg-opacity-10 border border-white border-opacity-20 rounded-2xl text-white placeholder-gray-400 focus:outline-none input-glow transition-all duration-300 hover:bg-opacity-15" placeholder="Enter your password">
+                    </div>
+                </div>
+                <button id="signin-btn" class="w-full py-4 px-6 huly-btn-enhanced font-semibold rounded-full relative z-10 shadow-xl transform transition-all duration-300 hover:shadow-2xl">
+                    <i class="fas fa-sign-in-alt mr-2"></i>Sign In to Account
+                </button>
+                <p class="text-center text-gray-400 text-sm mt-4">
+                    New user? <a href="#" id="switch-to-signup" class="text-amber-400 font-semibold hover:underline transition-colors duration-200">Create an account</a>
+                </p>
+            </div>
+
+            <div id="signup-form" class="space-y-5 hidden animate-slideIn animate-delay-200">
+                <div class="space-y-2">
+                    <label class="block text-sm font-medium text-gray-300 ml-1">Username</label>
+                    <div class="relative">
+                        <i class="fas fa-user-plus absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 z-10"></i>
+                        <input type="text" id="signup-username" class="w-full pl-12 pr-4 py-4 bg-white bg-opacity-10 border border-white border-opacity-20 rounded-2xl text-white placeholder-gray-400 focus:outline-none input-glow transition-all duration-300 hover:bg-opacity-15" placeholder="Choose a username">
+                    </div>
+                </div>
+                <div class="space-y-2">
+                    <label class="block text-sm font-medium text-gray-300 ml-1">Password</label>
+                    <div class="relative">
+                        <i class="fas fa-key absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 z-10"></i>
+                        <input type="password" id="signup-password" class="w-full pl-12 pr-4 py-4 bg-white bg-opacity-10 border border-white border-opacity-20 rounded-2xl text-white placeholder-gray-400 focus:outline-none input-glow transition-all duration-300 hover:bg-opacity-15" placeholder="Create a password">
+                    </div>
+                </div>
+                <!-- Merged Profile Picture Input -->
+                <div class="space-y-2">
+                    <label class="block text-sm font-medium text-gray-300 ml-1">Profile Picture (URL or Upload)</label>
+                    <div class="relative w-full">
+                        <i class="fas fa-image absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 z-10"></i>
+                        <input type="text" id="signup-profile-url" class="w-full pl-12 pr-12 py-4 bg-white bg-opacity-10 border border-white border-opacity-20 rounded-2xl text-white placeholder-gray-400 focus:outline-none input-glow transition-all duration-300 hover:bg-opacity-15" placeholder="Enter URL or upload file">
+                        <button id="upload-icon-btn" class="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-white focus:outline-none transition-colors duration-200">
+                            <i class="fas fa-upload text-lg"></i>
+                        </button>
+                        <input type="file" id="signup-profile-file" accept="image/*" class="hidden">
+                    </div>
+                    <p id="file-name-display" class="text-gray-400 text-sm ml-1 mt-1 hidden">No file selected.</p>
+                </div>
+
+                <button id="signup-btn" class="w-full py-4 px-6 huly-btn-enhanced font-semibold rounded-full relative z-10 shadow-xl transform transition-all duration-300 hover:shadow-2xl">
+                    <i class="fas fa-user-plus mr-2"></i>Create New Account
+                </button>
+                <p class="text-center text-gray-400 text-sm mt-4">
+                    Already have an account? <a href="#" id="switch-to-signin" class="text-amber-400 font-semibold hover:underline transition-colors duration-200">Log in</a>
+                </p>
+            </div>
+
+            <div id="message-box" class="mt-6 p-4 rounded-2xl text-sm hidden shadow-lg animate-slideIn">
+                <i class="mr-2"></i><span></span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const signinForm = document.getElementById('signin-form');
+            const signupForm = document.getElementById('signup-form');
+            const signinBtn = document.getElementById('signin-btn');
+            const signupBtn = document.getElementById('signup-btn');
+            const messageBox = document.getElementById('message-box');
+            const messageIcon = messageBox.querySelector('i');
+            const messageText = messageBox.querySelector('span');
+            const headerTitle = document.getElementById('header-title');
+            const headerSubtitle = document.getElementById('header-subtitle');
+
+            // New navigation links
+            const switchToSignupLink = document.getElementById('switch-to-signup');
+            const switchToSigninLink = document.getElementById('switch-to-signin');
+
+            // Profile Picture Elements
+            const signupProfileUrl = document.getElementById('signup-profile-url');
+            const uploadIconBtn = document.getElementById('upload-icon-btn');
+            const signupProfileFile = document.getElementById('signup-profile-file');
+            const fileNameDisplay = document.getElementById('file-name-display');
+
+            // Function to display messages (success or error)
+            function showMessage(message, type = 'error') {
+                messageText.textContent = message;
+                messageBox.classList.remove('hidden', 'bg-red-900', 'border-red-500', 'text-red-300', 'bg-green-900', 'border-green-500', 'text-green-300');
+                messageIcon.className = ''; // Clear previous icon classes
+
+                if (type === 'error') {
+                    messageBox.classList.add('bg-red-900', 'bg-opacity-30', 'backdrop-blur-sm', 'border', 'border-red-500', 'border-opacity-30', 'text-red-300');
+                    messageIcon.classList.add('fas', 'fa-exclamation-triangle');
+                } else if (type === 'success') {
+                    messageBox.classList.add('bg-green-900', 'bg-opacity-30', 'backdrop-blur-sm', 'border', 'border-green-500', 'border-opacity-30', 'text-green-300');
+                    messageIcon.classList.add('fas', 'fa-check-circle');
+                }
+
+                // Hide message after 5 seconds
+                setTimeout(() => {
+                    messageBox.classList.add('hidden');
+                }, 5000);
+            }
+
+            // Navigation link logic
+            if (switchToSignupLink) {
+                switchToSignupLink.onclick = (e) => {
+                    e.preventDefault();
+                    signinForm.classList.add('hidden');
+                    signupForm.classList.remove('hidden');
+                    messageBox.classList.add('hidden'); // Hide message on switch
+                    headerTitle.textContent = 'Create Your Account';
+                    headerSubtitle.textContent = 'Join us and get started!';
+                };
+            }
+
+            if (switchToSigninLink) {
+                switchToSigninLink.onclick = (e) => {
+                    e.preventDefault();
+                    signupForm.classList.add('hidden');
+                    signinForm.classList.remove('hidden');
+                    messageBox.classList.add('hidden'); // Hide message on switch
+                    headerTitle.textContent = 'Welcome Back';
+                    headerSubtitle.textContent = 'Access your account to continue';
+                };
+            }
+
+            // Profile Picture Input Logic
+            if (uploadIconBtn && signupProfileFile && signupProfileUrl && fileNameDisplay) {
+                uploadIconBtn.onclick = () => {
+                    signupProfileFile.click(); // Trigger the hidden file input
+                };
+
+                signupProfileFile.onchange = () => {
+                    if (signupProfileFile.files.length > 0) {
+                        const file = signupProfileFile.files[0];
+                        fileNameDisplay.textContent = `Selected: ${file.name}`;
+                        fileNameDisplay.classList.remove('hidden');
+                        signupProfileUrl.value = ''; // Clear URL if file is selected
+                        signupProfileUrl.readOnly = true; // Make URL input read-only
+                        signupProfileUrl.placeholder = 'File selected, clear to use URL';
+                        signupProfileUrl.type = 'text'; // Change type to text to prevent URL validation
+                    } else {
+                        fileNameDisplay.classList.add('hidden');
+                        fileNameDisplay.textContent = 'No file selected.';
+                        signupProfileUrl.readOnly = false; // Make URL input editable
+                        signupProfileUrl.placeholder = 'Enter URL or upload file';
+                        signupProfileUrl.type = 'text'; // Keep as text or change back to url if needed
+                    }
+                };
+
+                signupProfileUrl.oninput = () => {
+                    // If user types in URL, clear file selection
+                    if (signupProfileUrl.value !== '') {
+                        signupProfileFile.value = ''; // Clear file input
+                        fileNameDisplay.classList.add('hidden');
+                        fileNameDisplay.textContent = 'No file selected.';
+                        signupProfileUrl.readOnly = false; // Ensure it's editable
+                        signupProfileUrl.placeholder = 'Enter URL or upload file';
+                        signupProfileUrl.type = 'text'; // Keep as text
+                    }
+                };
+            }
+
+            // Sign In button click handler
+            if (signinBtn) {
+                signinBtn.onclick = () => {
+                    const username = document.getElementById('signin-username').value;
+                    const password = document.getElementById('signin-password').value;
+
+                    if (!username || !password) {
+                        showMessage('Please enter both username and password.', 'error');
+                        return;
+                    }
+
+                    // Simulate API call for sign-in
+                    setTimeout(() => {
+                        if (username === 'user' && password === 'password') {
+                            showMessage('Sign In successful! Welcome back.', 'success');
+                            // In a real app, you would redirect or update UI here
+                        } else {
+                            showMessage('Invalid username or password. Please try again.', 'error');
+                        }
+                    }, 1000); // Simulate network delay
+                };
+            }
+
+            // Sign Up button click handler
+            if (signupBtn) {
+                signupBtn.onclick = () => {
+                    const username = document.getElementById('signup-username').value;
+                    const password = document.getElementById('signup-password').value;
+                    const profileUrl = document.getElementById('signup-profile-url').value;
+                    const profileFile = signupProfileFile.files[0]; // Get the selected file
+
+                    if (!username || !password) {
+                        showMessage('Please choose a username and create a password.', 'error');
+                        return;
+                    }
+
+                    if (password.length < 6) {
+                        showMessage('Password must be at least 6 characters long.', 'error');
+                        return;
+                    }
+
+                    // Determine which profile picture method is used
+                    let profilePictureSource = 'None';
+                    if (profileFile) {
+                        profilePictureSource = `File: ${profileFile.name}`;
+                    } else if (profileUrl) {
+                        profilePictureSource = `URL: ${profileUrl}`;
+                    }
+
+                    // Simulate API call for sign-up
+                    setTimeout(() => {
+                        console.log('Signing up with:', { username, password, profilePictureSource });
+                        showMessage(`Account for "${username}" created successfully!`, 'success');
+                        // Optionally switch to sign-in tab after successful signup
+                        // switchToSigninLink.click(); // Simulate clicking the "Log in" link
+                    }, 1000); // Simulate network delay
+                };
+            }
+
+            // Dynamic Orb Generation
+            const generateOrbs = () => {
+                const body = document.body;
+                // Clear existing orbs if any
+                document.querySelectorAll('.floating-orb-container').forEach(orb => orb.remove());
+
+                let orbConfigs = [];
+                const width = window.innerWidth;
+                const height = window.innerHeight;
+
+                // Define base sizes and positions relative to viewport dimensions
+                // This ensures proper vertical, horizontal, and diagonal gaps
+                const baseSize = Math.min(width, height) * 0.15; // 15% of the smaller dimension
+
+                if (width < 640) { // Mobile
+                    orbConfigs = [
+                        { size: baseSize * 1.2, top: '10%', left: '5%', delay: '0s' },
+                        { size: baseSize * 0.9, bottom: '15%', right: '10%', delay: '2s' },
+                        { size: baseSize * 0.7, top: '55%', left: '20%', delay: '1s' }
+                    ];
+                } else if (width >= 640 && width < 1024) { // Tablet
+                    orbConfigs = [
+                        { size: baseSize * 1.4, top: '10%', left: '8%', delay: '0s' },
+                        { size: baseSize * 1.1, bottom: '10%', right: '12%', delay: '2s' },
+                        { size: baseSize * 0.8, top: '60%', left: '15%', delay: '1s' },
+                        { size: baseSize * 1.2, top: '25%', right: '20%', delay: '3s' },
+                        { size: baseSize * 0.7, bottom: '5%', left: '50%', delay: '4s' }
+                    ];
+                } else { // Desktop
+                    orbConfigs = [
+                        { size: baseSize * 1.6, top: '10%', left: '5%', delay: '0s' },
+                        { size: baseSize * 1.3, bottom: '5%', right: '10%', delay: '2s' },
+                        { size: baseSize * 1.0, top: '50%', left: '15%', delay: '1s' },
+                        { size: baseSize * 1.4, top: '20%', right: '10%', delay: '3s' },
+                        { size: baseSize * 1.1, bottom: '25%', left: '40%', delay: '4s' },
+                        { size: baseSize * 0.8, top: '5%', right: '30%', delay: '0.5s' },
+                        { size: baseSize * 0.7, bottom: '15%', left: '70%', delay: '2.5s' },
+                        { size: baseSize * 0.6, top: '70%', right: '5%', delay: '1.5s' }
+                    ];
+                }
+
+                orbConfigs.forEach((config) => {
+                    const orb = document.createElement('div');
+                    orb.classList.add('floating-orb-container');
+                    orb.style.width = `${config.size}px`;
+                    orb.style.height = `${config.size}px`;
+                    if (config.top) orb.style.top = config.top;
+                    if (config.left) orb.style.left = config.left;
+                    if (config.right) orb.style.right = config.right;
+                    if (config.bottom) orb.style.bottom = config.bottom;
+                    orb.style.animationDelay = config.delay;
+                    body.appendChild(orb);
+                });
+            };
+
+            // Call on load and resize
+            generateOrbs();
+            window.addEventListener('resize', generateOrbs);
+        });
+    </script>
+    <script src="main.js" type="text/javascript" charset="utf-8"></script>
+</body>
+</html>
+
