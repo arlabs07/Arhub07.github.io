@@ -280,6 +280,27 @@ class AuthSystem {
                             <button onclick="window.location.href='dashboard.html'" class="w-full flex items-center space-x-3 py-2.5 px-3 text-gray-300 hover:bg-white hover:bg-opacity-10 hover:text-white rounded-lg transition-all duration-200 text-sm">
                                 <i class="fas fa-home text-amber-400 w-4"></i><span>Dashboard</span>
                             </button>
+                            <button onclick="window.location.href='messages.html'" class="w-full flex items-center space-x-3 py-2.5 px-3 text-gray-300 hover:bg-white hover:bg-opacity-10 hover:text-white rounded-lg transition-all duration-200 text-sm">
+                                <i class="fas fa-envelope text-amber-400 w-4"></i><span>Messages</span>
+                            </button>
+                            <button onclick="window.location.href='tasks.html'" class="w-full flex items-center space-x-3 py-2.5 px-3 text-gray-300 hover:bg-white hover:bg-opacity-10 hover:text-white rounded-lg transition-all duration-200 text-sm">
+                                <i class="fas fa-tasks text-amber-400 w-4"></i><span>Tasks</span>
+                            </button>
+                            <button onclick="window.location.href='settings.html'" class="w-full flex items-center space-x-3 py-2.5 px-3 text-gray-300 hover:bg-white hover:bg-opacity-10 hover:text-white rounded-lg transition-all duration-200 text-sm">
+                                <i class="fas fa-cog text-amber-400 w-4"></i><span>Settings</span>
+                            </button>
+                            <button onclick="window.location.href='projects.html'" class="w-full flex items-center space-x-3 py-2.5 px-3 text-gray-300 hover:bg-white hover:bg-opacity-10 hover:text-white rounded-lg transition-all duration-200 text-sm">
+                                <i class="fas fa-folder text-amber-400 w-4"></i><span>Projects</span>
+                            </button>
+                            <button onclick="window.location.href='analytics.html'" class="w-full flex items-center space-x-3 py-2.5 px-3 text-gray-300 hover:bg-white hover:bg-opacity-10 hover:text-white rounded-lg transition-all duration-200 text-sm">
+                                <i class="fas fa-chart-line text-amber-400 w-4"></i><span>Analytics</span>
+                            </button>
+                            <button onclick="window.location.href='support.html'" class="w-full flex items-center space-x-3 py-2.5 px-3 text-gray-300 hover:bg-white hover:bg-opacity-10 hover:text-white rounded-lg transition-all duration-200 text-sm">
+                                <i class="fas fa-life-ring text-amber-400 w-4"></i><span>Support</span>
+                            </button>
+                            <button onclick="window.location.href='about.html'" class="w-full flex items-center space-x-3 py-2.5 px-3 text-gray-300 hover:bg-white hover:bg-opacity-10 hover:text-white rounded-lg transition-all duration-200 text-sm">
+                                <i class="fas fa-info-circle text-amber-400 w-4"></i><span>About</span>
+                            </button>
                         </div>
                         <hr class="border-gray-700 border-opacity-50 my-3">
                         `
