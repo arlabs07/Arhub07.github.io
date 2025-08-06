@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    
+</head>
+<body class="bg-gray-900 text-white min-h-screen flex flex-col items-center justify-center p-4 font-sans">
+
+    <div class="bg-gray-800 p-8 rounded-lg shadow-xl w-full max-w-2xl mt-16 sm:mt-0"> <!-- mt-16 for header clearance -->
+        <h2 class="text-4xl font-bold text-center mb-6 text-orange-400">Welcome to Your Dashboard!</h2>
+        <p class="text-lg text-gray-300 text-center mb-4">
+            This is your personalized space after logging in.
+        </p>
+        <p class="text-md text-gray-400 text-center">
+            You can add more content and features here. Use the profile picture in the header to access your profile or the menu for navigation.
+        </p>
+        <div class="mt-8 text-center">
+            <button onclick="window.redirectToProfile()" class="px-6 py-3 rounded-md bg-orange-500 hover:bg-orange-600 text-white font-semibold shadow-md transition duration-200 focus:outline-none focus:ring-2 focus:ring-orange-400 flex items-center justify-center">
+                <i class="fas fa-user-circle mr-2"></i> Go to Profile
+            </button>
+        </div>
+    </div>
+<script src="main.js" type="text/javascript" charset="utf-8"></script>
+</body>
+</html>
