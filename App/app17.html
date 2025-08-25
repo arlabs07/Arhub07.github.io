@@ -1,0 +1,1838 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Arai - AI Search</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5.1.0/dist/tesseract.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/javascript.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/htmlbars.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.js"></script>
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: linear-gradient(135deg, #1f1f1f, #121212);
+            color: #E8EAED;
+        }
+
+        .font-google-sans {
+            font-family: 'Google Sans', sans-serif;
+        }
+
+        .main-container {
+            background: transparent;
+        }
+
+        .bottom-bar {
+            background: transparent;
+            padding: 1rem;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            z-index: 50;
+        }
+
+        @media (min-width: 768px) {
+            .bottom-bar {
+                max-width: 85%;
+                margin: 0 auto;
+            }
+        }
+
+        .bottom-bar-hidden {
+            display: none;
+        }
+
+        .floating-input-container {
+            background: #1E1F20;
+            border: 1px solid #3C4043;
+            border-radius: 12px;
+            padding: .5rem;
+        }
+
+        .floating-input-container:focus-within {
+            border-color: #8AB4F8;
+        }
+
+        .floating-input {
+            background: transparent;
+            color: #E8EAED;
+            border: none;
+            outline: none;
+            resize: none;
+        }
+
+        .floating-input::placeholder {
+            color: #969BA1;
+        }
+
+        .suggestion-chip {
+            background: linear-gradient(135deg, #1E1F20, #2A2B2C);
+            border: 1px solid #3C4043;
+        }
+
+        .horizontal-scroll {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        .horizontal-scroll::-webkit-scrollbar {
+            display: none;
+        }
+
+        @keyframes shimmer {
+            0% {
+                background-position: -1000px 0
+            }
+            100% {
+                background-position: 1000px 0
+            }
+        }
+
+        .shimmer {
+            animation: shimmer 2s infinite linear;
+            background: linear-gradient(to right, #1E1F20 4%, #343536 25%, #1E1F20 36%);
+            background-size: 1000px 100%;
+        }
+
+        .result-source-card {
+            background: #1E1F20;
+            border: 1px solid #3C4043;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px)
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0)
+            }
+        }
+
+        @keyframes fadeOut {
+            from {
+                opacity: 1;
+                transform: translateY(0)
+            }
+            to {
+                opacity: 0;
+                transform: translateY(-10px)
+            }
+        }
+
+        .fade-in {
+            animation: fadeIn 1s ease-out;
+        }
+
+        .fade-out {
+            animation: fadeOut .3s ease-out;
+        }
+
+        .overlay {
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(8px);
+        }
+
+        .truncate-3-lines {
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .action-btn {
+            transition: all .2s ease;
+        }
+
+        .action-btn:hover {
+            background: #3C4043;
+            transform: scale(1.05);
+        }
+
+        .history-item {
+            transition: all .2s ease;
+        }
+
+        .history-item:hover {
+            background: #1E1F20;
+        }
+
+        .tts-active {
+            color: #8AB4F8 !important;
+            animation: pulse 1.5s infinite;
+        }
+
+        .news-item {
+            background: #1E1F20;
+            border: 1px solid #3C4043;
+        }
+
+        .recording {
+            animation: pulse 1.5s infinite;
+            color: #ff4444 !important;
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(1)
+            }
+            50% {
+                transform: scale(1.1)
+            }
+            100% {
+                transform: scale(1)
+            }
+        }
+
+        .transition-all {
+            transition: all .3s ease;
+        }
+
+        .attachment-preview {
+            max-height: 100px;
+            object-fit: cover;
+        }
+
+        .attachment-container {
+            max-width: 150px;
+            position: relative;
+        }
+
+        .remove-attachment {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: #ff4444;
+            color: white;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+
+        .loading-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+        }
+
+        .loading-spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #8AB4F8;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+        }
+
+        .loading-progress {
+            text-align: center;
+            color: #E8EAED;
+            margin-top: 10px;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg)
+            }
+            100% {
+                transform: rotate(360deg)
+            }
+        }
+
+        .rotating {
+            animation: spin 2s linear infinite;
+        }
+
+        .profile-container {
+            max-width: 500px;
+            margin: 0 auto;
+            padding: 24px;
+            background: #1E1F20;
+            border-radius: 16px;
+            border: 1px solid #3C4043;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(8px);
+        }
+
+        .profile-header {
+            font-size: 1.75rem;
+            font-weight: 600;
+            color: #E8EAED;
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+
+        .profile-label {
+            display: block;
+            color: #E8EAED;
+            font-weight: 500;
+            margin-bottom: .5rem;
+            font-size: .9rem;
+        }
+
+        .profile-input {
+            width: 100%;
+            padding: .75rem;
+            background: #2A2B2C;
+            border: 1px solid #3C4043;
+            border-radius: 8px;
+            color: #E8EAED;
+            font-size: 1rem;
+            outline: none;
+            transition: border-color .2s, box-shadow .2s;
+        }
+
+        .profile-input:focus {
+            border-color: #8AB4F8;
+            box-shadow: 0 0 0 3px rgba(138, 180, 248, 0.2);
+        }
+
+        .profile-picture-container {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            justify-content: center;
+        }
+
+        .profile-picture-preview {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid #8AB4F8;
+            box-shadow: 0 0 10px rgba(138, 180, 248, 0.3);
+        }
+
+        .profile-upload-label {
+            display: inline-block;
+            padding: .5rem 1rem;
+            background: #3C4043;
+            color: #E8EAED;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: .9rem;
+        }
+
+        .profile-upload-label:hover {
+            background: #4A4E54;
+        }
+
+        .profile-section {
+            margin-bottom: 2rem;
+        }
+
+        .profile-icon-container {
+            display: flex;
+            align-items: center;
+        }
+
+        .profile-icon {
+            clip-path: circle(50% at 50% 50%);
+        }
+
+        #profile-upload {
+            display: none;
+        }
+
+        .code-container {
+            position: relative;
+        }
+
+        .copy-code-btn {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            padding: 4px 8px;
+            background: #3C4043;
+            color: #E8EAED;
+            border-radius: 4px;
+            font-size: .8rem;
+            cursor: pointer;
+        }
+
+        .copy-code-btn:hover {
+            background: #8AB4F8;
+            color: #000;
+        }
+
+        .multimedia-item {
+            background: #1E1F20;
+            border: 1px solid #3C4043;
+            padding: 1rem;
+            border-radius: 8px;
+        }
+
+        .multimedia-item:hover {
+            background: #2A2B2C;
+        }
+
+        .notification {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #1E1F20;
+            border: 1px solid #3C4043;
+            color: #E8EAED;
+            padding: 1rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+            z-index: 1000;
+            opacity: 0;
+            animation: notify 3s ease-in-out
+        }
+
+        @keyframes notify {
+            0% {
+                opacity: 0;
+                transform: translate(-50%, 20px)
+            }
+            10% {
+                opacity: 1;
+                transform: translate(-50%, 0)
+            }
+            90% {
+                opacity: 1;
+                transform: translate(-50%, 0)
+            }
+            100% {
+                opacity: 0;
+                transform: translate(-50%, 20px)
+            }
+        }
+
+        .media-player-container {
+            position: relative;
+            width: 100%;
+            max-width: 800px;
+            background: #1E1F20;
+            border-radius: 8px;
+            padding: 1rem;
+        }
+
+        .media-player-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: .5rem;
+            background: #2A2B2C;
+            border-radius: 0 0 8px 8px;
+        }
+
+        .media-play-btn,
+        .media-pause-btn,
+        .media-seek-btn {
+            font-size: 1.2rem;
+            color: #E8EAED;
+            cursor: pointer;
+        }
+
+        .media-seek-bar {
+            width: 100%;
+            margin: 0 1rem;
+        }
+
+        .media-time {
+            font-size: .9rem;
+            color: #E8EAED;
+        }
+
+        .ocr-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+            backdrop-filter: blur(10px);
+        }
+
+        .ocr-spinner {
+            border: 6px solid #f3f3f3;
+            border-top: 6px solid #8AB4F8;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            animation: spin 1s linear infinite, scalePulse 1.5s ease-in-out infinite;
+        }
+
+        .ocr-progress {
+            font-size: 1.2rem;
+            color: #E8EAED;
+            margin-top: 20px;
+            text-shadow: 0 0 10px rgba(138, 180, 248, 0.5);
+            animation: fadePulse 1.5s ease-in-out infinite;
+        }
+
+        @keyframes scalePulse {
+            0% {
+                transform: scale(1)
+            }
+            50% {
+                transform: scale(1.2)
+            }
+            100% {
+                transform: scale(1)
+            }
+        }
+
+        @keyframes fadePulse {
+            0% {
+                opacity: 0.7
+            }
+            50% {
+                opacity: 1
+            }
+            100% {
+                opacity: 0.7
+            }
+        }
+
+        .table-responsive {
+            max-width: 100%;
+            overflow-x: auto;
+        }
+
+        .table-responsive table {
+            border-collapse: collapse;
+            border: 1px solid #3C4043;
+        }
+
+        .table-responsive th,
+        .table-responsive td {
+            padding: 8px;
+            border: 1px solid #3C4043;
+        }
+
+        .fast-mode-btn {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem 1.5rem;
+            border-radius: 9999px;
+            cursor: pointer;
+            font-weight: 500;
+            color: white;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid #3C4043;
+            background-color: #3c4043;
+            transition: all 0.3s ease;
+        }
+
+        .fast-mode-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(120deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.6s ease;
+        }
+
+        .fast-mode-btn:hover::before {
+            left: 100%;
+        }
+
+        .fast-mode-btn:hover {
+            background-color: #4a4e54;
+        }
+    </style>
+</head>
+
+<body class="antialiased">
+    <div id="app-container" class="main-container max-w-4xl mx-auto h-screen flex flex-col">
+        <div id="home-view" class="flex flex-col h-full">
+            <header class="flex items-center justify-between p-4">
+                <div class="profile-icon-container w-6">
+                    <img id="profile-icon" src="" alt="Profile" class="profile-icon h-8 w-8 cursor-pointer object-cover" onclick="showProfile()">
+                </div>
+                <img id="logo" src="https://arlabs07.github.io/Arhub07.github.io/Images/Arai.png" alt="Arai Logo" class="h-8 w-8">
+                <i class="fas fa-history text-xl text-gray-400 cursor-pointer" onclick="showHistory()"></i>
+            </header>
+            <main class="flex-grow flex flex-col pb-48">
+                <div id="hello-message" class="text-center mb-4">
+                    <h1 class="text-2xl text-gray-200"></h1>
+                </div>
+                <div class="flex-grow"></div>
+            </main>
+        </div>
+        <div id="results-view" class="hidden flex-col h-full">
+            <header class="flex items-center justify-between p-4 space-x-4 sticky top-0 bg-[#131314] z-10 border-b border-gray-800">
+                <img id="results-logo" src="https://arlabs07.github.io/Arhub07.github.io/Images/Arai.png" alt="Arai Logo" class="h-6 w-6 flex-shrink-0">
+                <div class="flex-grow text-lg text-gray-200 truncate" id="results-query-display"></div>
+                <i class="fas fa-edit text-lg text-gray-400 cursor-pointer" onclick="resetChat()"></i>
+                <i class="fas fa-history text-xl text-gray-400 cursor-pointer" onclick="showHistory()"></i>
+            </header>
+            <main id="results-content" class="flex-grow overflow-y-auto px-4 pt-6 pb-48">
+                <div id="loading-skeleton" class="hidden space-y-4"></div>
+                <div id="results-container"></div>
+                <div id="action-buttons" class="hidden flex items-center space-x-4 mt-6 pt-4 border-t border-gray-700">
+                    <button class="action-btn p-2 rounded-full" onclick="shareResponse()" title="Share"><i class="fas fa-share text-gray-400"></i></button>
+                    <button class="action-btn p-2 rounded-full" onclick="copyResponse()" title="Copy"><i class="fas fa-copy text-gray-400"></i></button>
+                    <button class="action-btn p-2 rounded-full" onclick="toggleTTS()" title="Text to Speech"><i class="fas fa-volume-up text-gray-400" id="tts-icon"></i></button>
+                </div>
+            </main>
+        </div>
+        <div id="history-view" class="hidden flex-col h-full">
+            <header class="flex items-center justify-between p-4 space-x-4 sticky top-0 bg-[#131314] z-10 border-b border-gray-800">
+                <i class="fas fa-arrow-left text-xl text-gray-400 cursor-pointer" onclick="goBack()"></i>
+                <div class="flex-grow text-lg text-gray-200">Search History</div>
+                <button class="text-red-400 text-sm" onclick="clearHistory()">Delete All</button>
+            </header>
+            <div class="p-4">
+                <div class="floating-input-container flex items-center p-2 rounded-full w-full mb-4">
+                    <i class="fas fa-search text-gray-400 px-2"></i>
+                    <input type="text" id="history-search" class="floating-input w-full px-2 text-base" placeholder="Search history...">
+                </div>
+            </div>
+            <main id="history-content" class="flex-grow overflow-y-auto px-4 pb-4">
+                <div id="history-list"></div>
+            </main>
+        </div>
+        <div id="profile-view" class="hidden flex-col h-full">
+            <header class="flex items-center justify-between p-4 space-x-4 sticky top-0 bg-[#131314] z-10 border-b border-gray-800">
+                <i class="fas fa-arrow-left text-xl text-gray-400 cursor-pointer" onclick="goBack()"></i>
+                <div class="flex-grow text-lg text-gray-200 font-google-sans">Profile</div>
+            </header>
+            <main class="flex-grow overflow-y-auto px-4 pt-6 pb-24">
+                <div class="max-w-4xl mx-auto">
+                    <h2 class="text-2xl font-google-sans text-gray-200 mb-6">Your Profile</h2>
+                    <div class="space-y-6">
+                        <div class="flex items-center gap-4">
+                            <img id="profile-picture-preview" src="" alt="Profile Preview" class="w-16 h-16 rounded-full object-cover border-2 border-[#8AB4F8]">
+                            <div class="flex-1">
+                                <label class="text-sm text-gray-300 mb-2 block">Profile Picture URL</label>
+                                <input type="text" id="profile-url-input" class="w-full p-3 bg-[#1E1F20] border border-[#3C4043] rounded-xl text-gray-200 focus:border-[#8AB4F8] focus:ring-2 focus:ring-[#8AB4F8] outline-none transition-all" placeholder="Enter image URL">
+                            </div>
+                        </div>
+                        <div>
+                            <label class="profile-upload-label"><i class="fas fa-upload mr-2"></i>Upload Picture</label>
+                            <input type="file" id="profile-upload" accept="image/*" class="hidden">
+                        </div>
+                        <div>
+                            <label class="text-sm text-gray-300 mb-2 block">Username</label>
+                            <input type="text" id="username-input" class="w-full p-3 bg-[#1E1F20] border border-[#3C4043] rounded-xl text-gray-200 focus:border-[#8AB4F8] focus:ring-2 focus:ring-[#8AB4F8] outline-none transition-all" placeholder="Enter your username">
+                        </div>
+                        <div>
+                            <label class="text-sm text-gray-300 mb-2 block">Translation Language (default for no translation)</label>
+                            <input type="text" id="translation-lang" class="w-full p-3 bg-[#1E1F20] border border-[#3C4043] rounded-xl text-gray-200 focus:border-[#8AB4F8] focus:ring-2 focus:ring-[#8AB4F8] outline-none transition-all" placeholder="Enter language code (e.g., en, hi, es)" value="default">
+                        </div>
+                        <button onclick="saveProfile()" class="w-full py-3 bg-[#8AB4F8] rounded-2xl text-black font-medium hover:bg-[#6B9CF6] transition-all">Save</button>
+                    </div>
+                </div>
+            </main>
+        </div>
+        <div id="camera-view" class="hidden flex-col h-full">
+            <header class="flex items-center justify-between p-4 space-x-4 sticky top-0 bg-[#131314] z-10 border-b border-gray-800">
+                <i class="fas fa-arrow-left text-xl text-gray-400 cursor-pointer" onclick="hideCameraView()"></i>
+                <div class="flex-grow text-lg text-gray-200">Camera</div>
+            </header>
+            <main class="flex-grow flex flex-col items-center justify-between relative">
+                <video id="camera-video" autoplay playsinline class="w-full h-full object-cover"></video>
+                <button onclick="captureImage()" class="absolute bottom-10 w-16 h-16 bg-white rounded-full flex items-center justify-center active:bg-blue-500">
+                    <i class="fas fa-camera text-black text-2xl"></i>
+                </button>
+            </main>
+        </div>
+        <div id="image-overlay" class="hidden fixed inset-0 overlay z-50 flex items-center justify-center p-4">
+            <div class="max-w-4xl max-h-full relative">
+                <img id="overlay-image" src="" alt="Full size image" class="max-w-full max-h-full rounded-2xl">
+                <button class="absolute top-4 right-4 bg-black bg-opacity-50 text-white rounded-full w-10 h-10 flex items-center justify-content-center" onclick="hideImageOverlay()"><i class="fas fa-times"></i></button>
+            </div>
+        </div>
+        <div id="media-overlay" class="hidden fixed inset-0 overlay z-50 flex items-center justify-center p-4">
+            <div class="media-player-container">
+                <div id="media-player-content"></div>
+                <div class="media-player-controls">
+                    <span class="media-play-btn"><i class="fas fa-play"></i></span>
+                    <span class="media-pause-btn hidden"><i class="fas fa-pause"></i></span>
+                    <input type="range" class="media-seek-bar" min="0" max="100" value="0">
+                    <span class="media-time">0:00 / 0:00</span>
+                </div>
+                <button class="absolute top-4 right-4 bg-black bg-opacity-50 text-white rounded-full w-10 h-10 flex items-center justify-center" onclick="hideMediaOverlay()"><i class="fas fa-times"></i></button>
+            </div>
+        </div>
+        <div id="news-overlay" class="hidden fixed inset-0 overlay z-50 flex items-end">
+            <div class="bg-[#1E1F20] w-full h-3/4 rounded-t-3xl transform translate-y-full transition-transform duration-300" id="news-panel">
+                <div class="p-6 h-full flex flex-col">
+                    <div class="w-12 h-1 bg-gray-600 rounded-full mx-auto mb-6 flex-shrink-0"></div>
+                    <h3 class="text-xl font-google-sans text-gray-200 mb-4 flex-shrink-0">Latest News</h3>
+                    <div id="all-news-list" class="space-y-4 flex-grow overflow-y-auto"></div>
+                    <button class="w-full mt-6 py-3 bg-gray-700 rounded-2xl text-gray-200 flex-shrink-0" onclick="hideNewsOverlay()">Close</button>
+                </div>
+            </div>
+        </div>
+        <div id="loading-overlay" class="hidden loading-overlay">
+            <div class="ocr-spinner"></div>
+            <div id="loading-progress" class="ocr-progress"></div>
+        </div>
+        <div id="notification-container"></div>
+        <div id="fast-buttons" class="hidden fixed bottom-36 left-1/2 -translate-x-1/2 z-[100] flex flex-row space-x-4">
+             <div class="fast-mode-btn" onclick="setFastMode('quick')" title="Quick Answer">
+                <i class="fas fa-bolt text-white"></i>
+                <span class="ml-2 font-medium">Quick</span>
+            </div>
+            <div class="fast-mode-btn" onclick="setFastMode('rocket')" title="Super Fast">
+                <i class="fas fa-rocket text-white"></i>
+                <span class="ml-2 font-medium">Rocket</span>
+            </div>
+        </div>
+        <div class="bottom-bar transition-all">
+            <div id="suggestions-container" class="w-full overflow-x-auto horizontal-scroll px-4 mb-2">
+                <div class="flex space-x-3">
+                    <div class="suggestion-chip p-4 rounded-2xl cursor-pointer flex-shrink-0 w-48" onclick="performSearch('Weather in Tokyo')">
+                        <p class="text-gray-300">Weather in Tokyo</p>
+                    </div>
+                    <div class="suggestion-chip p-4 rounded-2xl cursor-pointer flex-shrink-0 w-48" onclick="performSearch('Solve 56^2 - 67^3')">
+                        <p class="text-gray-300">Math problem</p>
+                    </div>
+                    <div class="suggestion-chip p-4 rounded-2xl cursor-pointer flex-shrink-0 w-48" onclick="performSearch('Latest tech news')">
+                        <p class="text-gray-300">Tech news</p>
+                    </div>
+                    <div class="suggestion-chip p-4 rounded-2xl cursor-pointer flex-shrink-0 w-48" onclick="performSearch('What is trigonometry search from this website https://en.wikipedia.org/wiki/Trigonometry')">
+                        <p class="text-gray-300">Trigonometry</p>
+                    </div>
+                </div>
+            </div>
+            <div class="floating-input-container flex flex-col items-center p-4 rounded-2xl w-full">
+                <textarea id="search-input" class="floating-input w-full px-2 text-base h-20" placeholder="Ask anything..."></textarea>
+                <div id="attachment-preview" class="flex space-x-2 mb-2 w-full"></div>
+                <div class="flex w-full items-center justify-between space-x-2">
+                    <input type="file" id="image-input" accept="image/*" class="hidden">
+                    <i class="far fa-image text-xl text-gray-400 px-2 cursor-pointer" onclick="document.getElementById('image-input').click()"></i>
+                    <i class="fas fa-camera text-xl text-gray-400 px-2 cursor-pointer" onclick="showCameraView()"></i>
+                    <i class="fas fa-microphone text-xl text-gray-400 px-2 cursor-pointer" id="mic-btn" onclick="toggleMicrophone()"></i>
+                    <button id="improve-btn" class="action-btn p-2 rounded-full" title="Improve Prompt" onclick="improvePrompt()"><i class="fas fa-wand-magic-sparkles text-gray-400"></i></button>
+                    <button id="send-btn" class="bg-gray-600 rounded-full w-9 h-9 flex items-center justify-center flex-shrink-0 cursor-not-allowed" disabled><i class="fas fa-arrow-up text-black"></i></button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        let currentView = 'home',
+            searchHistory = JSON.parse(localStorage.getItem('araiSearchHistory') || '[]'),
+            currentQuery = '',
+            currentResponse = '',
+            isSpeaking = !1,
+            isRecording = !1,
+            isLoading = !1,
+            speechSynthesis = window.speechSynthesis,
+            usedApis = [],
+            currentNews = [],
+            username = localStorage.getItem('araiUsername') || '',
+            profilePic = localStorage.getItem('araiProfilePic') || 'https://placehold.co/32x32/333/FFF?text=U',
+            translationLang = localStorage.getItem('araiTranslationLang') || 'default',
+            currentAnswerIndex = 0,
+            answers = [],
+            attachedFile = null,
+            tesseractWorker = null,
+            queryCache = new Map,
+            mediaPlayer = null,
+            loadingInterval = null,
+            searchMode = 'normal';
+        const homeView = document.getElementById('home-view'),
+            resultsView = document.getElementById('results-view'),
+            historyView = document.getElementById('history-view'),
+            profileView = document.getElementById('profile-view'),
+            cameraView = document.getElementById('camera-view'),
+            searchInput = document.getElementById('search-input'),
+            sendBtn = document.getElementById('send-btn'),
+            improveBtn = document.getElementById('improve-btn'),
+            resultsQueryDisplay = document.getElementById('results-query-display'),
+            loadingSkeleton = document.getElementById('loading-skeleton'),
+            resultsContainer = document.getElementById('results-container'),
+            actionButtons = document.getElementById('action-buttons'),
+            historySearch = document.getElementById('history-search'),
+            historyList = document.getElementById('history-list'),
+            imageOverlay = document.getElementById('image-overlay'),
+            overlayImage = document.getElementById('overlay-image'),
+            newsOverlay = document.getElementById('news-overlay'),
+            newsPanel = document.getElementById('news-panel'),
+            allNewsList = document.getElementById('all-news-list'),
+            imageInput = document.getElementById('image-input'),
+            micBtn = document.getElementById('mic-btn'),
+            profileIcon = document.getElementById('profile-icon'),
+            helloMessage = document.getElementById('hello-message').querySelector('h1'),
+            usernameInput = document.getElementById('username-input'),
+            profileUrlInput = document.getElementById('profile-url-input'),
+            profileUpload = document.getElementById('profile-upload'),
+            profilePicturePreview = document.getElementById('profile-picture-preview'),
+            translationLangInput = document.getElementById('translation-lang'),
+            cameraVideo = document.getElementById('camera-video'),
+            bottomBar = document.querySelector('.bottom-bar'),
+            attachmentPreview = document.getElementById('attachment-preview'),
+            loadingOverlay = document.getElementById('loading-overlay'),
+            loadingProgress = document.getElementById('loading-progress'),
+            logo = document.getElementById('logo'),
+            resultsLogo = document.getElementById('results-logo'),
+            mediaOverlay = document.getElementById('media-overlay'),
+            mediaPlayerContent = document.getElementById('media-player-content'),
+            notificationContainer = document.getElementById('notification-container'),
+            fastButtons = document.getElementById('fast-buttons'),
+            suggestionsContainer = document.getElementById('suggestions-container');
+        sendBtn.addEventListener('click', handleSearch), searchInput.addEventListener('keypress', e => {
+            'Enter' === e.key && handleSearch()
+        }), searchInput.addEventListener('input', updateSendButtonState), historySearch.addEventListener('input', e => filterHistory(e.target.value)), imageInput.addEventListener('change', handleFileAttachment), profileUpload.addEventListener('change', handleProfileUpload), document.addEventListener('DOMContentLoaded', () => {
+            hljs.highlightAll()
+        });
+
+        function updateSendButtonState() {
+            searchInput.value.trim().length > 0 || attachedFile && !isLoading ? (sendBtn.classList.remove('bg-gray-600', 'cursor-not-allowed'), sendBtn.classList.add('bg-[#8AB4F8]'), sendBtn.disabled = !1) : (sendBtn.classList.remove('bg-[#8AB4F8]'), sendBtn.classList.add('bg-gray-600', 'cursor-not-allowed'), sendBtn.disabled = !0)
+        }
+
+        function updateURL(e) {
+            const t = new URL(window.location);
+            e ? t.searchParams.set('q', encodeURIComponent(e)) : t.searchParams.delete('q'), window.history.pushState({}, document.title, t)
+        }
+
+        function goBack() {
+            'results' === currentView ? (showView('home'), updateURL('')) : 'history' === currentView || 'profile' === currentView || 'camera' === currentView ? showView('home') : void 0, hideNewsOverlay()
+        }
+
+        function showView(e) {
+            homeView.classList.add('hidden'), resultsView.classList.add('hidden'), historyView.classList.add('hidden'), profileView.classList.add('hidden'), cameraView.classList.add('hidden'), currentView = e;
+            const t = 'camera' === e || 'history' === e || 'profile' === e;
+            bottomBar.classList.toggle('bottom-bar-hidden', t), 'home' === e ? homeView.classList.remove('hidden') : 'results' === e ? (resultsView.classList.remove('hidden'), resultsView.classList.add('flex')) : 'history' === e ? (historyView.classList.remove('hidden'), historyView.classList.add('flex'), loadHistory()) : 'profile' === e ? (profileView.classList.remove('hidden'), profileView.classList.add('flex'), loadProfile()) : 'camera' === e && (cameraView.classList.remove('hidden'), cameraView.classList.add('flex'), startCamera()), 'home' === e ? suggestionsContainer.classList.remove('hidden') : suggestionsContainer.classList.add('hidden')
+        }
+
+        function resetChat() {
+            showView('home'), searchInput.value = '', attachedFile = null, attachmentPreview.innerHTML = '', resultsContainer.innerHTML = '', actionButtons.classList.add('hidden'), updateURL(''), updateSendButtonState()
+        }
+
+        function showHistory() {
+            showView('history')
+        }
+
+        function showProfile() {
+            showView('profile')
+        }
+
+        function showCameraView() {
+            showView('camera')
+        }
+
+        function hideCameraView() {
+            showView('home'), stopCamera()
+        }
+        async function startCamera() {
+            try {
+                const e = await navigator.mediaDevices.getUserMedia({
+                    video: {
+                        facingMode: 'environment'
+                    }
+                });
+                cameraVideo.srcObject = e
+            } catch (e) {
+                console.error('Camera error:', e), showNotification('Camera access denied or error occurred. Please check permissions.'), hideCameraView()
+            }
+        }
+
+        function stopCamera() {
+            cameraVideo.srcObject && cameraVideo.srcObject.getTracks().forEach(e => e.stop())
+        }
+
+        function captureImage() {
+            const e = document.createElement('canvas');
+            e.width = cameraVideo.videoWidth, e.height = cameraVideo.videoHeight, e.getContext('2d').drawImage(cameraVideo, 0, 0);
+            const t = e.toDataURL('image/png');
+            processCapturedImage(t), hideCameraView()
+        }
+        async function processCapturedImage(e) {
+            try {
+                const t = await fetch(e).then(e => e.blob()),
+                    a = new File([t], 'captured.png', {
+                        type: 'image/png'
+                    });
+                handleFileAttachment({
+                    target: {
+                        files: [a]
+                    }
+                })
+            } catch (e) {
+                console.error('Process image error:', e), showNotification('Error processing captured image. Please try again.')
+            }
+        }
+
+        function handleFileAttachment(e) {
+            const t = e.target.files[0];
+            if (!t) return;
+            t.size > 5242880 ? (showNotification('File is too large. Please select a file smaller than 5MB.'), void 0) : (attachedFile = t, attachmentPreview.innerHTML = `<div class="attachment-container"><img src="${URL.createObjectURL(t)}" alt="Attachment" class="attachment-preview rounded-lg"><span class="remove-attachment" onclick="removeAttachment()">×</span></div>`, updateSendButtonState())
+        }
+
+        function removeAttachment() {
+            attachedFile = null, attachmentPreview.innerHTML = '', updateSendButtonState()
+        }
+        async function handleSearch() {
+            if (isLoading) return;
+            let e = searchInput.value.trim();
+            if (attachedFile) {
+                loadingOverlay.classList.remove('hidden'), loadingProgress.textContent = 'Processing image...';
+                let t;
+                try {
+                    t = await processImageOCR(attachedFile)
+                } catch (e) {
+                    t = ''
+                }
+                e = e ? `${e} ${t}` : t, attachedFile = null, attachmentPreview.innerHTML = '', loadingOverlay.classList.add('hidden')
+            }
+            e && performSearch(e)
+        }
+        async function processImageOCR(e) {
+            try {
+                tesseractWorker || (loadingProgress.textContent = 'Initializing OCR...', tesseractWorker = await Tesseract.createWorker('eng+hin')), loadingProgress.textContent = 'Recognizing text...';
+                const {
+                    data: {
+                        text: t
+                    }
+                } = await tesseractWorker.recognize(e);
+                return t.trim()
+            } catch (e) {
+                return console.error('OCR error:', e), showNotification('Failed to process image text. Please try a different image or check connection.'), ''
+            } finally {
+                loadingOverlay.classList.add('hidden'), loadingProgress.textContent = ''
+            }
+        }
+        async function improvePrompt() {
+            const e = searchInput.value.trim();
+            if (!e) return void showNotification('Please enter a prompt to improve.');
+            try {
+                improveBtn.disabled = !0, improveBtn.classList.add('opacity-50');
+                const t = `Query: "${e}"\nRewrite the query into its clearest and most detailed form using rich, descriptive keywords. Expand context where helpful, add specificity, and ensure precision. The improved prompt may use bullet points or a list when it makes the request clearer. Output only the improved prompt below without any explanation or formatting.`,
+                    a = await fetch(`https://text.pollinations.ai/${encodeURIComponent(t)}`);
+                if (!a.ok) throw new Error('Prompt improvement failed');
+                const n = await a.text();
+                searchInput.value = n.trim() || e, updateSendButtonState()
+            } catch (e) {
+                console.error('Prompt improvement error:', e), showNotification('Failed to improve prompt. Please try again.')
+            } finally {
+                improveBtn.disabled = !1, improveBtn.classList.remove('opacity-50')
+            }
+        }
+        async function filterAdultContent(e) {
+            const t = ['explicit', 'adult', 'nsfw', 'porn', 'erotic', 'nudity', 'violence', 'gore'],
+                a = e.toLowerCase();
+            return t.some(e => a.includes(e)) ? null : e
+        }
+        async function fetchPollinationsResponse(e, t = '') {
+            try {
+                const a = t ? `Query: ${e}\nSources:\n${t}` : e,
+                    n = await fetch(`https://text.pollinations.ai/${encodeURIComponent(a)}`);
+                if (!n.ok) throw new Error('Pollinations response failed');
+                let r = await n.text();
+                r = r.replace(/\\\[([^$]+?)\\\]/g, '$$$$$1$$$$').replace(/\\([^$]+?)\\/g, '$$$1$$');
+                const i = await filterAdultContent(r);
+                if (!i) throw new Error('Content flagged as inappropriate');
+                return 'default' === translationLang || '' === i ? i : await translateText(i, translationLang)
+            } catch (e) {
+                return console.error('Pollinations response error:', e), null
+            }
+        }
+        async function fetchPollinationsImage(e) {
+            try {
+                const t = `https://api.allorigins.win/raw?url=${encodeURIComponent(`https://pollinations.ai/p/${encodeURIComponent(e)}?width=1024&height=1024&nologo=true`)}`,
+                    a = await fetch(t);
+                return a.ok ? {
+                    url: a.url
+                } : null
+            } catch (e) {
+                return console.error('Pollinations image error:', e), null
+            }
+        }
+        async function translateText(e, t) {
+            try {
+                const a = `translate English to ${t} "${e}"`,
+                    n = await fetch(`https://text.pollinations.ai/${encodeURIComponent(a)}`);
+                if (!n.ok) return e;
+                const r = await n.text();
+                return r.trim() || e
+            } catch (e) {
+                return console.error('Translation error:', e), e
+            }
+        }
+        async function fetchWebsiteContent(e) {
+            try {
+                const t = `https://api.allorigins.win/raw?url=${encodeURIComponent(e)}`,
+                    a = await fetch(t);
+                if (!a.ok) return null;
+                const n = await a.text(),
+                    r = new DOMParser,
+                    i = r.parseFromString(n, 'text/html'),
+                    o = [...i.querySelectorAll('p,h1,h2,h3,h4,h5,h6')].map(e => e.textContent.trim()).filter(e => e).join(' ');
+                let l;
+                try {
+                    l = await fetchMicroLink(e)
+                } catch (e) {
+                    l = null
+                }
+                let c = '';
+                if (l && (c = `Title: ${l.title}, Description: ${l.description}, URL: ${l.url}${l.logo?`, Logo: ${l.logo}`:''}${l.screenshot?`, Screenshot: ${l.screenshot}`:''}`), !(await filterAdultContent(o))) return null;
+                return {
+                    microLink: l,
+                    text: `${o.substring(0,3500)} ${c}`.substring(0, 4e3)
+                }
+            } catch (e) {
+                return console.error('AllOrigins fetch error:', e), null
+            }
+        }
+        async function parseRss(e) {
+            try {
+                const t = `https://api.allorigins.win/raw?url=${encodeURIComponent(e)}`,
+                    a = await fetch(t);
+                if (!a.ok) return null;
+                const n = await a.text(),
+                    r = new DOMParser,
+                    i = r.parseFromString(n, 'application/xml'),
+                    o = i.querySelectorAll('item');
+                let l = [];
+                return o.forEach(e => {
+                    const t = e.querySelector('description'),
+                        a = e.querySelector('media\\:content, content');
+                    let n = a ? a.getAttribute('url') : null;
+                    if (!n && t) try {
+                        const a = r.parseFromString(t.textContent, 'text/html'),
+                            i = a.querySelector('img');
+                        i && (n = i.src)
+                    } catch (e) {}
+                    const o = t?.textContent.replace(/<[^>]*>/g, '').substring(0, 200) + '...' || '';
+                    filterAdultContent(o) && l.push({
+                        title: e.querySelector('title')?.textContent || '',
+                        url: e.querySelector('link')?.textContent || '',
+                        description: o,
+                        urlToImage: n,
+                        publishedAt: e.querySelector('pubDate')?.textContent || new Date().toISOString(),
+                        source: {
+                            name: e.querySelector('source')?.textContent || 'Google News'
+                        }
+                    })
+                }), {
+                    articles: l.slice(0, 10)
+                }
+            } catch (e) {
+                return console.error('RSS parse error:', e), null
+            }
+        }
+        async function fetchMicroLink(e) {
+            try {
+                const t = await fetch(`https://api.microlink.io?url=${encodeURIComponent(e)}`);
+                if (!t.ok) return null;
+                const a = await t.json();
+                return 'success' === a.status ? {
+                    title: a.data.title,
+                    description: a.data.description,
+                    logo: a.data.logo?.url,
+                    screenshot: a.data.screenshot?.url,
+                    url: a.data.url
+                } : null
+            } catch (e) {
+                return console.error('Micro Link error:', e), null
+            }
+        }
+        async function fetchWikipediaMultimedia(e) {
+            try {
+                const t = await fetch(`https://commons.wikimedia.org/w/api.php?action=query&generator=search&gsrsearch=${encodeURIComponent(e)}&gsrlimit=10&gsrnamespace=6&prop=imageinfo&iiprop=url|extmetadata&format=json&origin=*`);
+                if (!t.ok) return null;
+                const a = await t.json(),
+                    n = [];
+                if (a.query?.pages)
+                    for (const e in a.query.pages) {
+                        const t = a.query.pages[e];
+                        t.imageinfo?.[0]?.url && (['mp3', 'ogg', 'wav'].includes(t.imageinfo[0].url.split('.').pop().toLowerCase()) || ['mp4', 'webm'].includes(t.imageinfo[0].url.split('.').pop().toLowerCase()) || ['pdf'].includes(t.imageinfo[0].url.split('.').pop().toLowerCase())) && n.push({
+                            url: t.imageinfo[0].url,
+                            title: t.title,
+                            type: ['mp3', 'ogg', 'wav'].includes(t.imageinfo[0].url.split('.').pop().toLowerCase()) ? 'audio' : ['mp4', 'webm'].includes(t.imageinfo[0].url.split('.').pop().toLowerCase()) ? 'video' : 'document',
+                            description: t.imageinfo[0].extmetadata?.ImageDescription?.value || t.title
+                        })
+                    }
+                return n.length > 0 ? {
+                    multimedia: n
+                } : null
+            } catch (e) {
+                return console.error('Wikipedia multimedia error:', e), null
+            }
+        }
+
+        function detectLanguage(e) {
+            return /[\u0900-\u097F]/.test(e) ? 'hi' : /[áéíóúñ]/.test(e) ? 'es' : /[àâäéèêëîïôœùûüç]/.test(e) ? 'fr' : /[äöüß]/.test(e) ? 'de' : /[\u4E00-\u9FFF]/.test(e) ? 'zh' : /[\u3040-\u309F\u30A0-\u30FF]/.test(e) ? 'ja' : /[\u0400-\u04FF]/.test(e) ? 'ru' : 'en'
+        }
+
+        function truncateToLastFullStop(e, t) {
+            if (e.length <= t) return e;
+            const a = e.split('. ');
+            let n = '',
+                r = 0;
+            for (const e of a) {
+                const i = r + e.length + 2;
+                if (i > t) break;
+                n += e + '. ', r = i
+            }
+            return n.trim()
+        }
+
+        function processInline(e) {
+            let t = e.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\*(.*?)\*/g, '<em>$1</em>').replace(/__(.*?)__/g, '<strong>$1</strong>').replace(/_(.*?)_/g, '<em>$1</em>').replace(/~~(.*?)~~/g, '<del>$1</del>').replace(/`([^`]+)`/g, '<code class="bg-gray-700 px-1 rounded">$1</code>').replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" class="text-blue-400 hover:underline" target="_blank">$1</a>').replace(/!\[([^\]]*)\]\(([^)]+)\)/g, '<img src="$2" alt="$1" class="max-w-full rounded-lg">').replace(/\$([^$]+)\$/g, (e, t) => {
+                try {
+                    const a = document.createElement('span');
+                    return katex.render(t, a, {
+                        throwOnError: !0,
+                        displayMode: !1
+                    }), a.outerHTML
+                } catch (e) {
+                    return console.error('KaTeX inline error:', e), t
+                }
+            }).replace(/\$\$(.*?)\$\$/g, (e, t) => {
+                try {
+                    const a = document.createElement('span');
+                    return katex.render(t, a, {
+                        throwOnError: !0,
+                        displayMode: !0
+                    }), a.outerHTML
+                } catch (e) {
+                    return console.error('KaTeX block error:', e), t
+                }
+            });
+            return t.replace(/\\\[([^$]+?)\\\]/g, '$$$$$1$$$$').replace(/\\([^$]+?)\\/g, '$$$1$$')
+        }
+
+        function formatChatResponse(e, t) {
+            const a = e.split('\n');
+            let n = '',
+                r = !1,
+                i = '',
+                o = '',
+                l = 0,
+                c = !1,
+                s = !1,
+                d = !1,
+                u = [];
+
+            function m() {
+                c && (n += '</ul>', c = !1), s && (n += '</ol>', s = !1)
+            }
+
+            function f() {
+                d && (n += '</blockquote>', d = !1)
+            }
+
+            function h() {
+                if (u.length > 0) {
+                    n += '<div class="table-responsive"><table class="w-full border-collapse border border-gray-500 my-4">', u.length > 1 && u[1].every(e => e.match(/^-+$/)) ? (n += `<thead><tr>${u[0].map(e=>`<th class="px-4 py-2 border border-gray-500">${processInline(e)}</th>`).join('')}</tr></thead>`, u = u.slice(2)) : void 0, n += '<tbody>', u.forEach(e => {
+                        n += `<tr>${e.map(e=>`<td class="px-4 py-2 border border-gray-500">${processInline(e)}</td>`).join('')}</tr>`
+                    }), n += '</tbody></table></div>', u = []
+                }
+            }
+            for (let e of a) {
+                if (r) {
+                    if (e.trim().startsWith('```')) {
+                        r = !1;
+                        const a = `code-${t}-${l++}`,
+                            c = o.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+                        n += `<div class="code-container relative"><pre><code class="language-${i||'text'}" id="${a}">${c.trim()}</code></pre><button class="copy-code-btn" onclick="copyCode('${a}')">Copy</button></div>`, o = '', i = ''
+                    } else o += e + '\n';
+                    continue
+                }
+                let p = e.match(/^```(\w+)?/);
+                if (p) {
+                    m(), f(), h(), r = !0, i = p[1];
+                    continue
+                }
+                if (p = e.match(/^(#{1,6})\s+(.*)/)) {
+                    m(), f(), h();
+                    const a = p[1].length;
+                    n += `<h${a} class="text-${4-a}xl font-bold mt-4 mb-2">${processInline(p[2])}</h${a}>`;
+                    continue
+                }
+                if (e.match(/^(-{3,}|\*{3,})$/)) {
+                    m(), f(), h(), n += '<hr class="my-4 border-gray-500">';
+                    continue
+                }
+                if (e.startsWith('> ')) {
+                    m(), h(), d || (n += '<blockquote class="border-l-4 border-gray-500 pl-4 my-2 italic">', d = !0), n += `<p>${processInline(e.slice(2))}</p>`;
+                    continue
+                }
+                if (p = e.match(/^(\s*)(-|\*|\d+\.)\s+(.*)/)) {
+                    f(), h();
+                    const t = p[1].length,
+                        a = p[2],
+                        r = processInline(p[3]);
+                    if (t > 0) {
+                        n += `<li class="ml-${t+5} list-disc">${r}</li>`;
+                        continue
+                    }
+                    if ('-' === a || '*' === a) s && (n += '</ol>', s = !1), c || (n += '<ul class="list-disc ml-5">', c = !0), n += `<li>${r}</li>`;
+                    else {
+                        c && (n += '</ul>', c = !1), s || (n += '<ol class="list-decimal ml-5">', s = !0), n += `<li>${r}</li>`
+                    }
+                } else if (p = e.match(/^\|(.+)\|$/)) {
+                    m(), f();
+                    const t = e.split('|').slice(1, -1).map(e => e.trim());
+                    u.push(t)
+                } else d ? (h(), d = !1) : void 0, m(), f(), h(), e.trim() && (n += `<p>${processInline(e)}</p>`)
+            }
+            return m(), f(), h(), r && (n += `<div class="code-container relative"><pre><code class="language-${i||'text'}" id="code-${t}-${l++}">${o.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').trim()}</code></pre><button class="copy-code-btn" onclick="copyCode('code-${t}-${l-1}')">Copy</button></div>`), setTimeout(() => {
+                document.querySelectorAll(`[id^="code-${t}-"]`).forEach(e => hljs.highlightElement(e))
+            }, 0), n
+        }
+
+        function copyCode(e) {
+            const t = document.getElementById(e);
+            t && navigator.clipboard.writeText(t.textContent).then(() => {
+                showNotification('Code copied to clipboard!')
+            }).catch(e => console.error('Copy error:', e))
+        }
+
+        function toggleMicrophone() {
+            'webkitSpeechRecognition' in window || 'SpeechRecognition' in window ? isRecording ? stopRecording() : startRecording() : showNotification('Speech recognition is not supported in your browser.')
+        }
+
+        function startRecording() {
+            const e = window.SpeechRecognition || window.webkitSpeechRecognition,
+                t = new e;
+            t.continuous = !1, t.interimResults = !1, t.lang = 'en-IN', t.onstart = () => {
+                isRecording = !0, micBtn.classList.add('recording')
+            }, t.onresult = e => {
+                const a = e.results[0][0].transcript;
+                searchInput.value = a, performSearch(a)
+            }, t.onerror = () => {
+                isRecording = !1, micBtn.classList.remove('recording'), showNotification('Speech recognition error. Please try again.')
+            }, t.onend = () => {
+                isRecording = !1, micBtn.classList.remove('recording')
+            }, t.start()
+        }
+
+        function stopRecording() {
+            isRecording = !1, micBtn.classList.remove('recording')
+        }
+        const apiSources = [{
+            name: 'RealTime',
+            fetch: async () => ({
+                time: new Date().toLocaleString('en-IN', {
+                    timeZone: 'Asia/Kolkata',
+                    dateStyle: 'full',
+                    timeStyle: 'long'
+                })
+            })
+        }, {
+            name: 'Weather',
+            fetch: async e => {
+                try {
+                    const t = e.match(/weather\s+(in|of|for)?\s*([A-Za-z\s]+(?:,\s*[A-Za-z\s]+)?)/i);
+                    if (!t) return null;
+                    const a = t[2].trim(),
+                        n = await fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(a)}`);
+                    if (!n.ok) return null;
+                    const r = await n.json();
+                    if (!r.results || !r.results[0]) return null;
+                    const {
+                        latitude: i,
+                        longitude: o,
+                        name: l,
+                        country: c,
+                        admin1: s
+                    } = r.results[0], d = s ? `${l}, ${s}, ${c}` : `${l}, ${c}`, u = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${i}&longitude=${o}&current_weather=true`);
+                    return u.ok ? {
+                        ...(await u.json()),
+                        location: {
+                            name: l,
+                            address: d,
+                            latitude: i,
+                            longitude: o
+                        }
+                    } : null
+                } catch (e) {
+                    return console.error('Weather error:', e), null
+                }
+            }
+        }, {
+            name: 'Frankfurter',
+            fetch: async e => {
+                try {
+                    const t = e.toLowerCase().match(/(\d+) (\w{3}) to (\w{3})/);
+                    if (!t) return null;
+                    const [, a, n, r] = t, i = n.toUpperCase(), o = r.toUpperCase(), l = await fetch(`https://api.frankfurter.app/latest?amount=${a}&from=${i}&to=${o}`);
+                    if (!l.ok) return null;
+                    const c = await l.json(),
+                        s = new Date().toISOString().split('T')[0],
+                        d = new Date(Date.now() - 6048e5).toISOString().split('T')[0],
+                        u = await fetch(`https://api.frankfurter.app/${d}..${s}?from=${i}&to=${o}`);
+                    return u.ok ? {
+                        latest: c,
+                        historical: await u.json()
+                    } : null
+                } catch (e) {
+                    return console.error('Frankfurter error:', e), null
+                }
+            }
+        }, {
+            name: 'Wikipedia',
+            fetch: async e => {
+                try {
+                    const t = await fetch(`https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(e)}`);
+                    return t.ok ? await t.json() : null
+                } catch (e) {
+                    return console.error('Wikipedia error:', e), null
+                }
+            }
+        }, {
+            name: 'WikipediaImages',
+            fetch: async e => {
+                try {
+                    const t = await fetch(`https://commons.wikimedia.org/w/api.php?action=query&generator=search&gsrsearch=${encodeURIComponent(e)}&gsrlimit=5&gsrnamespace=6&prop=imageinfo&iiprop=url&format=json&origin=*`);
+                    if (!t.ok) return null;
+                    const a = await t.json(),
+                        n = [];
+                    if (a.query?.pages)
+                        for (const e in a.query.pages) {
+                            const t = a.query.pages[e];
+                            t.imageinfo?.[0]?.url && t.imageinfo[0].url.match(/\.(jpg|jpeg|png|gif)$/i) && n.push({
+                                url: t.imageinfo[0].url,
+                                title: t.title
+                            })
+                        }
+                    return n.length > 0 ? {
+                        images: n
+                    } : null
+                } catch (e) {
+                    return console.error('WikipediaImages error:', e), null
+                }
+            }
+        }, {
+            name: 'DuckDuckGo',
+            fetch: async e => {
+                try {
+                    const t = `https://api.allorigins.win/raw?url=${encodeURIComponent(`https://api.duckduckgo.com/?q=${encodeURIComponent(e)}&format=json&no_html=1&skip_disambig=1`)}`,
+                        a = await fetch(t);
+                    return a.ok ? await a.json() : null
+                } catch (e) {
+                    return console.error('DuckDuckGo error:', e), null
+                }
+            }
+        }, {
+            name: 'Dictionary',
+            fetch: async e => {
+                try {
+                    const t = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${encodeURIComponent(e)}`);
+                    if (!t.ok) return null;
+                    const a = await t.json();
+                    return Array.isArray(a) ? a[0] : null
+                } catch (e) {
+                    return console.error('Dictionary error:', e), null
+                }
+            }
+        }, {
+            name: 'GoogleNewsRSS',
+            fetch: async e => {
+                try {
+                    return await parseRss(`https://news.google.com/rss/search?q=${encodeURIComponent(e)}&hl=en-IN&gl=IN&ceid=IN:en`)
+                } catch (e) {
+                    return console.error('GoogleNewsRSS error:', e), null
+                }
+            }
+        }, {
+            name: 'MicroLink',
+            fetch: async e => {
+                try {
+                    const t = e.match(/(https?:\/\/[^\s]+)/);
+                    if (!t) return null;
+                    const a = t[0];
+                    return await fetchMicroLink(a)
+                } catch (e) {
+                    return console.error('MicroLink error:', e), null
+                }
+            }
+        }];
+        async function parseWebsiteQuery(e) {
+            const t = e.match(/(https?:\/\/[^\s]+)/);
+            if (!t) return {
+                query: e,
+                website: null
+            };
+            const a = t[0],
+                n = e.replace(a, '').replace(/search from this website/i, '').trim();
+            return {
+                query: n,
+                website: a
+            }
+        }
+
+        function constructPollinationsPrompt(e, t, a) {
+            let n = `You are Arai trained by Arlabs07.\n**User Query**: ${e}\n\n**Context and Sources**:\n`;
+            return t.RealTime?.time && (n += `### Real-Time Information\n${t.RealTime.time}\n\n`), t.Weather?.current_weather && (n += `### Weather Information\n- **Location**: ${t.Weather.location.name}\n- **Address**: ${t.Weather.location.address}\n- **Temperature**: ${t.Weather.current_weather.temperature}°C\n- **Condition**: ${0===t.Weather.current_weather.weathercode?'Clear':1===t.Weather.current_weather.weathercode?'Mainly clear':2===t.Weather.current_weather.weathercode?'Partly cloudy':3===t.Weather.current_weather.weathercode?'Overcast':'Other'}\n- **Wind Speed**: ${t.Weather.current_weather.windspeed} km/h\n\n`), t.Wikipedia?.extract && (n += `### Wikipedia Summary\n${truncateToLastFullStop(t.Wikipedia.extract,1e3)}\n\n`), t.DuckDuckGo?.AbstractText && (n += `### General Information\n${truncateToLastFullStop(t.DuckDuckGo.AbstractText,800)}\n\n`), t.Dictionary && (n += `### Dictionary\n- **Word**: ${t.Dictionary.word}${t.Dictionary.phonetic?` (${t.Dictionary.phonetic})`:''}\n- **Meanings**: ${t.Dictionary.meanings.map(e=>`${e.partOfSpeech}: ${e.definitions.map(e=>e.definition).join(', ')}`).join('; ')}\n\n`), t.Frankfurter && (n += `### Currency Conversion\n${t.Frankfurter.latest.amount} ${t.Frankfurter.latest.base} = ${Object.values(t.Frankfurter.latest.rates)[0]} ${Object.keys(t.Frankfurter.latest.rates)[0]}\nHistorical (last 7 days):\n${Object.keys(t.Frankfurter.historical.rates).map(e=>`${e}: ${t.Frankfurter.historical.rates[e][Object.keys(t.Frankfurter.latest.rates)[0]]}`).join('\n')}\n\n`), t.GoogleNewsRSS?.articles && (n += `### Recent News\n${t.GoogleNewsRSS.articles.slice(0,3).map(e=>`- **${e.title}**: ${truncateToLastFullStop(e.description,200)} (Source: ${e.source.name})`).join('\n')}\n\n`), a && (n += `### Website Content\n${truncateToLastFullStop(a,1e3)}\n\n`), n += `**Instructions**: Provide a concise, accurate, and informative response to the query "${e}" based on the provided context. Based on this, provide a comprehensive, well-formatted answer using markdown. Be educational and detailed. Use markdown for all formatting including tables, lists, code blocks (with language identifiers), blockquotes, and KaTeX math formulas (inline with $...$ and block with $$...$$).`, truncateToLastFullStop(n, 3800)
+        }
+
+        function typeAnimation(element, html, onComplete) {
+            const spans = [];
+            const tempDiv = document.createElement('div');
+            tempDiv.innerHTML = html;
+
+            function wrapTextNodes(node) {
+                if (node.nodeType === 3 && node.nodeValue.trim() !== '') {
+                    const fragment = document.createDocumentFragment();
+                    const text = node.nodeValue;
+                    for (let i = 0; i < text.length; i++) {
+                        const span = document.createElement('span');
+                        span.textContent = text[i];
+                        span.style.opacity = '0';
+                        span.style.transition = 'opacity 0.2s ease';
+                        spans.push(span);
+                        fragment.appendChild(span);
+                    }
+                    node.parentNode.replaceChild(fragment, node);
+                } else {
+                    for (const child of Array.from(node.childNodes)) {
+                        wrapTextNodes(child);
+                    }
+                }
+            }
+
+            wrapTextNodes(tempDiv);
+            element.innerHTML = '';
+            element.appendChild(tempDiv);
+
+            let i = 0;
+
+            function reveal() {
+                if (i < spans.length) {
+                    spans[i].style.opacity = '1';
+                    i++;
+                    setTimeout(reveal, 5); // Typing speed
+                } else {
+                    // Optional: cleanup spans to restore normal text nodes for performance
+                    element.innerHTML = html;
+                    if (onComplete) onComplete();
+                }
+            }
+
+            if (spans.length > 0) {
+                reveal();
+            } else {
+                element.innerHTML = html;
+                if (onComplete) onComplete();
+            }
+        }
+        async function performSearch(e, t = 'normal') {
+            if (isLoading) return;
+            const a = queryCache.get(e + ':' + t);
+            if (a) return isLoading = !0, logo.classList.add('rotating'), resultsLogo.classList.add('rotating'), updateSendButtonState(), bottomBar.classList.add('opacity-50'), showView('results'), resultsQueryDisplay.textContent = e, searchInput.value = '', updateSendButtonState(), currentQuery = e, updateURL(e), addToHistory(e), resultsContainer.innerHTML = '', actionButtons.classList.add('hidden'), loadingSkeleton.classList.remove('hidden'), usedApis = ['Pollinations'], currentNews = a.news || [], answers = a.answers, loadingSkeleton.classList.add('hidden'), renderResults(a, e), isLoading = !1, logo.classList.remove('rotating'), resultsLogo.classList.remove('rotating'), bottomBar.classList.remove('opacity-50'), void updateSendButtonState();
+            isLoading = !0, logo.classList.add('rotating'), resultsLogo.classList.add('rotating'), updateSendButtonState(), bottomBar.classList.add('opacity-50'), showView('results'), resultsQueryDisplay.textContent = e, searchInput.value = '', updateSendButtonState(), currentQuery = e, updateURL(e), addToHistory(e), resultsContainer.innerHTML = '', actionButtons.classList.add('hidden'), loadingSkeleton.innerHTML = `<div class="h-4 bg-gray-700 rounded w-3/4 shimmer"></div><div class="space-y-2"><div class="h-3 bg-gray-700 rounded shimmer"></div><div class="h-3 bg-gray-700 rounded w-5/6 shimmer"></div><div class="h-3 bg-gray-700 rounded w-4/6 shimmer"></div></div>`, loadingSkeleton.classList.remove('hidden'), loadingInterval = setInterval(() => {
+                const e = ['1/6', '2/6', '3/6', '4/6', '5/6'],
+                    t = e[Math.floor(Math.random() * e.length)],
+                    a = document.createElement('div');
+                a.className = `h-3 bg-gray-700 rounded w-${t} shimmer`, loadingSkeleton.appendChild(a)
+            }, 1e3), fastButtons.classList.remove('hidden'), usedApis = ['Pollinations'], currentNews = [], answers = [];
+            try {
+                let a = {},
+                    n = null,
+                    r = null;
+                const {
+                    query: i,
+                    website: o
+                } = await parseWebsiteQuery(e);
+                if ('normal' === t || 'quick' === t)
+                    if (o) {
+                        const e = await fetchWebsiteContent(o);
+                        e && (n = e.text, r = e.microLink, usedApis.push('AllOrigins', 'MicroLink'))
+                    } let l = null;
+                if ('normal' === t) try {
+                    l = await fetchWikipediaMultimedia(i), l && (a.WikipediaMultimedia = l, usedApis.push('WikipediaMultimedia'))
+                } catch (e) {
+                    console.error('Multimedia fetch error:', e)
+                }
+                const c = e.toLowerCase().match(/(\d+) (\w{3}) to (\w{3})/),
+                    s = e.match(/(https?:\/\/[^\s]+)/),
+                    d = e.match(/weather\s+(in|of|for)?\s*([A-Za-z\s]+(?:,\s*[A-Za-z\s]+)?)/i),
+                    u = d ? apiSources.filter(e => 'Weather' === e.name) : c ? apiSources.filter(e => 'Frankfurter' === e.name) : s ? apiSources.filter(e => 'MicroLink' === e.name) : apiSources.filter(e => 'Frankfurter' !== e.name && 'MicroLink' !== e.name),
+                    m = 'rocket' === t ? u.filter(e => !['Wikipedia', 'WikipediaImages', 'DuckDuckGo', 'Dictionary', 'GoogleNewsRSS'].includes(e.name)) : 'quick' === t ? u.filter(e => !['WikipediaImages', 'GoogleNewsRSS'].includes(e.name)) : u,
+                    f = m.map(async e => {
+                        try {
+                            const t = await e.fetch(i);
+                            t && (a[e.name] = t, usedApis.push(e.name))
+                        } catch (t) {
+                            console.error(`${e.name} fetch error:`, t)
+                        }
+                    });
+                await Promise.all(f);
+                let h = null;
+                if ('normal' === t) h = await fetchPollinationsImage(i);
+                let p = [...(a.WikipediaImages?.images || [])];
+                h && p.push({
+                    url: h.url,
+                    title: i
+                }), a.Wikipedia?.thumbnail && p.push({
+                    url: a.Wikipedia.thumbnail.source,
+                    title: a.Wikipedia.title
+                }), a.Wikipedia?.originalimage && p.push({
+                    url: a.Wikipedia.originalimage.source,
+                    title: a.Wikipedia.title
+                }), r?.logo && p.push({
+                    url: r.logo,
+                    title: r.title
+                }), r?.screenshot && p.push({
+                    url: r.screenshot,
+                    title: r.title
+                }), p = [...new Set(p.map(e => e.url))].map(e => p.find(t => t.url === e)), currentNews = a.GoogleNewsRSS?.articles || [], loadingSkeleton.classList.add('hidden'), clearInterval(loadingInterval), fastButtons.classList.add('hidden');
+                const g = {
+                    news: a.GoogleNewsRSS,
+                    wiki: a.Wikipedia,
+                    images: p.length > 0 ? {
+                        results: p
+                    } : null,
+                    multimedia: a.WikipediaMultimedia,
+                    main: a.DuckDuckGo,
+                    dictionary: a.Dictionary,
+                    frankfurter: a.Frankfurter,
+                    weather: a.Weather,
+                    pollinations: {
+                        response: await fetchPollinationsResponse(i, constructPollinationsPrompt(i, a, n))
+                    },
+                    microlink: r
+                };
+                queryCache.set(e + ':' + t, g), queryCache.size > 50 && queryCache.delete(queryCache.keys().next().value), renderResults(g, e)
+            } catch (t) {
+                console.error('Search error:', t), loadingSkeleton.classList.add('hidden'), clearInterval(loadingInterval), fastButtons.classList.add('hidden'), renderError()
+            } finally {
+                isLoading = !1, logo.classList.remove('rotating'), resultsLogo.classList.remove('rotating'), bottomBar.classList.remove('opacity-50'), updateSendButtonState()
+            }
+        }
+        async function renderResults(e, t) {
+            let a = '',
+                n = [],
+                r = [],
+                i = [],
+                o = [];
+            if (e.main?.RelatedTopics && e.main.RelatedTopics.filter(e => e.FirstURL && e.Text).forEach(e => {
+                    try {
+                        o.push({
+                            FirstURL: e.FirstURL,
+                            Text: e.Text,
+                            Icon: e.Icon,
+                            Hostname: new URL(e.FirstURL).hostname
+                        })
+                    } catch (e) {
+                        console.error('Web source error:', e)
+                    }
+                }), e.images?.results && (n = e.images.results.slice(0, 10)), e.multimedia?.multimedia && (r = e.multimedia.multimedia.slice(0, 10)), e.news?.articles && (i = e.news.articles.slice(0, 2)), answers = [], e.pollinations?.response && answers.push({
+                    source: 'Pollinations',
+                    content: `**Pollinations Summary**\n${e.pollinations.response}`,
+                    plain: e.pollinations.response
+                }), e.weather?.current_weather) {
+                const t = e.weather,
+                    n = `**Weather**\nLocation: ${t.location.name}\nAddress: ${t.location.address}\nLatitude: ${t.location.latitude}\nLongitude: ${t.location.longitude}\nTemperature: ${t.current_weather.temperature}°C\nCondition: ${0===t.current_weather.weathercode?'Clear':1===t.current_weather.weathercode?'Mainly clear':2===t.current_weather.weathercode?'Partly cloudy':3===t.current_weather.weathercode?'Overcast':'Other'}\nWind Speed: ${t.current_weather.windspeed} km/h`;
+                answers.push({
+                    source: 'Weather',
+                    content: n,
+                    plain: n
+                })
+            }
+            if (e.wiki?.extract) {
+                const t = `**Wikipedia**\n${e.wiki.extract}`;
+                answers.push({
+                    source: 'Wikipedia',
+                    content: t,
+                    plain: e.wiki.extract
+                })
+            }
+            if (e.main?.AbstractText) {
+                const t = `**DuckDuckGo**\n${e.main.AbstractText}`;
+                answers.push({
+                    source: 'DuckDuckGo',
+                    content: t,
+                    plain: e.main.AbstractText
+                })
+            }
+            if (e.dictionary) {
+                const t = e.dictionary,
+                    n = `**Dictionary**\nWord: ${t.word}${t.phonetic?` (${t.phonetic})`:''}\nMeanings:\n${t.meanings.map(e=>`- ${e.partOfSpeech}: ${e.definitions.map(e=>e.definition).join(', ')}`).join('\n')}`;
+                answers.push({
+                    source: 'Dictionary',
+                    content: n,
+                    plain: n
+                })
+            }
+            if (e.frankfurter) {
+                const {
+                    latest: t,
+                    historical: n
+                } = e.frankfurter, r = `**Frankfurter**\n${t.amount} ${t.base} = ${Object.values(t.rates)[0]} ${Object.keys(t.rates)[0]}`;
+                answers.push({
+                    source: 'Frankfurter',
+                    content: r,
+                    plain: r,
+                    afterRender: e => {
+                        try {
+                            const a = document.createElement('div');
+                            a.id = `chart-${e}`, a.style.width = '100%', a.style.height = '300px', document.getElementById(`answer-${e}`).appendChild(a);
+                            const r = Object.keys(n.rates).sort(),
+                                i = r.map(e => n.rates[e][Object.keys(t.rates)[0]]);
+                            new Chart(a, {
+                                type: 'line',
+                                data: {
+                                    labels: r,
+                                    datasets: [{
+                                        label: `${t.base} to ${Object.keys(t.rates)[0]}`,
+                                        data: i,
+                                        borderColor: '#8AB4F8',
+                                        tension: .1
+                                    }]
+                                },
+                                options: {
+                                    responsive: !0,
+                                    scales: {
+                                        y: {
+                                            beginAtZero: !1
+                                        }
+                                    }
+                                }
+                            })
+                        } catch (t) {
+                            console.error('Chart error:', t)
+                        }
+                    }
+                })
+            }
+            if (e.microlink) {
+                const {
+                    title: t,
+                    description: n,
+                    logo: r,
+                    screenshot: i,
+                    url: o
+                } = e.microlink, l = `**MicroLink**\n**${t}**\n${n}\n${o}${r?`\n![Logo](${r})`:''}${i?`\n![Screenshot](${i})`:''}\n[Visit Site](${o})`;
+                answers.push({
+                    source: 'MicroLink',
+                    content: l,
+                    plain: `${t}\n${n}\n${o}`
+                })
+            }
+            if (o.length > 0) {
+                a += '<div class="mb-6 fade-in transition-all"><h2 class="font-google-sans text-lg text-gray-300 mb-3">Web Sources</h2><div class="flex overflow-x-auto space-x-3 pb-3 horizontal-scroll">', o.slice(0, 10).forEach(e => {
+                    const t = 'google.com' === e.Hostname ? 'https://www.google.com/favicon.ico' : e.Icon?.URL ? `https://duckduckgo.com${e.Icon.URL}` : 'https://placehold.co/40x40/333/FFF?text=S';
+                    a += `<a href="${e.FirstURL}" target="_blank" class="result-source-card flex-shrink-0 w-64 p-3 rounded-2xl flex items-start space-x-3 hover:bg-gray-700 transition-colors"><img src="${t}" onerror="this.onerror=null;this.src='https://placehold.co/40x40/333/FFF?text=S';" alt="Icon" class="w-10 h-10 rounded-lg object-cover bg-gray-600"><div class="flex-1 min-w-0"><p class="text-sm text-gray-200 truncate-3-lines">${truncateText(e.Text,80)}</p><p class="text-xs text-gray-400 truncate">${e.Hostname}</p></div></a>`
+                }), a += '</div></div>'
+            }
+            if (n.length > 0) {
+                a += '<div class="mb-6 fade-in transition-all" id="image-results"><h2 class="font-google-sans text-lg text-gray-300 mb-3">Images</h2><div class="flex overflow-x-auto space-x-3 pb-3 horizontal-scroll">', n.forEach(e => a += `<div class="flex-shrink-0 w-32 h-32 rounded-xl overflow-hidden cursor-pointer hover:opacity-80 transition-opacity" onclick="showImageOverlay('${e.url}')"><img src="${e.url}" alt="${e.title||'Image'}" class="w-full h-full object-cover" loading="lazy"></div>`), a += '</div></div>'
+            }
+            if (r.length > 0) {
+                a += '<div class="mb-6 fade-in transition-all" id="multimedia-results"><h2 class="font-google-sans text-lg text-gray-300 mb-3">Multimedia</h2><div class="flex overflow-x-auto space-x-3 pb-3 horizontal-scroll">', r.forEach(e => {
+                    let t = '';
+                    'audio' === e.type ? t = `<span class="cursor-pointer text-blue-400 hover:underline" onclick="showMediaOverlay('audio','${e.url}','${e.title}')">Play Audio</span>` : 'video' === e.type ? t = `<span class="cursor-pointer text-blue-400 hover:underline" onclick="showMediaOverlay('video','${e.url}','${e.title}')">Play Video</span>` : 'document' === e.type && (t = `<a href="${e.url}" target="_blank" class="text-blue-400 hover:underline">View Document</a>`), a += `<div class="multimedia-item flex-shrink-0 w-64 p-3 rounded-2xl"><p class="text-gray-200 mb-2">${truncateText(e.title,50)}</p><p class="text-sm text-gray-400 mb-2">${truncateText(e.description.replace(/<[^>]*>/g,''),100)}</p>${t}</div>`
+                }), a += '</div></div>'
+            }
+            if (answers.length > 0) {
+                let answersHtml = '<div class="mb-6 fade-in transition-all" id="answers-container">';
+                answersHtml += `<div class="text-gray-300 text-base leading-relaxed space-y-4 answer-page" id="answer-0"></div>`;
+                for (let n = 1; n < answers.length; n++) {
+                    const r = `answer-${n}`,
+                        i = formatChatResponse(answers[n].content, r);
+                    answersHtml += `<div class="text-gray-300 text-base leading-relaxed space-y-4 answer-page hidden" id="${r}">${i}</div>`
+                }
+                answers.length > 1 && (answersHtml += `<div class="flex justify-between mt-4"><button onclick="prevAnswer()" class="text-blue-400">&lt;</button><span class="text-gray-400" id="pagination-span">1/${answers.length}</span><button onclick="nextAnswer()" class="text-blue-400">&gt;</button></div>`), answersHtml += '</div>', a += answersHtml, currentResponse = answers[0].plain
+            } else {
+                currentResponse = 'No specific answer found, but check the sources above for more information.';
+                const e = `main-response`;
+                a += `<p class="text-gray-400 fade-in mb-6 transition-all" id="main-response">${formatChatResponse(currentResponse,e)}</p>`
+            }
+            i.length > 0 && (a += '<div class="mb-6 fade-in transition-all"><h2 class="font-google-sans text-lg text-gray-300 mb-3">Latest News</h2><div class="space-y-3">', i.forEach(e => {
+                const t = new Date(e.publishedAt).toLocaleDateString();
+                a += `<a href="${e.url}" target="_blank" class="news-item p-4 rounded-2xl flex space-x-4 hover:bg-gray-700 transition-colors"><div class="flex-1"><h3 class="text-gray-200 font-medium mb-2 truncate-3-lines">${truncateText(e.title,100)}</h3><p class="text-xs text-gray-500">${e.source.name} • ${t}</p></div>${e.urlToImage?`<img src="${e.urlToImage}" alt="News image" class="w-20 h-20 rounded-lg object-cover bg-gray-600" loading="lazy">`:''}</a>`
+            }), currentNews.length > 2 && (a += '<button class="w-full py-2 text-blue-400 text-sm hover:text-blue-300" onclick="showNewsOverlay()">See more news</button>'), a += '</div></div>'), resultsContainer.innerHTML = a, actionButtons.classList.remove('hidden');
+            if (answers.length > 0) {
+                const firstAnswerContainer = document.getElementById('answer-0');
+                if (firstAnswerContainer) {
+                    const firstAnswerContent = formatChatResponse(answers[0].content, 'answer-0');
+                    typeAnimation(firstAnswerContainer, firstAnswerContent, () => {
+                        renderAnswerExtras(0);
+                        firstAnswerContainer.querySelectorAll('pre code').forEach(block => {
+                            hljs.highlightElement(block);
+                        });
+                    });
+                }
+            }
+            hljs.highlightAll()
+        }
+
+        function renderAnswerExtras(e) {
+            answers[e]?.afterRender && answers[e].afterRender(e)
+        }
+
+        function renderError() {
+            currentResponse = 'Sorry, something went wrong. Please try again.';
+            const e = `error-response`;
+            resultsContainer.innerHTML = `<p class="text-red-400 fade-in transition-all" id="main-response">${formatChatResponse(currentResponse,e)}</p>`, actionButtons.classList.remove('hidden'), hljs.highlightAll()
+        }
+
+        function truncateText(e, t) {
+            return e ? e.length <= t ? e : e.substring(0, t - 3) + '...' : ''
+        }
+
+        function addToHistory(e) {
+            searchHistory = searchHistory.filter(t => t.query !== e), searchHistory.unshift({
+                id: Date.now(),
+                query: e
+            }), searchHistory.length > 50 && searchHistory.pop(), localStorage.setItem('araiSearchHistory', JSON.stringify(searchHistory))
+        }
+
+        function loadHistory() {
+            renderHistoryList(searchHistory)
+        }
+
+        function renderHistoryList(e) {
+            0 === e.length ? historyList.innerHTML = '<p class="text-gray-400 text-center py-8">No search history yet.</p>' : historyList.innerHTML = e.map(e => `<div class="history-item p-2 rounded-2xl flex items-center justify-between cursor-pointer hover:bg-gray-700 transition-colors" onclick="performSearch('${e.query.replace(/'/g,"\\'")}')"><p class="text-gray-200 truncate flex-1">${truncateText(e.query,80)}</p><button class="text-red-400 text-sm ml-2" onclick="deleteHistoryItem(${e.id});event.stopPropagation();">Delete</button></div>`).join('')
+        }
+
+        function deleteHistoryItem(e) {
+            searchHistory = searchHistory.filter(t => t.id !== e), localStorage.setItem('araiSearchHistory', JSON.stringify(searchHistory)), renderHistoryList(searchHistory)
+        }
+
+        function clearHistory() {
+            searchHistory = [], localStorage.setItem('araiSearchHistory', JSON.stringify(searchHistory)), renderHistoryList(searchHistory)
+        }
+
+        function showImageOverlay(e) {
+            overlayImage.src = e, imageOverlay.classList.remove('hidden'), bottomBar.classList.add('bottom-bar-hidden')
+        }
+
+        function hideImageOverlay() {
+            imageOverlay.classList.add('hidden'), overlayImage.src = '', ('home' === currentView || 'results' === currentView) && bottomBar.classList.remove('bottom-bar-hidden')
+        }
+
+        function showNewsOverlay() {
+            allNewsList.innerHTML = currentNews.map(e => {
+                const t = new Date(e.publishedAt).toLocaleDateString();
+                return `<a href="${e.url}" target="_blank" class="news-item p-4 rounded-2xl flex space-x-4 hover:bg-gray-700 transition-colors"><div class="flex-1"><h3 class="text-gray-200 font-medium mb-2 truncate-3-lines">${truncateText(e.title,100)}</h3><p class="text-xs text-gray-500">${e.source.name} • ${t}</p></div>${e.urlToImage?`<img src="${e.urlToImage}" alt="News image" class="w-20 h-20 rounded-lg object-cover bg-gray-600" loading="lazy">`:''}</a>`
+            }).join(''), newsOverlay.classList.remove('hidden'), newsPanel.classList.remove('translate-y-full'), bottomBar.classList.add('bottom-bar-hidden')
+        }
+
+        function hideNewsOverlay() {
+            newsPanel.classList.add('translate-y-full'), setTimeout(() => {
+                newsOverlay.classList.add('hidden')
+            }, 300), ('home' === currentView || 'results' === currentView) && bottomBar.classList.remove('bottom-bar-hidden')
+        }
+
+        function showMediaOverlay(e, t, a) {
+            mediaPlayer && (mediaPlayer.pause(), mediaPlayer.src = ''), mediaPlayerContent.innerHTML = '';
+            const n = 'audio' === e ? document.createElement('audio') : document.createElement('video');
+            n.src = t, n.className = 'w-full max-h-[80vh] rounded-t-2xl', mediaPlayerContent.appendChild(n), mediaOverlay.classList.remove('hidden'), mediaPlayer = n;
+            const r = document.querySelector('.media-play-btn'),
+                i = document.querySelector('.media-pause-btn'),
+                o = document.querySelector('.media-seek-bar'),
+                l = document.querySelector('.media-time');
+
+            function c() {
+                const e = Math.floor(n.currentTime),
+                    t = Math.floor(n.duration || 0),
+                    a = Math.floor(e / 60),
+                    r = e % 60,
+                    s = Math.floor(t / 60),
+                    d = t % 60;
+                l.textContent = `${a}:${r.toString().padStart(2,'0')} / ${s}:${d.toString().padStart(2,'0')}`, o.value = n.duration ? (n.currentTime / n.duration) * 100 : 0
+            }
+            n.addEventListener('timeupdate', c), n.addEventListener('loadedmetadata', c), r.addEventListener('click', () => {
+                n.play(), r.classList.add('hidden'), i.classList.remove('hidden')
+            }), i.addEventListener('click', () => {
+                n.pause(), i.classList.add('hidden'), r.classList.remove('hidden')
+            }), o.addEventListener('input', () => {
+                const e = (o.value / 100) * n.duration;
+                n.currentTime = e
+            }), n.addEventListener('ended', () => {
+                i.classList.add('hidden'), r.classList.remove('hidden')
+            }), 'video' === e && (n.controls = !1), bottomBar.classList.add('bottom-bar-hidden')
+        }
+
+        function hideMediaOverlay() {
+            mediaPlayer && (mediaPlayer.pause(), mediaPlayer.src = ''), mediaPlayer = null, mediaOverlay.classList.add('hidden'), mediaPlayerContent.innerHTML = '', ('home' === currentView || 'results' === currentView) && bottomBar.classList.remove('bottom-bar-hidden')
+        }
+
+        function shareResponse() {
+            navigator.share ? navigator.share({
+                title: 'Arai Search Result',
+                text: currentResponse,
+                url: window.location.href
+            }).catch(e => console.error('Share error:', e)) : showNotification('Share not supported in this browser.')
+        }
+
+        function copyResponse() {
+            navigator.clipboard.writeText(currentResponse).then(() => {
+                showNotification('Response copied to clipboard!')
+            }).catch(e => console.error('Copy error:', e))
+        }
+
+        function toggleTTS() {
+            if (isSpeaking) speechSynthesis.cancel(), isSpeaking = !1, document.getElementById('tts-icon').classList.remove('tts-active');
+            else {
+                const e = new SpeechSynthesisUtterance(currentResponse);
+                e.lang = detectLanguage(currentResponse) || 'en-US', speechSynthesis.speak(e), isSpeaking = !0, document.getElementById('tts-icon').classList.add('tts-active'), e.onend = () => {
+                    isSpeaking = !1, document.getElementById('tts-icon').classList.remove('tts-active')
+                }
+            }
+        }
+
+        function prevAnswer() {
+            currentAnswerIndex > 0 && (document.getElementById(`answer-${currentAnswerIndex}`).classList.add('hidden'), currentAnswerIndex--, document.getElementById(`answer-${currentAnswerIndex}`).classList.remove('hidden'), currentResponse = answers[currentAnswerIndex].plain, document.getElementById('pagination-span').textContent = `${currentAnswerIndex+1}/${answers.length}`, renderAnswerExtras(currentAnswerIndex))
+        }
+
+        function nextAnswer() {
+            currentAnswerIndex < answers.length - 1 && (document.getElementById(`answer-${currentAnswerIndex}`).classList.add('hidden'), currentAnswerIndex++, document.getElementById(`answer-${currentAnswerIndex}`).classList.remove('hidden'), currentResponse = answers[currentAnswerIndex].plain, document.getElementById('pagination-span').textContent = `${currentAnswerIndex+1}/${answers.length}`, renderAnswerExtras(currentAnswerIndex))
+        }
+
+        function setFastMode(e) {
+            isLoading = !1, clearInterval(loadingInterval), loadingSkeleton.classList.add('hidden'), fastButtons.classList.add('hidden'), logo.classList.remove('rotating'), resultsLogo.classList.remove('rotating'), bottomBar.classList.remove('opacity-50'), updateSendButtonState(), searchMode = e, performSearch(currentQuery, e)
+        }
+
+        function loadProfile() {
+            usernameInput.value = username, profileUrlInput.value = profilePic, profilePicturePreview.src = profilePic, profileIcon.src = profilePic, translationLangInput.value = translationLang, helloMessage.textContent = username ? `Hello, ${username}!` : 'Hello!'
+        }
+
+        function saveProfile() {
+            username = usernameInput.value.trim(), profilePic = profileUrlInput.value.trim() || 'https://placehold.co/32x32/333/FFF?text=U', translationLang = translationLangInput.value.trim() || 'default', localStorage.setItem('araiUsername', username), localStorage.setItem('araiProfilePic', profilePic), localStorage.setItem('araiTranslationLang', translationLang), profilePicturePreview.src = profilePic, profileIcon.src = profilePic, helloMessage.textContent = username ? `Hello, ${username}!` : 'Hello!', showNotification('Profile saved successfully!')
+        }
+
+        function handleProfileUpload(e) {
+            const t = e.target.files[0];
+            if (!t) return;
+            t.size > 2097152 ? showNotification('Profile picture is too large. Please select a file smaller than 2MB.') : (reader = new FileReader, reader.onload = () => {
+                profilePic = reader.result, profileUrlInput.value = '', localStorage.setItem('araiProfilePic', profilePic), profilePicturePreview.src = profilePic, profileIcon.src = profilePic, showNotification('Profile picture updated!')
+            }, reader.readAsDataURL(t))
+        }
+
+        function filterHistory(e) {
+            const t = searchHistory.filter(t => t.query.toLowerCase().includes(e.toLowerCase()));
+            renderHistoryList(t)
+        }
+
+        function showNotification(e) {
+            const t = document.createElement('div');
+            t.className = 'notification', t.textContent = e, notificationContainer.appendChild(t), setTimeout(() => {
+                t.remove()
+            }, 3e3)
+        }
+        loadProfile();
+    </script>
+</body>
+
+</html>
