@@ -1,0 +1,706 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>ProxyForge Client - Advanced Web Extractor</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <style>
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #1a1a1a
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #b91c1c;
+            border-radius: 3px
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #991b1b
+        }
+
+        .scroll-container {
+            overflow-x: auto;
+            white-space: nowrap;
+            scrollbar-width: thin;
+            scrollbar-color: #b91c1c #1a1a1a
+        }
+
+        .scroll-item {
+            display: inline-block;
+            white-space: normal;
+            margin-right: 1rem;
+            min-width: 250px
+        }
+
+        .resource-preview {
+            max-width: 40px;
+            max-height: 40px;
+            object-fit: cover;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: transform 0.2s ease
+        }
+
+        .resource-preview:hover {
+            transform: scale(1.1)
+        }
+
+        .copy-btn {
+            opacity: 0;
+            transition: opacity 0.2s ease
+        }
+
+        .copy-container:hover .copy-btn {
+            opacity: 1
+        }
+
+        .nav-tab {
+            transition: all 0.3s ease;
+            border-bottom: 2px solid transparent
+        }
+
+        .nav-tab.active {
+            border-bottom-color: #ef4444;
+            background: rgba(239, 68, 68, 0.1)
+        }
+
+        .page-content {
+            display: none
+        }
+
+        .page-content.active {
+            display: block
+        }
+
+        .ai-sparkle {
+            fill: #a855f7;
+            transition: fill 0.3s ease
+        }
+
+        .ai-sparkle:hover {
+            fill: #c084fc
+        }
+
+        .media-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.95);
+            backdrop-filter: blur(10px);
+            z-index: 9999;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            animation: fadeIn 0.3s ease
+        }
+
+        .media-overlay.show {
+            display: flex
+        }
+
+        .media-content {
+            max-width: 95vw;
+            max-height: 95vh;
+            position: relative;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8)
+        }
+
+        .media-content img {
+            max-width: 100%;
+            max-height: 90vh;
+            object-fit: contain;
+            display: block
+        }
+
+        .media-content .custom-video,
+        .media-content .custom-audio {
+            max-width: 100%;
+            max-height: 90vh;
+            background: #000;
+            position: relative;
+            border-radius: 8px
+        }
+
+        .media-content .custom-video video,
+        .media-content .custom-audio audio {
+            width: 100%;
+            height: 100%;
+            outline: none
+        }
+
+        .media-content iframe {
+            width: 90vw;
+            height: 90vh;
+            border: none;
+            background: #fff;
+            border-radius: 8px
+        }
+
+        .overlay-close {
+            position: absolute;
+            top: -50px;
+            right: -10px;
+            background: rgba(220, 38, 38, 0.9);
+            border: none;
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+            font-size: 18px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3)
+        }
+
+        .overlay-close:hover {
+            background: rgba(220, 38, 38, 1);
+            transform: scale(1.1)
+        }
+
+        .overlay-nav {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(15, 23, 42, 0.9);
+            border: none;
+            color: white;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+            font-size: 24px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(5px)
+        }
+
+        .overlay-nav:hover {
+            background: rgba(15, 23, 42, 1);
+            transform: translateY(-50%) scale(1.1)
+        }
+
+        .overlay-nav.prev {
+            left: -80px
+        }
+
+        .overlay-nav.next {
+            right: -80px
+        }
+
+        .overlay-newtab {
+            position: absolute;
+            top: -50px;
+            right: 50px;
+            background: rgba(59, 130, 246, 0.9);
+            border: none;
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+            font-size: 16px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3)
+        }
+
+        .overlay-newtab:hover {
+            background: rgba(59, 130, 246, 1);
+            transform: scale(1.1)
+        }
+
+        .overlay-info {
+            position: absolute;
+            bottom: -60px;
+            left: 0;
+            right: 0;
+            color: white;
+            text-align: center;
+            background: rgba(0, 0, 0, 0.8);
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 14px
+        }
+
+        .clickable-media {
+            cursor: pointer;
+            transition: opacity 0.2s ease
+        }
+
+        .clickable-media:hover {
+            opacity: 0.8
+        }
+
+        .iframe-locked {
+            pointer-events: none;
+            position: relative
+        }
+
+        .iframe-locked::after {
+            content: 'Preview Locked';
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(239, 68, 68, 0.9);
+            color: white;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            z-index: 1000;
+            font-weight: 500
+        }
+
+        .preview-controls {
+            display: flex;
+            gap: 8px
+        }
+
+        .preview-controls button {
+            transition: all 0.2s ease
+        }
+
+        .preview-controls button:hover {
+            transform: scale(1.05)
+        }
+
+        .custom-player-controls {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(transparent, rgba(0, 0, 0, 0.8));
+            padding: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-radius: 0 0 8px 8px
+        }
+
+        .custom-player-controls button {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease
+        }
+
+        .custom-player-controls button:hover {
+            background: rgba(255, 255, 255, 0.4);
+            transform: scale(1.1)
+        }
+
+        .custom-player-controls .progress {
+            flex: 1;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 2px;
+            cursor: pointer;
+            position: relative
+        }
+
+        .custom-player-controls .progress-bar {
+            height: 100%;
+            background: #ef4444;
+            border-radius: 2px;
+            transition: width 0.1s ease
+        }
+
+        .custom-player-controls .time {
+            color: white;
+            font-size: 12px;
+            min-width: 45px;
+            text-align: center
+        }
+
+        .fade-message {
+            opacity: 1;
+            transition: opacity 0.5s ease-out
+        }
+
+        .fade-message.fade-out {
+            opacity: 0
+        }
+
+        .float-refresh {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 56px;
+            height: 56px;
+            background: #ef4444;
+            border: none;
+            border-radius: 50%;
+            color: white;
+            font-size: 20px;
+            cursor: pointer;
+            box-shadow: 0 8px 25px rgba(239, 68, 68, 0.3);
+            z-index: 9998;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center
+        }
+
+        .float-refresh:hover {
+            transform: scale(1.1);
+            box-shadow: 0 12px 35px rgba(239, 68, 68, 0.4)
+        }
+
+        .float-refresh:active {
+            transform: scale(0.95)
+        }
+
+        .input-disabled {
+            pointer-events: none;
+            opacity: 0.6
+        }
+
+        .audio-player {
+            background: linear-gradient(135deg, #1e293b, #334155);
+            border-radius: 12px;
+            padding: 20px;
+            max-width: 600px;
+            margin: 20px auto;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px)
+        }
+
+        .audio-player .controls {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-top: 15px
+        }
+
+        .audio-player .play-btn {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, #ef4444, #dc2626);
+            border: none;
+            color: white;
+            font-size: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center
+        }
+
+        .audio-player .play-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 8px 20px rgba(239, 68, 68, 0.4)
+        }
+
+        .audio-player .progress-container {
+            flex: 1;
+            position: relative;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 3px;
+            cursor: pointer
+        }
+
+        .audio-player .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #ef4444, #f97316);
+            border-radius: 3px;
+            transition: width 0.1s ease
+        }
+
+        .audio-player .time-display {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 12px;
+            min-width: 40px;
+            text-align: center
+        }
+
+        .audio-info {
+            text-align: center;
+            margin-bottom: 15px
+        }
+
+        .audio-info i {
+            font-size: 40px;
+            color: #ef4444;
+            margin-bottom: 10px
+        }
+
+        .audio-info h3 {
+            color: white;
+            font-size: 16px;
+            margin: 0
+        }
+
+        @media (max-width:768px) {
+            .preview-controls .btn-text {
+                display: none
+            }
+            .preview-controls button {
+                padding: 8px !important;
+                min-width: auto !important
+            }
+            .float-refresh {
+                width: 48px;
+                height: 48px;
+                font-size: 18px
+            }
+            .media-content {
+                max-width: 98vw;
+                max-height: 98vh
+            }
+            .audio-player {
+                margin: 10px;
+                padding: 15px;
+                max-width: 90vw
+            }
+            .audio-player .controls {
+                gap: 10px
+            }
+            .audio-player .play-btn {
+                width: 40px;
+                height: 40px;
+                font-size: 16px
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: scale(0.9)
+            }
+            to {
+                opacity: 1;
+                transform: scale(1)
+            }
+        }
+
+        @keyframes spin {
+            from {
+                transform: rotate(0deg)
+            }
+            to {
+                transform: rotate(360deg)
+            }
+        }
+
+        @media (prefers-reduced-motion:reduce) {
+            * {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important
+            }
+        }
+    </style>
+</head>
+
+<body class="bg-[radial-gradient(ellipse_at_center,_#450a0a_30%,_#000000_70%)] text-gray-200 font-sans min-h-screen">
+    <div id="media-overlay" class="media-overlay">
+        <div class="media-content"><button class="overlay-close" onclick="closeMediaOverlay()"><i class="fas fa-times"></i></button><button class="overlay-newtab" onclick="openCurrentMediaInTab()"><i class="fas fa-external-link-alt"></i></button><button class="overlay-nav prev"
+                onclick="navigateMedia(-1)"><i class="fas fa-chevron-left"></i></button><button class="overlay-nav next" onclick="navigateMedia(1)"><i class="fas fa-chevron-right"></i></button>
+            <div id="media-display"></div>
+            <div class="overlay-info"><span id="media-info"></span></div>
+        </div>
+    </div><button class="float-refresh" id="float-refresh" title="Refresh Analysis"><i class="fas fa-sync-alt"></i></button>
+    <div class="container mx-auto p-2 md:p-4">
+        <header class="text-center mb-6">
+            <h1 class="text-3xl md:text-4xl font-bold text-white mb-2"><i class="fas fa-bolt text-red-500"></i> ProxyForge <span class="text-sm text-gray-400">Client</span></h1>
+            <p class="text-gray-400 text-sm">Advanced Web Analysis, Complete Resource Extraction & Visual Insights</p>
+        </header>
+        <main>
+            <form id="proxy-form" class="mb-4 max-w-4xl mx-auto">
+                <div class="flex items-center bg-black/50 border border-gray-700 rounded-lg shadow-lg overflow-hidden"><input type="url" id="url-input" placeholder="https://example.com" required class="flex-1 bg-transparent p-3 text-white focus:outline-none focus:ring-2 focus:ring-red-500"><button type="submit" id="fetch-button" class="bg-red-700 hover:bg-red-800 text-white p-3 transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-red-500"><i class="fas fa-search"></i><i id="spinner" class="fas fa-spinner fa-spin hidden ml-1"></i></button></div>
+            </form>
+            <nav id="page-nav" class="hidden mb-6 bg-black/30 rounded-lg p-2">
+                <div class="flex overflow-x-auto space-x-2 pb-2"><button class="nav-tab px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap active" data-page="overview"><i class="fas fa-chart-line mr-2"></i>Overview</button><button class="nav-tab px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap"
+                        data-page="visual"><i class="fas fa-camera mr-2"></i>Visual</button><button class="nav-tab px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap" data-page="metadata"><i class="fas fa-tags mr-2"></i>Metadata</button><button class="nav-tab px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap"
+                        data-page="resources"><i class="fas fa-list mr-2"></i>Resources</button><button class="nav-tab px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap" data-page="performance"><i class="fas fa-tachometer-alt mr-2"></i>Performance</button>
+                    <button
+                        class="nav-tab px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap" data-page="social"><i class="fas fa-share-alt mr-2"></i>Social</button><button class="nav-tab px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap" data-page="structure"><i class="fas fa-sitemap mr-2"></i>Structure</button><button class="nav-tab px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap"
+                            data-page="text"><i class="fas fa-file-alt mr-2"></i>Text</button><button class="nav-tab px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap" data-page="source"><i class="fas fa-code mr-2"></i>Source</button><button class="nav-tab px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap"
+                            data-page="preview"><i class="fas fa-desktop mr-2"></i>Preview</button></div>
+            </nav>
+            <div id="message-container" class="text-center text-gray-400 mb-4 fade-message">
+                <p>Enter a URL above to start comprehensive web analysis.</p>
+            </div>
+            <div id="results-container" class="hidden">
+                <div id="overview-page" class="page-content active space-y-4">
+                    <div id="ai-overview" class="bg-gradient-to-r from-purple-900/50 to-blue-900/50 border border-purple-700 rounded-lg p-6 shadow-xl mb-6">
+                        <div class="flex items-center mb-4"><svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="24" height="24" viewBox="0 0 24 24" class="mr-3"><path class="ai-sparkle" d="M17.469,9.286l-2.156-0.957c-1.657-0.736-2.976-2.096-3.683-3.801L10.81,2.554C10.658,2.187,10.329,2.004,10,2.004	S9.342,2.187,9.19,2.554L8.371,4.528C7.663,6.232,6.345,7.593,4.687,8.329L2.531,9.286c-0.708,0.314-0.708,1.344,0,1.658	l2.226,0.988c1.616,0.717,2.911,2.029,3.631,3.678l0.809,1.852c0.155,0.356,0.479,0.534,0.803,0.534s0.648-0.178,0.804-0.534	l0.809-1.852c0.72-1.648,2.015-2.961,3.631-3.678l2.226-0.988C18.177,10.63,18.177,9.6,17.469,9.286z M10,14.34	c-0.949-1.882-2.497-3.37-4.408-4.225C7.523,9.231,9.07,7.706,10,5.78c0.93,1.926,2.477,3.451,4.408,4.334	C12.497,10.969,10.949,12.458,10,14.34z"></path><path class="ai-sparkle" d="18.713,21.125l-0.247,0.565c-0.18,0.414-0.753,0.414-0.934,0l-0.247-0.565c-0.44-1.008-1.231-1.81-2.219-2.249l-0.76-0.337	c-0.411-0.182-0.411-0.78,0-0.962l0.717-0.319c1.013-0.45,1.819-1.282,2.251-2.324l0.253-0.611c0.176-0.426,0.765-0.426,0.941,0	l0.253,0.611c0.432,1.042,1.238,1.874,2.251,2.324l0.717,0.319c0.411,0.182,0.411,0.78,0,0.962l-0.76,0.337	C19.945,19.315,19.153,20.117,18.713,21.125z"></path></svg>
+                            <h3
+                                class="text-xl font-bold text-white">AI Overview</h3>
+                                <div class="ml-auto"><i class="fas fa-spinner fa-spin text-purple-400 hidden" id="ai-loading"></i></div>
+                        </div>
+                        <div id="ai-content" class="bg-black/30 rounded-lg p-4 min-h-[100px] flex items-center justify-center text-gray-400">
+                            <p>AI overview will appear here after analysis...</p>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                        <div class="bg-black/50 border border-gray-800 rounded-lg p-4 shadow-xl">
+                            <h3 class="text-lg font-bold text-white mb-3 flex items-center"><i class="fas fa-heartbeat text-green-500 mr-2"></i>Status</h3>
+                            <div id="status-content" class="space-y-2 text-sm"></div>
+                        </div>
+                        <div class="bg-black/50 border border-gray-800 rounded-lg p-4 shadow-xl">
+                            <h3 class="text-lg font-bold text-white mb-3 flex items-center"><i class="fas fa-clock text-yellow-500 mr-2"></i>Timing</h3>
+                            <div id="timing-content" class="space-y-2 text-sm"></div>
+                        </div>
+                        <div class="bg-black/50 border border-gray-800 rounded-lg p-4 shadow-xl">
+                            <h3 class="text-lg font-bold text-white mb-3 flex items-center"><i class="fas fa-weight text-purple-500 mr-2"></i>Size</h3>
+                            <div id="size-content" class="space-y-2 text-sm"></div>
+                        </div>
+                        <div class="bg-black/50 border border-gray-800 rounded-lg p-4 shadow-xl">
+                            <h3 class="text-lg font-bold text-white mb-3 flex items-center"><i class="fas fa-chart-bar text-blue-500 mr-2"></i>Summary</h3>
+                            <div id="summary-content" class="space-y-2 text-sm"></div>
+                        </div>
+                    </div>
+                </div>
+                <div id="visual-page" class="page-content space-y-4">
+                    <div class="bg-black/50 border border-gray-800 rounded-lg p-4 shadow-xl">
+                        <h3 class="text-lg font-bold text-white mb-4 flex items-center"><i class="fas fa-camera text-blue-500 mr-2"></i>Visual Analysis</h3>
+                        <div id="visual-content" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+                    </div>
+                </div>
+                <div id="metadata-page" class="page-content space-y-4">
+                    <div class="bg-black/50 border border-gray-800 rounded-lg p-4 shadow-xl copy-container">
+                        <div class="flex justify-between items-center mb-4">
+                            <h3 class="text-lg font-bold text-white flex items-center"><i class="fas fa-tags text-cyan-500 mr-2"></i>Complete Metadata</h3><button class="copy-btn bg-gray-700 hover:bg-gray-600 text-white p-2 rounded text-sm" onclick="copyMetadata()"><i class="fas fa-copy"></i></button></div>
+                        <div
+                            id="metadata-content" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+                </div>
+            </div>
+            <div id="resources-page" class="page-content space-y-4">
+                <div class="bg-black/50 border border-gray-800 rounded-lg p-4 shadow-xl">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="text-lg font-bold text-white flex items-center"><i class="fas fa-list text-green-500 mr-2"></i>All Resources <span id="resource-count" class="text-sm text-gray-400">(0)</span></h3>
+                        <div class="flex gap-2"><select id="resource-filter" class="bg-gray-700 text-white text-sm px-2 py-1 rounded"><option value="all">All Types</option><option value="image">Images</option><option value="link">Links</option><option value="script">Scripts</option><option value="stylesheet">Stylesheets</option><option value="media">Media</option><option value="embed">Embeds</option></select></div>
+                    </div>
+                    <div class="overflow-x-auto max-h-96 overflow-y-auto">
+                        <table id="resources-table" class="w-full text-xs">
+                            <thead class="sticky top-0 bg-gray-900">
+                                <tr class="border-b border-gray-700">
+                                    <th class="text-left py-2 px-2 text-gray-300">Type</th>
+                                    <th class="text-left py-2 px-2 text-gray-300">Source</th>
+                                    <th class="text-left py-2 px-2 text-gray-300">Description</th>
+                                    <th class="text-center py-2 px-2 text-gray-300">Preview</th>
+                                    <th class="text-left py-2 px-2 text-gray-300">URL</th>
+                                </tr>
+                            </thead>
+                            <tbody id="resources-tbody"></tbody>
+                        </table>
+                    </div>
+                </div>
+                <div id="removed-ads-section"></div>
+            </div>
+            <div id="performance-page" class="page-content space-y-4">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="bg-black/50 border border-gray-800 rounded-lg p-4 shadow-xl copy-container">
+                        <div class="flex justify-between items-center mb-4">
+                            <h3 class="text-lg font-bold text-white flex items-center"><i class="fas fa-tachometer-alt text-orange-500 mr-2"></i>Performance Metrics</h3><button class="copy-btn bg-gray-700 hover:bg-gray-600 text-white p-2 rounded text-sm" onclick="copyPerformance()"><i class="fas fa-copy"></i></button></div>
+                        <div
+                            id="performance-content" class="space-y-3"></div>
+                </div>
+                <div class="bg-black/50 border border-gray-800 rounded-lg p-4 shadow-xl">
+                    <h3 class="text-lg font-bold text-white mb-4 flex items-center"><i class="fas fa-layer-group text-purple-500 mr-2"></i>Resource Breakdown</h3>
+                    <div id="resource-breakdown" class="space-y-3"></div>
+                </div>
+            </div>
+    </div>
+    <div id="social-page" class="page-content space-y-4">
+        <div class="bg-black/50 border border-gray-800 rounded-lg p-4 shadow-xl copy-container">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-lg font-bold text-white flex items-center"><i class="fas fa-share-alt text-pink-500 mr-2"></i>Social Media Analysis</h3><button class="copy-btn bg-gray-700 hover:bg-gray-600 text-white p-2 rounded text-sm" onclick="copySocial()"><i class="fas fa-copy"></i></button></div>
+            <div id="social-content"
+                class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-4"></div>
+        </div>
+    </div>
+    <div id="structure-page" class="page-content space-y-4">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="bg-black/50 border border-gray-800 rounded-lg p-4 shadow-xl copy-container">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-lg font-bold text-white flex items-center"><i class="fas fa-heading text-indigo-500 mr-2"></i>Heading Structure</h3><button class="copy-btn bg-gray-700 hover:bg-gray-600 text-white p-2 rounded text-sm" onclick="copyHeadings()"><i class="fas fa-copy"></i></button></div>
+                <div
+                    id="headings-content" class="space-y-2"></div>
+        </div>
+        <div class="bg-black/50 border border-gray-800 rounded-lg p-4 shadow-xl copy-container">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-lg font-bold text-white flex items-center"><i class="fas fa-link text-blue-500 mr-2"></i>Link Analysis</h3><button class="copy-btn bg-gray-700 hover:bg-gray-600 text-white p-2 rounded text-sm" onclick="copyLinks()"><i class="fas fa-copy"></i></button></div>
+            <div id="links-content"
+                class="space-y-2"></div>
+        </div>
+        <div class="bg-black/50 border border-gray-800 rounded-lg p-4 shadow-xl">
+            <h3 class="text-lg font-bold text-white mb-4 flex items-center"><i class="fas fa-clipboard-list text-yellow-500 mr-2"></i>Forms Analysis</h3>
+            <div id="forms-content" class="space-y-2"></div>
+        </div>
+    </div>
+    </div>
+    <div id="text-page" class="page-content">
+        <div class="bg-black/50 border border-gray-800 rounded-lg shadow-xl">
+            <div class="flex justify-between items-center p-4 border-b border-gray-700">
+                <h3 class="text-lg font-bold text-white flex items-center"><i class="fas fa-file-alt text-green-500 mr-2"></i>Parsed Text Content</h3><button id="copy-text-button" class="bg-gray-700 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded text-sm"><i class="fas fa-copy mr-1"></i><span class="btn-text">Copy</span></button></div>
+            <div
+                class="p-4">
+                <div class="bg-gray-900/50 rounded-lg p-4 max-h-96 overflow-y-auto">
+                    <div id="parsed-text-stats" class="mb-4 text-sm text-gray-400 border-b border-gray-700 pb-2"></div>
+                    <div id="parsed-text-content" class="text-gray-300 whitespace-pre-wrap font-mono text-sm leading-relaxed"></div>
+                </div>
+        </div>
+    </div>
+    </div>
+    <div id="source-page" class="page-content">
+        <div class="bg-black/50 border border-gray-800 rounded-lg shadow-xl">
+            <div class="flex justify-between items-center p-4 border-b border-gray-700">
+                <h3 class="text-lg font-bold text-white flex items-center"><i class="fas fa-code text-yellow-500 mr-2"></i>Source Code</h3><button id="copy-code-button" class="bg-gray-700 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded text-sm"><i class="fas fa-copy mr-1"></i><span class="btn-text">Copy</span></button></div>
+            <div
+                class="h-96 overflow-y-auto p-4">
+                <pre><code id="code-content" class="language-html rounded text-xs"></code></pre>
+        </div>
+    </div>
+    </div>
+    <div id="preview-page" class="page-content">
+        <div class="bg-black/50 border border-gray-800 rounded-lg shadow-xl">
+            <div class="flex justify-between items-center p-4 border-b border-gray-700">
+                <h3 class="text-lg font-bold text-white flex items-center"><i class="fas fa-desktop text-orange-500 mr-2"></i>Live Preview</h3>
+                <div class="preview-controls"><button id="lock-preview-btn" class="bg-yellow-600 hover:bg-yellow-700 text-white px-3 py-1 rounded text-sm"><i class="fas fa-lock mr-1"></i><span class="btn-text">Lock</span></button><button id="refresh-preview-btn" class="bg-orange-600 hover:bg-orange-700 text-white px-3 py-1 rounded text-sm"><i class="fas fa-sync-alt mr-1"></i><span class="btn-text">Refresh</span></button>
+                    <button
+                        id="newtab-preview-btn" class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded text-sm"><i class="fas fa-external-link-alt mr-1"></i><span class="btn-text">New Tab</span></button>
+                </div>
+            </div>
+            <div class="p-4"><iframe id="preview-frame" class="w-full h-[600px] bg-white rounded-md border-2 border-gray-700" sandbox="allow-scripts allow-same-origin allow-forms allow-popups"></iframe></div>
+        </div>
+    </div>
+    </div>
+    </main>
+    </div>
+    <script>
+        
+        const MICROLINK_API='https://api.microlink.io',AI_API='https://text.pollinations.ai/',ALLORIGINS_API='https://api.allorigins.win/get?url=',SUPPORTED_EXTENSIONS=['.html','.htm','.php','.asp','.aspx','.jsp','.css','.js','.json','.png','.jpg','.jpeg','.gif','.svg','.webp','.ico','.mp4','.mp3','.avi','.mov','.wav','.ogg','.pdf','.doc','.docx','.txt','.xml','.woff','.woff2','.ttf','.eot'],SECURITY_HEADERS=['content-security-policy','x-frame-options','x-content-type-options','strict-transport-security','referrer-policy','permissions-policy','feature-policy','x-xss-protection','x-webkit-csp','x-content-security-policy'];let allResourcesData=[],currentUrl='',parsedTextContent='',cachedHtmlContent='',currentMediaIndex=0,mediaResources=[],previewLocked=!1,currentMediaUrl='',removedAdsList=[],messageTimeout=null,lastUpdated='',isProcessing=!1;function freezeInput(){document.getElementById('url-input').classList.add('input-disabled'),document.getElementById('fetch-button').disabled=!0,isProcessing=!0}function unfreezeInput(){document.getElementById('url-input').classList.remove('input-disabled'),document.getElementById('fetch-button').disabled=!1,isProcessing=!1}function showLoading(){freezeInput(),document.getElementById('spinner').classList.remove('hidden'),showMessage('<i class="fas fa-spinner fa-spin"></i> Analyzing webpage...',!1),document.getElementById('results-container').classList.add('hidden'),document.getElementById('page-nav').classList.add('hidden')}function hideLoading(){unfreezeInput(),document.getElementById('spinner').classList.add('hidden')}function displayError(e){hideLoading(),showMessage(`<i class="fas fa-exclamation-triangle"></i> ${e}`,!0),document.getElementById('results-container').classList.add('hidden'),document.getElementById('page-nav').classList.add('hidden')}function showMessage(e,t=!1){const n=document.getElementById('message-container');n.innerHTML=`<p class='${t?'text-red-400':'text-green-400'}'>${e}</p>`,n.classList.remove('fade-out'),messageTimeout&&clearTimeout(messageTimeout),messageTimeout=setTimeout(()=>{n.classList.add('fade-out'),setTimeout(()=>{n.innerHTML='',n.classList.remove('fade-out')},500)},3e3)}function clearAIOverview(){document.getElementById('ai-content').innerHTML='<p class="text-gray-400">AI overview will appear here after analysis...</p>',document.getElementById('ai-loading').classList.add('hidden')}function removeAds(e){const t=new DOMParser,n=t.parseFromString(e,'text/html'),r=['.ad','.ads','.advertisement','.banner','.sponsor','.sponsored','.promo','.popup','.popunder','.advert','#ad','#ads','#advertisement','#banner','#sponsor','#sponsored','#promo','#popup','#popunder','#advert','[class*="ad-"]','[class*="ads-"]','[class*="advertisement"]','[class*="banner"]','[class*="sponsor"]','[class*="promo"]','[id*="ad-"]','[id*="ads-"]','[id*="advertisement"]','[id*="banner"]','[id*="sponsor"]','[id*="promo"]','iframe[src*="doubleclick"]','iframe[src*="googlesyndication"]','iframe[src*="googleadservices"]','iframe[src*="adsystem"]','iframe[src*="amazon-adsystem"]','iframe[src*="facebook.com/tr"]','div[class*="adsense"]','div[id*="adsense"]','ins.adsbygoogle','[data-ad]'];return removedAdsList=[],r.forEach(e=>{try{n.querySelectorAll(e).forEach(e=>{if(!e||!e.parentNode)return;const t=e.textContent?.trim()||'';if(t.length>500||e.closest('nav,header,footer,main'))return;const n=e.getBoundingClientRect?.();n&&(n.width>window.innerWidth*.8||n.height>window.innerHeight*.6)||removedAdsList.push({tag:e.tagName,classes:e.className||'',id:e.id||'',text:t.substring(0,60)+(t.length>60?'...':'')}),e.parentNode.removeChild(e)})}catch(t){console.warn('Ad selector failed:',e,t)}}),console.log(`Removed ${removedAdsList.length} ad elements`),n.documentElement.outerHTML}function createCustomVideoPlayer(e){return`<div class="custom-video"><video id="custom-video" preload="metadata" style="width:100%;height:100%;border-radius:8px" controls><source src="${e}" type="video/mp4">Your browser does not support video playback.</video></div>`}function createCustomAudioPlayer(e){return`<div class="audio-player"><div class="audio-info"><i class="fas fa-music"></i><h3>Audio Player</h3></div><audio id="custom-audio" preload="metadata"><source src="${e}" type="audio/mpeg">Your browser does not support audio playback.</audio><div class="controls"><button class="play-btn" onclick="togglePlay()"><i class="fas fa-play" id="play-icon"></i></button><div class="progress-container" onclick="seek(event)"><div class="progress-fill" id="progress-bar"></div></div><div class="time-display"><span id="current-time">0:00</span> / <span id="duration">0:00</span></div></div></div>`}function togglePlay(){const e=document.getElementById('custom-video'),t=document.getElementById('custom-audio'),n=e||t,r=document.getElementById('play-icon');n&&(n.paused?(n.play(),r.className='fas fa-pause'):(n.pause(),r.className='fas fa-play'))}function seek(e){const t=document.getElementById('custom-video'),n=document.getElementById('custom-audio'),r=t||n;if(!r)return;const s=e.currentTarget.getBoundingClientRect(),a=(e.clientX-s.left)/s.width;r.currentTime=a*r.duration}function updateProgress(){const e=document.getElementById('custom-video'),t=document.getElementById('custom-audio'),n=e||t;if(!n||!n.duration)return;const r=document.getElementById('progress-bar'),s=document.getElementById('current-time'),a=document.getElementById('duration');r&&(r.style.width=n.currentTime/n.duration*100+'%'),s&&(s.textContent=formatTime(n.currentTime||0)),a&&(a.textContent=formatTime(n.duration||0))}function formatTime(e){const t=Math.floor(e/60)||0,n=Math.floor(e%60)||0;return`${t}:${n.toString().padStart(2,'0')}`}function openMediaOverlay(e){const t=mediaResources[e];if(!t)return;currentMediaIndex=e,currentMediaUrl=t.url;const n=document.getElementById('media-overlay'),r=document.getElementById('media-display'),s=document.getElementById('media-info');let a='';if('image'===t.type)a=`<img src="${t.url}" alt="${t.alt}" style="max-width:100%;max-height:90vh;object-fit:contain;">`;else if('media'===t.type&&(t.mediaType?.includes('video')||t.url.match(/\.(mp4|webm|ogg|avi|mov)$/i)))a=createCustomVideoPlayer(t.url);else if('media'===t.type&&(t.mediaType?.includes('audio')||t.url.match(/\.(mp3|wav|ogg|m4a|aac)$/i)))a=createCustomAudioPlayer(t.url);else if(t.url.match(/\.pdf$/i)){const e=`https://docs.google.com/viewerng/viewer?url=${encodeURIComponent(t.url)}&embedded=true`;a=`<iframe src="${e}" frameborder="0" style="width:90vw;height:90vh;border:none;" sandbox="allow-scripts allow-same-origin allow-forms"></iframe>`}else t.url.match(/\.(html|htm|css|js|txt|json)$/i)?a=`<iframe src="${ALLORIGINS_API}${encodeURIComponent(t.url)}" frameborder="0" style="width:90vw;height:90vh;border:none;" sandbox="allow-scripts allow-same-origin"></iframe>`:a='<div style="padding:20px;text-align:center;color:white;">Media type not supported for preview</div>';r.innerHTML=a,s.textContent=`${t.alt||t.title||'Media'} (${e+1}/${mediaResources.length})`,n.classList.add('show'),a.includes('custom-audio')?setTimeout(()=>{const e=document.getElementById('custom-audio');e&&(e.addEventListener('loadedmetadata',updateProgress),e.addEventListener('timeupdate',updateProgress),e.addEventListener('canplay',updateProgress))},200):a.includes('custom-video')&&setTimeout(()=>{const e=document.getElementById('custom-video');e&&(e.addEventListener('loadedmetadata',updateProgress),e.addEventListener('timeupdate',updateProgress))},200)}function openCurrentMediaInTab(){currentMediaUrl&&(currentMediaUrl.match(/\.pdf$/i)?window.open(`https://docs.google.com/viewerng/viewer?url=${encodeURIComponent(currentMediaUrl)}&embedded=true`,'_blank'):window.open(currentMediaUrl,'_blank'))}function closeMediaOverlay(){document.getElementById('media-overlay').classList.remove('show')}function navigateMedia(e){currentMediaIndex+=e,currentMediaIndex<0&&(currentMediaIndex=mediaResources.length-1),currentMediaIndex>=mediaResources.length&&(currentMediaIndex=0),openMediaOverlay(currentMediaIndex)}function collectMediaResources(){mediaResources=allResourcesData.filter(e=>'image'===e.type||'media'===e.type||'link'===e.type||'script'===e.type||'stylesheet'===e.type||'embed'===e.type&&e.url.match(/\.(mp4|webm|ogg|avi|mov|mp3|wav|m4a|jpg|jpeg|png|gif|webp|svg|pdf|html|htm|css|js|txt|xml|json)$/i))}function lockPreview(){const e=document.getElementById('preview-frame'),t=document.getElementById('lock-preview-btn');previewLocked?(e.classList.remove('iframe-locked'),e.style.pointerEvents='auto',t.innerHTML='<i class="fas fa-lock mr-1"></i><span class="btn-text">Lock</span>',t.classList.remove('bg-red-600'),t.classList.add('bg-yellow-600'),previewLocked=!1):(e.classList.add('iframe-locked'),e.style.pointerEvents='none',t.innerHTML='<i class="fas fa-unlock mr-1"></i><span class="btn-text">Unlock</span>',t.classList.remove('bg-yellow-600'),t.classList.add('bg-red-600'),previewLocked=!0)}function openPreviewInNewTab(){const e=document.getElementById('preview-frame');if(e.srcdoc){const t=new Blob([e.srcdoc],{type:'text/html'}),n=URL.createObjectURL(t);window.open(n,'_blank')}else e.src&&window.open(e.src,'_blank')}function displayRemovedAds(){const e=document.getElementById('removed-ads-section');if(0===removedAdsList.length)return void(e.innerHTML='');let t='<div class="bg-black/50 border border-gray-800 rounded-lg p-4 shadow-xl mt-4"><h3 class="text-lg font-bold text-white mb-4 flex items-center"><i class="fas fa-shield-alt text-red-500 mr-2"></i>Removed Ads Details</h3><div class="overflow-x-auto"><table class="w-full text-xs border-collapse"><thead><tr class="border-b border-gray-700"><th class="text-left py-2 px-2 text-gray-300">Tag</th><th class="text-left py-2 px-2 text-gray-300">Class</th><th class="text-left py-2 px-2 text-gray-300">ID</th><th class="text-left py-2 px-2 text-gray-300">Text Snippet</th></tr></thead><tbody>';removedAdsList.forEach(e=>{t+=`<tr class="border-b border-gray-800"><td class="py-2 px-2 text-gray-300">${e.tag}</td><td class="py-2 px-2 text-gray-300 break-all">${e.classes}</td><td class="py-2 px-2 text-gray-300">${e.id}</td><td class="py-2 px-2 text-gray-400">${e.text}</td></tr>`}),t+='</tbody></table></div></div>',e.innerHTML=t}function formatBytes(e){if(0===e)return'0 B';const t=1024,n=['B','KB','MB','GB'],r=Math.floor(Math.log(e)/Math.log(t));return(e/Math.pow(t,r)).toFixed(2)+' '+n[r]}function truncateUrl(e,t=50){return e.length<=t?e:e.substring(0,t)+'...'}function isAbsoluteUrl(e){try{return new URL(e),!0}catch{return!1}}function makeAbsoluteUrl(e,t){if(!e||''===e.trim())return'';try{return isAbsoluteUrl(e)?e:new URL(e,t).href}catch{return e}}function getFileIcon(e,t=''){const n=e.toLowerCase();return t&&t.includes('image')||['.png','.jpg','.jpeg','.gif','.webp','.svg','.ico'].some(e=>n.includes(e))?'fas fa-image':['.css'].some(e=>n.includes(e))?'fab fa-css3-alt':['.js'].some(e=>n.includes(e))?'fab fa-js-square':['.pdf'].some(e=>n.includes(e))?'fas fa-file-pdf':['.doc','.docx'].some(e=>n.includes(e))?'fas fa-file-word':['.mp4','.avi','.mov'].some(e=>n.includes(e))?'fas fa-video':['.mp3','.wav','.ogg'].some(e=>n.includes(e))?'fas fa-music':'fas fa-file'}function extractParsedText(e){const t=new DOMParser,n=t.parseFromString(e,'text/html');return n.querySelectorAll('script').forEach(e=>e.remove()),n.querySelectorAll('style').forEach(e=>e.remove()),(n.body?n.body.textContent||n.body.innerText:'').replace(/\s+/g,' ').trim()}async function generateAIOverview(e,t,n=''){const r=document.getElementById('ai-loading'),s=document.getElementById('ai-content');r.classList.remove('hidden');try{const a=`Write a concise summary under 100 words about the website ${e}. Description: "${n}". Content: "${t.substring(0,400)}" Provide key insights about purpose and value in plain text without formatting, bullet points, or markdown. Keep response brief and informative.`,o=encodeURIComponent(a),i=`${AI_API}${o}`,l=await fetch(i);if(l.ok){const e=await l.text(),t=e.replace(/[*#_`\[\]]/g,'').replace(/\n+/g,' ').trim();s.innerHTML=`<div class="text-white leading-relaxed">${t}</div>`}else throw new Error('AI service unavailable')}catch(e){console.error('AI Overview Error:',e),s.innerHTML='<div class="text-red-400"><i class="fas fa-exclamation-triangle mr-2"></i>AI overview temporarily unavailable. Please try again later.</div>'}finally{r.classList.add('hidden')}}async function fetchWithAllOrigins(e){const t=`cache_${e}`;if(sessionStorage.getItem(t))return sessionStorage.getItem(t);try{const n=new AbortController,r=setTimeout(()=>n.abort(),2e4),s=await fetch(`${ALLORIGINS_API}${encodeURIComponent(e)}`,{signal:n.signal});if(clearTimeout(r),s.ok){const n=await s.json();return sessionStorage.setItem(t,n.contents),n.contents}throw new Error('AllOrigins failed')}catch(e){throw console.error('Fetch error:',e),new Error('Failed to fetch webpage')}}async function getMicrolinkData(e){const t=`microlink_${e}`;if(sessionStorage.getItem(t))return JSON.parse(sessionStorage.getItem(t));try{const n=new AbortController,r=setTimeout(()=>n.abort(),15e3),s=await fetch(`${MICROLINK_API}?url=${encodeURIComponent(e)}&screenshot=true&logo=true&palette=true`,{signal:n.signal});if(clearTimeout(r),s.ok){const n=await s.json();if(n&&n.data){const r=n.data,s={title:r.title||'',description:r.description||'',image:r.image?.url||'',logo:r.logo?.url||'',screenshot:r.screenshot?.url||'',palette:r.palette||[],url:r.url||e,lang:r.lang||'',author:r.author||'',date:r.date||'',publisher:r.publisher||''};return sessionStorage.setItem(t,JSON.stringify(s)),s}}return{}}catch(e){return console.warn('Microlink error:',e),{}}}function removeSecurityHeaders(e){let t=e;return SECURITY_HEADERS.forEach(e=>{[`<meta\\s+http-equiv=["']${e}["'][^>]*>`,`<meta\\s+name=["']${e}["'][^>]*>`,`<meta[^>]*http-equiv=["']${e}["'][^>]*>`,`<meta[^>]*name=["']${e}["'][^>]*>`].forEach(e=>{t=t.replace(new RegExp(e,'gi'),'')})}),[t=t.replace(/<head(\s[^>]*)?>/i,'<head$1><meta http-equiv="Content-Security-Policy" content="frame-ancestors *; default-src * \'unsafe-inline\' \'unsafe-eval\' data: blob:;">'),t][0]}function processHtmlUrls(e,t){const n=new DOMParser,r=n.parseFromString(e,'text/html'),s={href:['a','link','area','base'],src:['img','script','iframe','source','embed','video','audio','input','frame'],action:['form'],data:['object'],poster:['video'],'data-src':['*'],srcset:['img','source']};return Object.entries(s).forEach(([e,n])=>{n.forEach(n=>{('*'===n?r.querySelectorAll(`[${e}]`):r.querySelectorAll(`${n}[${e}]`)).forEach(n=>{const r=n.getAttribute(e);if(r)if('srcset'===e){const e=r.split(',').map(e=>{const n=e.trim().split(/\s+/);return n[0]&&(n[0]=makeAbsoluteUrl(n[0],t)),n.join(' ')});n.setAttribute('srcset',e.join(', '))}else{const s=makeAbsoluteUrl(r,t);s!==r&&n.setAttribute(e,s)}})})}),r.querySelectorAll('meta[property^="og:"],meta[name^="twitter:"],meta[property="og:image"],meta[property="og:url"],meta[name="twitter:image"]').forEach(e=>{const n=e.getAttribute('content');if(n&&/^https?:\/\//i.test(n)){const r=makeAbsoluteUrl(n,t);r!==n&&e.setAttribute('content',r)}}),r.querySelectorAll('style').forEach(e=>{let n=e.textContent||'';n&&(n=n.replace(/url\s*\(\s*['"]?([^'"()]+)['"]?\s*\)/g,(e,n)=>`url('${makeAbsoluteUrl(n.trim(),t)}')`),e.textContent=n)}),r.querySelectorAll('[style]').forEach(e=>{let n=e.getAttribute('style')||'';n&&(n=n.replace(/url\s*\(\s*['"]?([^'"()]+)['"]?\s*\)/g,(e,n)=>`url('${makeAbsoluteUrl(n.trim(),t)}')`),e.setAttribute('style',n))}),r.documentElement.outerHTML}function extractMetadata(e,t){const n=new DOMParser,r=n.parseFromString(e,'text/html'),s=(e,t='textContent')=>{const n=r.querySelector(e);return n?n[t]||n.getAttribute('content')||'':''},a=r.querySelector('meta[property="article:modified_time"], meta[name="last-modified"], meta[name="modified"]');let o='';return a&&a.content&&(o=new Date(a.content).toLocaleDateString()),{title:s('title'),description:s('meta[name="description"]','content')||s('meta[property="og:description"]','content'),keywords:s('meta[name="keywords"]','content'),author:s('meta[name="author"]','content'),ogImage:makeAbsoluteUrl(s('meta[property="og:image"]','content'),t),ogTitle:s('meta[property="og:title"]','content'),ogUrl:s('meta[property="og:url"]','content'),ogSiteName:s('meta[property="og:site_name"]','content'),ogType:s('meta[property="og:type"]','content'),twitterCard:s('meta[name="twitter:card"]','content'),twitterSite:s('meta[name="twitter:site"]','content'),twitterCreator:s('meta[name="twitter:creator"]','content'),twitterTitle:s('meta[name="twitter:title"]','content'),twitterDescription:s('meta[name="twitter:description"]','content'),twitterImage:makeAbsoluteUrl(s('meta[name="twitter:image"]','content'),t),favicon:makeAbsoluteUrl(s('link[rel*="icon"]','href')||'/favicon.ico',t),appleTouchIcon:makeAbsoluteUrl(s('link[rel="apple-touch-icon"]','href'),t),language:s('html','lang')||'en',charset:s('meta[charset]','charset')||'utf-8',viewport:s('meta[name="viewport"]','content'),robots:s('meta[name="robots"]','content'),canonical:makeAbsoluteUrl(s('link[rel="canonical"]','href'),t),generator:s('meta[name="generator"]','content'),theme:s('meta[name="theme-color"]','content'),manifest:makeAbsoluteUrl(s('link[rel="manifest"]','href'),t),rss:makeAbsoluteUrl(s('link[type="application/rss+xml"]','href'),t),atom:makeAbsoluteUrl(s('link[type="application/atom+xml"]','href'),t),lastUpdated:o||lastUpdated||'Not Available'}}function extractResources(e,t){const n=new DOMParser,r=n.parseFromString(e,'text/html'),s=[],a=new Set;return r.querySelectorAll('img[src]').forEach(e=>{const n=makeAbsoluteUrl(e.getAttribute('src'),t),r=e.alt||'Content Image';n&&!a.has(n)&&(a.add(n),s.push({type:'image',subtype:'content',url:n,alt:r,title:e.title||'',source:'img[src]',icon:getFileIcon(n,'image')}))}),r.querySelectorAll('img[srcset], source[srcset]').forEach(e=>{const n=e.getAttribute('srcset');n&&n.split(',').forEach(e=>{const n=e.trim().split(/\s+/)[0];if(n){const e=makeAbsoluteUrl(n,t);e&&!a.has(e)&&(a.add(e),s.push({type:'image',subtype:'responsive',url:e,alt:'Responsive Image',source:'srcset',icon:getFileIcon(e,'image')}))}})}),['og:image','twitter:image','twitter:image:src'].forEach(e=>{const n=r.querySelector(`meta[property="${e}"], meta[name="${e}"]`);if(n&&n.content){const r=makeAbsoluteUrl(n.content,t);r&&!a.has(r)&&(a.add(r),s.push({type:'image',subtype:'social',url:r,alt:`${e} Image`,source:e,icon:getFileIcon(r,'image')}))}}),['icon','shortcut icon','apple-touch-icon','apple-touch-icon-precomposed'].forEach(e=>{r.querySelectorAll(`link[rel*="${e}"]`).forEach(n=>{if(n.href){const r=makeAbsoluteUrl(n.getAttribute('href'),t);r&&!a.has(r)&&(a.add(r),s.push({type:'image',subtype:'icon',url:r,alt:`${e} Icon`,source:`link[rel="${e}"]`,icon:'fas fa-star'}))}})}),r.querySelectorAll('a[href]').forEach(e=>{const n=e.getAttribute('href');if(n&&!n.startsWith('#')&&!n.startsWith('javascript:')&&!n.startsWith('mailto:')){const r=makeAbsoluteUrl(n,t);r&&s.push({type:'link',url:r,text:e.textContent.trim()||e.title||'Link',title:e.title||'',icon:'fas fa-link'})}}),r.querySelectorAll('script[src]').forEach(e=>{const n=e.getAttribute('src');if(n){const r=makeAbsoluteUrl(n,t);r&&s.push({type:'script',url:r,scriptType:e.type||'text/javascript',icon:getFileIcon(r)})}}),r.querySelectorAll('link[rel="stylesheet"], link[href$=".css"]').forEach(e=>{const n=e.getAttribute('href');if(n){const r=makeAbsoluteUrl(n,t);r&&s.push({type:'stylesheet',url:r,media:e.media||'all',icon:getFileIcon(r)})}}),r.querySelectorAll('iframe[src], embed[src], object[data]').forEach(e=>{const n=e.getAttribute('src')||e.getAttribute('data');if(n){const r=makeAbsoluteUrl(n,t);r&&s.push({type:'embed',url:r,title:e.title||'Embedded Content',icon:'fas fa-window-restore'})}}),r.querySelectorAll('video[src], audio[src], source[src]').forEach(e=>{const n=e.getAttribute('src');if(n){const r=makeAbsoluteUrl(n,t);r&&s.push({type:'media',url:r,mediaType:e.type||'unknown',icon:'AUDIO'===e.tagName||e.type?.includes('audio')?'fas fa-music':'fas fa-video'})}}),s}function analyzePage(e,t){const n=new DOMParser,r=n.parseFromString(e,'text/html'),s=new Set,a=new Set,o=new Set;r.querySelectorAll('a[href]').forEach(e=>{const n=e.getAttribute('href');if(n&&!n.startsWith('#')&&!n.startsWith('javascript:')&&!n.startsWith('mailto:')){const e=makeAbsoluteUrl(n,t);if(e){s.add(e);try{new URL(e).hostname===new URL(t).hostname?a.add(e):o.add(e)}catch{}}}});const i=r.body?r.body.textContent:'';return{totalLinks:s.size,internalLinks:a.size,externalLinks:o.size,images:r.querySelectorAll('img').length,scripts:r.querySelectorAll('script').length,stylesheets:r.querySelectorAll('link[rel="stylesheet"], style').length,hasForm:r.querySelectorAll('form').length>0,hasVideo:r.querySelectorAll('video').length>0,hasAudio:r.querySelectorAll('audio').length>0,textLength:i.length,wordCount:i.split(/\s+/).filter(e=>e.length>0).length,headings:{h1:r.querySelectorAll('h1').length,h2:r.querySelectorAll('h2').length,h3:r.querySelectorAll('h3').length,h4:r.querySelectorAll('h4').length,h5:r.querySelectorAll('h5').length,h6:r.querySelectorAll('h6').length},socialMedia:{facebook:r.querySelectorAll('a[href*="facebook.com"]').length,twitter:r.querySelectorAll('a[href*="twitter.com"], a[href*="x.com"]').length,instagram:r.querySelectorAll('a[href*="instagram.com"]').length,linkedin:r.querySelectorAll('a[href*="linkedin.com"]').length,youtube:r.querySelectorAll('a[href*="youtube.com"]').length,tiktok:r.querySelectorAll('a[href*="tiktok.com"]').length,pinterest:r.querySelectorAll('a[href*="pinterest.com"]').length},forms:{total:r.querySelectorAll('form').length,inputs:r.querySelectorAll('input').length,textareas:r.querySelectorAll('textarea').length,selects:r.querySelectorAll('select').length,buttons:r.querySelectorAll('button, input[type="submit"], input[type="button"]').length},performance:{totalElements:r.querySelectorAll('*').length,totalScripts:r.querySelectorAll('script').length,inlineScripts:r.querySelectorAll('script:not([src])').length,externalScripts:r.querySelectorAll('script[src]').length,totalStyles:r.querySelectorAll('style, link[rel="stylesheet"]').length,inlineStyles:r.querySelectorAll('style').length,externalStyles:r.querySelectorAll('link[rel="stylesheet"]').length}}}async function fetchAndProcessPage(e){if(e.match(/\.pdf$/i)){const t=`https://docs.google.com/viewerng/viewer?url=${encodeURIComponent(e)}&embedded=true`,n=`<iframe src="${t}" style="width:100%;height:100%;border:none;" frameborder="0" sandbox="allow-scripts allow-same-origin allow-forms"></iframe>`;return cachedHtmlContent=n,{success:!0,url:e,originalUrl:e,status:200,statusText:'PDF Document',contentType:'application/pdf',responseTime:0,size:{original:0,processed:0,compression:'0%'},metadata:{title:'PDF Document',description:'PDF file viewed through Google Docs Viewer',lastUpdated:'N/A'},analysis:{},microlink:{},contents:n,processedLinks:!0,securityRemoved:!1,adsRemoved:!1,timestamp:new Date().toISOString(),requestId:Math.random().toString(36).substr(2,9)}}const t=Date.now();try{const[n,r]=await Promise.allSettled([fetchWithAllOrigins(e),getMicrolinkData(e)]);if('fulfilled'!==n.status)throw new Error(n.reason||'Failed to fetch content');const s=Date.now()-t,a=new Blob([n.value]).size,o=removeAds(n.value),i=processHtmlUrls(removeSecurityHeaders(o),e),l=new Blob([i]).size,c=extractMetadata(o,e),d=extractResources(o,e),u=analyzePage(o,e);u.resources=d;const m='fulfilled'===r.status?r.value:{};return parsedTextContent=extractParsedText(o),cachedHtmlContent=i,{success:!0,url:e,originalUrl:e,status:200,statusText:'OK',contentType:'text/html',responseTime:s,size:{original:a,processed:l,compression:((a-l)/a*100).toFixed(2)+'%'},metadata:c,analysis:u,microlink:m,contents:i,processedLinks:!0,securityRemoved:!0,adsRemoved:removedAdsList.length>0,timestamp:new Date().toISOString(),requestId:Math.random().toString(36).substr(2,9)}}catch(e){throw console.error('Fetch error:',e),{success:!1,error:e.message||'Unknown error',url:e,status:0,statusText:'Error',timestamp:new Date().toISOString(),requestId:Math.random().toString(36).substr(2,9)}}}function createResourcePreview(e,t){const{type:n,url:r,alt:s,icon:a}=e,o='image'===n||'media'===n||'link'===n||'script'===n||'stylesheet'===n||'embed'===n&&r.match(/\.(mp4|webm|ogg|avi|mov|mp3|wav|m4a|jpg|jpeg|png|gif|webp|svg|pdf|html|htm|css|js|txt|xml|json)$/i);return'image'===n?`<img src="${r}" alt="${s||'Image'}" class="resource-preview clickable-media" onclick="openMediaFromResources(${t})" onerror="this.style.display='none';this.nextElementSibling.style.display='inline'" loading="lazy"><i class="${a} text-gray-400" style="display:none"></i>`:o?`<i class="${a} text-gray-400 text-lg clickable-media" onclick="openMediaFromResources(${t})" title="Click to preview"></i>`:`<i class="${a} text-gray-400 text-lg"></i>`}function openMediaFromResources(e){collectMediaResources();const t=mediaResources.findIndex(t=>allResourcesData.indexOf(t)===e);-1!==t&&openMediaOverlay(t)}function displayResources(e=allResourcesData){const t=document.getElementById('resources-tbody'),n=document.getElementById('resource-count');if(t.innerHTML='',n.textContent=`(${e.length})`,0===e.length)return void(t.innerHTML='<tr><td colspan="5" class="py-4 text-center text-gray-400">No resources found</td></tr>');e.forEach((e,n)=>{const r=document.createElement('tr');r.classList.add('border-b','border-gray-800','hover:bg-gray-900/50'),r.innerHTML=`<td class="py-2 px-2"><span class="px-2 py-1 bg-gray-800 rounded text-xs">${e.type}</span>${e.subtype?`<br><span class="px-1 py-0.5 bg-gray-700 rounded text-xs mt-1 inline-block">${e.subtype}</span>`:''}</td><td class="py-2 px-2 text-xs text-gray-400">${e.source||e.type}</td><td class="py-2 px-2 font-mono text-xs text-gray-300 max-w-[200px]" title="${e.text||e.alt||e.title||e.type}">${truncateUrl(e.text||e.alt||e.title||e.type,30)}</td><td class="py-2 px-2 text-center">${createResourcePreview(e,n)}</td><td class="py-2 px-2"><a href="${e.url}" target="_blank" rel="noopener noreferrer" class="text-blue-400 hover:text-blue-300 text-xs font-mono" title="${e.url}">${truncateUrl(e.url,40)}</a></td>`,t.appendChild(r)})}function switchPage(e){document.querySelectorAll('.page-content').forEach(e=>e.classList.remove('active')),document.querySelectorAll('.nav-tab').forEach(e=>e.classList.remove('active')),document.getElementById(`${e}-page`).classList.add('active'),document.querySelector(`[data-page="${e}"]`).classList.add('active'),'resources'===e&&allResourcesData.length>0&&(displayResources(),displayRemovedAds())}function copyToClipboard(e,t,n='Copied!'){navigator.clipboard.writeText(e).then(()=>{const e=t.innerHTML;t.innerHTML=`<i class="fas fa-check"></i> ${n}`,t.classList.add('bg-green-600'),setTimeout(()=>{t.innerHTML=e,t.classList.remove('bg-green-600')},2e3)}).catch(()=>{t.innerHTML='<i class="fas fa-exclamation"></i> Failed',t.classList.add('bg-red-600'),setTimeout(()=>{t.innerHTML='<i class="fas fa-copy"></i> Copy',t.classList.remove('bg-red-600')},2e3)})}function copyMetadata(){const e=document.getElementById('metadata-content').textContent,t=document.querySelector('#metadata-page .copy-btn');copyToClipboard(e,t,'Metadata Copied!')}function copyPerformance(){const e=document.getElementById('performance-content').textContent,t=document.querySelector('#performance-page .copy-btn');copyToClipboard(e,t,'Performance Copied!')}function copySocial(){const e=document.getElementById('social-content').textContent,t=document.querySelector('#social-page .copy-btn');copyToClipboard(e,t,'Social Data Copied!')}function copyHeadings(){const e=document.getElementById('headings-content').textContent,t=document.querySelector('#structure-page .copy-btn');copyToClipboard(e,t,'Headings Copied!')}function copyLinks(){const e=document.getElementById('links-content').textContent,t=document.querySelectorAll('#structure-page .copy-btn')[1];copyToClipboard(e,t,'Links Copied!')}function displayResults(e,t){hideLoading(),allResourcesData=e.analysis?.resources||[],currentUrl=t,collectMediaResources(),showMessage('<i class="fas fa-check-circle"></i> Analysis complete! Navigate through tabs to explore data.',!1),document.getElementById('page-nav').classList.remove('hidden'),document.getElementById('results-container').classList.remove('hidden'),generateAIOverview(t,parsedTextContent,e.metadata?.description||'');const n=`<div class="flex items-center mb-2"><div class="w-3 h-3 rounded-full bg-green-500 mr-2"></div><span class="text-gray-400">Status:</span><span class="ml-2 text-green-400">${e.status} ${e.statusText}</span></div><div class="flex items-center mb-2"><div class="w-3 h-3 rounded-full bg-blue-500 mr-2"></div><span class="text-gray-400">Content:</span><span class="ml-2 text-white text-xs">${e.contentType}</span></div><div class="flex items-center mb-2"><div class="w-3 h-3 rounded-full bg-purple-500 mr-2"></div><span class="text-gray-400">Ads Removed:</span><span class="ml-2 text-purple-400">${removedAdsList.length}</span></div><div class="flex items-center"><div class="w-3 h-3 rounded-full bg-yellow-500 mr-2"></div><span class="text-gray-400">Last Updated:</span><span class="ml-2 text-white text-xs">${e.metadata?.lastUpdated||'N/A'}</span></div>`;document.getElementById('status-content').innerHTML=n;const r=`<div class="bg-gray-800/50 p-2 rounded"><span class="text-gray-400">Response:</span><span class="ml-2 text-white">${e.responseTime}ms</span></div><div class="bg-gray-800/50 p-2 rounded"><span class="text-gray-400">Timestamp:</span><span class="ml-2 text-white text-xs">${new Date(e.timestamp).toLocaleTimeString()}</span></div>`;document.getElementById('timing-content').innerHTML=r;const s=`<div class="bg-gray-800/50 p-2 rounded"><span class="text-gray-400">Original:</span><span class="ml-2 text-white">${formatBytes(e.size?.original||0)}</span></div><div class="bg-gray-800/50 p-2 rounded"><span class="text-gray-400">Processed:</span><span class="ml-2 text-white">${formatBytes(e.size?.processed||0)}</span></div><div class="bg-gray-800/50 p-2 rounded"><span class="text-gray-400">Saved:</span><span class="ml-2 text-green-400">${e.size?.compression||'0%'}</span></div>`;document.getElementById('size-content').innerHTML=s;const a=`<div class="bg-gray-800/50 p-2 rounded"><span class="text-gray-400">Resources:</span><span class="ml-2 text-white">${allResourcesData.length}</span></div><div class="bg-gray-800/50 p-2 rounded"><span class="text-gray-400">Text:</span><span class="ml-2 text-white">${(e.analysis?.wordCount||0).toLocaleString()} words</span></div>`;document.getElementById('summary-content').innerHTML=a;const o=[];e.microlink?.screenshot&&o.push(`<div class="bg-gray-800/50 p-4 rounded"><h4 class="text-white font-semibold mb-2">Screenshot</h4><img src="${e.microlink.screenshot}" alt="Page screenshot" class="w-full max-h-48 object-contain rounded border border-gray-700 clickable-media cursor-pointer" onclick="openMediaOverlay(0)" loading="lazy"></div>`),e.microlink?.logo&&o.push(`<div class="bg-gray-800/50 p-4 rounded"><h4 class="text-white font-semibold mb-2">Logo</h4><img src="${e.microlink.logo}" alt="Site logo" class="max-h-16 object-contain rounded clickable-media cursor-pointer" onclick="openMediaOverlay(1)" loading="lazy"></div>`),e.microlink?.palette?.length&&o.push(`<div class="bg-gray-800/50 p-4 rounded"><h4 class="text-white font-semibold mb-2">Color Palette</h4><div class="grid grid-cols-5 gap-2">${e.microlink.palette.map(e=>`<div class="aspect-square rounded border border-gray-600" style="background-color:${e}" title="${e}"></div>`).join('')}</div></div>`),document.getElementById('visual-content').innerHTML=o.length?o.join(''):'<div class="col-span-full text-gray-400 text-center py-8">Visual analysis not available</div>';const i=[];Object.entries(e.metadata||{}).forEach(([e,t])=>{t&&i.push(`<div class="bg-gray-800/50 p-3 rounded"><h4 class="text-white font-semibold text-sm capitalize mb-1">${e.replace(/([A-Z])/g,' $1')}</h4><p class="text-gray-300 text-xs break-all">${t}</p></div>`)}),document.getElementById('metadata-content').innerHTML=i.length?i.join(''):'<div class="col-span-full text-gray-400 text-center py-8">No metadata available</div>';const l=[];l.push(`<div class="bg-gray-800/50 p-3 rounded"><h4 class="text-white font-semibold">Elements</h4><p class="text-2xl text-green-400">${e.analysis?.performance?.totalElements||0}</p></div>`),l.push(`<div class="bg-gray-800/50 p-3 rounded"><h4 class="text-white font-semibold">Scripts</h4><p class="text-lg text-yellow-400">${e.analysis?.performance?.totalScripts||0} <span class="text-sm">(${e.analysis?.performance?.externalScripts||0} ext)</span></p></div>`),l.push(`<div class="bg-gray-800/50 p-3 rounded"><h4 class="text-white font-semibold">Styles</h4><p class="text-lg text-blue-400">${e.analysis?.performance?.totalStyles||0} <span class="text-sm">(${e.analysis?.performance?.externalStyles||0} ext)</span></p></div>`),l.push(`<div class="bg-gray-800/50 p-3 rounded"><h4 class="text-white font-semibold">Text Length</h4><p class="text-lg text-purple-400">${(e.analysis?.textLength||0).toLocaleString()}</p></div>`),document.getElementById('performance-content').innerHTML=l.join('');const c=Object.entries(allResourcesData.reduce((e,t)=>(e[t.type]=(e[t.type]||0)+1,e),{})).map(([e,t])=>`<div class="flex justify-between items-center bg-gray-800/50 p-2 rounded"><span class="text-gray-400 capitalize">${e}:</span><span class="text-white">${t}</span></div>`).join('');document.getElementById('resource-breakdown').innerHTML=c||'<div class="text-gray-400">No resources found</div>';const d=Object.entries(e.analysis?.socialMedia||{}).map(([e,t])=>{const n={facebook:'fab fa-facebook text-blue-500',twitter:'fab fa-twitter text-sky-500',instagram:'fab fa-instagram text-pink-500',linkedin:'fab fa-linkedin text-blue-600',youtube:'fab fa-youtube text-red-500',tiktok:'fab fa-tiktok text-black',pinterest:'fab fa-pinterest text-red-400'};return`<div class="bg-gray-800/50 p-3 rounded text-center"><i class="${n[e]||'fas fa-share'} text-2xl mb-2"></i><h4 class="text-white font-semibold text-sm capitalize">${e}</h4><p class="text-lg text-white">${t}</p></div>`}).join('');document.getElementById('social-content').innerHTML=d||'<div class="col-span-full text-gray-400 text-center py-8">No social media links found</div>';if(e.analysis?.headings){const t=Object.entries(e.analysis.headings).map(([e,t])=>`<div class="bg-gray-800/50 p-3 rounded flex justify-between items-center"><span class="text-gray-400 font-mono">${e.toUpperCase()}</span><span class="text-white text-xl">${t}</span></div>`).join('');document.getElementById('headings-content').innerHTML=t||'<div class="text-gray-400">No headings found</div>'}const u=[];u.push(`<div class="bg-gray-800/50 p-3 rounded"><h4 class="text-white font-semibold">Internal Links</h4><p class="text-2xl text-green-400">${e.analysis?.internalLinks||0}</p></div>`),u.push(`<div class="bg-gray-800/50 p-3 rounded"><h4 class="text-white font-semibold">External Links</h4><p class="text-2xl text-yellow-400">${e.analysis?.externalLinks||0}</p></div>`),u.push(`<div class="bg-gray-800/50 p-3 rounded"><h4 class="text-white font-semibold">Total Links</h4><p class="text-2xl text-white">${e.analysis?.totalLinks||0}</p></div>`),document.getElementById('links-content').innerHTML=u.join('');if(e.analysis?.forms){const t=[];t.push(`<div class="bg-gray-800/50 p-2 rounded flex justify-between"><span class="text-gray-400">Forms:</span><span class="text-white">${e.analysis.forms.total}</span></div>`),t.push(`<div class="bg-gray-800/50 p-2 rounded flex justify-between"><span class="text-gray-400">Inputs:</span><span class="text-white">${e.analysis.forms.inputs}</span></div>`),t.push(`<div class="bg-gray-800/50 p-2 rounded flex justify-between"><span class="text-gray-400">Textareas:</span><span class="text-white">${e.analysis.forms.textareas}</span></div>`),t.push(`<div class="bg-gray-800/50 p-2 rounded flex justify-between"><span class="text-gray-400">Selects:</span><span class="text-white">${e.analysis.forms.selects}</span></div>`),t.push(`<div class="bg-gray-800/50 p-2 rounded flex justify-between"><span class="text-gray-400">Buttons:</span><span class="text-white">${e.analysis.forms.buttons}</span></div>`),document.getElementById('forms-content').innerHTML=t.join('')}const m=`Characters: ${parsedTextContent.length.toLocaleString()} | Words: ${parsedTextContent.split(/\s+/).filter(e=>e.length>0).length.toLocaleString()} | Lines: ${parsedTextContent.split('\n').length.toLocaleString()}`;document.getElementById('parsed-text-stats').innerHTML=m,document.getElementById('parsed-text-content').textContent=parsedTextContent||'No text content found',document.getElementById('code-content').textContent=e.contents||'No content available',hljs.highlightElement(document.getElementById('code-content')),updatePreviewIFrame()}function updatePreviewIFrame(){const e=document.getElementById('preview-frame');cachedHtmlContent?(e.srcdoc=cachedHtmlContent,e.style.pointerEvents=previewLocked?'none':'auto'):e.src=''}document.addEventListener('click',e=>{if(e.target.classList.contains('nav-tab')||e.target.closest('.nav-tab')){const t=e.target.classList.contains('nav-tab')?e.target:e.target.closest('.nav-tab');switchPage(t.dataset.page)}e.target===document.getElementById('media-overlay')&&closeMediaOverlay()}),document.addEventListener('keydown',e=>{const t=document.getElementById('media-overlay');if(t.classList.contains('show'))switch(e.key){case'Escape':closeMediaOverlay();break;case'ArrowLeft':navigateMedia(-1);break;case'ArrowRight':navigateMedia(1)}}),document.getElementById('resource-filter').addEventListener('change',e=>{const t=e.target.value;'all'===t?displayResources(allResourcesData):displayResources(allResourcesData.filter(e=>e.type===t))}),document.getElementById('lock-preview-btn').addEventListener('click',lockPreview),document.getElementById('refresh-preview-btn').addEventListener('click',()=>{updatePreviewIFrame()}),document.getElementById('newtab-preview-btn').addEventListener('click',openPreviewInNewTab),document.getElementById('proxy-form').addEventListener('submit',async e=>{e.preventDefault();const t=document.getElementById('url-input').value.trim();t&&!isProcessing&&(clearAIOverview(),showLoading(),fetchAndProcessPage(t).then(e=>{displayResults(e,t)}).catch(e=>{displayError(e.error||e.message||'Failed to fetch webpage')}))}),document.getElementById('copy-code-button').addEventListener('click',()=>{const e=document.getElementById('code-content').textContent,t=document.getElementById('copy-code-button');copyToClipboard(e,t)}),document.getElementById('copy-text-button').addEventListener('click',()=>{const e=parsedTextContent,t=document.getElementById('copy-text-button');copyToClipboard(e,t,'Text Copied!')}),document.getElementById('float-refresh').addEventListener('click',()=>{!isProcessing&&document.getElementById('url-input').value.trim()&&document.getElementById('proxy-form').dispatchEvent(new Event('submit'))});
+
+    </script>
