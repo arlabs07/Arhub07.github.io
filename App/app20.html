@@ -1,0 +1,3784 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport"
+    content="width=device-width,initial-scale=1" />
+  <title>Arai</title>
+  <script
+    src="https://cdn.tailwindcss.com">
+  </script>
+  <link
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    rel="stylesheet">
+  <link rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/dark.min.css">
+  <script
+    src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js">
+  </script>
+  <link rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css"
+    crossorigin="anonymous">
+  <script defer
+    src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.js"
+    crossorigin="anonymous"></script>
+  <script defer
+    src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/contrib/auto-render.min.js"
+    crossorigin="anonymous"></script>
+  <script
+    src="https://cdnjs.cloudflare.com/ajax/libs/marked/14.1.2/marked.min.js">
+  </script>
+  <script
+    src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.1.7/purify.min.js">
+  </script>
+  <script
+    src="https://unpkg.com/tesseract.js@v2.1.0/dist/tesseract.min.js">
+  </script>
+  <script
+    src="https://unpkg.com/pdfjs-dist@2.11.338/build/pdf.min.js">
+  </script>
+  <style> 
+  :root{color-scheme:dark}*{box-sizing:border-box}html,body{height:100%;margin:0;padding:0;background:#000;color:#e5e7eb;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;overflow:hidden;scrollbar-width:thin;scrollbar-color:#404040 #1a1a1a}::-webkit-scrollbar{width:6px;height:6px}::-webkit-scrollbar-thumb{background:#404040;border-radius:3px;transition:background .2s}::-webkit-scrollbar-thumb:hover{background:#525252}::-webkit-scrollbar-track{background:#1a1a1a}*{scrollbar-width:thin;scrollbar-color:#404040 #1a1a1a}::-webkit-scrollbar{height:6px;width:6px}::-webkit-scrollbar-thumb{background:#404040;border-radius:3px;transition:background .2s}::-webkit-scrollbar-thumb:hover{background:#525252}::-webkit-scrollbar-track{background:#1a1a1a}.user-message{background:#1f1f1f;border:1px solid #2a2a2a;width:85%;margin-left:auto;margin-right:0;padding:12px 16px;word-wrap:break-word;word-break:break-word;overflow-wrap:break-word;transition:all .2s ease}.ai-response{background:transparent;width:100%;padding:12px 16px;word-wrap:break-word;word-break:break-word;overflow-wrap:break-word;transition:all .2s ease;position:relative}.message{border-radius:12px;margin:8px 0;line-height:1.6;animation:fadeIn .3s ease}.model-card{background:#0b0b0b;border:1px solid #1a1a1a;transition:all .2s ease}.model-card:hover{border-color:#2a2a2a}.model-tab{border-bottom:2px solid transparent;transition:all .2s ease}.model-tab.active{border-bottom-color:#22c55e;color:#22c55e}.model-tab:hover{color:#34d399}.status-dot{width:8px;height:8px;border-radius:50%;display:inline-block;margin-right:4px;transition:all .2s ease}.status-up{background:#22c55e}.status-down{background:#ef4444}.status-unknown{background:#a3a3a3}.message pre{overflow:auto;background:#0b0b0b;border:1px solid #1a1a1a;border-radius:8px;padding:8px;margin:8px 0;word-wrap:break-word;word-break:break-all;overflow-wrap:break-word}.message code{background:#0b0b0b;border:1px solid #1a1a1a;border-radius:4px;padding:2px 6px}.message table{width:100%;border-collapse:collapse;margin:8px 0}.message th,.message td{border:1px solid #1f1f1f;padding:8px 12px}.message blockquote{border-left:3px solid #333;padding-left:12px;color:#c1c1c1;margin:8px 0}.preserve{white-space:pre-wrap;word-wrap:break-word;word-break:break-word;overflow-wrap:break-word}.katex-display{margin:16px 0;text-align:center}.katex{font-size:1.1em}.results-container{overflow-x:auto;overflow-y:hidden}.result-content{overflow-y:auto;max-height:calc(100vh - 110px)}.loading-dots{display:inline-flex;align-items:center;gap:2px}.loading-dots span{width:4px;height:4px;border-radius:50%;background:#22c55e;animation:bounce 1.4s infinite ease-in-out}.loading-dots span:nth-child(1){animation-delay:-0.32s}.loading-dots span:nth-child(2){animation-delay:-0.16s}@keyframes bounce{0%,80%,100%{transform:scale(0)}40%{transform:scale(1)}}@keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}.warning-overlay,.simple-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.8);display:flex;align-items:center;justify-content:center;z-index:1000;backdrop-filter:blur(4px);animation:fadeIn .3s ease}hr{margin:12px 0;border:none;border-top:1px solid #333}#sidebar{background:#0b0b0b;border-right:1px solid #1a1a1a;width:260px;transition:transform .3s cubic-bezier(.4,0,.2,1);transform:translateX(-100%)}@media(min-width:768px){#sidebar{width:280px}}@media(min-width:1024px){#sidebar{transform:translateX(0)}.sidebar-open #sidebar{transform:translateX(0)}}.sidebar-open #sidebar{transform:translateX(0)}.chat-item{transition:all .2s ease;position:relative}.chat-item.active{background-color:#1a1a1a}.chat-item:hover{background-color:#171717}.message img{max-width:100%;height:auto;border-radius:8px;margin:8px 0;transition:transform .2s ease}.message img:hover{transform:scale(1.02)}button{transition:all .2s ease}button:hover{transform:translateY(-1px)}button:active{transform:translateY(0)}@media(max-width:640px){.user-message,.ai-response{width:100%;padding:12px 16px}.result-content{padding:12px}#sidebar{width:50vw}.message{margin:6px 0}.message pre{padding:6px}.message th,.message td{padding:6px 8px}}@media(max-width:480px){.user-message,.ai-response{padding:8px 12px}.message{margin:4px 0}#sidebar{width:55vw}}@media(min-width:1440px){#sidebar{width:320px}.result-content{max-height:calc(100vh - 100px)}}.error-message{color:#ef4444;background:#1f1414;border:1px solid #dc2626;border-radius:8px;padding:12px;margin:8px 0;animation:shake .5s ease-in-out}@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}.retry-btn{background:#dc2626;color:white;border:none;border-radius:6px;padding:6px 12px;font-size:12px;cursor:pointer;margin-top:8px;transition:all .2s ease}.retry-btn:hover{background:#b91c1c}.memory-item{background:#0f1419;border:1px solid #1f2937;border-radius:6px;padding:8px 12px;margin:4px 0;display:flex;justify-content:between;align-items:center}.memory-item .keyword{flex:1;font-size:12px;color:#e5e7eb}.memory-item .delete-btn{color:#ef4444;cursor:pointer;padding:4px;border-radius:4px}.memory-item .delete-btn:hover{background:#1f1414}.audio-playing{color:#22c55e !important}.favicon-line{margin:8px 0 16px 0;height:24px}.favicon-line img{width:20px;height:20px;border-radius:3px;border:1px solid #333;margin-right:8px;display:inline-block;cursor:pointer;transition:transform .2s ease}.favicon-line img:hover{transform:scale(1.1)}.extract-line{margin:8px 0 16px 0;height:24px}.extract-line img{width:20px;height:20px;border-radius:3px;border:1px solid #333;margin-right:8px;display:inline-block;cursor:pointer;transition:transform .2s ease}.extract-line img:hover{transform:scale(1.1)}.web-search-active{color:#22c55e!important}#searchSourcesModal{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);width:90vw;max-width:800px;max-height:80vh;background:#1a1a1a;color:#eee;border-radius:12px;box-shadow:0 0 50px #000;overflow-y:auto;z-index:9999;padding:24px;display:none}#extractModal{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);width:95vw;max-width:1000px;max-height:90vh;background:#1a1a1a;color:#eee;border-radius:16px;box-shadow:0 0 80px rgba(34,197,94,0.3);overflow-y:auto;z-index:9999;padding:32px;display:none;font-size:16px}#searchModalBackdrop,#extractModalBackdrop{position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(0,0,0,0.8);backdrop-filter:blur(12px);z-index:9998;display:none}#modalCloseBtn,#extractCloseBtn{position:absolute;top:16px;right:16px;font-size:28px;cursor:pointer;background:none;border:none;color:#cbd5e0;transition:color .2s}#modalCloseBtn:hover,#extractCloseBtn:hover{color:#ef4444}.modal-source{margin-bottom:20px;border:1px solid #2d3748;padding:20px;border-radius:12px;background:#2d3748}.modal-source-title{font-weight:600;margin-bottom:12px;color:#22c55e;font-size:18px}.modal-source-desc{max-height:120px;overflow:hidden;transition:max-height .3s ease;cursor:pointer;font-size:16px;line-height:1.6}.modal-source-desc.expanded{max-height:none}.modal-source-url{display:flex;align-items:center;gap:12px;margin-top:12px;color:#a0aec0;text-decoration:none;font-size:16px}.modal-source-url img{width:20px;height:20px;border-radius:6px}.modal-source-url:hover{color:#22c55e}.read-more{color:#22c55e;cursor:pointer;font-size:14px;margin-top:8px;font-weight:600}.read-more:hover{text-decoration:underline}#uploadOverlay{position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(0,0,0,0.8);backdrop-filter:blur(10px);z-index:9999;display:none;align-items:center;justify-content:center}#uploadModal{background:#1a1a1a;border-radius:12px;padding:24px;width:90vw;max-width:500px;max-height:80vh;overflow-y:auto;position:relative}.upload-drop-zone{border:2px dashed #444;border-radius:8px;padding:40px;text-align:center;margin-bottom:16px;transition:border-color .3s}.upload-drop-zone.drag-over{border-color:#22c55e;background:#0a2a1a}.upload-options{display:flex;gap:16px;justify-content:center}.upload-option{flex:1;border:1px solid #444;border-radius:8px;padding:20px;text-align:center;cursor:pointer;transition:all .3s}.upload-option:hover{border-color:#22c55e;background:#0a2a1a}.attached-files{margin:8px 0;padding:8px;background:#262626;border-radius:8px;max-height:100px;overflow-y:auto}.attached-file{display:flex;align-items:center;gap:8px;padding:4px 8px;margin:4px 0;background:#333;border-radius:4px}.attached-file .remove-file{color:#ef4444;cursor:pointer;font-size:16px}.attached-file .remove-file:hover{color:#dc2626}.message a{color:#3b82f6 !important;text-decoration:none;transition:color .2s ease}.message a:hover{color:#60a5fa !important;text-decoration:underline}.message a:visited{color:#8b5cf6 !important}#settingsPage{position:fixed;top:0;left:0;width:100vw;height:100vh;background:#0b0b0b;z-index:10000;display:none;overflow:hidden}.settings-content{display:flex;height:100vh}.settings-sidebar{width:280px;background:#0b0b0b;border-right:1px solid #1a1a1a;padding:16px;display:none}@media(min-width:1024px){.settings-sidebar{display:block}}.settings-main{flex:1;padding:24px;overflow-y:auto}.settings-close{position:absolute;top:16px;right:16px;font-size:24px;cursor:pointer;color:#cbd5e0;background:none;border:none}.settings-close:hover{color:#ef4444}.file-sent-icon{color:#22c55e;margin-right:8px}.table-container{overflow-x:auto!important;max-width:100%;margin:16px 0;border-radius:12px;box-shadow:0 0 20px rgba(34,197,94,0.08);background:#111}.table-container table{min-width:700px;width:100%;border-collapse:collapse}.table-container th,.table-container td{padding:16px 20px;border:1px solid #2d333b;text-align:left;font-size:16px;word-wrap:break-word;white-space:nowrap}.table-container th{background:#1b1f24;color:#22c55e;font-weight:700;position:sticky;top:0;z-index:10}.table-container tbody tr:nth-child(odd){background:#101214}.table-container tbody tr:nth-child(even){background:#161a20}.table-container tbody tr:hover{background:#20262b;transition:background .2s ease}.math-display-container{overflow-x:auto!important;margin:20px 0;text-align:center;padding:16px;background:#0f0f0f;border-radius:12px;border:1px solid #22c55e}.math-inline{display:inline-block;max-width:100%;overflow-x:auto;vertical-align:middle}.modal-source pre{max-height:600px!important;overflow-y:auto;font-size:15px!important;line-height:1.5!important;padding:20px!important;background:#111!important;border-radius:8px!important;word-wrap:break-word!important;white-space:pre-wrap!important}
+
+  </style>
+</head>
+
+<body
+  class="h-full text-neutral-200 flex flex-col lg:flex-row overflow-hidden">
+  <div id="settingsPage">
+    <div class="settings-content">
+      <div class="settings-sidebar"
+        id="settingsSidebarContent">
+      </div>
+      <div class="settings-main"><button
+          class="settings-close"
+          id="settingsCloseBtn">&times;</button>
+        <h2
+          class="text-xl font-bold mb-6">
+          Settings</h2>
+        <div class="mb-6"><label
+            class="block text-sm font-medium text-neutral-300 mb-2">Your
+            Name</label><input
+            id="userNameInput"
+            type="text"
+            class="w-full bg-neutral-800 border border-neutral-600 rounded-md px-3 py-2 outline-none focus:ring-1 focus:ring-emerald-500 text-sm transition-all duration-200">
+        </div>
+        <div class="mb-6"><label
+            class="block text-sm font-medium text-neutral-300 mb-2">Universal
+            System
+            Prompt</label><textarea
+            id="universalSystemPromptInput"
+            class="w-full bg-neutral-800 border border-neutral-600 rounded-md px-3 py-2 outline-none focus:ring-1 focus:ring-emerald-500 text-sm transition-all duration-200"
+            rows="4"></textarea></div>
+        <div class="mb-6"><label
+            class="block text-sm font-medium text-neutral-300 mb-2">System
+            Memory</label>
+          <div id="systemMemoryList"
+            class="max-h-40 overflow-y-auto mb-4 p-2 border border-neutral-700 rounded-md bg-neutral-900">
+          </div>
+        </div><button id="saveSettings"
+          class="px-6 py-2 bg-emerald-600 hover:bg-emerald-700 rounded text-sm font-medium transition-all duration-200">Save
+          Settings</button>
+      </div>
+    </div>
+  </div>
+  <div id="sidebar"
+    class="h-full flex flex-col flex-shrink-0 lg:relative fixed z-40 overflow-hidden">
+    <div
+      class="p-3 border-b border-neutral-800 flex gap-2">
+      <button id="newChatBtn"
+        class="p-2 bg-emerald-600 hover:bg-emerald-700 rounded-lg text-emerald-100 flex items-center justify-center flex-shrink-0 transition-all duration-200"><i
+          class="fa-solid fa-pen text-sm"></i></button><input
+        id="chatSearch" type="text"
+        placeholder="Search..."
+        class="flex-1 min-w-0 bg-neutral-900 border border-neutral-700 rounded-md px-2 py-2 text-xs outline-none focus:ring-1 focus:ring-emerald-500 transition-all duration-200">
+    </div>
+    <div id="chatList"
+      class="flex-1 overflow-y-auto px-2 py-2">
+    </div>
+    <div
+      class="p-3 border-t border-neutral-800">
+      <button id="settingsBtn"
+        class="w-full flex items-center gap-2 px-3 py-2 text-neutral-300 hover:bg-neutral-800 rounded-md text-sm transition-all duration-200"><i
+          class="fa-solid fa-gear"></i>Settings</button>
+    </div>
+  </div>
+  <main
+    class="flex-1 flex flex-col min-h-0 bg-neutral-950 overflow-hidden">
+    <div id="warningOverlay"
+      class="warning-overlay hidden">
+      <div
+        class="bg-neutral-900 border border-amber-500 rounded-lg p-4 max-w-sm mx-4 w-full">
+        <div
+          class="flex items-center gap-3 mb-3">
+          <i
+            class="fa-solid fa-triangle-exclamation text-amber-400 text-lg"></i>
+          <h3
+            class="font-semibold text-amber-400 text-sm">
+            Warning</h3>
+        </div>
+        <p
+          class="text-xs text-neutral-300 mb-4">
+          This AI model may generate
+          harmful, inappropriate, or
+          offensive content. Use with
+          caution and discretion.</p>
+        <button id="closeWarning"
+          class="px-4 py-2 bg-amber-600 hover:bg-amber-700 rounded text-xs font-medium w-full transition-all duration-200">I
+          Understand</button>
+      </div>
+    </div>
+    <div id="deleteConfirmOverlay"
+      class="simple-overlay hidden">
+      <div
+        class="bg-neutral-900 border border-red-500 rounded-lg p-4 max-w-sm mx-4 w-full">
+        <div
+          class="flex items-center gap-3 mb-3">
+          <i
+            class="fa-solid fa-trash text-red-400 text-lg"></i>
+          <h3
+            class="font-semibold text-red-400 text-sm">
+            Delete Chat</h3>
+        </div>
+        <p
+          class="text-xs text-neutral-300 mb-4">
+          Are you sure you want to
+          delete this chat? This action
+          cannot be undone.</p>
+        <div class="flex gap-2"><button
+            id="cancelDelete"
+            class="px-4 py-2 bg-neutral-600 hover:bg-neutral-700 rounded text-xs font-medium flex-1 transition-all duration-200">Cancel</button><button
+            id="confirmDelete"
+            class="px-4 py-2 bg-red-600 hover:bg-red-700 rounded text-xs font-medium flex-1 transition-all duration-200">Delete</button>
+        </div>
+      </div>
+    </div>
+    <div id="chatOptionsOverlay"
+      class="simple-overlay hidden">
+      <div
+        class="bg-neutral-800 rounded-md shadow-lg p-1 min-w-[100px]">
+      </div>
+    </div>
+    <div id="renameOverlay"
+      class="simple-overlay hidden">
+      <div
+        class="bg-neutral-900 border border-neutral-700 rounded-lg p-4 max-w-sm mx-4 w-full">
+        <h3
+          class="font-semibold mb-3 text-sm">
+          Rename Chat</h3><input
+          id="renameInput" type="text"
+          class="w-full bg-neutral-800 border border-neutral-600 rounded-md px-3 py-2 mb-3 outline-none focus:ring-1 focus:ring-emerald-500 text-sm transition-all duration-200">
+        <div class="flex gap-2"><button
+            id="cancelRename"
+            class="px-4 py-2 bg-neutral-600 hover:bg-neutral-700 rounded text-xs font-medium flex-1 transition-all duration-200">Cancel</button><button
+            id="confirmRename"
+            class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 rounded text-xs font-medium flex-1 transition-all duration-200">Save</button>
+        </div>
+      </div>
+    </div>
+    <div id="systemPromptOverlay"
+      class="simple-overlay hidden">
+      <div
+        class="bg-neutral-900 border border-neutral-700 rounded-lg p-4 max-w-md mx-4 w-full">
+        <h3
+          class="font-semibold mb-3 text-sm">
+          Set System Prompt</h3>
+        <textarea id="systemPromptInput"
+          class="w-full bg-neutral-800 border border-neutral-600 rounded-md px-3 py-2 mb-3 outline-none focus:ring-1 focus:ring-emerald-500 text-sm transition-all duration-200"
+          rows="3"></textarea>
+        <div class="flex gap-2"><button
+            id="cancelSystemPrompt"
+            class="px-4 py-2 bg-neutral-600 hover:bg-neutral-700 rounded text-xs font-medium flex-1 transition-all duration-200">Cancel</button><button
+            id="confirmSystemPrompt"
+            class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 rounded text-xs font-medium flex-1 transition-all duration-200">Save</button>
+        </div>
+      </div>
+    </div>
+    <div id="chatMemoryOverlay"
+      class="simple-overlay hidden">
+      <div
+        class="bg-neutral-900 border border-neutral-700 rounded-lg p-4 max-w-md mx-4 w-full max-h-96">
+        <h3
+          class="font-semibold mb-3 text-sm">
+          Chat Memory</h3>
+        <div id="chatMemoryList"
+          class="max-h-64 overflow-y-auto mb-3">
+        </div><button
+          id="closeChatMemory"
+          class="px-4 py-2 bg-neutral-600 hover:bg-neutral-700 rounded text-xs font-medium w-full transition-all duration-200">Close</button>
+      </div>
+    </div>
+    <div id="searchModalBackdrop"></div>
+    <div id="extractModalBackdrop">
+    </div>
+    <div id="searchSourcesModal"><button
+        id="modalCloseBtn">&times;</button>
+      <h2>Web Search Sources</h2>
+      <div id="modalContent"></div>
+    </div>
+    <div id="extractModal"><button
+        id="extractCloseBtn">&times;</button>
+      <h2>Extracted File Content</h2>
+      <div id="extractContent"></div>
+    </div>
+    <div id="uploadOverlay">
+      <div id="uploadModal">
+        <h2>Upload Files</h2>
+        <div class="upload-drop-zone"
+          id="dropZone"><i
+            class="fa-solid fa-cloud-upload text-4xl mb-4 text-neutral-400"></i>
+          <p>Drag and drop files here
+          </p>
+        </div>
+        <div class="upload-options">
+          <div class="upload-option"
+            id="uploadImage"><i
+              class="fa-solid fa-image text-2xl mb-2"></i>
+            <p>Upload Image</p>
+          </div>
+          <div class="upload-option"
+            id="uploadFile"><i
+              class="fa-solid fa-file text-2xl mb-2"></i>
+            <p>Upload File</p>
+          </div>
+        </div><button id="closeUpload"
+          class="w-full mt-4 px-4 py-2 bg-neutral-600 hover:bg-neutral-700 rounded">Close</button>
+      </div>
+    </div>
+    <header
+      class="px-3 py-1 flex items-center justify-between gap-2 flex-shrink-0 border-b border-neutral-800">
+      <div
+        class="flex items-center gap-3">
+        <div
+          class="p-2 rounded-lg bg-emerald-600/20 text-emerald-400">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="18" height="18"
+            viewBox="0 0 30 30"
+            class="block"
+            style="fill:#40C057">
+            <path
+              d="M14.217,19.707l-1.112,2.547c-0.427,0.979-1.782,0.979-2.21,0l-1.112-2.547c-0.99-2.267-2.771-4.071-4.993-5.057L1.73,13.292c-0.973-0.432-0.973-1.848,0-2.28l2.965-1.316C6.974,8.684,8.787,6.813,9.76,4.47l1.126-2.714c0.418-1.007,1.81-1.007,2.228,0L14.24,4.47c0.973,2.344,2.786,4.215,5.065,5.226l2.965,1.316c0.973,0.432,0.973,1.848,0,2.28l-3.061,1.359C16.988,15.637,15.206,17.441,14.217,19.707z">
+            </path>
+            <path
+              d="M24.481,27.796l-0.339,0.777c-0.248,0.569-1.036,0.569-1.284,0l-0.339-0.777c-0.604-1.385-1.693-2.488-3.051-3.092l-1.044-0.464c-0.565-0.251-0.565-1.072,0-1.323l0.986-0.438c1.393-0.619,2.501-1.763,3.095-3.195l0.348-0.84c0.243-0.585,1.052-0.585,1.294,0l0.348,0.84c0.594,1.432,1.702,2.576,3.095,3.195l0.986,0.438c0.565,0.251,0.565,1.072,0,1.323l-1.044,0.464C26.174,25.308,25.085,26.411,24.481,27.796z">
+            </path>
+          </svg>
+        </div>
+        <h1
+          class="text-base sm:text-lg font-semibold tracking-tight">
+          Arai</h1>
+      </div>
+      <div
+        class="flex items-center gap-2">
+        <button id="newChatHeaderBtn"
+          class="p-2 rounded-lg text-neutral-300 hover:bg-neutral-800 transition-all duration-200"><i
+            class="fa-solid fa-pen text-sm"></i></button><button
+          id="menuBtn"
+          class="p-2 rounded-lg text-neutral-300 hover:bg-neutral-800 lg:hidden transition-all duration-200"><i
+            class="fa-solid fa-bars text-sm"></i></button>
+      </div>
+    </header>
+    <div
+      class="flex-1 flex flex-col min-h-0 overflow-hidden">
+      <div
+        class="flex-1 min-h-0 overflow-hidden">
+        <div id="statusContainer"
+          class="h-full flex flex-col overflow-hidden">
+          <nav id="tabs"
+            class="border-b border-neutral-800 flex-shrink-0">
+            <div
+              class="overflow-x-auto">
+              <ul
+                class="flex gap-4 pb-2 px-4 min-w-max whitespace-nowrap">
+              </ul>
+            </div>
+          </nav>
+          <div id="statusBar"
+            class="flex-1 p-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 overflow-y-auto">
+          </div>
+        </div>
+        <div id="resultsContainer"
+          class="h-full hidden results-container overflow-hidden">
+          <div id="results"
+            class="flex overflow-x-auto h-full gap-1">
+          </div>
+        </div>
+      </div>
+      <div
+        class="border-t border-neutral-800 bg-neutral-900 p-2 flex-shrink-0">
+        <div id="attachedFiles"
+          class="attached-files hidden">
+        </div>
+        <div
+          class="bg-neutral-900 rounded-xl border border-neutral-800">
+          <div class="p-2"><textarea
+              id="promptInput"
+              placeholder="Type your message... (Ctrl+Enter to send)"
+              class="w-full bg-transparent resize-none outline-none text-sm transition-all duration-200"
+              rows="1"></textarea></div>
+          <div
+            class="flex items-center justify-between px-3 pb-2 pt-0 border-t border-neutral-800">
+            <div
+              class="flex items-center gap-2">
+              <button id="webSearchBtn"
+                class="p-2 text-neutral-400 hover:text-emerald-400 text-xs transition-all duration-200"><i
+                  class="fa-solid fa-globe"></i><span
+                  class="hidden sm:inline ml-1">Search</span></button><button
+                id="uploadBtn"
+                class="p-2 text-neutral-400 hover:text-emerald-400 text-xs transition-all duration-200"><i
+                  class="fa-solid fa-paperclip"></i><span
+                  class="hidden sm:inline ml-1">Upload</span></button><button
+                id="voiceBtn"
+                class="p-2 text-neutral-400 hover:text-emerald-400 text-xs transition-all duration-200"><i
+                  class="fa-solid fa-microphone"></i><span
+                  class="hidden sm:inline ml-1">Voice</span></button>
+            </div><button id="sendBtn"
+              class="px-3 py-2 bg-emerald-600 hover:bg-emerald-700 rounded-lg text-xs font-medium flex items-center gap-2 transition-all duration-200"><svg
+                width="14" height="14"
+                viewBox="0 0 24 24"
+                fill="currentColor">
+                <path
+                  fill-rule="evenodd"
+                  d="M4.10514201,11.8070619 L2.74013818,2.2520351 L22.236068,12 L2.74013818,21.7479649 L4.10514201,12.1929381 L4.87689437,12 L4.10514201,11.8070619 Z M5.25986182,5.7479649 L5.89485799,10.1929381 L13.1231056,12 L5.89485799,13.8070619 L5.25986182,18.2520351 L17.763932,12 L5.25986182,5.7479649 Z" />
+              </svg><span
+                class="hidden sm:inline ml-1">Send</span></button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main><input type="file"
+    id="fileInput" class="hidden"
+    multiple
+    accept=".txt,.pdf,.doc,.docx,.csv,.json,.jpg,.jpeg,.png,.gif,.webp,.html,.css,.js,.py,.java,.cpp,.c,.php,.rb,.go" />
+  <script>
+    const MODELS = [
+      {
+        id: "pollinations",
+        label: "Pollinations",
+        baseUrl: "https://text.pollinations.ai/"
+      },
+      {
+        id: "deepseek-reasoning",
+        label: "Deepseek R."
+      },
+      {
+        id: "gemini",
+        label: "Gemini"
+      },
+      {
+        id: "mistral",
+        label: "Mistral"
+      },
+      {
+        id: "openai",
+        label: "OpenAI"
+      },
+      {
+        id: "openai-audio",
+        label: "OpenAI Audio",
+        audio: true
+      },
+      {
+        id: "openai-fast",
+        label: "OpenAI Fast"
+      },
+      {
+        id: "openai-large",
+        label: "OpenAI Large"
+      },
+      {
+        id: "openai-reasoning",
+        label: "OpenAI R."
+      },
+      {
+        id: "qwen-coder",
+        label: "Qwen Coder"
+      },
+      {
+        id: "roblox-rp",
+        label: "Roblox RP"
+      },
+      {
+        id: "bidara",
+        label: "Bidara"
+      }, {
+        id: "evil",
+        label: "Evil",
+        warn: true
+      },
+      {
+        id: "midjourney",
+        label: "Midjourney"
+      },
+      {
+        id: "mirexa",
+        label: "Mirexa"
+      },
+      { id: "rtist", label: "Rtist" },
+      {
+        id: "unity",
+        label: "Unity",
+        warn: true
+      }
+    ];
+    let activeTab = "status";
+    const statusMap = {};
+    const controllers = {};
+    const activeAudioMap = {};
+    const CHAT_STORAGE_KEY =
+      "AraiChatSessionsV6";
+    const RUN_STATE_KEY =
+      "AraiRunStateV6";
+    const SYSTEM_MEMORY_KEY =
+      "AraiSystemMemoryV2";
+    let chats = [];
+    let activeChatId = null;
+    let runState = JSON.parse(
+        localStorage.getItem(
+          RUN_STATE_KEY) || "null") ||
+      Object.fromEntries(MODELS.map(
+        m => [m.id, "active"]));
+    let systemMemory = JSON.parse(
+      localStorage.getItem(
+        SYSTEM_MEMORY_KEY) || "[]");
+    let isGenerating = false;
+    let ttsReady = false;
+    let ttsVoice = null;
+    let recognition = null;
+    let chatToDelete = null;
+    let webSearchEnabled = false;
+    let isSearching = false;
+    let isExtracting = false;
+    let lastWebSources = {};
+    let lastFileExtracts = {};
+    let attachedFiles = [];
+    const DEFAULT_SYSTEM_PROMPT =
+      "1. provide a structured answer (1-line summary; numbered steps; short example; next action).\n2. If image asked emit <img src=\"https://image.pollinations.ai/prompt/{prompt}\" alt=\"{prompt}\">\n3. When saving memory output exactly ✓[cm{keyword, keyword, keyword...}]✓ or ✓[sm{keyword, keyword, keyword...}]✓ (cm = chat memory, sm = system memory). Each keyword may be a word up to a full sentence — do NOT remove the {} or other symbols. Example: ✓[cm{favorite_language Python, prefers_formal_responses, greeting Hello Ar}]✓.";
+    const MAX_RETRIES = 3;
+    const RETRY_DELAY = 1000;
+    
+    function saveRunState() {
+      localStorage
+        .setItem(RUN_STATE_KEY, JSON
+          .stringify(runState))
+    }
+    
+    function saveChats() {
+      localStorage
+        .setItem(CHAT_STORAGE_KEY, JSON
+          .stringify(chats))
+    }
+    
+    function saveSystemMemory() {
+      localStorage
+        .setItem(SYSTEM_MEMORY_KEY, JSON
+          .stringify(systemMemory))
+    }
+    
+    function loadChats() {
+      const
+        stored = localStorage.getItem(
+          CHAT_STORAGE_KEY);
+      if (
+        stored) {
+        try {
+          chats = JSON
+            .parse(stored);
+          chats.forEach(chat => {
+            if (!
+              chat.memory) chat
+              .memory = {};
+            MODELS.forEach(
+              model => {
+                if (!chat
+                  .memory[model
+                    .id]) chat
+                  .memory[model
+                    .id] = []
+              })
+          });
+          chats.forEach(chat => {
+            MODELS
+              .forEach(
+                model => {
+                  if (model
+                    .audio && chat
+                    .history[model
+                      .id]) {
+                    chat
+                      .history[model
+                        .id] = chat
+                      .history[model
+                        .id].filter(
+                        msg => msg
+                        .content !==
+                        "searching" &&
+                        msg
+                        .content !==
+                        "..." && msg
+                        .content !==
+                        "extracting..."
+                      )
+                  }
+                })
+          });
+          if (
+            chats.length > 0
+          ) {
+            activeChatId = chats[
+                chats.length - 1]
+              .id
+          } else {
+            createNewChat
+              ()
+          }
+        } catch (e) {
+          console
+            .error(
+              "Failed to load chats:", e
+            );
+          chats = [];
+          createNewChat
+            ()
+        }
+      } else {
+        createNewChat
+          ()
+      }
+    }
+    
+    function createNewChat() {
+      const
+        newChat = {
+          id: `chat-${Date.now()}`,
+          name: "New Chat",
+          systemPrompt: "",
+          createdAt: new Date()
+            .toISOString(),
+          history: {},
+          memory: {}
+        };
+      MODELS.forEach(model => {
+        newChat
+          .memory[model.id] = []
+      });
+      chats.push(newChat);
+      activeChatId = newChat.id;
+      saveChats();
+      renderChatList();
+      loadAndDisplayChatHistoryForActiveChat
+        ();
+      return newChat
+    }
+    
+    function parseMemoryCommands(text,
+      chatId, modelId) {
+      const regex =
+        /✓\[cm\{([^}]+)\}\]✓|✓\[sm\{([^}]+)\}\]✓/g;
+      let
+        match;
+      let cleanText =
+        text;
+      const activeChat = chats
+        .find(c => c.id ===
+          chatId);
+      const
+        matches = [];
+      while ((match = regex
+          .exec(text)) !==
+        null) {
+        matches.push(
+          match)
+      }
+      matches.forEach(
+        match => {
+          const cmKeywords =
+            match[1];
+          const
+            smKeywords = match[
+              2];
+          if (cmKeywords &&
+            activeChat) {
+            const
+              keywords = cmKeywords
+              .split(',').map(k => k
+                .trim()).filter(k => k
+                .length > 0);
+            keywords.forEach(
+              keyword => {
+                if (!
+                  activeChat.memory[
+                    modelId]
+                  .includes(keyword)
+                ) {
+                  activeChat
+                    .memory[modelId]
+                    .push(
+                      keyword)
+                }
+              });
+            saveChats();
+            cleanText = cleanText
+              .replace(match[0],
+                `✓ ${cmKeywords}`
+              )
+          } else if (
+            smKeywords) {
+            const
+              keywords = smKeywords
+              .split(',').map(k => k
+                .trim()).filter(k => k
+                .length > 0);
+            keywords.forEach(
+              keyword => {
+                if (!
+                  systemMemory
+                  .includes(keyword)
+                ) {
+                  systemMemory
+                    .push(
+                      keyword)
+                }
+              });
+            saveSystemMemory();
+            cleanText = cleanText
+              .replace(match[0],
+                `✓✓ ${smKeywords}`
+              )
+          }
+        });
+      return cleanText
+        .trim()
+    }
+    
+    function buildMemoryPrompt(chatId,
+      modelId) {
+      let memoryPrompt =
+        "";
+      const activeChat = chats.find(
+        c => c.id === chatId);
+      if (
+        systemMemory.length > 0
+      ) {
+        memoryPrompt +=
+          `\nSystem Memory Keywords: ${systemMemory.join(', ')}`
+      }
+      if (
+        activeChat && activeChat.memory[
+          modelId] && activeChat.memory[
+          modelId].length > 0
+      ) {
+        memoryPrompt +=
+          `\nChat Memory Keywords: ${activeChat.memory[modelId].join(', ')}`
+      }
+      if (
+        memoryPrompt) {
+        memoryPrompt =
+          `\nPrevious conversation context:${memoryPrompt}\nUse this context to provide better answers when relevant.\n`
+      }
+      return memoryPrompt
+    }
+    
+    function renderChatMemory() {
+      const
+        activeChat = chats.find(c => c
+          .id === activeChatId);
+      const
+        currentModelMemory =
+        activeTab !== "status" &&
+        activeChat ? activeChat.memory[
+          activeTab] || [] : [];
+      const
+        memoryList = document
+        .getElementById(
+          'chatMemoryList');
+      memoryList.innerHTML = '';
+      if (
+        currentModelMemory.length === 0
+      ) {
+        memoryList.innerHTML =
+          '<p class="text-xs text-neutral-400">No memories stored for this model.</p>';
+        return
+      }
+      currentModelMemory
+        .forEach((keyword,
+          index) => {
+          const item =
+            document.createElement(
+              'div');
+          item.className =
+            'memory-item';
+          item.innerHTML =
+            `<span class="keyword">✓ ${keyword}</span><i class="fa-solid fa-trash delete-btn" onclick="deleteChatMemory(${index})"></i>`;
+          memoryList.appendChild(
+            item)
+        })
+    }
+    
+    function renderSystemMemory() {
+      const
+        memoryList = document
+        .getElementById(
+          'systemMemoryList');
+      memoryList.innerHTML = '';
+      if (
+        systemMemory.length === 0
+      ) {
+        memoryList.innerHTML =
+          '<p class="text-xs text-neutral-400">No system memories stored.</p>';
+        return
+      }
+      systemMemory
+        .forEach((keyword,
+          index) => {
+          const item =
+            document.createElement(
+              'div');
+          item.className =
+            'memory-item';
+          item.innerHTML =
+            `<span class="keyword">✓✓ ${keyword}</span><i class="fa-solid fa-trash delete-btn" onclick="deleteSystemMemory(${index})"></i>`;
+          memoryList.appendChild(
+            item)
+        })
+    }
+    
+    function deleteChatMemory(
+      index) {
+      const activeChat = chats
+        .find(c => c.id ===
+          activeChatId);
+      if (
+        activeChat && activeTab !==
+        "status" && activeChat.memory[
+          activeTab]) {
+        activeChat
+          .memory[activeTab].splice(
+            index, 1);
+        saveChats();
+        renderChatMemory()
+      }
+    }
+    
+    function deleteSystemMemory(
+      index) {
+      systemMemory.splice(index,
+        1);
+      saveSystemMemory();
+      renderSystemMemory()
+    }
+    
+    function preloadTTS() {
+      if (
+        "speechSynthesis" in window
+      ) {
+        const getAndSetVoice =
+          () => {
+            ttsReady = true;
+            const
+              voices = speechSynthesis
+              .getVoices();
+            ttsVoice = voices.find(v =>
+                /en/i.test(v.lang)) ||
+              voices[0]
+          };
+        getAndSetVoice();
+        speechSynthesis
+          .onvoiceschanged =
+          getAndSetVoice
+      }
+    }
+    
+    function setupSpeechRecognition() {
+      if (
+        'webkitSpeechRecognition' in
+        window || 'SpeechRecognition' in
+        window) {
+        const
+          SpeechRecognition = window
+          .SpeechRecognition || window
+          .webkitSpeechRecognition;
+        recognition =
+          new SpeechRecognition;
+        recognition.continuous = false;
+        recognition.interimResults =
+          false;
+        recognition.lang =
+          'en-US';
+        const voiceBtn =
+          document.getElementById(
+            'voiceBtn');
+        recognition.onresult =
+          e => {
+            document
+              .getElementById(
+                'promptInput').value +=
+              e.results[0][0]
+              .transcript;
+            voiceBtn.innerHTML =
+              '<i class="fa-solid fa-microphone"></i><span class="hidden sm:inline ml-1">Voice</span>'
+          };
+        recognition.onerror =
+          () => {
+            voiceBtn.innerHTML =
+              '<i class="fa-solid fa-microphone"></i><span class="hidden sm:inline ml-1">Voice</span>'
+          };
+        recognition.onend =
+          () => {
+            voiceBtn.innerHTML =
+              '<i class="fa-solid fa-microphone"></i><span class="hidden sm:inline ml-1">Voice</span>'
+          }
+      }
+    }
+    
+    function speakNow(text) {
+      if (
+        speechSynthesis && text &&
+        ttsReady) {
+        const utterance =
+          new SpeechSynthesisUtterance(
+            text);
+        if (ttsVoice)
+          utterance.voice = ttsVoice;
+        speechSynthesis.speak(
+          utterance)
+      }
+    }
+    async function fetchWebData(
+      prompt) {
+      const now = new Date()
+        .toISOString();
+      const
+        sources = [];
+      try {
+        const
+          wikiRes = await fetch(
+            `https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(prompt)}`
+          );
+        if (wikiRes.ok) {
+          const
+            wikiJson = await wikiRes
+            .json();
+          const imageUrl =
+            wikiJson.thumbnail ?
+            wikiJson.thumbnail
+            .source : '';
+          sources.push({
+            provider: "Wikipedia",
+            url: `https://en.wikipedia.org/wiki/${encodeURIComponent(prompt)}`,
+            title: wikiJson
+              .title || "",
+            description: (wikiJson
+                .extract || "")
+              .replace(/\n/g, ' ')
+              .trim(),
+            image: imageUrl
+          })
+        }
+        const
+          bingRes = await fetch(
+            `https://api.allorigins.win/get?url=${encodeURIComponent(`https://www.bing.com/search?q=${encodeURIComponent(prompt)}&format=rss&count=10`)}`
+          );
+        if (bingRes.ok) {
+          const
+            bingJson = await bingRes
+            .json();
+          const parser =
+            new DOMParser();
+          const
+            xml = parser
+            .parseFromString(bingJson
+              .contents,
+              "application/xml"
+            );
+          const items = Array
+            .from(xml
+              .querySelectorAll(
+                "item")).slice(0, 3);
+          items.forEach(
+            item => {
+              const title =
+                item.querySelector(
+                  "title")
+                ?.textContent ||
+                "";
+              const
+                description = (item
+                  .querySelector(
+                    "description")
+                  ?.textContent ||
+                  "").replace(/\n/g,
+                  ' ').trim();
+              const
+                url = item
+                .querySelector(
+                  "link")
+                ?.textContent ||
+                "";
+              if (title)
+                sources
+                .push({
+                  provider: "Bing",
+                  url,
+                  title,
+                  description,
+                  image: ""
+                })
+            })
+        }
+        const
+          ddgRes = await fetch(
+            `https://api.duckduckgo.com/?q=${encodeURIComponent(prompt)}&format=json&no_redirect=1&no_html=1`
+          );
+        if (ddgRes.ok) {
+          const
+            ddgJson = await ddgRes
+            .json();
+          if (ddgJson
+            .AbstractText) {
+            sources
+              .push({
+                provider: "DuckDuckGo",
+                url: ddgJson
+                  .AbstractURL ||
+                  "",
+                title: ddgJson
+                  .Heading || "",
+                description: (
+                    ddgJson
+                    .AbstractText ||
+                    "").replace(
+                    /\n/g, ' ')
+                  .trim(),
+                image: ddgJson
+                  .Image ||
+                  ""
+              })
+          }
+        }
+      } catch (
+        e) {
+        console.warn(
+          "Error fetching web data:",
+          e)
+      }
+      return {
+        now,
+        sources
+      }
+    }
+    async function fetchSpecificSite(
+      url) {
+      const proxyUrls = [
+        "https://api.allorigins.win/get?url=",
+        "https://api.codetabs.com/v1/proxy?quest=",
+        "https://corsproxy.io/?"
+      ];
+      for (const proxy of
+          proxyUrls) {
+        try {
+          const
+            res = await fetch(
+              proxy +
+              encodeURIComponent(
+                url));
+          if (!res.ok)
+            throw new Error(
+              `HTTP ${res.status}`
+            );
+          const json =
+            await res.json();
+          const
+            html = json.contents ||
+            json;
+          const parser =
+            new DOMParser();
+          const
+            doc = parser
+            .parseFromString(html,
+              "text/html");
+          const
+            title = doc
+            .querySelector("title")
+            ?.textContent ||
+            "";
+          const description =
+            doc.querySelector(
+              "meta[name=description]"
+            )?.getAttribute(
+              "content") ||
+            "No description found.";
+          const
+            bodyText = doc.body
+            ?.textContent?.replace(
+              /\s+/g, " ").trim() ||
+            "";
+          let combinedText =
+            `title: ${title}, description: ${description}, text: ${bodyText}`;
+          if (
+            combinedText.length >
+            3800) {
+            const lastDot =
+              combinedText
+              .lastIndexOf('.',
+                3800);
+            combinedText = lastDot >
+              0 ? combinedText
+              .slice(0, lastDot +
+                1) : combinedText
+              .slice(0,
+                3800)
+          }
+          return {
+            title,
+            description,
+            text: combinedText
+          }
+        } catch (
+          e) {
+          console.warn(
+            `Proxy ${proxy} failed:`,
+            e
+          )
+        }
+      }
+      return {
+        title: "Error",
+        description: "Failed to fetch URL content.",
+        text: ""
+      }
+    }
+    
+    function isUrl(text) {
+      try {
+        new URL
+          (
+            text);
+        return true
+      } catch { return false }
+    }
+    async function extractTextFromImage(
+      file) {
+      try {
+        const result =
+          await Tesseract.recognize(
+            file, 'eng'
+          );
+        return result.data
+          .text
+      } catch (
+        error) {
+        console.error(
+          'OCR Error:', error
+        );
+        return 'Failed to extract text from image.'
+      }
+    }
+    async function extractTextFromPDF(
+      file) {
+      try {
+        const
+          arrayBuffer = await file
+          .arrayBuffer();
+        const
+          pdf = await pdfjsLib
+          .getDocument({ data: arrayBuffer })
+          .promise;
+        let text =
+          '';
+        for (let i = 1; i <= pdf
+          .numPages; i++) {
+          const
+            page = await pdf
+            .getPage(i);
+          const
+            content = await page
+            .getTextContent();
+          const
+            strings = content.items
+            .map(item => item.str);
+          text += strings.join(
+              ' ') +
+            '\n'
+        }
+        return text
+      } catch (
+        error) {
+        console.error(
+          'PDF Error:', error
+        );
+        return 'Failed to extract text from PDF.'
+      }
+    }
+    async function extractTextFromFile(
+      file) {
+      const text =
+        await file
+        .text();
+      return text
+    }
+    async function processAttachedFiles() {
+      if (
+        attachedFiles.length ===
+        0) return '';
+      let
+        extractedContent =
+        '';
+      const
+        fileContents = [];
+      for (
+        const file of
+          attachedFiles) {
+        let
+          content = '';
+        if (file
+          .type.startsWith(
+            'image/')) {
+          content
+            =
+            await extractTextFromImage(
+              file)
+        } else if (
+          file.type ===
+          'application/pdf'
+        ) {
+          content =
+            await extractTextFromPDF(
+              file
+            )
+        } else {
+          content
+            =
+            await extractTextFromFile(
+              file)
+        }
+        const
+          truncatedContent =
+          content.slice(0,
+            800) + (content
+            .length > 800 ?
+            '...' : '');
+        extractedContent +=
+          `\n${file.name}: ${truncatedContent}`;
+        fileContents
+          .push({
+            name: file
+              .name,
+            content: content
+              .slice(0,
+                2000) + (content
+                .length >
+                2000 ? '...' :
+                ''),
+            type: file
+              .type
+          })
+      }
+      lastFileExtracts
+        = Object.fromEntries(
+          MODELS.filter(m =>
+            runState[m.id] ===
+            "active").map(m => [
+            m.id, fileContents
+          ])
+        );
+      return extractedContent
+    }
+    
+    function addAttachedFile(
+      file) {
+      attachedFiles.push(file);
+      renderAttachedFiles()
+    }
+    
+    function removeAttachedFile(
+      index) {
+      attachedFiles.splice(index,
+        1);
+      renderAttachedFiles()
+    }
+    
+    function renderAttachedFiles() {
+      const
+        container = document
+        .getElementById(
+          'attachedFiles');
+      if (
+        attachedFiles.length === 0
+      ) {
+        container.classList.add(
+          'hidden');
+        return
+      }
+      container
+        .classList.remove('hidden');
+      container.innerHTML = '';
+      attachedFiles.forEach((file,
+        index) => {
+        const fileEl =
+          document.createElement(
+            'div');
+        fileEl.className =
+          'attached-file';
+        const
+          fileIcon = file.type
+          .startsWith('image/') ?
+          'fa-image' : file.type ===
+          'application/pdf' ?
+          'fa-file-pdf' : file.type
+          .includes('html') || file
+          .type.includes('css') ||
+          file.type.includes(
+            'javascript') ?
+          'fa-code' : 'fa-file';
+        fileEl.innerHTML =
+          `<i class="fa-solid ${fileIcon} file-sent-icon"></i><span>${file.name}</span><i class="fa-solid fa-times remove-file" onclick="removeAttachedFile(${index})"></i>`;
+        container.appendChild(
+          fileEl)
+      })
+    }
+    
+    function createFaviconLine(sources,
+      modelId) {
+      if (!sources || sources
+        .length === 0)
+        return null;
+      const faviconLine =
+        document.createElement('div');
+      faviconLine.className =
+        'favicon-line';
+      faviconLine.setAttribute(
+        'data-model-id', modelId);
+      sources.forEach(
+        src => {
+          try {
+            const url =
+              new URL(src.url);
+            const
+              faviconUrl =
+              `https://www.google.com/s2/favicons?domain=${url.hostname}&sz=20`;
+            const
+              img = document
+              .createElement('img');
+            img.src = faviconUrl;
+            img.title = src.provider;
+            img.setAttribute(
+              'data-favicon-click',
+              'true');
+            img.onerror = () => img
+              .style.display = 'none';
+            faviconLine.appendChild(
+              img)
+          } catch (
+            e) {}
+        });
+      return faviconLine
+    }
+    
+    function createExtractLine(files,
+      modelId) {
+      if (!files || files
+        .length === 0)
+        return null;
+      const extractLine =
+        document.createElement('div');
+      extractLine.className =
+        'extract-line';
+      extractLine.setAttribute(
+        'data-model-id', modelId);
+      const
+        extractIcon = document
+        .createElement('i');
+      extractIcon.className =
+        'fa-solid fa-file-text';
+      extractIcon.style.cssText =
+        'color:#fbbf24;cursor:pointer;font-size:20px;padding:2px;margin-right:8px;';
+      extractIcon.title =
+        'View extracted content';
+      extractIcon.setAttribute(
+        'data-extract-click', 'true');
+      extractLine.appendChild(
+        extractIcon
+      );
+      return extractLine
+    }
+    
+    function showSearchSourcesModal(
+      sources) {
+      const modalContent =
+        document.getElementById(
+          'modalContent');
+      modalContent.innerHTML = '';
+      sources.forEach(src => {
+        const
+          item = document
+          .createElement('div');
+        item.className =
+          'modal-source';
+        const
+          titleEscaped = (src
+            .title || '').replace(
+            /</g, '&lt;').replace(
+            />/g, '&gt;');
+        const
+          descriptionEscaped = (src
+            .description || '')
+          .replace(/</g, '&lt;')
+          .replace(/>/g,
+            '&gt;');
+        const
+          urlEscaped = (src.url ||
+            '').replace(/</g,
+            '&lt;').replace(/>/g,
+            '&gt;');
+        const
+          description =
+          descriptionEscaped
+          .length > 150 ?
+          descriptionEscaped.slice(
+            0, 150) + '...' :
+          descriptionEscaped;
+        const
+          fullDescription =
+          descriptionEscaped;
+        const
+          needsExpansion =
+          description !==
+          fullDescription;
+        let
+          domain = '';
+        try {
+          domain
+            = new URL(src.url)
+            .hostname
+        } catch (
+          e) {
+          domain = src
+            .url
+        }
+        item
+          .innerHTML =
+          `<div class="modal-source-title">${src.provider}: ${titleEscaped}</div><div class="modal-source-desc" data-full="${fullDescription}" data-short="${description}">${description}</div>${needsExpansion?'<div class="read-more">Read More</div>':''}<a href="${urlEscaped}" target="_blank" class="modal-source-url"><img src="https://www.google.com/s2/favicons?domain=${domain}&sz=16"><span>${domain}</span></a>${src.image?`<img src="${src.image}" style="max-width:200px;margin-top:8px;border-radius:4px;">`:''}<hr style="margin:12px 0;border:none;border-top:1px solid #444;">`;
+        modalContent.appendChild(
+          item);
+        if (
+          needsExpansion) {
+          const
+            readMore = item
+            .querySelector(
+              '.read-more');
+          const
+            desc = item
+            .querySelector(
+              '.modal-source-desc');
+          readMore.addEventListener(
+            'click', () => {
+              const
+                isExpanded = desc
+                .classList
+                .contains(
+                  'expanded'
+                );
+              if (
+                isExpanded) {
+                desc
+                  .textContent =
+                  desc
+                  .getAttribute(
+                    'data-short');
+                desc.classList
+                  .remove(
+                    'expanded');
+                readMore
+                  .textContent =
+                  'Read More'
+              } else {
+                desc
+                  .textContent =
+                  desc
+                  .getAttribute(
+                    'data-full');
+                desc.classList
+                  .add(
+                    'expanded');
+                readMore
+                  .textContent =
+                  'Read Less'
+              }
+            }
+          )
+        }
+      });
+      document.getElementById(
+          'searchSourcesModal').style
+        .display = 'block';
+      document.getElementById(
+          'searchModalBackdrop').style
+        .display = 'block'
+    }
+    
+    function showExtractModal(
+      files) {
+      const extractContent =
+        document.getElementById(
+          'extractContent');
+      extractContent.innerHTML = '';
+      files.forEach(file => {
+        const
+          item = document
+          .createElement('div');
+        item.className =
+          'modal-source';
+        const
+          nameEscaped = file.name
+          .replace(/</g, '&lt;')
+          .replace(/>/g,
+            '&gt;');
+        const
+          contentEscaped = (file
+            .content || '').replace(
+            /</g, '&lt;').replace(
+            />/g, '&gt;');
+        item.innerHTML =
+          `<div class="modal-source-title">📄 ${nameEscaped}</div><div class="modal-source-desc"><pre style="white-space:pre-wrap;background:#1a1a1a;padding:12px;border-radius:6px;font-size:12px;max-height:400px;overflow-y:auto;word-wrap:break-word;">${contentEscaped}</pre></div>`;
+        extractContent.appendChild(
+          item)
+      });
+      document.getElementById(
+          'extractModal').style
+        .display = 'block';
+      document.getElementById(
+          'extractModalBackdrop').style
+        .display = 'block'
+    }
+    
+    function clearPreviousFavicons() {
+      lastWebSources
+        = {}
+    }
+    
+    function showSettingsPage() {
+      const
+        settingsPage = document
+        .getElementById('settingsPage');
+      settingsPage.style.display =
+        'block';
+      const sidebarContent =
+        document.getElementById(
+          'settingsSidebarContent'
+        );
+      const chatListContent =
+        document.getElementById(
+          'chatList').innerHTML;
+      const
+        isDesktop = window.innerWidth >=
+        1024;
+      if (
+        isDesktop) {
+        sidebarContent
+          .innerHTML =
+          `<div class="p-3 border-b border-neutral-800 flex gap-2"><button onclick="createNewChat()" class="p-2 bg-emerald-600 hover:bg-emerald-700 rounded-lg text-emerald-100 flex items-center justify-center flex-shrink-0 transition-all duration-200"><i class="fa-solid fa-pen text-sm"></i></button><input type="text" placeholder="Search..." class="flex-1 min-w-0 bg-neutral-900 border border-neutral-700 rounded-md px-2 py-2 text-xs outline-none focus:ring-1 focus:ring-emerald-500 transition-all duration-200"></div><div class="flex-1 overflow-y-auto px-2 py-2">${chatListContent}</div>`
+      } else {
+        sidebarContent
+          .innerHTML = ''
+      }
+      const
+        userNameInput = document
+        .getElementById(
+          'userNameInput');
+      const
+        universalPromptInput = document
+        .getElementById(
+          'universalSystemPromptInput');
+      userNameInput.value = localStorage
+        .getItem('userName') || '';
+      universalPromptInput.value =
+        localStorage.getItem(
+          'universalSystemPrompt') ||
+        DEFAULT_SYSTEM_PROMPT;
+      renderSystemMemory()
+    }
+    
+    function hideSettingsPage() {
+      document
+        .getElementById('settingsPage')
+        .style.display = 'none'
+    }
+    
+    function renderTabs() {
+      const
+        tabsUl = document.querySelector(
+          "#tabs ul");
+      tabsUl.innerHTML = "";
+      const
+        statusTab = document
+        .createElement("li");
+      statusTab.innerHTML =
+        `<button data-tab="status" class="model-tab ${activeTab==="status"?"active":""} px-3 py-2 rounded-t text-sm text-neutral-300 hover:text-emerald-400">Status</button>`;
+      tabsUl.appendChild(statusTab);
+      MODELS.forEach(m => {
+        const li =
+          document.createElement(
+            "li");
+        li.innerHTML =
+          `<button data-tab="${m.id}" class="model-tab ${activeTab===m.id?"active":""} px-3 py-2 rounded-t text-sm text-neutral-300 hover:text-emerald-400">${m.label}${m.warn?' <span class="text-amber-400 cursor-pointer hover:text-amber-300" onclick="showWarning(event)">!</span>':""}${m.audio?' <span class="text-sky-400">🎧</span>':""}</button>`;
+        tabsUl.appendChild(li)
+      });
+      tabsUl.querySelectorAll(
+        "button.model-tab").forEach(
+        btn => {
+          btn.addEventListener(
+            "click",
+            () => {
+              activeTab = btn
+                .getAttribute(
+                  "data-tab");
+              renderTabs();
+              updateView()
+            })
+        })
+    }
+    
+    function showWarning(e) {
+      e
+        .stopPropagation();
+      document.getElementById(
+          'warningOverlay').classList
+        .remove('hidden')
+    }
+    
+    function renderStatus() {
+      const
+        statusBar = document
+        .getElementById("statusBar");
+      statusBar.innerHTML = "";
+      MODELS.forEach(m => {
+        const st =
+          statusMap[m.id] ||
+          "unknown";
+        const
+          dotClass = st === "up" ?
+          "status-up" : st ===
+          "down" ? "status-down" :
+          "status-unknown";
+        const
+          state = runState[m
+            .id];
+        const icon =
+          state === "active" ?
+          '<i class="fa-solid fa-pause"></i>' :
+          '<i class="fa-solid fa-play"></i>';
+        const
+          el = document
+          .createElement("div");
+        el.className =
+          "flex items-center justify-between p-3 rounded-lg model-card";
+        el.innerHTML =
+          `<div class="flex items-center gap-2"><span class="status-dot ${dotClass}"></span><span class="text-sm">${m.label}</span></div><div class="flex items-center gap-3"><span class="text-xs text-neutral-400">${st==="up"?"✔":st==="down"?"✖":"○"}</span><button class="toggleBtn text-xs px-2 py-1 rounded bg-neutral-900 border border-neutral-800 hover:bg-neutral-800" data-model-id="${m.id}">${icon}</button></div>`;
+        el.querySelector(
+            ".toggleBtn")
+          .addEventListener("click",
+            () => {
+              runState[m.id] =
+                runState[m.id] ===
+                "active" ?
+                "paused" : "active";
+              saveRunState();
+              renderStatus()
+            });
+        statusBar.appendChild(el)
+      })
+    }
+    
+    function renderCards() {
+      const
+        results = document
+        .getElementById("results");
+      results.innerHTML = "";
+      MODELS.forEach(m => {
+        const card =
+          document.createElement(
+            "div");
+        card.className =
+          "flex-shrink-0 w-80 sm:w-96 lg:w-[400px] h-full flex flex-col border-r border-neutral-800 last:border-r-0";
+        card.setAttribute(
+          "data-model", m.id);
+        const
+          state = runState[m
+            .id];
+        const toggleIcon =
+          state === "active" ?
+          '<i class="fa-solid fa-pause"></i>' :
+          '<i class="fa-solid fa-play"></i>';
+        card.innerHTML =
+          `<div class="px-4 py-3 border-b border-neutral-800 bg-neutral-900 flex items-center justify-between"><div class="flex items-center gap-2"><h3 class="font-semibold text-sm">${m.label}${m.warn?' <span class="text-amber-400 cursor-pointer hover:text-amber-300 text-xs px-1 py-1 border border-amber-500/30 rounded ml-1" onclick="showWarning(event)">!</span>':""}${m.audio?' <span class="text-sky-400 text-xs px-1 py-1 border border-sky-500/30 rounded ml-1">🎧</span>':""}</h3></div><div class="flex items-center gap-1"><button class="model-memory-btn text-xs px-2 py-1 rounded bg-neutral-800 border border-neutral-700 hover:bg-neutral-700" data-model="${m.id}" title="Chat Memory"><i class="fa-solid fa-brain"></i></button><button class="model-toggle-btn text-xs px-2 py-1 rounded bg-neutral-800 border border-neutral-700 hover:bg-neutral-700" data-model="${m.id}">${toggleIcon}</button></div></div><div class="result-content flex-1 p-4 overflow-y-auto" data-content></div>`;
+        results.appendChild(card)
+      });
+      document.querySelectorAll(
+        '.model-toggle-btn').forEach(
+        btn => {
+          btn.addEventListener(
+            'click', e => {
+              const
+                modelId = e.target
+                .closest('button')
+                .dataset
+                .model;
+              const
+                currentState =
+                runState[modelId];
+              runState[modelId] =
+                currentState ===
+                "active" ?
+                "paused" : "active";
+              saveRunState();
+              renderCards();
+              loadAndDisplayChatHistoryForActiveChat
+                ()
+            })
+        });
+      document.querySelectorAll(
+        '.model-memory-btn').forEach(
+        btn => {
+          btn.addEventListener(
+            'click',
+            e => {
+              activeTab = e
+                .target.closest(
+                  'button').dataset
+                .model;
+              renderChatMemory();
+              document
+                .getElementById(
+                  'chatMemoryOverlay'
+                ).classList
+                .remove('hidden')
+            })
+        }
+      );
+      loadAndDisplayChatHistoryForActiveChat
+        ()
+    }
+    
+    function renderChatList(filter =
+      '') {
+      const chatListEl = document
+        .getElementById("chatList");
+      chatListEl.innerHTML = "";
+      const
+        filteredChats = chats.filter(
+          c => c.name.toLowerCase()
+          .includes(filter
+            .toLowerCase())).sort((a,
+            b) => new Date(b
+            .createdAt) -
+          new Date(a.createdAt));
+      filteredChats.forEach(
+        chat => {
+          const item =
+            document.createElement(
+              "div");
+          item.className =
+            `chat-item flex items-center justify-between p-2 rounded-md cursor-pointer hover:bg-neutral-800 relative ${chat.id===activeChatId?'active':''}`;
+          item.dataset.chatId = chat
+            .id;
+          item.innerHTML =
+            `<span class="text-xs truncate pr-3 flex-1">${chat.name}</span><button class="chat-options-btn text-neutral-400 hover:text-white p-1 flex-shrink-0"><i class="fa-solid fa-ellipsis-vertical text-xs"></i></button>`;
+          item.addEventListener(
+            'click', e => {
+              if (!e
+                .target.closest(
+                  '.chat-options-btn'
+                )) {
+                activeChatId
+                  = chat.id;
+                renderChatList(
+                  document
+                  .getElementById(
+                    'chatSearch')
+                  .value);
+                loadAndDisplayChatHistoryForActiveChat
+                  ();
+                document.body
+                  .classList.remove(
+                    'sidebar-open'
+                  )
+              }
+            });
+          item.querySelector(
+              '.chat-options-btn')
+            .addEventListener('click',
+              e => {
+                e
+                  .stopPropagation();
+                showChatOptions(chat
+                  .id, e
+                  .currentTarget)
+              });
+          chatListEl.appendChild(
+            item)
+        })
+    }
+    
+    function showChatOptions(chatId,
+      target) {
+      const overlay = document
+        .getElementById(
+          'chatOptionsOverlay');
+      const
+        menu = overlay.querySelector(
+          'div');
+      menu.innerHTML =
+        `<button data-action="rename" class="w-full text-left px-3 py-2 text-xs text-neutral-200 hover:bg-neutral-700 rounded-t-md">Rename</button><button data-action="system-prompt" class="w-full text-left px-3 py-2 text-xs text-neutral-200 hover:bg-neutral-700">System Prompt</button><button data-action="delete" class="w-full text-left px-3 py-2 text-xs text-red-400 hover:bg-neutral-700 rounded-b-md">Delete</button>`;
+      overlay.classList.remove(
+        'hidden');
+      const rect = target
+        .getBoundingClientRect();
+      menu.style.position = 'fixed';
+      menu.style.top =
+        `${rect.bottom}px`;
+      menu.style.right =
+        `${window.innerWidth-rect.right}px`;
+      const
+        closeOverlay = e => {
+          if (!menu
+            .contains(e.target)
+          ) {
+            overlay.classList.add(
+              'hidden');
+            document
+              .removeEventListener(
+                'click', closeOverlay,
+                true)
+          }
+        };
+      setTimeout(() => {
+          document
+            .addEventListener('click',
+              closeOverlay, true)
+        },
+        0);
+      menu.querySelector(
+          '[data-action="rename"]')
+        .onclick = () => {
+          overlay
+            .classList.add('hidden');
+          openRenameOverlay(chatId)
+        };
+      menu.querySelector(
+        '[data-action="system-prompt"]'
+      ).onclick = () => {
+        overlay
+          .classList.add('hidden');
+        openSystemPromptOverlay(
+          chatId)
+      };
+      menu.querySelector(
+          '[data-action="delete"]')
+        .onclick = () => {
+          overlay
+            .classList.add('hidden');
+          showDeleteConfirmation(
+            chatId)
+        }
+    }
+    
+    function showDeleteConfirmation(
+      chatId) {
+      chatToDelete = chatId;
+      document.getElementById(
+          'deleteConfirmOverlay')
+        .classList.remove('hidden')
+    }
+    
+    function openRenameOverlay(
+      chatId) {
+      const overlay = document
+        .getElementById(
+          'renameOverlay');
+      const input =
+        document.getElementById(
+          'renameInput');
+      const chat =
+        chats.find(c => c.id ===
+          chatId);
+      if (!chat) return;
+      input.value = chat.name ===
+        "New Chat" ? "" : chat.name;
+      overlay.classList.remove(
+        'hidden');
+      input.focus();
+      document.getElementById(
+          'confirmRename').onclick =
+        () => {
+          const newName = input
+            .value.trim();
+          if (
+            newName) {
+            chat.name =
+              newName;
+            saveChats();
+            renderChatList()
+          }
+          overlay
+            .classList.add('hidden')
+        };
+      document.getElementById(
+          'cancelRename').onclick =
+        () => overlay.classList.add(
+          'hidden')
+    }
+    
+    function openSystemPromptOverlay(
+      chatId) {
+      const overlay = document
+        .getElementById(
+          'systemPromptOverlay');
+      const
+        textarea = document
+        .getElementById(
+          'systemPromptInput');
+      const
+        chat = chats.find(c => c.id ===
+          chatId);
+      if (!chat) return;
+      textarea.value = chat
+        .systemPrompt || "";
+      overlay.classList.remove(
+        'hidden');
+      textarea.focus();
+      document.getElementById(
+          'confirmSystemPrompt')
+        .onclick = () => {
+          chat
+            .systemPrompt = textarea
+            .value.trim();
+          saveChats();
+          overlay.classList.add(
+            'hidden')
+        };
+      document.getElementById(
+          'cancelSystemPrompt')
+        .onclick = () => overlay
+        .classList.add('hidden')
+    }
+    
+    function deleteChat(chatId) {
+      chats
+        = chats.filter(c => c.id !==
+          chatId);
+      if (activeChatId ===
+        chatId) {
+        if (chats.length >
+          0) {
+          activeChatId = chats[
+              chats.length - 1]
+            .id
+        } else {
+          createNewChat
+            ()
+        }
+      }
+      saveChats();
+      renderChatList();
+      loadAndDisplayChatHistoryForActiveChat
+        ()
+    }
+    
+    function loadAndDisplayChatHistoryForActiveChat() {
+      const
+        activeChat = chats.find(c => c
+          .id === activeChatId);
+      MODELS.forEach(m => {
+        const
+          content = document
+          .querySelector(
+            `[data-model="${m.id}"] [data-content]`
+          );
+        if (
+          content) {
+          content
+            .innerHTML = "";
+          if (
+            activeChat && activeChat
+            .history[m.id]
+          ) {
+            activeChat.history[m
+              .id].forEach(
+              msg => {
+                if (msg
+                  .content !==
+                  "searching" &&
+                  msg.content !==
+                  "..." && msg
+                  .content !==
+                  "extracting..."
+                ) {
+                  appendMessage
+                    (m.id, msg
+                      .content,
+                      msg.type,
+                      false
+                    )
+                }
+              })
+          }
+        }
+      })
+    }
+    
+    function typeWriterEffect(element,
+      text, speed = 15
+    ) {
+      return new Promise(
+        resolve => {
+          let i = 0;
+          element.innerHTML =
+            '';
+          const timer =
+            setInterval(() => {
+                if (
+                  i < text.length
+                ) {
+                  element
+                    .innerHTML += text
+                    .charAt(i);
+                  i++
+                } else {
+                  clearInterval
+                    (timer);
+                  resolve()
+                }
+              },
+              speed)
+        })
+    }
+    
+    function formatImages(
+      text) {
+      return text.replace(
+        /(https?:\/\/[^\s]+\.(?:jpg|jpeg|png|gif|webp|svg))(\?[^\s]*)?/gi,
+        (match) =>
+        `<img src="${match}" alt="Generated Image" style="max-width: 100%; height: auto; border-radius: 8px; margin: 8px 0;" loading="lazy" />`
+      )
+    }
+    
+    function sleep(
+      ms) {
+      return new Promise(resolve =>
+        setTimeout(resolve, ms))
+    }
+    
+    function appendMessage(modelId,
+      content, type, scroll = true,
+      isNew = false) {
+      const contentEl =
+        document.querySelector(
+          `[data-model="${modelId}"] [data-content]`
+        );
+      if (!contentEl)
+        return;
+      const messageEl = document
+        .createElement("div");
+      messageEl.className =
+        `message ${type==="user"?"user-message":"ai-response"}`;
+      if (
+        type === "ai") {
+        messageEl
+          .innerHTML =
+          `<div class="flex items-center justify-between mb-2"><div class="flex items-center gap-2"><span class="text-xs text-emerald-400 font-medium">${MODELS.find(m=>m.id===modelId)?.label}</span></div><div class="flex items-center gap-2"><button class="icon-copy text-neutral-400 hover:text-emerald-400 text-xs p-1" title="Copy"><i class="fa-regular fa-copy"></i></button><button class="icon-listen text-neutral-400 hover:text-emerald-400 text-xs p-1" title="Listen"><i class="fa-solid fa-headphones"></i></button><button class="icon-resend text-neutral-400 hover:text-emerald-400 text-xs p-1" title="Resend"><i class="fa-solid fa-rotate-right"></i></button></div></div><div class="message-content"></div>`
+      } else {
+        messageEl
+          .innerHTML =
+          `<div class="message-content"></div>`
+      }
+      const
+        messageContent = messageEl
+        .querySelector(
+          ".message-content");
+      contentEl.appendChild(
+        messageEl);
+      if (type ===
+        "ai") {
+        if (content === "..." ||
+          content === "searching" ||
+          content === "extracting..."
+        ) {
+          if (content ===
+            "searching"
+          ) {
+            messageContent
+              .innerHTML =
+              '<div class="text-blue-400">searching<span class="loading-dots"><span></span><span></span><span></span></span></div>'
+          } else if (
+            content === "extracting..."
+          ) {
+            messageContent
+              .innerHTML =
+              '<div class="text-orange-400">extracting<span class="loading-dots"><span></span><span></span><span></span></span></div>'
+          } else {
+            messageContent
+              .innerHTML =
+              '<div class="loading-dots"><span></span><span></span><span></span></div>'
+          }
+        } else {
+          let
+            processedContent =
+            formatImages(content);
+          const
+            html = renderRich(
+              processedContent);
+          if (
+            isNew) {
+            typeWriterEffect(
+                messageContent, '')
+              .then(
+                () => {
+                  messageContent
+                    .innerHTML = html;
+                  postFormat(
+                    messageContent
+                  );
+                  const sources =
+                    lastWebSources[
+                      modelId];
+                  const
+                    extracts =
+                    lastFileExtracts[
+                      modelId];
+                  if (
+                    sources && sources
+                    .length > 0) {
+                    const
+                      faviconLine =
+                      createFaviconLine(
+                        sources, modelId
+                      );
+                    if (
+                      faviconLine)
+                      messageEl
+                      .appendChild(
+                        faviconLine
+                      )
+                  }
+                  if (
+                    extracts && extracts
+                    .length > 0) {
+                    const
+                      extractLine =
+                      createExtractLine(
+                        extracts,
+                        modelId);
+                    if (
+                      extractLine)
+                      messageEl
+                      .appendChild(
+                        extractLine
+                      )
+                  }
+                })
+          } else {
+            messageContent
+              .innerHTML = html;
+            postFormat(
+              messageContent);
+            const
+              sources = lastWebSources[
+                modelId];
+            const
+              extracts =
+              lastFileExtracts[
+                modelId];
+            if (sources &&
+              sources.length > 0
+            ) {
+              const faviconLine =
+                createFaviconLine(
+                  sources, modelId
+                );
+              if (faviconLine)
+                messageEl.appendChild(
+                  faviconLine)
+            }
+            if (
+              extracts && extracts
+              .length > 0) {
+              const
+                extractLine =
+                createExtractLine(
+                  extracts, modelId
+                );
+              if (extractLine)
+                messageEl.appendChild(
+                  extractLine
+                )
+            }
+          }
+        }
+        wireMessageActions
+          (messageEl, modelId,
+            content)
+      } else {
+        messageContent
+          .textContent = content
+      }
+      if (
+        scroll) {
+        contentEl.scrollTop =
+          contentEl.scrollHeight
+      }
+    }
+    
+    function wireMessageActions(
+      messageEl, modelId, content
+    ) {
+      const copyBtn = messageEl
+        .querySelector(
+          ".icon-copy");
+      const listenBtn =
+        messageEl.querySelector(
+          ".icon-listen");
+      const
+        resendBtn = messageEl
+        .querySelector(".icon-resend");
+      copyBtn?.addEventListener("click",
+        async () => {
+          try {
+            await navigator
+              .clipboard.writeText(
+                content);
+            copyBtn.innerHTML =
+              '<i class="fa-solid fa-check text-emerald-500"></i>';
+            setTimeout(() => copyBtn
+              .innerHTML =
+              '<i class="fa-regular fa-copy"></i>',
+              1500)
+          } catch (
+            err) {
+            console.error(
+              "Copy failed:", err
+            )
+          }
+        });
+      listenBtn?.addEventListener(
+        "click", () => {
+          const
+            audioKey =
+            `${modelId}-audio`;
+          if (
+            activeAudioMap[audioKey]
+          ) {
+            speechSynthesis
+              .cancel();
+            delete activeAudioMap[
+              audioKey];
+            listenBtn.classList
+              .remove(
+                'audio-playing')
+          } else {
+            if (
+              content && ttsReady
+            ) {
+              const utterance =
+                new SpeechSynthesisUtterance(
+                  content);
+              if (
+                ttsVoice) utterance
+                .voice = ttsVoice;
+              utterance.onstart =
+                () => {
+                  activeAudioMap[
+                    audioKey] = true;
+                  listenBtn.classList
+                    .add(
+                      'audio-playing'
+                    )
+                };
+              utterance.onend =
+                () => {
+                  delete activeAudioMap
+                    [audioKey];
+                  listenBtn.classList
+                    .remove(
+                      'audio-playing'
+                    )
+                };
+              utterance.onerror =
+                () => {
+                  delete activeAudioMap
+                    [audioKey];
+                  listenBtn.classList
+                    .remove(
+                      'audio-playing'
+                    )
+                };
+              speechSynthesis.speak(
+                utterance)
+            }
+          }
+        });
+      resendBtn?.addEventListener(
+        "click", async () => {
+          const
+            activeChat = chats.find(
+              c => c.id ===
+              activeChatId);
+          const
+            lastUserMsg = activeChat
+            ?.history[modelId]
+            ?.filter(m => m.type ===
+              "user").pop();
+          if (
+            lastUserMsg) {
+            const
+              contentEl = document
+              .querySelector(
+                `[data-model="${modelId}"] [data-content]`
+              );
+            const messages =
+              contentEl
+              .querySelectorAll(
+                ".message");
+            const
+              lastAiMessage = Array
+              .from(messages)
+              .reverse().find(msg =>
+                msg.classList
+                .contains(
+                  'ai-response')
+              );
+            if (
+              lastAiMessage) {
+              lastAiMessage
+                .remove()
+            }
+            if (
+              activeChat.history[
+                modelId]) {
+              const
+                lastAiIndex =
+                activeChat.history[
+                  modelId].length -
+                1;
+              if (activeChat
+                .history[modelId][
+                  lastAiIndex
+                ] && activeChat
+                .history[modelId][
+                  lastAiIndex
+                ].type === "ai"
+              ) {
+                activeChat
+                  .history[modelId]
+                  .splice(
+                    lastAiIndex, 1);
+                saveChats
+                  ()
+              }
+            }
+            await fetchTextOrAudio
+              (lastUserMsg.content,
+                modelId, MODELS
+                .find(m => m.id ===
+                  modelId)?.audio
+              )
+          }
+        })
+    }
+    
+    function updateView() {
+      const
+        statusContainer = document
+        .getElementById(
+          "statusContainer");
+      const
+        resultsContainer = document
+        .getElementById(
+          "resultsContainer");
+      if (
+        activeTab === "status"
+      ) {
+        statusContainer.classList
+          .remove("hidden");
+        resultsContainer.classList.add(
+          "hidden"
+        )
+      } else {
+        statusContainer
+          .classList.add("hidden");
+        resultsContainer.classList
+          .remove("hidden")
+      }
+    }
+    
+    function buildUrl(prompt,
+      model) {
+      const modelConfig = MODELS
+        .find(m => m.id ===
+          model);
+      const activeChat = chats
+        .find(c => c.id ===
+          activeChatId);
+      let
+        systemPrompt = activeChat
+        ?.systemPrompt || localStorage
+        .getItem(
+          'universalSystemPrompt') ||
+        DEFAULT_SYSTEM_PROMPT;
+      systemPrompt += buildMemoryPrompt(
+        activeChatId, model);
+      if (
+        modelConfig && modelConfig
+        .baseUrl) {
+        let url =
+          modelConfig.baseUrl +
+          encodeURIComponent(
+            prompt);
+        if (systemPrompt
+          .trim()) {
+          url +=
+            `?system=${encodeURIComponent(systemPrompt)}`
+        }
+        return url
+      }
+      let
+        url =
+        `https://text.pollinations.ai/${encodeURIComponent(prompt)}?model=${encodeURIComponent(model)}`;
+      if (
+        systemPrompt.trim()) {
+        url +=
+          `&system=${encodeURIComponent(systemPrompt)}`
+      }
+      return url
+    }
+    
+    function renderRich(text) {
+      marked
+        .setOptions({
+          breaks: true,
+          gfm: true,
+          headerIds: false,
+          mangle: false
+        });
+      let
+        processed = text.replace(
+          /\n---\n/g, '\n<br><hr><br>\n'
+        );
+      processed = processed.replace(
+        /\\\[\s*([\s\S]*?)\s*\\\]/g,
+        '<div class="math-display-container"><div class="math-display">\\[$1\\]</div></div>'
+      );
+      processed = processed.replace(
+        /\\\(\s*([\s\S]*?)\s*\\\)/g,
+        '<span class="math-inline">\\($1\\)</span>'
+      );
+      processed = processed.replace(
+        /\$\$\s*([\s\S]*?)\s*\$\$/g,
+        '<div class="math-display-container"><div class="math-display">$$$$1$$$$</div></div>'
+      );
+      processed = processed.replace(
+        /(?<!\$)\$(?!\$)([^$\n]+)(?<!\$)\$(?!\$)/g,
+        '<span class="math-inline">$$$1$$$</span>'
+      );
+      processed = processed.replace(
+        /(\[.*?\]\(.*?\))/g,
+        '<span class="markdown-link">$1</span>'
+      );
+      let raw = marked.parse(
+        processed || "");
+      raw = raw.replace(/<p>/g,
+        '<p class="preserve">');
+      raw = raw.replace(/<table/g,
+        '<div class="table-container"><table'
+      );
+      raw = raw.replace(/<\/table>/g,
+        '</table></div>'
+      );
+      return DOMPurify.sanitize(
+        raw, {
+          USE_PROFILES: { html: true },
+          ALLOWED_TAGS: ['p', 'div',
+            'span', 'strong', 'em',
+            'code', 'pre', 'a', 'i',
+            'br', 'hr', 'table',
+            'thead', 'tbody', 'tr',
+            'th', 'td',
+            'blockquote', 'ul',
+            'ol', 'li', 'h1', 'h2',
+            'h3', 'h4', 'h5', 'h6',
+            'audio', 'source', 'img'
+          ],
+          ALLOWED_ATTR: ['class',
+            'href', 'target',
+            'title', 'controls',
+            'src', 'type', 'alt',
+            'style', 'loading'
+          ]
+        })
+    }
+    async function postFormat(
+      rootEl) {
+      rootEl
+        .querySelectorAll("pre code")
+        .forEach(block => {
+          try {
+            hljs
+              .highlightElement(
+                block)
+          } catch (
+            e) {
+            console.error(
+              "Highlight.js error:",
+              e)
+          }
+        });
+      rootEl.querySelectorAll('a')
+        .forEach(a => {
+          a.style
+            .color = '#3b82f6';
+          a.style.textDecoration =
+            'none';
+          a.target = '_blank';
+          a.addEventListener(
+            'mouseenter', () => a
+            .style.color =
+            '#60a5fa');
+          a.addEventListener(
+            'mouseleave', () => a
+            .style.color =
+            '#3b82f6')
+        });
+      rootEl.querySelectorAll(
+        '.table-container').forEach(
+        container => {
+          container
+            .style.overflowX =
+            'auto';
+          container.style
+            .marginBottom = '16px'
+        }
+      );
+      rootEl.querySelectorAll(
+          '.math-display-container')
+        .forEach(
+          container => {
+            container
+              .style.overflowX =
+              'auto';
+            container.style
+              .marginBottom = '16px';
+            container.style
+              .textAlign = 'center'
+          });
+      rootEl.querySelectorAll(
+        '.math-inline').forEach(
+        inline => {
+          inline.style
+            .display =
+            'inline-block';
+          inline.style.maxWidth =
+            '100%';
+          inline.style.overflowX =
+            'auto'
+        });
+      try {
+        if (
+          window.MathJax) {
+          window
+            .MathJax.config = window
+            .MathJax.config || {};
+          window.MathJax.config.tex =
+            window.MathJax.config
+            .tex || {};
+          window.MathJax.config.tex
+            .inlineMath = [
+              ['$', '$'],
+              ['\\(', '\\)']
+            ];
+          window.MathJax.config.tex
+            .displayMath = [
+              ['$$', '$$'],
+              ['\\[', '\\]']
+            ];
+          if (window.MathJax
+            .typesetPromise
+          ) {
+            await MathJax
+              .typesetPromise([
+                rootEl
+              ])
+          }
+        }
+      } catch (
+        e) {
+        console.error(
+          "MathJax error:", e
+        )
+      }
+    }
+    async function fetchWithRetry(
+      prompt, modelId, isAudio,
+      retries = 0) {
+      const
+        activeChat = chats.find(c =>
+          c.id === activeChatId
+        );
+      let systemPrompt =
+        activeChat?.systemPrompt ||
+        localStorage.getItem(
+          'universalSystemPrompt'
+        ) ||
+        DEFAULT_SYSTEM_PROMPT;
+      systemPrompt +=
+        buildMemoryPrompt(
+          activeChatId, modelId
+        );
+      const endpoint =
+        buildUrl(prompt,
+          modelId);
+      try {
+        const
+          controller =
+          new AbortController();
+        const
+          timeoutId = setTimeout(
+            () => controller.abort(),
+            25000);
+        const
+          options = {
+            method: 'GET',
+            headers: { 'Accept': 'text/plain, application/json, audio/*', 'User-Agent': 'Arai-Chat-Client/1.0', 'Cache-Control': 'no-cache', 'Connection': 'keep-alive' },
+            signal: controller
+              .signal
+          };
+        if (
+          controllers[modelId])
+          controllers[modelId] =
+          controller;
+        const
+          response = await fetch(
+            endpoint, options);
+        clearTimeout(
+          timeoutId);
+        if (!response
+          .ok) throw new Error(
+          `HTTP ${response.status}: ${response.statusText}`
+        );
+        return response
+      } catch (
+        error) {
+        console.warn(
+          `Endpoint ${endpoint} failed:`,
+          error.message);
+        if (
+          retries < MAX_RETRIES
+        ) {
+          await sleep(
+            RETRY_DELAY * (
+              retries + 1)
+          );
+          return fetchWithRetry(
+            prompt, modelId,
+            isAudio, retries + 1
+          )
+        }
+        throw new Error(
+          "All endpoints failed"
+        )
+      }
+    }
+    async function fetchTextOrAudio(
+      prompt, modelId, isAudio
+    ) {
+      const ctrl =
+        new AbortController;
+      controllers[modelId] =
+        ctrl;
+      const activeChat =
+        chats.find(c => c.id ===
+          activeChatId);
+      if (!
+        activeChat) return;
+      if (!
+        activeChat.history[
+          modelId]) activeChat
+        .history[
+          modelId] = [];
+      const
+        loadingMsgIndex =
+        activeChat.history[
+          modelId].length;
+      activeChat.history[modelId]
+        .push({
+          type: "ai",
+          content: "..."
+        });
+      appendMessage(modelId,
+        "...", "ai", true, false
+      );
+      try {
+        const res =
+          await fetchWithRetry(
+            prompt, modelId,
+            isAudio);
+        const ct = (
+          res.headers.get(
+            "Content-Type") ||
+          "").toLowerCase();
+        let
+          responseContent;
+        if (
+          isAudio && ct
+          .startsWith("audio/")
+        ) {
+          const blob =
+            await res.blob();
+          if (
+            blob.size === 0)
+            throw new Error(
+              "Empty audio response"
+            );
+          const objectUrl =
+            URL.createObjectURL(
+              blob);
+          responseContent =
+            `<audio controls class="w-full mt-2"><source src="${objectUrl}" type="${blob.type}"/></audio>`
+        } else {
+          responseContent
+            = await res
+            .text();
+          if (!
+            responseContent ||
+            responseContent.trim()
+            .length === 0
+          ) {
+            throw new Error(
+              "Empty text response"
+            )
+          }
+          responseContent
+            = parseMemoryCommands(
+              responseContent,
+              activeChatId,
+              modelId
+            )
+        }
+        activeChat
+          .history[modelId][
+            loadingMsgIndex
+          ] = {
+            type: "ai",
+            content: responseContent
+          };
+        const
+          contentEl = document
+          .querySelector(
+            `[data-model="${modelId}"] [data-content]`
+          );
+        const messages =
+          contentEl
+          .querySelectorAll(
+            ".message");
+        if (
+          messages[messages
+            .length - 1]) {
+          const
+            messageContent =
+            messages[messages
+              .length - 1]
+            .querySelector(
+              ".message-content"
+            );
+          if (isAudio && ct
+            .startsWith("audio/")
+          ) {
+            messageContent
+              .innerHTML =
+              responseContent
+          } else {
+            let
+              processedContent =
+              formatImages(
+                responseContent);
+            await typeWriterEffect
+              (messageContent,
+                '');
+            const html =
+              renderRich(
+                processedContent);
+            messageContent
+              .innerHTML = html;
+            postFormat(
+              messageContent
+            );
+            const sources =
+              lastWebSources[
+                modelId];
+            const
+              extracts =
+              lastFileExtracts[
+                modelId];
+            if (
+              sources && sources
+              .length > 0) {
+              const
+                faviconLine =
+                createFaviconLine(
+                  sources, modelId
+                );
+              if (
+                faviconLine)
+                messages[messages
+                  .length - 1]
+                .appendChild(
+                  faviconLine
+                )
+            }
+            if (
+              extracts && extracts
+              .length > 0) {
+              const
+                extractLine =
+                createExtractLine(
+                  extracts,
+                  modelId);
+              if (
+                extractLine)
+                messages[messages
+                  .length - 1]
+                .appendChild(
+                  extractLine
+                )
+            }
+          }
+          wireMessageActions
+            (messages[messages
+                .length - 1],
+              modelId,
+              responseContent
+            )
+        }
+        statusMap[
+          modelId] = "up";
+        saveChats()
+      } catch (
+        e) {
+        let errorContent;
+        if (e
+          .name === "AbortError"
+        ) {
+          errorContent =
+            "Request was cancelled by user."
+        } else {
+          errorContent
+            =
+            "I'm unable to connect to my server right now. Please try again later or provide another request."
+        }
+        activeChat
+          .history[modelId][
+            loadingMsgIndex
+          ] = {
+            type: "ai",
+            content: errorContent
+          };
+        const
+          contentEl = document
+          .querySelector(
+            `[data-model="${modelId}"] [data-content]`
+          );
+        const messages =
+          contentEl
+          .querySelectorAll(
+            ".message");
+        if (
+          messages[messages
+            .length - 1]) {
+          const
+            messageContent =
+            messages[messages
+              .length - 1]
+            .querySelector(
+              ".message-content");
+          messageContent
+            .innerHTML =
+            `<div class="error-message">${errorContent}<button class="retry-btn" onclick="retryLastRequest('${modelId}')">Retry</button></div>`
+        }
+        statusMap
+          [modelId] = e.name ===
+          "AbortError" ?
+          "unknown" : "down";
+        saveChats
+          ()
+      } finally {
+        delete controllers
+          [modelId];
+        renderStatus
+          ()
+      }
+    }
+    async function retryLastRequest(
+      modelId) {
+      const
+        activeChat = chats.find(
+          c => c.id ===
+          activeChatId);
+      const
+        lastUserMsg = activeChat
+        ?.history[modelId]
+        ?.filter(m => m.type ===
+          "user").pop();
+      if (
+        lastUserMsg) {
+        const
+          contentEl = document
+          .querySelector(
+            `[data-model="${modelId}"] [data-content]`
+          );
+        const messages =
+          contentEl
+          .querySelectorAll(
+            ".message");
+        const
+          lastAiMessage = Array
+          .from(messages)
+          .reverse().find(msg =>
+            msg.classList
+            .contains(
+              'ai-response')
+          );
+        if (
+          lastAiMessage) {
+          lastAiMessage
+            .remove()
+        }
+        if (
+          activeChat.history[
+            modelId]) {
+          const
+            lastAiIndex =
+            activeChat.history[
+              modelId].length -
+            1;
+          if (activeChat
+            .history[modelId][
+              lastAiIndex
+            ] && activeChat
+            .history[modelId][
+              lastAiIndex
+            ].type === "ai"
+          ) {
+            activeChat
+              .history[modelId]
+              .splice(
+                lastAiIndex, 1);
+            saveChats
+              ()
+          }
+        }
+        await fetchTextOrAudio
+          (lastUserMsg.content,
+            modelId, MODELS
+            .find(m => m.id ===
+              modelId)?.audio
+          )
+      }
+    }
+    async function runAll(
+      prompt) {
+      if (
+        isGenerating ||
+        isSearching ||
+        isExtracting) return;
+      clearPreviousFavicons
+        ();
+      let finalPrompt =
+        prompt;
+      let
+        webSources = [];
+      let
+        extractedText =
+        '';
+      if (attachedFiles
+        .length > 0
+      ) {
+        isExtracting =
+          true;
+        const
+          activeModels =
+          MODELS.filter(m =>
+            runState[m.id] ===
+            "active");
+        activeModels.forEach(
+          m => {
+            const
+              activeChat =
+              chats.find(
+                c => c
+                .id ===
+                activeChatId
+              );
+            if (!
+              activeChat
+              .history[m.id]
+            ) activeChat
+              .history[m
+                .id] = [];
+            activeChat
+              .history[m.id]
+              .push({
+                type: "user",
+                content: prompt
+              });
+            appendMessage(m
+              .id, prompt,
+              "user",
+              true, false);
+            activeChat
+              .history[m.id]
+              .push({
+                type: "ai",
+                content: "extracting..."
+              });
+            appendMessage(m
+              .id,
+              "extracting...",
+              "ai", true,
+              false)
+          });
+        saveChats();
+        extractedText =
+          await processAttachedFiles();
+        activeModels.forEach(
+          m => {
+            const
+              contentEl =
+              document
+              .querySelector(
+                `[data-model="${m.id}"] [data-content]`
+              );
+            const
+              messages =
+              contentEl
+              .querySelectorAll(
+                ".message"
+              );
+            const
+              lastMessage =
+              Array.from(
+                messages)
+              .reverse()
+              .find(msg =>
+                msg
+                .classList
+                .contains(
+                  'ai-response'
+                ));
+            if (
+              lastMessage
+            ) {
+              const
+                messageContent =
+                lastMessage
+                .querySelector(
+                  ".message-content"
+                );
+              if (
+                messageContent
+                .textContent
+                .includes(
+                  'extracting'
+                )
+              ) {
+                messageContent
+                  .innerHTML =
+                  '<div class="loading-dots"><span></span><span></span><span></span></div>'
+              }
+            }
+            const
+              lastIndex =
+              chats.find(
+                c => c
+                .id ===
+                activeChatId
+              )?.history[m
+                .id]
+              .length -
+              1;
+            if (
+              lastIndex >=
+              0 && chats
+              .find(c => c
+                .id ===
+                activeChatId
+              ).history[m
+                .id][
+                lastIndex
+              ].content ===
+              "extracting..."
+            ) {
+              chats
+                .find(c => c
+                  .id ===
+                  activeChatId
+                ).history[
+                  m.id][
+                  lastIndex
+                ] = {
+                  type: "ai",
+                  content: "..."
+                }
+            }
+          }
+        );
+        attachedFiles = [];
+        renderAttachedFiles();
+        isExtracting =
+          false
+      }
+      if (
+        webSearchEnabled
+      ) {
+        isSearching =
+          true;
+        const
+          activeModels =
+          MODELS.filter(m =>
+            runState[m.id] ===
+            "active");
+        if (!
+          extractedText
+        ) {
+          activeModels
+            .forEach(
+              m => {
+                const
+                  activeChat =
+                  chats.find(
+                    c => c
+                    .id ===
+                    activeChatId
+                  );
+                if (!
+                  activeChat
+                  .history[m
+                    .id])
+                  activeChat
+                  .history[m
+                    .id] = [];
+                activeChat
+                  .history[m
+                    .id]
+                  .push({
+                    type: "user",
+                    content: prompt
+                  });
+                appendMessage(
+                  m.id,
+                  prompt,
+                  "user",
+                  true,
+                  false);
+                activeChat
+                  .history[m
+                    .id]
+                  .push({
+                    type: "ai",
+                    content: "searching"
+                  });
+                appendMessage(
+                  m.id,
+                  "searching",
+                  "ai",
+                  true,
+                  false)
+              });
+          saveChats()
+        }
+        if (
+          isUrl(finalPrompt)
+        ) {
+          const {
+            title,
+            description,
+            text
+          } =
+          await fetchSpecificSite
+            (finalPrompt);
+          finalPrompt =
+            `${finalPrompt} . this is the data of the website { title: ${title}, description: ${description}, text: ${text} }`;
+          webSources = [
+          {
+            provider: 'Website',
+            url: finalPrompt
+          }]
+        } else {
+          const {
+            now,
+            sources
+          } =
+          await fetchWebData(
+            finalPrompt
+          );
+          const imageUrls =
+            sources.filter(
+              s => s.image)
+            .map(s => s
+              .image);
+          const
+            imagesText =
+            imageUrls.length ?
+            ` images: {${imageUrls.join(', ')}}` :
+            '';
+          finalPrompt =
+            `${finalPrompt} . {${now} , web sources : ${sources.map(s=>`${s.provider}: { title: ${s.title}, description: ${s.description}, url: ${s.url} }`).join(', ')}${imagesText}} }`;
+          webSources =
+            sources
+        }
+        activeModels
+          .forEach(
+            m => {
+              const
+                contentEl =
+                document
+                .querySelector(
+                  `[data-model="${m.id}"] [data-content]`
+                );
+              const
+                messages =
+                contentEl
+                .querySelectorAll(
+                  ".message"
+                );
+              const
+                lastMessage =
+                Array.from(
+                  messages)
+                .reverse()
+                .find(msg =>
+                  msg
+                  .classList
+                  .contains(
+                    'ai-response'
+                  ));
+              if (
+                lastMessage
+              ) {
+                const
+                  messageContent =
+                  lastMessage
+                  .querySelector(
+                    ".message-content"
+                  );
+                if (
+                  messageContent
+                  .textContent
+                  .includes(
+                    'searching'
+                  )
+                ) {
+                  messageContent
+                    .innerHTML =
+                    '<div class="loading-dots"><span></span><span></span><span></span></div>'
+                }
+              }
+              const
+                lastIndex =
+                chats.find(
+                  c => c
+                  .id ===
+                  activeChatId
+                )?.history[m
+                  .id]
+                .length -
+                1;
+              if (
+                lastIndex >=
+                0 && chats
+                .find(c => c
+                  .id ===
+                  activeChatId
+                ).history[m
+                  .id][
+                  lastIndex
+                ].content ===
+                "searching"
+              ) {
+                chats
+                  .find(c => c
+                    .id ===
+                    activeChatId
+                  ).history[
+                    m.id][
+                    lastIndex
+                  ] = {
+                    type: "ai",
+                    content: "..."
+                  }
+              }
+            });
+        lastWebSources =
+          Object.fromEntries(
+            activeModels.map(
+              m => [m.id,
+                webSources
+              ]));
+        isSearching =
+          false
+      }
+      if (
+        extractedText
+      ) {
+        finalPrompt +=
+          `. file extraction: {${extractedText}}`
+      }
+      isGenerating
+        = true;
+      updateSendButton();
+      Object.values(
+          controllers)
+        .forEach(c => c
+          .abort());
+      MODELS.forEach(m =>
+        statusMap[m.id] =
+        "unknown");
+      renderStatus();
+      let
+        activeChat = chats
+        .find(c => c.id ===
+          activeChatId);
+      if (!
+        activeChat
+      ) {
+        activeChat =
+          createNewChat()
+      }
+      if (
+        activeChat.name ===
+        "New Chat" && prompt
+      ) {
+        activeChat.name =
+          prompt.substring(0,
+            30) + (prompt
+            .length > 30 ?
+            "..." : "");
+        renderChatList
+          ()
+      }
+      const
+        activeModels = MODELS
+        .filter(m => runState[
+            m.id] ===
+          "active");
+      if (!
+        webSearchEnabled && !
+        extractedText
+      ) {
+        activeModels
+          .forEach(m => {
+            if (
+              !activeChat
+              .history[m.id]
+            ) activeChat
+              .history[m
+                .id] = [];
+            activeChat
+              .history[m.id]
+              .push({
+                type: "user",
+                content: prompt
+              });
+            appendMessage(m
+              .id, prompt,
+              "user",
+              true, false
+            )
+          })
+      }
+      saveChats
+        ();
+      await Promise
+        .allSettled(
+          activeModels.map(
+            m =>
+            fetchTextOrAudio(
+              finalPrompt, m
+              .id, !!m.audio))
+        );
+      isGenerating = false;
+      updateSendButton()
+    }
+    
+    function stopGeneration() {
+      Object
+        .values(controllers).forEach(
+          c => c.abort());
+      isGenerating = false;
+      updateSendButton()
+    }
+    
+    function updateSendButton() {
+      const
+        sendBtn = document
+        .getElementById("sendBtn");
+      if (
+        isGenerating || isSearching ||
+        isExtracting) {
+        sendBtn
+          .innerHTML =
+          '<i class="fa-solid fa-square"></i><span class="hidden sm:inline ml-1">Stop</span>';
+        sendBtn.className =
+          "px-3 py-2 bg-red-600 hover:bg-red-700 rounded-lg text-xs font-medium flex items-center gap-2 transition-all duration-200"
+      } else {
+        sendBtn
+          .innerHTML =
+          '<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path fill-rule="evenodd" d="M4.10514201,11.8070619 L2.74013818,2.2520351 L22.236068,12 L2.74013818,21.7479649 L4.10514201,12.1929381 L4.87689437,12 L4.10514201,11.8070619 Z M5.25986182,5.7479649 L5.89485799,10.1929381 L13.1231056,12 L5.89485799,13.8070619 L5.25986182,18.2520351 L17.763932,12 L5.25986182,5.7479649 Z"/></svg><span class="hidden sm:inline ml-1">Send</span>';
+        sendBtn.className =
+          "px-3 py-2 bg-emerald-600 hover:bg-emerald-700 rounded-lg text-xs font-medium flex items-center gap-2 transition-all duration-200"
+      }
+    }
+    
+    function init() {
+      preloadTTS();
+      setupSpeechRecognition();
+      loadChats();
+      renderTabs();
+      renderStatus();
+      renderCards();
+      renderChatList();
+      updateView();
+      const input =
+        document.getElementById(
+          "promptInput");
+      const
+        sendBtn = document
+        .getElementById(
+          "sendBtn");
+      const menuBtn =
+        document.getElementById(
+          'menuBtn');
+      const newChatBtn =
+        document.getElementById(
+          'newChatBtn');
+      const
+        newChatHeaderBtn = document
+        .getElementById(
+          'newChatHeaderBtn');
+      const
+        chatSearch = document
+        .getElementById(
+          'chatSearch');
+      const
+        settingsBtn = document
+        .getElementById(
+          'settingsBtn');
+      const
+        saveSettingsBtn = document
+        .getElementById(
+          'saveSettings');
+      const
+        userNameInput = document
+        .getElementById(
+          'userNameInput');
+      const
+        universalPromptInput = document
+        .getElementById(
+          'universalSystemPromptInput'
+        );
+      const fileInput = document
+        .getElementById(
+          "fileInput");
+      const
+        closeWarning = document
+        .getElementById(
+          "closeWarning");
+      const
+        cancelDelete = document
+        .getElementById(
+          'cancelDelete');
+      const
+        confirmDelete = document
+        .getElementById(
+          'confirmDelete');
+      const
+        closeChatMemory = document
+        .getElementById(
+          'closeChatMemory');
+      const
+        webSearchBtn = document
+        .getElementById(
+          'webSearchBtn');
+      const
+        modalCloseBtn = document
+        .getElementById(
+          'modalCloseBtn');
+      const
+        extractCloseBtn = document
+        .getElementById(
+          'extractCloseBtn');
+      const
+        uploadBtn = document
+        .getElementById(
+          'uploadBtn');
+      const
+        uploadOverlay = document
+        .getElementById(
+          'uploadOverlay');
+      const
+        closeUpload = document
+        .getElementById(
+          'closeUpload');
+      const dropZone =
+        document.getElementById(
+          'dropZone');
+      const
+        uploadImage = document
+        .getElementById(
+          'uploadImage');
+      const
+        uploadFile = document
+        .getElementById(
+          'uploadFile');
+      const
+        searchModalBackdrop = document
+        .getElementById(
+          'searchModalBackdrop');
+      const
+        extractModalBackdrop = document
+        .getElementById(
+          'extractModalBackdrop');
+      const
+        settingsCloseBtn = document
+        .getElementById(
+          'settingsCloseBtn');
+      if (
+        typeof Tesseract !== 'undefined'
+      ) {
+        console.log(
+          'Tesseract loaded successfully'
+        )
+      }
+      if (typeof pdfjsLib !==
+        'undefined') {
+        pdfjsLib
+          .GlobalWorkerOptions
+          .workerSrc =
+          'https://unpkg.com/pdfjs-dist@2.11.338/build/pdf.worker.min.js';
+        console.log(
+          'PDF.js loaded successfully'
+        )
+      }
+      document.addEventListener(
+        'click', e => {
+          if (e.target
+            .matches(
+              '[data-favicon-click="true"]'
+            )) {
+            const faviconLine =
+              e.target.closest(
+                '.favicon-line'
+              );
+            const modelId =
+              faviconLine
+              ?.getAttribute(
+                'data-model-id');
+            if (
+              modelId &&
+              lastWebSources[modelId]
+            ) {
+              showSearchSourcesModal
+                (lastWebSources[
+                  modelId])
+            }
+          }
+          if (e
+            .target.matches(
+              '[data-extract-click="true"]'
+            )) {
+            const extractLine =
+              e.target.closest(
+                '.extract-line'
+              );
+            const modelId =
+              extractLine
+              ?.getAttribute(
+                'data-model-id');
+            if (
+              modelId &&
+              lastFileExtracts[
+                modelId]
+            ) {
+              showExtractModal(
+                lastFileExtracts[
+                  modelId])
+            }
+          }
+        });
+      modalCloseBtn.addEventListener(
+        'click', () => {
+          document
+            .getElementById(
+              'searchSourcesModal')
+            .style.display = 'none';
+          document.getElementById(
+              'searchModalBackdrop')
+            .style.display = 'none'
+        });
+      extractCloseBtn.addEventListener(
+        'click', () => {
+          document
+            .getElementById(
+              'extractModal').style
+            .display = 'none';
+          document.getElementById(
+              'extractModalBackdrop')
+            .style.display = 'none'
+        });
+      searchModalBackdrop
+        .addEventListener('click',
+          () => {
+            document.getElementById(
+                'searchSourcesModal')
+              .style.display = 'none';
+            document.getElementById(
+                'searchModalBackdrop')
+              .style.display = 'none'
+          });
+      extractModalBackdrop
+        .addEventListener('click',
+          () => {
+            document.getElementById(
+                'extractModal').style
+              .display = 'none';
+            document.getElementById(
+                'extractModalBackdrop')
+              .style.display = 'none'
+          });
+      settingsBtn.addEventListener(
+        'click',
+        () => { showSettingsPage() });
+      settingsCloseBtn.addEventListener(
+        'click',
+        () => { hideSettingsPage() });
+      saveSettingsBtn.addEventListener(
+        'click', () => {
+          localStorage
+            .setItem('userName',
+              userNameInput.value);
+          localStorage.setItem(
+            'universalSystemPrompt',
+            universalPromptInput
+            .value);
+          hideSettingsPage()
+        });
+      uploadBtn.addEventListener(
+        'click', () => {
+          uploadOverlay
+            .style.display = 'flex'
+        });
+      closeUpload.addEventListener(
+        'click', () => {
+          uploadOverlay
+            .style.display = 'none'
+        });
+      uploadOverlay.addEventListener(
+        'click', e => {
+          if (e
+            .target === uploadOverlay
+          ) {
+            uploadOverlay.style
+              .display = 'none'
+          }
+        });
+      dropZone.addEventListener(
+        'dragover', e => {
+          e
+            .preventDefault();
+          dropZone.classList.add(
+            'drag-over')
+        });
+      dropZone.addEventListener(
+        'dragleave', () => {
+          dropZone
+            .classList.remove(
+              'drag-over')
+        });
+      dropZone.addEventListener('drop',
+        e => {
+          e.preventDefault();
+          dropZone.classList.remove(
+            'drag-over');
+          const
+            files = Array.from(e
+              .dataTransfer.files);
+          files.forEach(
+            addAttachedFile);
+          uploadOverlay.style
+            .display = 'none'
+        });
+      uploadImage.addEventListener(
+        'click', () => {
+          fileInput
+            .accept = 'image/*';
+          fileInput.click()
+        });
+      uploadFile.addEventListener(
+        'click', () => {
+          fileInput
+            .accept =
+            '.txt,.pdf,.doc,.docx,.csv,.json,.html,.css,.js,.py,.java,.cpp,.c,.php,.rb,.go';
+          fileInput.click()
+        });
+      fileInput.addEventListener(
+        'change', e => {
+          Array.from(e
+            .target.files).forEach(
+            addAttachedFile);
+          uploadOverlay.style
+            .display = 'none'
+        });
+      
+      function handleSend() {
+        if (
+          isGenerating || isSearching ||
+          isExtracting) {
+          stopGeneration
+            ();
+          return
+        }
+        const prompt =
+          input.value.trim();
+        if (!
+          prompt) return;
+        input.value = "";
+        input.style.height = 'auto';
+        runAll(prompt)
+      }
+      input
+        .addEventListener('input',
+          () => {
+            input.style.height =
+              'auto';
+            input.style.height = Math
+              .min(input.scrollHeight,
+                150) + 'px'
+          });
+      input.addEventListener("keydown",
+        e => {
+          if (e.key ===
+            "Enter" && (e.ctrlKey || e
+              .metaKey)) {
+            e
+              .preventDefault();
+            handleSend()
+          }
+        });
+      sendBtn.addEventListener("click",
+        handleSend);
+      webSearchBtn.addEventListener(
+        "click",
+        () => {
+          webSearchEnabled = !
+            webSearchEnabled;
+          webSearchBtn.classList
+            .toggle(
+              'web-search-active',
+              webSearchEnabled)
+        });
+      menuBtn.addEventListener('click',
+        e => {
+          e.stopPropagation();
+          document.body.classList
+            .toggle('sidebar-open')
+        });
+      document.addEventListener('click',
+        e => {
+          if (!document
+            .getElementById('sidebar')
+            .contains(e.target) && !
+            menuBtn.contains(e.target)
+          ) {
+            document.body
+              .classList.remove(
+                'sidebar-open')
+          }
+        });
+      newChatBtn.addEventListener(
+        'click', () => {
+          createNewChat
+            ();
+          document.body.classList
+            .remove('sidebar-open')
+        });
+      newChatHeaderBtn.addEventListener(
+        'click', () => {
+          createNewChat
+            ();
+          document.body.classList
+            .remove('sidebar-open')
+        });
+      chatSearch.addEventListener(
+        'input', e => renderChatList(e
+          .target.value));
+      cancelDelete.addEventListener(
+        'click', () => {
+          document
+            .getElementById(
+              'deleteConfirmOverlay')
+            .classList.add('hidden');
+          chatToDelete = null
+        });
+      confirmDelete.addEventListener(
+        'click', () => {
+          if (
+            chatToDelete) {
+            deleteChat
+              (chatToDelete);
+            document.getElementById(
+              'deleteConfirmOverlay'
+            ).classList.add(
+              'hidden');
+            chatToDelete = null
+          }
+        });
+      closeChatMemory.addEventListener(
+        'click', () => {
+          document
+            .getElementById(
+              'chatMemoryOverlay')
+            .classList.add('hidden')
+        }
+      );
+      document.getElementById(
+        "voiceBtn").addEventListener(
+        "click", () => {
+          if (
+            recognition) {
+            document
+              .getElementById(
+                'voiceBtn')
+              .innerHTML =
+              '<i class="fa-solid fa-stop"></i><span class="hidden sm:inline ml-1">Stop</span>';
+            recognition.start()
+          }
+        });
+      closeWarning.addEventListener(
+        "click", () => {
+          document
+            .getElementById(
+              'warningOverlay')
+            .classList.add('hidden')
+        }
+      );
+      window.retryLastRequest =
+        retryLastRequest;
+      window.deleteChatMemory =
+        deleteChatMemory;
+      window.deleteSystemMemory =
+        deleteSystemMemory;
+      window.removeAttachedFile =
+        removeAttachedFile
+    }
+    init()
+  </script>
