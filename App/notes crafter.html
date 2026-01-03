@@ -1,0 +1,1866 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>PurplePDF | Notes Crafter</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%238b5cf6'/%3E%3Cstop offset='50%25' stop-color='%23ec4899'/%3E%3Cstop offset='100%25' stop-color='%23f59e0b'/%3E%3C/linearGradient%3E%3C/defs%3E%3Ccircle cx='50' cy='50' r='45' fill='url(%23g)'/%3E%3Cpath d='M35 35h30v8h-30zm0 12h25v6h-25zm0 10h28v6h-28z' fill='white' opacity='0.9'/%3E%3Cpath d='M40 65h20l-5-5v3h-10v4z' fill='white'/%3E%3C/svg%3E">
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" crossorigin="anonymous">
+
+<!-- Libraries -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js" crossorigin="anonymous"></script>
+<!-- Cropper.js for Crop Pattern -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css" crossorigin="anonymous">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js" crossorigin="anonymous"></script>
+
+<!-- Custom Styles -->
+<style>/* --- style.css --- */
+
+/* Base Styles */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { background: #000; color: #fff; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; overflow-x: hidden; }
+
+/* Scrollbar */
+.custom-scrollbar::-webkit-scrollbar { width: 6px; }
+.custom-scrollbar::-webkit-scrollbar-track { background: #1a1a1a; }
+.custom-scrollbar::-webkit-scrollbar-thumb { background: #444; border-radius: 3px; }
+.custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #8b5cf6; }
+
+/* Animations */
+.gradient-text { background: linear-gradient(45deg, #8b5cf6, #ec4899, #f59e0b); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; background-size: 200% auto; animation: gradientShift 3s ease infinite; }
+@keyframes gradientShift { 0%, 100% { background-position: 0 50%; } 50% { background-position: 100% 50%; } }
+.fade-in { animation: fadeIn 0.5s cubic-bezier(0.4, 0, 0.2, 1); }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+/* Button Styles */
+.btn-primary { background: linear-gradient(135deg, #8b5cf6, #ec4899); border-radius: 8px; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); border: none; cursor: pointer; color: white; display: inline-flex; align-items: center; justify-content: center; }
+.btn-primary:hover { transform: translateY(-2px); box-shadow: 0 10px 25px rgba(139, 92, 246, 0.4); }
+.btn-primary:disabled { opacity: 0.5; cursor: not-allowed; transform: none; box-shadow: none; filter: grayscale(1); }
+.btn-secondary { background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 8px; color: #fff; transition: all 0.2s; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; }
+.btn-secondary:hover { background: rgba(255, 255, 255, 0.2); }
+
+/* --- Custom Dropdowns --- */
+.custom-select-wrapper { position: relative; user-select: none; width: 100%; outline: none; }
+.custom-select-trigger {
+    background: #0a0a0a; border: 2px solid rgba(139, 92, 246, 0.3); border-radius: 8px; color: #fff;
+    padding: 0.75rem; cursor: pointer; display: flex; justify-content: space-between; align-items: center;
+    transition: all 0.3s; font-size: 0.95rem;
+}
+.custom-select-trigger:hover { border-color: #8b5cf6; }
+.custom-select-wrapper:focus .custom-select-trigger { border-color: #ec4899; box-shadow: 0 0 0 2px rgba(236, 72, 153, 0.3); }
+
+.custom-select-wrapper.open .custom-select-trigger { border-color: #8b5cf6; border-bottom-left-radius: 0; border-bottom-right-radius: 0; }
+.custom-options {
+    position: absolute; top: 100%; left: 0; right: 0; background: #0a0a0a; border: 2px solid #8b5cf6;
+    border-top: none; border-bottom-left-radius: 8px; border-bottom-right-radius: 8px;
+    z-index: 100; display: none; max-height: 200px; overflow-y: auto; box-shadow: 0 10px 20px rgba(0,0,0,0.5);
+}
+.custom-select-wrapper.open .custom-options { display: block; }
+.custom-option { padding: 0.75rem; cursor: pointer; transition: background 0.2s; color: #ccc; }
+.custom-option:hover { background: rgba(139, 92, 246, 0.2); color: #fff; }
+.custom-option.selected { background: #8b5cf6; color: #fff; }
+
+/* Toggle Switch */
+.toggle-switch { position: relative; display: inline-block; width: 44px; height: 24px; flex-shrink: 0; }
+.toggle-switch input { opacity: 0; width: 0; height: 0; }
+.toggle-slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #333; transition: 0.4s; border-radius: 26px; }
+.toggle-slider:before { position: absolute; content: ""; height: 18px; width: 18px; left: 3px; bottom: 3px; background-color: white; transition: 0.4s; border-radius: 50%; }
+input:checked + .toggle-slider { background: linear-gradient(135deg, #8b5cf6, #ec4899); }
+input:checked + .toggle-slider:before { transform: translateX(20px); }
+.toggle-switch input:focus + .toggle-slider { box-shadow: 0 0 0 2px rgba(139, 92, 246, 0.5); }
+
+/* Containers */
+.setting-group { background: linear-gradient(135deg, rgba(139, 92, 246, 0.05), rgba(236, 72, 153, 0.05)); border: 1px solid rgba(139, 92, 246, 0.2); border-radius: 8px; padding: 1.5rem; margin-bottom: 1rem; }
+.error-banner { background: linear-gradient(135deg, rgba(239, 68, 68, 0.2), rgba(220, 38, 38, 0.1)); border: 2px solid rgba(239, 68, 68, 0.5); border-radius: 8px; padding: 1rem; margin: 1rem 0; animation: fadeIn 0.3s ease; }
+
+/* Drop Zone */
+.drop-zone { border: 2px dashed rgba(139, 92, 246, 0.5); border-radius: 12px; background: rgba(139, 92, 246, 0.05); transition: all 0.3s ease; cursor: pointer; min-height: 200px; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; outline: none; }
+.drop-zone:hover, .drop-zone.drag-over { border-color: #ec4899; background: rgba(236, 72, 153, 0.1); transform: scale(1.01); }
+.drop-zone:focus { border-color: #ec4899; box-shadow: 0 0 0 4px rgba(236, 72, 153, 0.2); }
+.drop-zone i { font-size: 3rem; margin-bottom: 1rem; color: #8b5cf6; }
+
+/* Thumbnail Grid */
+.pdf-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 1rem; margin-top: 1.5rem; align-items: start; }
+
+/* Card Styles */
+.pdf-page-card { position: relative; background: #1a1a1a; border-radius: 8px; overflow: hidden; border: 2px solid transparent; transition: border-color 0.2s, box-shadow 0.2s, aspect-ratio 0.3s; user-select: none; width: 100%; height: auto; }
+.pdf-page-card:hover { border-color: rgba(139, 92, 246, 0.5); }
+.pdf-page-card.selected { border-color: #8b5cf6; box-shadow: 0 0 15px rgba(139, 92, 246, 0.3); }
+.pdf-page-card.selected::after { content: '\f00c'; font-family: 'Font Awesome 6 Free'; font-weight: 900; position: absolute; top: 8px; right: 8px; background: #8b5cf6; color: white; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.3); z-index: 5; pointer-events: none; }
+
+.card-image-container { width: 100%; height: 100%; overflow: hidden; position: relative; background: #fff; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+.card-image-container img { width: 100%; height: 100%; object-fit: contain; pointer-events: none; transition: transform 0.3s ease; }
+
+/* Page Number Badge */
+.page-number { position: absolute; bottom: 0; left: 0; right: 0; background: rgba(0,0,0,0.7); color: #fff; font-size: 0.75rem; padding: 4px; text-align: center; pointer-events: none; z-index: 2; }
+
+/* Card Controls */
+.drag-handle { position: absolute; top: 6px; left: 6px; width: 28px; height: 28px; background: rgba(0,0,0,0.6); color: #fff; border-radius: 4px; display: flex; align-items: center; justify-content: center; cursor: grab; z-index: 10; transition: background 0.2s; }
+.drag-handle:hover { background: rgba(139, 92, 246, 0.8); }
+.drag-handle:active { cursor: grabbing; }
+
+.card-action-btn { position: absolute; bottom: 28px; width: 28px; height: 28px; background: rgba(0,0,0,0.6); color: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 10; transition: background 0.2s; border: none; }
+.rotate-btn { right: 6px; }
+.rotate-btn:hover { background: rgba(236, 72, 153, 0.8); }
+.crop-btn { right: 40px; }
+.crop-btn:hover { background: rgba(236, 72, 153, 0.8); }
+
+/* Sortable States */
+.pdf-page-card.sortable-ghost { opacity: 0.4; background: #333; border: 2px dashed #8b5cf6; }
+.pdf-page-card.sortable-drag { opacity: 1; transform: scale(1.05); z-index: 50; box-shadow: 0 10px 20px rgba(0,0,0,0.5); }
+
+/* Processing Overlay */
+.loading-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.85); z-index: 100; display: flex; flex-direction: column; align-items: center; justify-content: center; backdrop-filter: blur(4px); }
+
+/* Range Slider Styles */
+input[type=range] { -webkit-appearance: none; width: 100%; background: transparent; }
+input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; height: 16px; width: 16px; border-radius: 50%; background: #ec4899; cursor: pointer; margin-top: -6px; box-shadow: 0 0 10px rgba(236, 72, 153, 0.5); transition: transform 0.1s; }
+input[type=range]::-webkit-slider-thumb:hover { transform: scale(1.1); }
+input[type=range]::-webkit-slider-runnable-track { width: 100%; height: 4px; cursor: pointer; background: #333; border-radius: 2px; }
+input[type=range]:focus::-webkit-slider-runnable-track { background: #444; }
+input[type=range]:focus { outline: none; }
+input[type=range]:focus::-webkit-slider-thumb { box-shadow: 0 0 0 3px rgba(236, 72, 153, 0.3); }
+
+/* --- Cropper Customization --- */
+.cropper-bg { background-image: none; background-color: #000; }
+.cropper-modal { background-color: #000; opacity: 0.8; }
+.cropper-view-box { outline: 2px solid #8b5cf6; outline-color: rgba(139, 92, 246, 0.75); }
+.cropper-line { background-color: #8b5cf6; }
+.cropper-point { background-color: #ec4899; }
+
+/* --- New Modals (Password & Success) --- */
+.modal-overlay { position: fixed; inset: 0; z-index: 60; background: rgba(0,0,0,0.9); backdrop-filter: blur(5px); display: flex; align-items: center; justify-content: center; padding: 1rem; }
+.mini-modal { background: #111; border: 1px solid #333; border-radius: 12px; padding: 2rem; width: 100%; max-width: 450px; text-align: center; box-shadow: 0 20px 40px rgba(0,0,0,0.6); position: relative; overflow: hidden; }
+.mini-modal::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px; background: linear-gradient(90deg, #8b5cf6, #ec4899); }
+
+.password-input { width: 100%; background: #0a0a0a; border: 2px solid #333; border-radius: 8px; padding: 12px; color: white; margin-bottom: 1rem; outline: none; transition: border-color 0.3s; font-size: 1.1rem; text-align: center; letter-spacing: 2px; }
+.password-input:focus { border-color: #8b5cf6; }
+
+.success-icon-circle { width: 80px; height: 80px; background: rgba(34, 197, 94, 0.1); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.5rem; border: 2px solid rgba(34, 197, 94, 0.3); }
+.success-icon-circle i { font-size: 40px; color: #22c55e; }
+
+/* Responsive Adjustments */
+@media (max-width: 1024px) {
+  .app-layout { flex-direction: column; }
+  .sidebar { width: 100% !important; margin-bottom: 2rem; }
+}
+</style>
+
+</head>
+<body class="min-h-screen">
+
+<!-- Processing Overlay -->
+<div id="loadingOverlay" class="loading-overlay hidden" aria-live="polite">
+    <div class="w-64 bg-gray-800 rounded-full h-4 mb-4 overflow-hidden relative border border-gray-600">
+        <div id="progressBar" class="bg-gradient-to-r from-purple-500 to-pink-500 h-full transition-all duration-300" style="width: 0%"></div>
+    </div>
+    <h3 class="text-xl font-bold text-white gradient-text mb-1" id="loadingText">Processing...</h3>
+    <p id="progressDetail" class="text-sm text-gray-400">Please wait</p>
+</div>
+
+<!-- Password Modal -->
+<div id="passwordModal" class="modal-overlay hidden" aria-modal="true" role="dialog" aria-labelledby="pwdTitle">
+    <div class="mini-modal" tabindex="-1">
+        <div class="mb-4">
+            <i class="fas fa-lock text-4xl text-purple-500 mb-2"></i>
+            <h3 id="pwdTitle" class="text-xl font-bold text-white">Protected PDF</h3>
+            <p id="passwordMsg" class="text-sm text-gray-400 mt-2">This file requires a password.</p>
+        </div>
+        <input type="password" id="pdfPasswordInput" class="password-input" placeholder="Enter Password">
+        <div class="flex space-x-3 justify-center mt-4">
+            <button id="cancelPasswordBtn" class="btn-secondary px-6 py-2">Cancel</button>
+            <button id="submitPasswordBtn" class="btn-primary px-6 py-2">Unlock</button>
+        </div>
+    </div>
+</div>
+
+<!-- Success / Print Modal -->
+<div id="successModal" class="modal-overlay hidden" aria-modal="true" role="dialog" aria-labelledby="successTitle">
+    <div class="mini-modal" tabindex="-1">
+        <button id="closeSuccessBtn" class="absolute top-4 right-4 text-gray-400 hover:text-white"><i class="fas fa-times"></i></button>
+        <div class="success-icon-circle">
+            <i class="fas fa-check"></i>
+        </div>
+        <h3 id="successTitle" class="text-2xl font-bold text-white mb-2">PDF Ready!</h3>
+        <p class="text-gray-400 mb-8">Your notes have been successfully crafted.</p>
+        
+        <div class="flex flex-col space-y-3">
+            <button id="finalDownloadBtn" class="btn-primary w-full py-3 font-bold text-lg">
+                <i class="fas fa-download mr-2"></i> Download PDF
+            </button>
+            <button id="finalPrintBtn" class="btn-secondary w-full py-3 font-semibold hover:bg-white hover:text-black hover:border-white transition-colors">
+                <i class="fas fa-print mr-2"></i> Print Notes
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Preview Modal -->
+<div id="previewModal" class="fixed inset-0 z-50 hidden bg-black bg-opacity-90 flex flex-col items-center justify-center p-4 backdrop-blur-sm" aria-modal="true" role="dialog" aria-labelledby="previewTitle">
+    <div class="bg-gray-900 rounded-lg border border-gray-700 w-full max-w-5xl h-[95vh] flex flex-col shadow-2xl modal-content" tabindex="-1">
+        <!-- Modal Header -->
+        <div class="flex items-center justify-between p-4 border-b border-gray-700 bg-black rounded-t-lg">
+            <h3 id="previewTitle" class="text-xl font-bold text-white"><i class="fas fa-eye mr-2 text-purple-500"></i>Page Preview</h3>
+            <button id="closeModalBtn" class="text-gray-400 hover:text-white transition-colors p-2 rounded focus:ring-2 focus:ring-purple-500 outline-none" aria-label="Close Preview">
+                <i class="fas fa-times text-xl"></i>
+            </button>
+        </div>
+        
+        <!-- Canvas Area -->
+        <div class="flex-1 overflow-auto p-4 bg-gray-800 flex justify-center items-start relative">
+            <div id="previewCanvasContainer" class="shadow-lg relative">
+                <!-- Canvas will be injected here -->
+            </div>
+        </div>
+
+        <!-- Pagination Controls -->
+        <div class="bg-gray-800 border-t border-gray-700 p-2 flex justify-center items-center space-x-4">
+            <button id="prevPreviewBtn" class="p-2 text-white hover:text-purple-400 disabled:opacity-30 disabled:cursor-not-allowed">
+                <i class="fas fa-chevron-left fa-lg"></i>
+            </button>
+            <span id="previewPageIndicator" class="text-sm font-mono text-gray-300">Page 1 / 1</span>
+            <button id="nextPreviewBtn" class="p-2 text-white hover:text-purple-400 disabled:opacity-30 disabled:cursor-not-allowed">
+                <i class="fas fa-chevron-right fa-lg"></i>
+            </button>
+        </div>
+
+        <!-- Modal Footer -->
+        <div class="p-4 border-t border-gray-700 bg-black rounded-b-lg flex justify-end space-x-3">
+            <button id="modalCloseBtn" class="btn-secondary px-6 py-2 focus:ring-2 focus:ring-purple-500 outline-none">Close</button>
+            <button id="modalDownloadBtn" class="btn-primary px-6 py-2 focus:ring-2 focus:ring-pink-500 outline-none">Download PDF</button>
+        </div>
+    </div>
+</div>
+
+<!-- Crop Modal -->
+<div id="cropModal" class="fixed inset-0 z-[60] hidden bg-black bg-opacity-95 flex flex-col items-center justify-center p-4 backdrop-blur-md" aria-modal="true" role="dialog" aria-labelledby="cropTitle">
+    <div class="bg-gray-900 rounded-lg border border-gray-700 w-full max-w-6xl h-[90vh] flex flex-col shadow-2xl modal-content" tabindex="-1">
+        <div class="flex items-center justify-between p-4 border-b border-gray-700 bg-black rounded-t-lg">
+            <div class="flex flex-col">
+                <h3 id="cropTitle" class="text-xl font-bold text-white"><i class="fas fa-crop-alt mr-2 text-pink-500"></i>Crop Slide</h3>
+                <span class="text-xs text-gray-400">Drag to remove unwanted areas for this specific slide.</span>
+            </div>
+            <button id="closeCropBtn" class="text-gray-400 hover:text-white transition-colors p-2 rounded focus:ring-2 focus:ring-purple-500 outline-none" aria-label="Cancel Crop">
+                <i class="fas fa-times text-xl"></i>
+            </button>
+        </div>
+        
+        <div class="flex-1 overflow-hidden p-4 bg-gray-900 flex justify-center items-center relative">
+            <div class="max-w-full max-h-full">
+                <img id="cropTargetImage" src="" alt="Crop Target" class="max-w-full max-h-[70vh] block">
+            </div>
+        </div>
+        
+        <div class="p-4 border-t border-gray-700 bg-black rounded-b-lg flex justify-between items-center">
+            <div class="text-sm text-gray-400">
+                <button id="resetCropBtn" class="text-white hover:text-pink-400 underline mr-4">Reset Full Image</button>
+            </div>
+            <div class="flex space-x-3">
+                <button id="cancelCropBtn" class="btn-secondary px-6 py-2 focus:ring-2 focus:ring-purple-500 outline-none">Cancel</button>
+                <button id="saveCropBtn" class="btn-primary px-6 py-2 focus:ring-2 focus:ring-pink-500 outline-none"><i class="fas fa-check mr-2"></i>Apply Crop</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Header -->
+<header class="flex items-center justify-between border-b border-gray-700 pb-4 fade-in px-4 py-4 bg-black z-10 relative">
+    <div class="flex items-center space-x-3">
+        <div class="w-10 h-10 bg-gradient-to-br from-purple-500 to-pink-500 rounded-lg flex items-center justify-center shadow-lg">
+            <svg width="24" height="24" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="PurplePDF Logo">
+                <defs><linearGradient id="headerGrad" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#ffffff" stop-opacity="0.9"></stop><stop offset="100%" stop-color="#e5e7eb" stop-opacity="0.8"></stop></linearGradient></defs>
+                <circle cx="50" cy="50" r="30" fill="url(#headerGrad)"></circle>
+                <path d="M40 42h20v4h-20zm0 6h16v3h-16zm0 5h18v3h-18z" fill="#8b5cf6" opacity="0.8"></path>
+                <path d="M45 58h10l-3-2v1h-4v1z" fill="#8b5cf6"></path>
+            </svg>
+        </div>
+        <h1 class="text-2xl font-bold text-white">PurplePDF</h1>
+    </div>
+    <div>
+        <a href="#" id="resetAppBtn" class="text-gray-400 hover:text-white text-sm focus:ring-1 focus:ring-purple-500 rounded px-2 py-1 outline-none" aria-label="Reset Application"><i class="fas fa-redo mr-1"></i> Reset</a>
+    </div>
+</header>
+
+<!-- Main Content Area -->
+<main class="container mx-auto px-4 py-8">
+
+    <!-- App Title -->
+    <div class="text-center mb-8 fade-in">
+        <h2 class="text-3xl md:text-5xl font-bold mb-3 gradient-text">Notes Crafter</h2>
+        <p class="text-gray-400 text-base md:text-lg">Convert slides &amp; PDFs into optimized, printable A4 notes.</p>
+    </div>
+
+    <!-- Error Display -->
+    <div id="errorDisplay" class="hidden error-banner max-w-4xl mx-auto" role="alert">
+        <div class="flex items-start space-x-3">
+            <i class="fas fa-exclamation-triangle text-red-400 text-xl mt-1"></i>
+            <div class="flex-1">
+                <h4 class="text-red-400 font-semibold mb-1">Error</h4>
+                <p id="errorMessage" class="text-gray-300 text-sm"></p>
+            </div>
+            <button id="closeErrorBtn" class="text-gray-400 hover:text-white focus:outline-none focus:text-white" aria-label="Close Error Message">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- SECTION 1: Upload -->
+    <div id="uploadSection" class="max-w-2xl mx-auto flex flex-col items-center fade-in">
+        <input type="file" id="fileInput" class="hidden" multiple="" accept="application/pdf" aria-label="Upload PDF files">
+        <div id="dropZone" class="drop-zone w-full p-10 focus:ring-2 focus:ring-purple-500" role="button" tabindex="0" aria-label="Drop PDF files here or click to upload">
+            <i class="fas fa-cloud-upload-alt animate-bounce" aria-hidden="true"></i>
+            <h3 class="text-xl font-semibold mb-2 text-white">Drop your PDFs here</h3>
+            <p class="text-gray-400 mb-4">or click to browse</p>
+            <button class="btn-primary px-6 py-2" tabindex="-1">Select Files</button>
+        </div>
+    </div>
+
+    <!-- SECTION 2: Workspace -->
+    <div id="workspace" class="hidden w-full max-w-7xl mx-auto">
+        
+        <div class="flex flex-col lg:flex-row gap-6">
+            
+            <!-- Controls Sidebar -->
+            <div class="w-full lg:w-1/4 space-y-4">
+                <div class="setting-group sticky top-4 max-h-[calc(100vh-2rem)] overflow-y-auto custom-scrollbar">
+                    <h3 class="text-lg font-bold mb-4 text-white flex items-center"><i class="fas fa-sliders-h mr-2 text-purple-500"></i>Settings</h3>
+                    
+                    <!-- Paper Settings -->
+                    <div class="mb-4 relative z-50">
+                        <label class="text-sm text-gray-400 block mb-1">Paper Size</label>
+                        <div class="custom-select-wrapper" id="pageSizeWrapper" tabindex="0" role="combobox">
+                            <div class="custom-select-trigger"><span>A4</span> <i class="fas fa-chevron-down"></i></div>
+                            <div class="custom-options" role="listbox">
+                                <div class="custom-option selected" data-value="a4" role="option" aria-selected="true">A4</div>
+                                <div class="custom-option" data-value="letter" role="option">Letter</div>
+                                <div class="custom-option" data-value="legal" role="option">Legal</div>
+                            </div>
+                            <input type="hidden" id="pageSize" value="a4">
+                        </div>
+                    </div>
+
+                    <!-- Layout Settings -->
+                    <div class="mb-4 relative z-40">
+                        <label class="text-sm text-gray-400 block mb-1">Orientation</label>
+                        <div class="custom-select-wrapper" id="layoutModeWrapper" tabindex="0" role="combobox">
+                            <div class="custom-select-trigger"><span>Portrait</span> <i class="fas fa-chevron-down"></i></div>
+                            <div class="custom-options" role="listbox">
+                                <div class="custom-option selected" data-value="portrait" role="option" aria-selected="true">Portrait</div>
+                                <div class="custom-option" data-value="landscape" role="option">Landscape</div>
+                            </div>
+                            <input type="hidden" id="layoutMode" value="portrait">
+                        </div>
+                    </div>
+
+                    <!-- Slides Per Page -->
+                    <div class="mb-4 relative z-30">
+                        <label class="text-sm text-gray-400 block mb-1">Slides per Page</label>
+                        <div class="custom-select-wrapper" id="slidesPerPageWrapper" tabindex="0" role="combobox">
+                            <div class="custom-select-trigger"><span>4 Slides (Grid)</span> <i class="fas fa-chevron-down"></i></div>
+                            <div class="custom-options" role="listbox">
+                                <div class="custom-option" data-value="1" role="option">1 Slide (Full)</div>
+                                <div class="custom-option" data-value="2" role="option">2 Slides</div>
+                                <div class="custom-option" data-value="3" role="option">3 Slides (Handout)</div>
+                                <div class="custom-option selected" data-value="4" role="option" aria-selected="true">4 Slides (Grid)</div>
+                                <div class="custom-option" data-value="6" role="option">6 Slides</div>
+                                <div class="custom-option" data-value="9" role="option">9 Slides</div>
+                            </div>
+                            <input type="hidden" id="slidesPerPage" value="4">
+                        </div>
+                    </div>
+
+                    <!-- Notes Area Settings -->
+                    <div class="mb-4 relative z-20">
+                        <label class="text-sm text-gray-400 block mb-1">Notes Area</label>
+                        <div class="custom-select-wrapper" id="noteStyleWrapper" tabindex="0" role="combobox">
+                            <div class="custom-select-trigger"><span>None</span> <i class="fas fa-chevron-down"></i></div>
+                            <div class="custom-options" role="listbox">
+                                <div class="custom-option selected" data-value="none" role="option" aria-selected="true">None</div>
+                                <div class="custom-option" data-value="lines" role="option">Ruled Lines</div>
+                                <div class="custom-option" data-value="blank" role="option">Blank Space</div>
+                            </div>
+                            <input type="hidden" id="noteStyle" value="none">
+                        </div>
+                    </div>
+
+                    <!-- Quality -->
+                    <div class="mb-4">
+                        <div class="flex justify-between mb-1">
+                            <label for="quality" class="text-sm text-gray-400">Quality</label>
+                            <span class="text-xs text-purple-400">High</span>
+                        </div>
+                        <input type="range" id="quality" min="10" max="100" value="80" aria-label="Output Quality">
+                    </div>
+
+                    <!-- Toggles -->
+                    <div class="space-y-3 pt-2 border-t border-gray-700">
+                        
+                         <!-- Smart Background -->
+                         <div class="flex items-center justify-between">
+                            <div class="flex flex-col">
+                                <span class="text-sm text-white font-semibold"><i class="fas fa-brain text-purple-500 mr-1"></i> Smart Background</span>
+                                <span class="text-[10px] text-gray-400 leading-tight">Keeps white slides white,<br>inverts dark slides</span>
+                            </div>
+                            <label class="toggle-switch" aria-label="Toggle Smart Background">
+                                <input type="checkbox" id="toggleSmartBg" checked="">
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+
+                        <!-- Auto Trim (High Algorithm) -->
+                        <div class="flex items-center justify-between">
+                            <div class="flex flex-col">
+                                <span class="text-sm text-white font-semibold"><i class="fas fa-crop-simple text-pink-500 mr-1"></i> Auto Crop</span>
+                                <span class="text-[10px] text-gray-400">AI detection for borders</span>
+                            </div>
+                            <label class="toggle-switch" aria-label="Toggle Auto Crop">
+                                <input type="checkbox" id="toggleSmartTrim" checked="">
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+
+                         <!-- Auto Fit -->
+                         <div class="flex items-center justify-between">
+                            <div class="flex flex-col">
+                                <span class="text-sm text-gray-300">Auto Fit Grid</span>
+                                <span class="text-[10px] text-gray-500">Minimize gaps</span>
+                            </div>
+                            <label class="toggle-switch" aria-label="Toggle Auto Fit">
+                                <input type="checkbox" id="toggleAutoFit" checked="">
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+
+                        <div class="h-px bg-gray-700 my-2"></div>
+
+                        <div class="flex items-center justify-between">
+                            <span class="text-sm text-gray-300">Grayscale</span>
+                            <label class="toggle-switch" aria-label="Toggle Grayscale">
+                                <input type="checkbox" id="toggleGrayscale">
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <div class="flex flex-col">
+                                <span class="text-sm text-gray-300">Force Invert</span>
+                                <span class="text-[10px] text-gray-500">Invert all colors</span>
+                            </div>
+                            <label class="toggle-switch" aria-label="Toggle Invert Colors">
+                                <input type="checkbox" id="toggleInvert">
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span class="text-sm text-gray-300">Remove BG</span>
+                            <label class="toggle-switch" aria-label="Toggle Background Removal">
+                                <input type="checkbox" id="toggleRemoveBg">
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span class="text-sm text-gray-300">Page Numbers</span>
+                            <label class="toggle-switch" aria-label="Toggle Page Numbers">
+                                <input type="checkbox" id="togglePageNum" checked="">
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Advanced Filters -->
+                    <div class="mt-4 pt-4 border-t border-gray-700">
+                        <div class="flex justify-between items-center mb-3">
+                            <label class="text-sm font-semibold text-gray-300">Live Filters</label>
+                            <button id="autoAdjustBtn" class="text-xs bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white px-3 py-1 rounded transition-all focus:ring-1 focus:ring-white outline-none shadow-md" aria-label="AI Auto Enhance">
+                                <i class="fas fa-magic mr-1"></i> AI Enhance
+                            </button>
+                        </div>
+                        
+                         <!-- Brightness -->
+                        <div class="mb-3">
+                            <div class="flex justify-between mb-1">
+                                <label for="brightness" class="text-xs text-gray-400">Brightness</label>
+                                <span id="brightnessVal" class="text-xs text-gray-500" aria-hidden="true">0</span>
+                            </div>
+                            <input type="range" id="brightness" min="-100" max="100" value="0" class="live-filter-input" aria-label="Brightness Adjustment">
+                        </div>
+
+                         <!-- Contrast -->
+                        <div class="mb-3">
+                            <div class="flex justify-between mb-1">
+                                <label for="contrast" class="text-xs text-gray-400">Contrast</label>
+                                <span id="contrastVal" class="text-xs text-gray-500" aria-hidden="true">0</span>
+                            </div>
+                            <input type="range" id="contrast" min="-100" max="100" value="0" class="live-filter-input" aria-label="Contrast Adjustment">
+                        </div>
+
+                        <!-- Saturation -->
+                        <div class="mb-3">
+                             <div class="flex justify-between mb-1">
+                                 <label for="saturation" class="text-xs text-gray-400">Saturation</label>
+                                 <span id="saturationVal" class="text-xs text-gray-500" aria-hidden="true">1.0</span>
+                             </div>
+                             <input type="range" id="saturation" min="0" max="2" step="0.1" value="1.0" class="live-filter-input" aria-label="Saturation Adjustment">
+                        </div>
+
+                        <!-- Gamma -->
+                        <div class="mb-1">
+                            <div class="flex justify-between mb-1">
+                                <label for="gamma" class="text-xs text-gray-400">Text Weight (Gamma)</label>
+                                <span id="gammaVal" class="text-xs text-gray-500" aria-hidden="true">1.0</span>
+                            </div>
+                            <input type="range" id="gamma" min="0.5" max="2.5" step="0.1" value="1.0" class="live-filter-input" aria-label="Gamma Correction">
+                        </div>
+                    </div>
+
+                    <!-- Buttons -->
+                    <div class="space-y-3 mt-6">
+                        <button id="previewBtn" class="btn-secondary w-full py-2 font-semibold focus:ring-2 focus:ring-purple-500 outline-none">
+                            <i class="fas fa-eye mr-2"></i> Preview Layout
+                        </button>
+                        <button id="generateBtn" class="btn-primary w-full py-3 font-bold text-lg focus:ring-2 focus:ring-pink-500 outline-none" disabled="">
+                            <i class="fas fa-file-pdf mr-2"></i> Download PDF
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Preview Area -->
+            <div class="w-full lg:w-3/4">
+                <div class="flex flex-col md:flex-row items-center justify-between mb-4 bg-gray-900 p-3 rounded-lg border border-gray-800 gap-3">
+                    <div class="flex items-center space-x-4">
+                        <button id="addMoreBtn" class="btn-secondary px-3 py-1 text-sm whitespace-nowrap focus:ring-1 focus:ring-purple-500"><i class="fas fa-plus mr-1"></i> Add PDF</button>
+                        <span id="selectedCount" class="text-purple-400 font-semibold text-sm whitespace-nowrap">0 pages selected</span>
+                    </div>
+                    <div class="flex items-center space-x-2 text-sm text-gray-400 bg-black px-2 py-1 rounded border border-gray-700">
+                        <i class="fas fa-bolt text-yellow-500"></i>
+                        <span>Live Preview Active</span>
+                    </div>
+                    <div class="space-x-2 whitespace-nowrap">
+                        <button id="selectAllBtn" class="text-xs text-gray-400 hover:text-white underline focus:text-white">Select All</button>
+                        <button id="clearSelectionBtn" class="text-xs text-gray-400 hover:text-white underline focus:text-white">Clear</button>
+                    </div>
+                </div>
+
+                <div id="pagesContainer" class="pdf-grid pb-20">
+                    <!-- Javascript will populate this -->
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+</main>
+
+<!-- Load Split Scripts in Order -->
+<script>
+// --- js/globals.js ---
+
+// --- Global Variables ---
+
+// Core Data
+var uploadedFiles = [];
+var allPages = []; // Stores objects: { id, pageIndex, pdfIndex, imgUrl, originalRatio, rotation, cropData }
+var selectedPageIds = new Set();
+var globalPageCounter = 0; // Unique ID generator
+
+// Instances
+var pdfDoc = null;
+var sortableInstance = null;
+var cropperInstance = null;
+var currentCroppingPageId = null;
+
+// Preview Data
+var previewPdfDoc = null;
+var currentPreviewPage = 1;
+var totalPreviewPages = 0;
+var finalPdfBlobUrl = null; // Store blob URL for the print/download overlay
+
+// Config Defaults
+var appConfig = {
+    quality: 80,
+    pageSize: 'a4',
+    layoutMode: 'portrait',
+    slidesPerPage: 4
+};
+
+// Timers for Live Preview
+var previewDebounceTimer = null;
+
+// PDF.js worker setup
+if (typeof pdfjsLib !== 'undefined') {
+    pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+}
+
+</script>
+<script>
+// --- js/utils.js ---
+
+// --- Utility Functions ---
+
+function showLoading(show, text = 'Loading...', current = 0, total = 100) {
+    const loadingOverlay = document.getElementById('loadingOverlay');
+    const loadingText = document.getElementById('loadingText');
+    const progressBar = document.getElementById('progressBar');
+    const progressDetail = document.getElementById('progressDetail');
+
+    if (!loadingOverlay) return;
+
+    if (show) {
+        loadingText.textContent = text;
+        loadingOverlay.classList.remove('hidden');
+        updateProgress(text, (current/total)*100);
+    } else {
+        loadingOverlay.classList.add('hidden');
+    }
+}
+
+function updateProgress(detail, percent) {
+    const progressBar = document.getElementById('progressBar');
+    const progressDetail = document.getElementById('progressDetail');
+    if (progressDetail) progressDetail.textContent = detail;
+    if (progressBar) progressBar.style.width = `${Math.min(100, Math.max(0, percent))}%`;
+}
+
+function showError(msg) {
+    const errorDisplay = document.getElementById('errorDisplay');
+    const errorMessage = document.getElementById('errorMessage');
+    if (!errorDisplay || !errorMessage) {
+        alert(msg);
+        return;
+    }
+    errorMessage.textContent = msg;
+    errorDisplay.classList.remove('hidden');
+    setTimeout(() => {
+        errorDisplay.classList.add('hidden');
+    }, 5000);
+}
+
+function updateStats() {
+    const count = selectedPageIds.size;
+    const statsEl = document.getElementById('selectedCount');
+    const genBtn = document.getElementById('generateBtn');
+    const prevBtn = document.getElementById('previewBtn');
+
+    if (statsEl) statsEl.textContent = `${count} page${count !== 1 ? 's' : ''} selected`;
+    
+    const disabled = count === 0;
+    if (genBtn) {
+        genBtn.disabled = disabled;
+        disabled ? genBtn.classList.add('opacity-50', 'cursor-not-allowed') : genBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+    }
+    if (prevBtn) {
+        prevBtn.disabled = disabled;
+        disabled ? prevBtn.classList.add('opacity-50', 'cursor-not-allowed') : prevBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+    }
+}
+
+function trapFocus(modal) {
+    const focusableElements = modal.querySelectorAll(
+        'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+    );
+    const firstElement = focusableElements[0];
+    const lastElement = focusableElements[focusableElements.length - 1];
+
+    modal.addEventListener('keydown', function(e) {
+        const isTabPressed = e.key === 'Tab' || e.keyCode === 9;
+        if (!isTabPressed) return;
+
+        if (e.shiftKey) { 
+            if (document.activeElement === firstElement) {
+                lastElement.focus();
+                e.preventDefault();
+            }
+        } else { 
+            if (document.activeElement === lastElement) {
+                firstElement.focus();
+                e.preventDefault();
+            }
+        }
+    });
+    if(firstElement) firstElement.focus();
+}
+
+// Success Modal Logic
+function showSuccessModal(blobUrl) {
+    finalPdfBlobUrl = blobUrl;
+    document.getElementById('successModal').classList.remove('hidden');
+    trapFocus(document.getElementById('successModal'));
+}
+
+function closeSuccessModal() {
+    document.getElementById('successModal').classList.add('hidden');
+    // We don't revoke URL immediately to allow re-opening or printing later if we wanted, 
+    // but here we usually assume flow is done.
+}
+
+</script>
+<script>
+// --- js/pdf-handling.js ---
+
+// --- PDF Loading & Password Handling ---
+
+// Bridge between UI and Password Callback
+let passwordResolve = null;
+
+async function handleFiles(files) {
+    if (files.length === 0) return;
+
+    const uploadSection = document.getElementById('uploadSection');
+    const workspace = document.getElementById('workspace');
+
+    showLoading(true, 'Processing PDFs...', 0, 100);
+
+    try {
+        if (uploadSection && (uploadSection.classList.contains('flex') || !uploadSection.classList.contains('hidden'))) {
+            uploadSection.classList.remove('flex');
+            uploadSection.classList.add('hidden');
+            workspace.classList.remove('hidden');
+            workspace.classList.add('fade-in');
+        }
+
+        for (let i = 0; i < files.length; i++) {
+            const file = files[i];
+            if (file.type === 'application/pdf') {
+                updateProgress(`Loading file ${i+1} of ${files.length}...`, (i/files.length)*100);
+                await processPDF(file);
+            }
+        }
+    } catch (error) {
+        console.error(error);
+        showError("An error occurred. If the PDF is corrupted or password protected, please check the file.");
+    } finally {
+        showLoading(false);
+        updateStats();
+    }
+}
+
+async function processPDF(file) {
+    const arrayBuffer = await file.arrayBuffer();
+    
+    // Advanced loading task to handle password
+    const loadingTask = pdfjsLib.getDocument({ data: arrayBuffer });
+    
+    loadingTask.onPassword = function (updatePassword, reason) {
+        if (reason === pdfjsLib.PasswordResponses.NEED_PASSWORD || reason === pdfjsLib.PasswordResponses.INCORRECT_PASSWORD) {
+            promptForPassword(reason).then(password => {
+                updatePassword(password);
+            }).catch(() => {
+                // User cancelled
+                loadingTask.destroy();
+                showError("Password required to load this PDF.");
+            });
+        }
+    };
+
+    const pdf = await loadingTask.promise;
+    const fileIndex = uploadedFiles.length;
+    uploadedFiles.push({ file, pdf });
+
+    for (let i = 1; i <= pdf.numPages; i++) {
+        const page = await pdf.getPage(i);
+        const viewport = page.getViewport({ scale: 0.25 }); 
+        const canvas = document.createElement('canvas');
+        const context = canvas.getContext('2d');
+        canvas.height = viewport.height;
+        canvas.width = viewport.width;
+
+        await page.render({ canvasContext: context, viewport: viewport }).promise;
+
+        const pageData = {
+            id: `p_${fileIndex}_${i}_${globalPageCounter++}`,
+            fileIndex: fileIndex,
+            pageIndex: i,
+            imgUrl: canvas.toDataURL('image/jpeg', 0.6),
+            originalRatio: page.getViewport({ scale: 1.0 }).width / page.getViewport({ scale: 1.0 }).height,
+            rotation: 0,
+            cropData: null
+        };
+
+        allPages.push(pageData);
+        createPageCard(pageData);
+        selectedPageIds.add(pageData.id);
+        
+        updateProgress(`Importing page ${i} of ${pdf.numPages}`, 50 + (i/pdf.numPages)*50);
+    }
+}
+
+// Password Modal UI
+function promptForPassword(reason) {
+    return new Promise((resolve, reject) => {
+        const modal = document.getElementById('passwordModal');
+        const input = document.getElementById('pdfPasswordInput');
+        const submitBtn = document.getElementById('submitPasswordBtn');
+        const cancelBtn = document.getElementById('cancelPasswordBtn');
+        const msg = document.getElementById('passwordMsg');
+
+        msg.textContent = reason === pdfjsLib.PasswordResponses.INCORRECT_PASSWORD 
+            ? "Incorrect password. Please try again." 
+            : "This PDF is protected.";
+
+        input.value = "";
+        modal.classList.remove('hidden');
+        input.focus();
+
+        const handleSubmit = () => {
+            const pwd = input.value;
+            if (pwd) {
+                cleanup();
+                resolve(pwd);
+            }
+        };
+
+        const handleCancel = () => {
+            cleanup();
+            reject();
+        };
+
+        const handleKey = (e) => {
+            if (e.key === 'Enter') handleSubmit();
+        };
+
+        submitBtn.onclick = handleSubmit;
+        cancelBtn.onclick = handleCancel;
+        input.onkeydown = handleKey;
+
+        function cleanup() {
+            modal.classList.add('hidden');
+            submitBtn.onclick = null;
+            cancelBtn.onclick = null;
+            input.onkeydown = null;
+        }
+    });
+}
+
+</script>
+<script>
+// --- js/processing.js ---
+
+// --- Image Processing & Algorithms ---
+
+// Shared Filter Logic for Preview & Final PDF
+function applyImageFilters(ctx, width, height, config) {
+    const imgData = ctx.getImageData(0, 0, width, height);
+    const data = imgData.data;
+
+    const contrastFactor = (259 * (config.contrast + 255)) / (255 * (259 - config.contrast));
+    
+    // Gamma LUT
+    const gammaCorrection = 1 / config.gamma;
+    const gammaLUT = new Uint8Array(256);
+    for (let i = 0; i < 256; i++) {
+        gammaLUT[i] = Math.pow(i / 255, gammaCorrection) * 255;
+    }
+
+    const sat = config.saturation;
+    // Saturation weights
+    const Rw = 0.3086, Gw = 0.6094, Bw = 0.0820;
+
+    for (let i = 0; i < data.length; i += 4) {
+        let r = data[i], g = data[i+1], b = data[i+2];
+
+        // Invert
+        if (config.invert) { r = 255 - r; g = 255 - g; b = 255 - b; }
+
+        // Brightness
+        if (config.brightness !== 0) {
+            r += config.brightness;
+            g += config.brightness;
+            b += config.brightness;
+        }
+
+        // Contrast
+        if (config.contrast !== 0) {
+            r = contrastFactor * (r - 128) + 128;
+            g = contrastFactor * (g - 128) + 128;
+            b = contrastFactor * (b - 128) + 128;
+        }
+
+        // Gamma
+        if (config.gamma !== 1.0) {
+            // Clamp before lookup
+            r = r < 0 ? 0 : r > 255 ? 255 : r;
+            g = g < 0 ? 0 : g > 255 ? 255 : g;
+            b = b < 0 ? 0 : b > 255 ? 255 : b;
+            
+            r = gammaLUT[Math.floor(r)];
+            g = gammaLUT[Math.floor(g)];
+            b = gammaLUT[Math.floor(b)];
+        }
+
+        // Saturation (luminance preservation approach)
+        if (sat !== 1.0) {
+            const lum = r*Rw + g*Gw + b*Bw;
+            r = lum + (r - lum) * sat;
+            g = lum + (g - lum) * sat;
+            b = lum + (b - lum) * sat;
+        }
+
+        // Grayscale
+        if (config.grayscale) {
+            const gray = 0.299 * r + 0.587 * g + 0.114 * b;
+            r = g = b = gray;
+        }
+
+        // Remove BG
+        if (config.removeBg) {
+            const gray = 0.299 * r + 0.587 * g + 0.114 * b;
+            // Simple threshold
+            if (gray > 220) {
+                r = 255; g = 255; b = 255; // White
+            }
+        }
+
+        // Clamp final
+        data[i] = r < 0 ? 0 : r > 255 ? 255 : r;
+        data[i+1] = g < 0 ? 0 : g > 255 ? 255 : g;
+        data[i+2] = b < 0 ? 0 : b > 255 ? 255 : b;
+        data[i+3] = 255; // Force opacity
+    }
+
+    ctx.putImageData(imgData, 0, 0);
+}
+
+// Advanced Auto Crop (Smart Trim)
+function getAdvancedSmartCrop(ctx, width, height) {
+    const imgData = ctx.getImageData(0, 0, width, height);
+    const data = imgData.data;
+
+    // Detect background color from corners
+    // We average 4 corners (10x10 pixels each) to find dominant bg
+    function getAvgColor(startX, startY) {
+        let r = 0, g = 0, b = 0, count = 0;
+        for(let y=startY; y<Math.min(height, startY+10); y++){
+            for(let x=startX; x<Math.min(width, startX+10); x++){
+                const i = (y*width+x)*4;
+                r += data[i]; g += data[i+1]; b += data[i+2];
+                count++;
+            }
+        }
+        return { r: r/count, g: g/count, b: b/count };
+    }
+
+    const tl = getAvgColor(0,0);
+    const tr = getAvgColor(width-10, 0);
+    const bl = getAvgColor(0, height-10);
+    const br = getAvgColor(width-10, height-10);
+
+    // Use top-left as primary reference, but ensure it's somewhat consistent with others
+    // If corners differ too much, fallback to white detection
+    const bgR = tl.r, bgG = tl.g, bgB = tl.b;
+    const tolerance = 40; // Sensitivity
+
+    function isContent(r, g, b) {
+        return Math.abs(r - bgR) > tolerance || 
+               Math.abs(g - bgG) > tolerance || 
+               Math.abs(b - bgB) > tolerance;
+    }
+
+    let minX = width, minY = height, maxX = 0, maxY = 0;
+    
+    // Scan Line by Line (optimized)
+    for (let y = 0; y < height; y++) {
+        let rowHasContent = false;
+        for (let x = 0; x < width; x++) {
+            const i = (y * width + x) * 4;
+            if (isContent(data[i], data[i+1], data[i+2])) {
+                if (x < minX) minX = x;
+                if (x > maxX) maxX = x;
+                rowHasContent = true;
+            }
+        }
+        if (rowHasContent) {
+            if (y < minY) minY = y;
+            if (y > maxY) maxY = y;
+        }
+    }
+    
+    // Check if empty or no trim needed
+    if (minX > maxX) return { x: 0, y: 0, w: width, h: height };
+
+    const padding = 15;
+    const cropX = Math.max(0, minX - padding);
+    const cropY = Math.max(0, minY - padding);
+    const cropW = Math.min(width, maxX + padding) - cropX;
+    const cropH = Math.min(height, maxY + padding) - cropY;
+
+    // Safety: If we cropped more than 80% of image, it might be an error or empty slide.
+    // If the crop area is tiny, return original.
+    if (cropW < 50 || cropH < 50) return { x: 0, y: 0, w: width, h: height };
+
+    return { x: cropX, y: cropY, w: cropW, h: cropH };
+}
+
+
+// AI Enhanced Auto Tune
+function performAdvancedAutoTune() {
+    const firstSelectedId = document.querySelector('.pdf-page-card.selected')?.dataset.id;
+    if (!firstSelectedId) {
+            showError("Select a page to analyze.");
+            return;
+    }
+
+    const pData = allPages.find(p => p.id === firstSelectedId);
+    if (!pData) return;
+
+    const img = new Image();
+    img.src = pData.imgUrl;
+    img.onload = () => {
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = img.width;
+        canvas.height = img.height;
+        ctx.drawImage(img, 0, 0);
+        
+        const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+        const data = imageData.data;
+        
+        let totalLum = 0;
+        let minLum = 255, maxLum = 0;
+        let rTot = 0, gTot = 0, bTot = 0;
+
+        // Sample pixels
+        for (let i = 0; i < data.length; i += 64) { // stride for speed
+            const r = data[i], g = data[i+1], b = data[i+2];
+            const lum = 0.299*r + 0.587*g + 0.114*b;
+            totalLum += lum;
+            if(lum < minLum) minLum = lum;
+            if(lum > maxLum) maxLum = lum;
+            rTot += r; gTot += g; bTot += b;
+        }
+        
+        const count = data.length / 64;
+        const avgLum = totalLum / count;
+        const avgR = rTot/count;
+        const avgG = gTot/count;
+        const avgB = bTot/count;
+
+        // Color Variance (is it already grayscale?)
+        // If R, G, B averages are very close, it's likely grayscale.
+        const colorVar = Math.abs(avgR - avgG) + Math.abs(avgG - avgB) + Math.abs(avgB - avgR);
+        const isGrayscale = colorVar < 10;
+        
+        let newConfig = {
+            brightness: 0,
+            contrast: 0,
+            gamma: 1.0,
+            invert: false,
+            saturation: 1.0
+        };
+
+        // Logic 1: Dark Mode
+        if (avgLum < 80) {
+            newConfig.invert = true;
+            newConfig.brightness = 20; 
+            newConfig.gamma = 0.9; // Make text slightly bolder
+        } 
+        // Logic 2: Low Contrast Light Mode (e.g. faded scans)
+        else if (avgLum > 180 && (maxLum - minLum) < 150) {
+            newConfig.contrast = 30; // Boost contrast heavily
+            newConfig.gamma = 1.4; // Darken text
+        }
+        // Logic 3: Normal but dull
+        else {
+             newConfig.contrast = 10; // Slight pop
+             newConfig.gamma = 1.1;
+        }
+        
+        // Logic 4: Color Enhancement
+        if (!isGrayscale && !newConfig.invert) {
+             newConfig.saturation = 1.2; // Boost colors for better readability
+        }
+
+        // Apply to DOM
+        document.getElementById('brightness').value = newConfig.brightness;
+        document.getElementById('contrast').value = newConfig.contrast;
+        document.getElementById('gamma').value = newConfig.gamma;
+        document.getElementById('saturation').value = newConfig.saturation;
+        document.getElementById('toggleInvert').checked = newConfig.invert;
+
+        // Update Labels
+        document.getElementById('brightnessVal').innerText = newConfig.brightness;
+        document.getElementById('contrastVal').innerText = newConfig.contrast;
+        document.getElementById('gammaVal').innerText = newConfig.gamma;
+        document.getElementById('saturationVal').innerText = newConfig.saturation;
+
+        // Trigger Live Preview
+        triggerLivePreview();
+
+        // Button Feedback
+        const autoBtn = document.getElementById('autoAdjustBtn');
+        const originalHtml = autoBtn.innerHTML;
+        autoBtn.innerHTML = '<i class="fas fa-check"></i> Optimized';
+        autoBtn.classList.add('from-green-500', 'to-green-600');
+        setTimeout(() => {
+            autoBtn.innerHTML = originalHtml;
+            autoBtn.classList.remove('from-green-500', 'to-green-600');
+        }, 2000);
+    };
+}
+
+</script>
+<script>
+// --- js/editor.js ---
+
+// --- Editor (Cards, Sortable, Cropper) ---
+
+function createPageCard(pageData) {
+    const pagesContainer = document.getElementById('pagesContainer');
+    const card = document.createElement('div');
+    card.className = `pdf-page-card selected fade-in`;
+    card.dataset.id = pageData.id;
+    card.setAttribute('role', 'listitem');
+    card.style.aspectRatio = `${pageData.originalRatio}`;
+
+    const imgContainer = document.createElement('div');
+    imgContainer.className = 'card-image-container';
+
+    const img = document.createElement('img');
+    // Set a data attribute for the original source so we can re-process
+    img.dataset.originalSrc = pageData.imgUrl; 
+    img.src = pageData.imgUrl;
+    img.alt = `Page ${pageData.pageIndex}`;
+    img.style.transform = `rotate(${pageData.rotation}deg)`;
+    
+    imgContainer.appendChild(img);
+
+    imgContainer.addEventListener('click', () => {
+        if (selectedPageIds.has(pageData.id)) {
+            selectedPageIds.delete(pageData.id);
+            card.classList.remove('selected');
+        } else {
+            selectedPageIds.add(pageData.id);
+            card.classList.add('selected');
+            // Trigger preview for this newly selected card
+            triggerLivePreview();
+        }
+        updateStats();
+    });
+
+    // Drag Handle
+    const handle = document.createElement('div');
+    handle.className = 'drag-handle';
+    handle.innerHTML = '<i class="fas fa-arrows-alt"></i>';
+    handle.title = "Drag to reorder";
+
+    // Rotate Button
+    const rotateBtn = document.createElement('button');
+    rotateBtn.className = 'card-action-btn rotate-btn';
+    rotateBtn.innerHTML = '<i class="fas fa-redo"></i>';
+    rotateBtn.title = "Rotate 90°";
+    rotateBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        rotatePage(pageData.id, img, card);
+    });
+
+    // Crop Button
+    const cropBtn = document.createElement('button');
+    cropBtn.className = 'card-action-btn crop-btn';
+    cropBtn.innerHTML = '<i class="fas fa-crop-alt"></i>';
+    cropBtn.title = "Crop this specific slide";
+    cropBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        openCropModal(pageData.id);
+    });
+
+    // Page Number
+    const num = document.createElement('div');
+    num.className = 'page-number';
+    num.textContent = `Pg ${pageData.pageIndex}`;
+
+    card.appendChild(imgContainer);
+    card.appendChild(handle);
+    card.appendChild(rotateBtn);
+    card.appendChild(cropBtn);
+    card.appendChild(num);
+
+    pagesContainer.appendChild(card);
+}
+
+function rotatePage(id, imgElement, cardElement) {
+    const page = allPages.find(p => p.id === id);
+    if (page) {
+        page.rotation = (page.rotation + 90) % 360;
+        imgElement.style.transform = `rotate(${page.rotation}deg)`;
+        
+        if (page.rotation === 90 || page.rotation === 270) {
+            cardElement.style.aspectRatio = `${1 / page.originalRatio}`;
+        } else {
+            cardElement.style.aspectRatio = `${page.originalRatio}`;
+        }
+    }
+}
+
+// --- Live Preview Updater ---
+function updateThumbnailPreview(pageId, config) {
+    const card = document.querySelector(`.pdf-page-card[data-id="${pageId}"]`);
+    if (!card) return;
+
+    const img = card.querySelector('img');
+    const originalSrc = img.dataset.originalSrc;
+    if (!originalSrc) return;
+
+    // We process off-screen
+    const tempImg = new Image();
+    tempImg.src = originalSrc;
+    tempImg.onload = () => {
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        // Low res for performance
+        canvas.width = tempImg.width > 600 ? 600 : tempImg.width;
+        canvas.height = canvas.width * (tempImg.height / tempImg.width);
+        
+        ctx.drawImage(tempImg, 0, 0, canvas.width, canvas.height);
+
+        // Apply Filters
+        applyImageFilters(ctx, canvas.width, canvas.height, config);
+
+        // Check Smart Trim Preview (Optional visual cue, maybe skip for live preview speed)
+        // If user wants to see trim, we might need to actually crop the canvas.
+        // For now, let's just show color filters to keep it "Instant".
+        
+        img.src = canvas.toDataURL('image/jpeg', 0.8);
+    };
+}
+
+// Global Trigger (called from main.js)
+function triggerLivePreview() {
+    if (previewDebounceTimer) clearTimeout(previewDebounceTimer);
+    
+    previewDebounceTimer = setTimeout(() => {
+        // Gather current config
+        const config = {
+            brightness: parseInt(document.getElementById('brightness').value),
+            contrast: parseInt(document.getElementById('contrast').value),
+            gamma: parseFloat(document.getElementById('gamma').value),
+            saturation: parseFloat(document.getElementById('saturation').value),
+            invert: document.getElementById('toggleInvert').checked,
+            grayscale: document.getElementById('toggleGrayscale').checked,
+            removeBg: document.getElementById('toggleRemoveBg').checked
+        };
+
+        // Update ONLY selected cards to save resources
+        selectedPageIds.forEach(id => {
+            updateThumbnailPreview(id, config);
+        });
+    }, 50); // 50ms delay for smoothness
+}
+
+// --- Cropper Logic ---
+function openCropModal(pageId) {
+    const pageData = allPages.find(p => p.id === pageId);
+    if (!pageData) return;
+
+    currentCroppingPageId = pageId;
+    const cropModal = document.getElementById('cropModal');
+    const cropTargetImage = document.getElementById('cropTargetImage');
+    
+    cropTargetImage.src = pageData.imgUrl;
+    
+    cropModal.classList.remove('hidden');
+    trapFocus(cropModal);
+
+    if(cropperInstance) {
+        cropperInstance.destroy();
+    }
+
+    cropperInstance = new Cropper(cropTargetImage, {
+        viewMode: 1,
+        autoCropArea: 0.9,
+        responsive: true,
+        background: false,
+        ready: function() {
+            if (pageData.cropData) {
+                const imgData = cropperInstance.getImageData();
+                const data = {
+                    x: pageData.cropData.xPct * imgData.naturalWidth,
+                    y: pageData.cropData.yPct * imgData.naturalHeight,
+                    width: pageData.cropData.wPct * imgData.naturalWidth,
+                    height: pageData.cropData.hPct * imgData.naturalHeight
+                };
+                cropperInstance.setData(data);
+            }
+        }
+    });
+}
+
+function closeCrop() {
+    const cropModal = document.getElementById('cropModal');
+    cropModal.classList.add('hidden');
+    if(cropperInstance) {
+        cropperInstance.destroy();
+        cropperInstance = null;
+    }
+    currentCroppingPageId = null;
+}
+
+function saveCrop() {
+    if(!cropperInstance || !currentCroppingPageId) return;
+
+    const data = cropperInstance.getData();
+    const imgData = cropperInstance.getImageData();
+
+    const cropData = {
+        xPct: data.x / imgData.naturalWidth,
+        yPct: data.y / imgData.naturalHeight,
+        wPct: data.width / imgData.naturalWidth,
+        hPct: data.height / imgData.naturalHeight
+    };
+    
+    const page = allPages.find(p => p.id === currentCroppingPageId);
+    if(page) {
+        page.cropData = cropData;
+        // Feedback
+        const card = document.querySelector(`.pdf-page-card[data-id="${currentCroppingPageId}"]`);
+        const cropBtn = card.querySelector('.crop-btn');
+        if(cropBtn) cropBtn.style.color = '#ec4899';
+    }
+    closeCrop();
+}
+
+</script>
+<script>
+// --- js/generator.js ---
+
+// --- PDF Generation Logic ---
+// Handles the heavy lifting of creating the final PDF
+
+async function startProcess(isPreview) {
+    if (selectedPageIds.size === 0) return;
+
+    // Get Settings
+    const config = {
+        layoutMode: document.getElementById('layoutMode').value,
+        pageSize: document.getElementById('pageSize').value,
+        slidesPerPage: parseInt(document.getElementById('slidesPerPage').value),
+        quality: parseInt(document.getElementById('quality').value) / 100,
+        noteStyle: document.getElementById('noteStyle').value,
+        grayscale: document.getElementById('toggleGrayscale').checked,
+        removeBg: document.getElementById('toggleRemoveBg').checked,
+        invert: document.getElementById('toggleInvert').checked,
+        smartBg: document.getElementById('toggleSmartBg').checked,
+        autoFit: document.getElementById('toggleAutoFit').checked,
+        smartTrim: document.getElementById('toggleSmartTrim').checked,
+        showPageNum: document.getElementById('togglePageNum').checked,
+        brightness: parseInt(document.getElementById('brightness').value),
+        contrast: parseInt(document.getElementById('contrast').value),
+        gamma: parseFloat(document.getElementById('gamma').value),
+        saturation: parseFloat(document.getElementById('saturation').value)
+    };
+
+    showLoading(true, isPreview ? 'Generating Preview...' : 'Crafting PDF...', 0, 100);
+    
+    try {
+        const cardElements = Array.from(document.querySelectorAll('.pdf-page-card.selected'));
+        const sortedIds = cardElements.map(c => c.dataset.id);
+        const pagesToProcess = [];
+        sortedIds.forEach(id => {
+            const p = allPages.find(page => page.id === id);
+            if (p) pagesToProcess.push(p);
+        });
+
+        await generateDoc(pagesToProcess, config, isPreview);
+
+    } catch (error) {
+        console.error(error);
+        showError("Failed to generate. " + error.message);
+    } finally {
+        showLoading(false);
+    }
+}
+
+async function generateDoc(pages, config, isPreview) {
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF(config.layoutMode, 'mm', config.pageSize);
+    
+    const pageWidth = doc.internal.pageSize.getWidth();
+    const pageHeight = doc.internal.pageSize.getHeight();
+    
+    // Grid setup
+    let rows, cols;
+    let isHandoutMode = false;
+    if (config.slidesPerPage === 3) { isHandoutMode = true; rows = 3; cols = 1; }
+    else {
+        switch(config.slidesPerPage) {
+            case 1: rows = 1; cols = 1; break;
+            case 2: rows = 2; cols = 1; break;
+            case 4: rows = 2; cols = 2; break;
+            case 6: rows = 3; cols = 2; break;
+            case 9: rows = 3; cols = 3; break;
+            default: rows = 2; cols = 2;
+        }
+    }
+
+    const margin = config.autoFit ? 5 : 10;
+    const pad = config.autoFit ? 1 : 4; 
+    const availableW = pageWidth - (margin * 2);
+    const availableH = pageHeight - (margin * 2);
+    const cellH = availableH / rows;
+    const cellW = availableW / cols;
+
+    let currentSlide = 0;
+
+    for (let i = 0; i < pages.length; i++) {
+        updateProgress(`Processing page ${i+1} of ${pages.length}`, Math.round((i / pages.length) * 100));
+        await new Promise(r => setTimeout(r, 0)); // Yield to UI
+
+        const pData = pages[i];
+        const pdfObj = uploadedFiles[pData.fileIndex].pdf;
+        const page = await pdfObj.getPage(pData.pageIndex);
+        
+        // --- High Res Rendering ---
+        const nativeVp = page.getViewport({ scale: 1.0 });
+        const maxDim = 2000; 
+        const scaleFactor = Math.min(maxDim / nativeVp.width, maxDim / nativeVp.height, 2.0); 
+        
+        const viewport = page.getViewport({ scale: scaleFactor });
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d', { willReadFrequently: true });
+        
+        canvas.width = viewport.width;
+        canvas.height = viewport.height;
+
+        ctx.fillStyle = '#ffffff';
+        ctx.fillRect(0,0, canvas.width, canvas.height);
+        
+        await page.render({ canvasContext: ctx, viewport: viewport }).promise;
+
+        let finalCanvas = canvas;
+
+        // 1. Rotation
+        if (pData.rotation !== 0) {
+            const rotCanvas = document.createElement('canvas');
+            const rotCtx = rotCanvas.getContext('2d');
+            if (pData.rotation === 90 || pData.rotation === 270) {
+                rotCanvas.width = canvas.height;
+                rotCanvas.height = canvas.width;
+            } else {
+                rotCanvas.width = canvas.width;
+                rotCanvas.height = canvas.height;
+            }
+            rotCtx.fillStyle = '#ffffff';
+            rotCtx.fillRect(0, 0, rotCanvas.width, rotCanvas.height);
+            rotCtx.translate(rotCanvas.width/2, rotCanvas.height/2);
+            rotCtx.rotate(pData.rotation * Math.PI / 180);
+            rotCtx.drawImage(canvas, -canvas.width/2, -canvas.height/2);
+            finalCanvas = rotCanvas;
+        }
+
+        // 2. Manual Crop
+        if (pData.cropData) {
+            const croppedCanvas = document.createElement('canvas');
+            const cCtx = croppedCanvas.getContext('2d');
+            const sx = Math.floor(pData.cropData.xPct * finalCanvas.width);
+            const sy = Math.floor(pData.cropData.yPct * finalCanvas.height);
+            const sw = Math.floor(pData.cropData.wPct * finalCanvas.width);
+            const sh = Math.floor(pData.cropData.hPct * finalCanvas.height);
+            if (sw > 0 && sh > 0) {
+                croppedCanvas.width = sw;
+                croppedCanvas.height = sh;
+                cCtx.fillStyle = '#ffffff';
+                cCtx.fillRect(0, 0, sw, sh);
+                cCtx.drawImage(finalCanvas, sx, sy, sw, sh, 0, 0, sw, sh);
+                finalCanvas = croppedCanvas;
+            }
+        } 
+        // 3. Auto Crop (High Algorithm)
+        else if (config.smartTrim) {
+            const trimRect = getAdvancedSmartCrop(finalCanvas.getContext('2d'), finalCanvas.width, finalCanvas.height);
+            if (trimRect.w < finalCanvas.width || trimRect.h < finalCanvas.height) {
+                const trimmedCanvas = document.createElement('canvas');
+                trimmedCanvas.width = trimRect.w;
+                trimmedCanvas.height = trimRect.h;
+                const tCtx = trimmedCanvas.getContext('2d');
+                tCtx.fillStyle = '#ffffff';
+                tCtx.fillRect(0, 0, trimRect.w, trimRect.h);
+                tCtx.drawImage(
+                    finalCanvas, 
+                    trimRect.x, trimRect.y, trimRect.w, trimRect.h, 
+                    0, 0, trimRect.w, trimRect.h
+                );
+                finalCanvas = trimmedCanvas;
+            }
+        }
+
+        // 4. Pixel Processing (Shared Filter Logic)
+        const finalCtx = finalCanvas.getContext('2d', { willReadFrequently: true });
+        
+        // Analyze for Smart Background (Dark detection)
+        // We do a quick check before applying filters if Smart BG is on
+        let effectiveInvert = config.invert;
+        if (config.smartBg && !config.invert) {
+             const d = finalCtx.getImageData(0,0, finalCanvas.width, finalCanvas.height).data;
+             let totalLum = 0;
+             for(let k=0; k<d.length; k+=256) totalLum += (d[k] + d[k+1] + d[k+2])/3;
+             if ( (totalLum / (d.length/256)) < 100 ) {
+                 effectiveInvert = true;
+             }
+        }
+
+        const filterConfig = {
+            ...config,
+            invert: effectiveInvert
+        };
+
+        // Apply shared filters
+        applyImageFilters(finalCtx, finalCanvas.width, finalCanvas.height, filterConfig);
+
+        const imgDataUrl = finalCanvas.toDataURL('image/jpeg', config.quality);
+
+        if (currentSlide >= config.slidesPerPage) {
+            doc.addPage();
+            currentSlide = 0;
+        }
+
+        // Layout Placement Calculation
+        const imgAspect = finalCanvas.width / finalCanvas.height;
+        let imgX, imgY, imgW, imgH;
+
+        if (isHandoutMode) {
+            const rowY = margin + (currentSlide * cellH);
+            let maxImgW, maxImgH;
+            
+            if (config.autoFit && config.noteStyle === 'none') {
+                maxImgW = availableW; 
+                maxImgH = cellH - (pad * 2);
+            } else {
+                maxImgW = availableW * 0.45;
+                maxImgH = cellH - 10;
+            }
+
+            if (imgAspect > (maxImgW / maxImgH)) { imgW = maxImgW; imgH = imgW / imgAspect; } 
+            else { imgH = maxImgH; imgW = imgH * imgAspect; }
+            
+            imgX = (config.autoFit && config.noteStyle === 'none') ? margin + (availableW - imgW) / 2 : margin;
+            imgY = rowY + (cellH - imgH) / 2;
+
+            doc.addImage(imgDataUrl, 'JPEG', imgX, imgY, imgW, imgH);
+            doc.setDrawColor(200);
+            doc.rect(imgX, imgY, imgW, imgH);
+            
+            if (config.showPageNum) {
+                doc.setFontSize(10); doc.setTextColor(100);
+                doc.text(`Slide ${pData.pageIndex}`, imgX, imgY + imgH + 5);
+            }
+
+            if (!(config.autoFit && config.noteStyle === 'none')) {
+                const noteX = margin + maxImgW + 10;
+                const noteW = availableW - maxImgW - 10;
+                if (config.noteStyle === 'lines') {
+                    doc.setDrawColor(200); doc.setLineWidth(0.1);
+                    for (let ly = rowY + 15; ly < rowY + cellH - 5; ly += 8) doc.line(noteX, ly, noteX + noteW, ly);
+                } else if (config.noteStyle === 'blank') {
+                    doc.setDrawColor(230); doc.rect(noteX, rowY + 5, noteW, cellH - 10);
+                }
+            }
+        } else {
+            const colIndex = currentSlide % cols;
+            const rowIndex = Math.floor(currentSlide / cols);
+            const cellX = margin + (colIndex * cellW);
+            const cellY = margin + (rowIndex * cellH);
+            const maxW = cellW - (pad*2);
+            const maxH = cellH - (pad*2);
+
+            let drawAreaH = (config.noteStyle !== 'none') ? maxH * 0.7 : maxH;
+            if (imgAspect > (maxW / drawAreaH)) { imgW = maxW; imgH = imgW / imgAspect; } 
+            else { imgH = drawAreaH; imgW = imgH * imgAspect; }
+
+            imgX = cellX + pad + (maxW - imgW) / 2;
+            imgY = cellY + pad + (drawAreaH - imgH) / 2;
+
+            doc.addImage(imgDataUrl, 'JPEG', imgX, imgY, imgW, imgH);
+            doc.setDrawColor(200);
+            doc.rect(imgX, imgY, imgW, imgH);
+
+            if (config.showPageNum) {
+                doc.setFontSize(8); doc.setTextColor(100);
+                doc.text(`${pData.pageIndex}`, imgX + imgW - 5, imgY + imgH + 4, { align: 'right' });
+            }
+
+            if (config.noteStyle !== 'none' && (maxH - drawAreaH) > 10) {
+                const noteY = cellY + pad + drawAreaH + 2;
+                if (config.noteStyle === 'lines') {
+                    doc.setDrawColor(220);
+                    for(let ly = noteY + 5; ly < noteY + (maxH*0.3); ly += 6) doc.line(cellX + pad, ly, cellX + pad + maxW, ly);
+                } else {
+                    doc.setDrawColor(240); doc.rect(cellX + pad, noteY, maxW, maxH * 0.3);
+                }
+            }
+        }
+        currentSlide++;
+    }
+
+    if (isPreview) {
+        const pdfBlob = doc.output('blob');
+        const blobUrl = URL.createObjectURL(pdfBlob);
+        await setupPreview(blobUrl);
+    } else {
+        const pdfBlob = doc.output('blob');
+        const blobUrl = URL.createObjectURL(pdfBlob);
+        showSuccessModal(blobUrl);
+    }
+}
+
+// --- Preview Helpers ---
+async function setupPreview(blobUrl) {
+    if(previewPdfDoc) {
+            previewPdfDoc.destroy();
+            previewPdfDoc = null;
+    }
+    
+    try {
+        previewPdfDoc = await pdfjsLib.getDocument(blobUrl).promise;
+        totalPreviewPages = previewPdfDoc.numPages;
+        currentPreviewPage = 1;
+        
+        document.getElementById('prevPreviewBtn').onclick = () => {
+            if (currentPreviewPage > 1) { currentPreviewPage--; renderPreviewPage(currentPreviewPage); updatePreviewControls(); }
+        };
+        document.getElementById('nextPreviewBtn').onclick = () => {
+            if (currentPreviewPage < totalPreviewPages) { currentPreviewPage++; renderPreviewPage(currentPreviewPage); updatePreviewControls(); }
+        };
+
+        updatePreviewControls();
+        renderPreviewPage(currentPreviewPage);
+        
+        const previewModal = document.getElementById('previewModal');
+        previewModal.classList.remove('hidden');
+        trapFocus(previewModal);
+    } catch(e) {
+        showError("Failed to load preview.");
+        console.error(e);
+    }
+}
+
+async function renderPreviewPage(pageNum) {
+    if (!previewPdfDoc) return;
+    
+    const page = await previewPdfDoc.getPage(pageNum);
+    const container = document.getElementById('previewCanvasContainer');
+    container.innerHTML = ''; 
+
+    const viewport = page.getViewport({ scale: 1.5 });
+    const canvas = document.createElement('canvas');
+    const context = canvas.getContext('2d');
+    canvas.width = viewport.width;
+    canvas.height = viewport.height;
+    
+    canvas.style.maxWidth = '100%';
+    canvas.style.height = 'auto';
+    canvas.style.boxShadow = '0 0 20px rgba(0,0,0,0.5)';
+
+    await page.render({ canvasContext: context, viewport: viewport }).promise;
+    container.appendChild(canvas);
+}
+
+function updatePreviewControls() {
+    document.getElementById('previewPageIndicator').textContent = `Page ${currentPreviewPage} / ${totalPreviewPages}`;
+    document.getElementById('prevPreviewBtn').disabled = currentPreviewPage <= 1;
+    document.getElementById('nextPreviewBtn').disabled = currentPreviewPage >= totalPreviewPages;
+}
+
+</script>
+<script>
+// --- js/main.js ---
+
+// --- Main Entry Point & Event Bindings ---
+
+document.addEventListener('DOMContentLoaded', () => {
+    // DOM Elements
+    const dropZone = document.getElementById('dropZone');
+    const fileInput = document.getElementById('fileInput');
+    const generateBtn = document.getElementById('generateBtn');
+    const previewBtn = document.getElementById('previewBtn');
+    
+    // Live Filter Inputs
+    const brightnessInput = document.getElementById('brightness');
+    const contrastInput = document.getElementById('contrast');
+    const gammaInput = document.getElementById('gamma');
+    const saturationInput = document.getElementById('saturation');
+    const toggleInvert = document.getElementById('toggleInvert');
+    const toggleGrayscale = document.getElementById('toggleGrayscale');
+    const toggleRemoveBg = document.getElementById('toggleRemoveBg');
+
+    // Button Listeners
+    document.getElementById('resetAppBtn').addEventListener('click', (e) => {
+        e.preventDefault();
+        window.location.reload();
+    });
+
+    document.getElementById('closeModalBtn').addEventListener('click', () => {
+        document.getElementById('previewModal').classList.add('hidden');
+    });
+    
+    document.getElementById('modalCloseBtn').addEventListener('click', () => {
+        document.getElementById('previewModal').classList.add('hidden');
+    });
+
+    document.getElementById('closeErrorBtn').addEventListener('click', () => {
+        document.getElementById('errorDisplay').classList.add('hidden');
+    });
+
+    // Slider Updates with Live Preview
+    [brightnessInput, contrastInput, gammaInput, saturationInput].forEach(input => {
+        input.addEventListener('input', (e) => {
+            const val = e.target.value;
+            let displayVal = val;
+            if(e.target.id === 'gamma' || e.target.id === 'saturation') displayVal = parseFloat(val).toFixed(1);
+            
+            document.getElementById(`${e.target.id}Val`).textContent = displayVal;
+            e.target.setAttribute('aria-valuenow', val);
+            
+            // Trigger Instant Preview
+            triggerLivePreview();
+        });
+    });
+
+    // Toggle Updates with Live Preview
+    [toggleInvert, toggleGrayscale, toggleRemoveBg].forEach(toggle => {
+        toggle.addEventListener('change', triggerLivePreview);
+    });
+
+    // AI Auto Adjust
+    document.getElementById('autoAdjustBtn').addEventListener('click', performAdvancedAutoTune);
+
+    // Initialize SortableJS
+    sortableInstance = Sortable.create(document.getElementById('pagesContainer'), {
+        animation: 150,
+        ghostClass: 'sortable-ghost',
+        dragClass: 'sortable-drag',
+        handle: '.drag-handle',
+    });
+
+    // Custom Dropdown Logic
+    initCustomDropdowns();
+
+    // Dropzone
+    setupDropZone(dropZone, fileInput);
+
+    // Selection
+    document.getElementById('selectAllBtn').addEventListener('click', () => {
+        const cards = document.querySelectorAll('.pdf-page-card');
+        cards.forEach(card => {
+            card.classList.add('selected');
+            selectedPageIds.add(card.dataset.id);
+        });
+        updateStats();
+        triggerLivePreview(); // Update all newly selected
+    });
+
+    document.getElementById('clearSelectionBtn').addEventListener('click', () => {
+        const cards = document.querySelectorAll('.pdf-page-card');
+        cards.forEach(card => {
+            card.classList.remove('selected');
+        });
+        selectedPageIds.clear();
+        updateStats();
+    });
+
+    // Main Actions
+    generateBtn.addEventListener('click', () => startProcess(false));
+    previewBtn.addEventListener('click', () => startProcess(true));
+    
+    document.getElementById('modalDownloadBtn').addEventListener('click', () => {
+        document.getElementById('previewModal').classList.add('hidden');
+        startProcess(false);
+    });
+
+    // Cropper Events
+    document.getElementById('saveCropBtn').addEventListener('click', saveCrop);
+    document.getElementById('cancelCropBtn').addEventListener('click', closeCrop);
+    document.getElementById('closeCropBtn').addEventListener('click', closeCrop);
+    document.getElementById('resetCropBtn').addEventListener('click', () => {
+        if (cropperInstance) cropperInstance.reset();
+        if (currentCroppingPageId) {
+            const page = allPages.find(p => p.id === currentCroppingPageId);
+            if(page) page.cropData = null;
+        }
+        closeCrop();
+    });
+
+    // --- Success Modal Events ---
+    document.getElementById('finalDownloadBtn').addEventListener('click', () => {
+        if (finalPdfBlobUrl) {
+            const a = document.createElement('a');
+            a.href = finalPdfBlobUrl;
+            a.download = 'PurplePDF_Notes.pdf';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+        }
+        closeSuccessModal();
+    });
+
+    document.getElementById('finalPrintBtn').addEventListener('click', () => {
+        if (finalPdfBlobUrl) {
+            // Open blob in new window to print
+            const win = window.open(finalPdfBlobUrl, '_blank');
+            if (win) {
+                // Focus and print if possible (browser restrictions vary)
+                setTimeout(() => {
+                    win.focus();
+                    win.print();
+                }, 1000);
+            } else {
+                showError("Pop-up blocked. Please allow pop-ups to print.");
+            }
+        }
+        closeSuccessModal();
+    });
+    
+    document.getElementById('closeSuccessBtn').addEventListener('click', closeSuccessModal);
+});
+
+// Helper: Custom Dropdowns
+function initCustomDropdowns() {
+    document.querySelectorAll('.custom-select-wrapper').forEach(wrapper => {
+        const trigger = wrapper.querySelector('.custom-select-trigger');
+        const options = wrapper.querySelectorAll('.custom-option');
+        const hiddenInput = wrapper.querySelector('input[type="hidden"]');
+        const triggerSpan = trigger.querySelector('span');
+
+        const toggle = () => {
+            document.querySelectorAll('.custom-select-wrapper').forEach(w => {
+                if (w !== wrapper) w.classList.remove('open');
+            });
+            wrapper.classList.toggle('open');
+        };
+
+        trigger.addEventListener('click', (e) => { e.stopPropagation(); toggle(); });
+
+        options.forEach(option => {
+            option.addEventListener('click', (e) => {
+                e.stopPropagation();
+                hiddenInput.value = option.dataset.value;
+                triggerSpan.textContent = option.textContent;
+                options.forEach(opt => opt.classList.remove('selected'));
+                option.classList.add('selected');
+                wrapper.classList.remove('open');
+            });
+        });
+    });
+
+    document.addEventListener('click', () => {
+        document.querySelectorAll('.custom-select-wrapper').forEach(w => w.classList.remove('open'));
+    });
+}
+
+function setupDropZone(dropZone, fileInput) {
+    dropZone.addEventListener('dragover', (e) => { e.preventDefault(); dropZone.classList.add('drag-over'); });
+    dropZone.addEventListener('dragleave', () => { dropZone.classList.remove('drag-over'); });
+    dropZone.addEventListener('drop', (e) => {
+        e.preventDefault();
+        dropZone.classList.remove('drag-over');
+        handleFiles(e.dataTransfer.files);
+    });
+    dropZone.addEventListener('click', (e) => { if (e.target.tagName !== 'BUTTON') fileInput.click(); });
+    dropZone.querySelector('button').addEventListener('click', (e) => { e.stopPropagation(); fileInput.click(); });
+    document.getElementById('addMoreBtn').addEventListener('click', () => fileInput.click());
+    fileInput.addEventListener('change', (e) => { handleFiles(e.target.files); fileInput.value = ''; });
+}
+
+</script>
+
+
+</body></html>
