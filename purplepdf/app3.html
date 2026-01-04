@@ -1,0 +1,2704 @@
+<!doctype html>
+<html lang=en>
+
+<head>
+  <meta charset=UTF-8>
+  <meta name=viewport
+    content="width=device-width,initial-scale=1">
+  <meta
+    http-equiv=Content-Security-Policy
+    content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://cdn.tailwindcss.com; style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com; font-src 'self' https://cdnjs.cloudflare.com; img-src 'self' data: blob:; connect-src 'self' blob:;">
+  <title>DocuMorph - PurplePDF</title>
+  <meta name=description
+    content="Advanced document extraction tool with AI-powered formatting - Convert PDF, DOCX, Excel to Markdown">
+  <meta name=author content=PurplePDF>
+  <link rel=icon type=image/svg+xml
+    href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%238b5cf6'/%3E%3Cstop offset='50%25' stop-color='%23ec4899'/%3E%3Cstop offset='100%25' stop-color='%23f59e0b'/%3E%3C/linearGradient%3E%3C/defs%3E%3Ccircle cx='50' cy='50' r='45' fill='url(%23g)'/%3E%3Cpath d='M35 35h30v8h-30zm0 12h25v6h-25zm0 10h28v6h-28z' fill='white' opacity='0.9'/%3E%3Cpath d='M40 65h20l-5-5v3h-10v4z' fill='white'/%3E%3C/svg%3E">
+  <script
+    src=https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js>
+  </script>
+  <script
+    src=https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js>
+  </script>
+  <script
+    src=https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js>
+  </script>
+  <script
+    src=https://cdnjs.cloudflare.com/ajax/libs/marked/9.1.6/marked.min.js>
+  </script>
+  <script
+    src=https://cdnjs.cloudflare.com/ajax/libs/turndown/7.1.2/turndown.min.js>
+  </script>
+  <script
+    src=https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js>
+  </script>
+  <link rel=stylesheet
+    href=https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css>
+  <link rel=stylesheet
+    href=https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css>
+  <script
+    src=https://cdn.tailwindcss.com>
+  </script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box
+    }
+    
+    body {
+      background: #000;
+      color: #fff;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      overflow-x: hidden
+    }
+    
+    .gradient-text {
+      background: linear-gradient(45deg, #8b5cf6, #ec4899, #f59e0b);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      background-size: 200% auto;
+      animation: gradientShift 3s ease infinite
+    }
+    
+    @keyframes gradientShift {
+      
+      0%,
+      100% {
+        background-position: 0 50%
+      }
+      
+      50% {
+        background-position: 100% 50%
+      }
+    }
+    
+    .upload-zone {
+      border: 3px solid rgba(139, 92, 246, .5);
+      border-radius: 12px;
+      transition: all .3s cubic-bezier(.4, 0, .2, 1)
+    }
+    
+    .upload-zone:hover {
+      border-color: #8b5cf6;
+      transform: scale(1.02);
+      box-shadow: 0 0 30px rgba(139, 92, 246, .3)
+    }
+    
+    .upload-zone.dragover {
+      border-color: #ec4899;
+      background: rgba(139, 92, 246, .1);
+      transform: scale(1.05)
+    }
+    
+    .upload-zone:focus-within {
+      outline: 3px solid #8b5cf6;
+      outline-offset: 2px
+    }
+    
+    .btn-primary {
+      background: linear-gradient(135deg, #8b5cf6, #ec4899);
+      border-radius: 8px;
+      transition: all .3s cubic-bezier(.4, 0, .2, 1);
+      cursor: pointer
+    }
+    
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 25px rgba(139, 92, 246, .4)
+    }
+    
+    .btn-primary:active {
+      transform: translateY(0)
+    }
+    
+    .btn-primary:focus {
+      outline: 3px solid #ec4899;
+      outline-offset: 2px
+    }
+    
+    .progress-container {
+      background: #1a1a1a;
+      border-radius: 8px;
+      overflow: hidden;
+      height: 32px;
+      position: relative;
+      border: 1px solid rgba(139, 92, 246, .3)
+    }
+    
+    .progress-bar {
+      height: 100%;
+      background: linear-gradient(90deg, #8b5cf6, #ec4899, #f59e0b);
+      transition: width .3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: .875rem;
+      font-weight: 600;
+      color: #fff
+    }
+    
+    .fade-in {
+      animation: fadeIn .5s cubic-bezier(.4, 0, .2, 1)
+    }
+    
+    .slide-up {
+      animation: slideUp .6s cubic-bezier(.4, 0, .2, 1)
+    }
+    
+    @keyframes fadeIn {
+      from {
+        opacity: 0
+      }
+      
+      to {
+        opacity: 1
+      }
+    }
+    
+    @keyframes slideUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px)
+      }
+      
+      to {
+        opacity: 1;
+        transform: translateY(0)
+      }
+    }
+    
+    .content-container {
+      background: #0a0a0a;
+      border: 1px solid rgba(139, 92, 246, .2);
+      border-radius: 8px;
+      max-height: 60vh;
+      overflow-y: auto;
+      scrollbar-width: thin;
+      scrollbar-color: #8b5cf6 #1a1a1a;
+      position: relative
+    }
+    
+    .content-container::-webkit-scrollbar {
+      width: 8px
+    }
+    
+    .content-container::-webkit-scrollbar-track {
+      background: #1a1a1a;
+      border-radius: 4px
+    }
+    
+    .content-container::-webkit-scrollbar-thumb {
+      background: #8b5cf6;
+      border-radius: 4px
+    }
+    
+    .content-container::-webkit-scrollbar-thumb:hover {
+      background: #ec4899
+    }
+    
+    .btn-toggle {
+      transition: all .3s cubic-bezier(.4, 0, .2, 1);
+      border: 2px solid rgba(139, 92, 246, .3);
+      border-radius: 8px;
+      cursor: pointer
+    }
+    
+    .btn-toggle:hover {
+      background: rgba(139, 92, 246, .2);
+      border-color: #8b5cf6
+    }
+    
+    .btn-toggle:focus {
+      outline: 2px solid #8b5cf6;
+      outline-offset: 2px
+    }
+    
+    .btn-toggle.active {
+      background: #8b5cf6;
+      color: #000;
+      border-color: #8b5cf6
+    }
+    
+    .error-banner {
+      background: linear-gradient(135deg, rgba(239, 68, 68, .2), rgba(220, 38, 38, .1));
+      border: 2px solid rgba(239, 68, 68, .5);
+      border-radius: 8px;
+      padding: 1rem;
+      margin: 1rem 0;
+      animation: slideDown .3s ease
+    }
+    
+    @keyframes slideDown {
+      from {
+        opacity: 0;
+        transform: translateY(-10px)
+      }
+      
+      to {
+        opacity: 1;
+        transform: translateY(0)
+      }
+    }
+    
+    .success-banner {
+      background: linear-gradient(135deg, rgba(34, 197, 94, .2), rgba(22, 163, 74, .1));
+      border: 2px solid rgba(34, 197, 94, .5);
+      border-radius: 8px;
+      padding: .75rem 1rem;
+      animation: slideDown .3s ease;
+      font-size: .875rem
+    }
+    
+    .markdown-editor {
+      background: #0a0a0a;
+      color: #e0e0e0;
+      font-family: 'Courier New', monospace;
+      font-size: .875rem;
+      line-height: 1.6;
+      padding: 1.5rem;
+      border: none;
+      outline: 0;
+      resize: vertical;
+      width: 100%;
+      min-height: 400px;
+      white-space: pre-wrap;
+      word-wrap: break-word
+    }
+    
+    .markdown-editor:focus {
+      outline: 2px solid rgba(139, 92, 246, .5);
+      outline-offset: -2px
+    }
+    
+    .markdown-content {
+      line-height: 1.8;
+      white-space: pre-wrap;
+      word-wrap: break-word
+    }
+    
+    .markdown-content h1,
+    .markdown-content h2,
+    .markdown-content h3,
+    .markdown-content h4,
+    .markdown-content h5,
+    .markdown-content h6 {
+      color: #8b5cf6;
+      font-weight: 700;
+      line-height: 1.3;
+      margin-top: 2rem;
+      margin-bottom: 1rem;
+      page-break-after: avoid
+    }
+    
+    .markdown-content h1:first-child,
+    .markdown-content h2:first-child,
+    .markdown-content h3:first-child {
+      margin-top: 0
+    }
+    
+    .markdown-content h1 {
+      font-size: 2.25rem;
+      border-bottom: 3px solid rgba(139, 92, 246, .3);
+      padding-bottom: .75rem;
+      margin-bottom: 1.5rem
+    }
+    
+    .markdown-content h2 {
+      font-size: 1.875rem;
+      margin-top: 2.5rem;
+      padding-top: .5rem
+    }
+    
+    .markdown-content h3 {
+      font-size: 1.5rem;
+      margin-top: 2rem
+    }
+    
+    .markdown-content h4 {
+      font-size: 1.25rem;
+      margin-top: 1.5rem;
+      color: #ec4899
+    }
+    
+    .markdown-content h5 {
+      font-size: 1.125rem;
+      margin-top: 1.25rem;
+      color: #ec4899
+    }
+    
+    .markdown-content h6 {
+      font-size: 1rem;
+      margin-top: 1rem;
+      color: #f59e0b
+    }
+    
+    .markdown-content p {
+      margin-bottom: 1.25rem;
+      line-height: 1.8
+    }
+    
+    .markdown-content ol,
+    .markdown-content ul {
+      margin-left: 0;
+      padding-left: 2rem;
+      margin-bottom: 1.25rem;
+      margin-top: .5rem
+    }
+    
+    .markdown-content ul {
+      list-style-type: disc
+    }
+    
+    .markdown-content ul ul {
+      list-style-type: circle;
+      margin-top: .5rem;
+      margin-bottom: .5rem
+    }
+    
+    .markdown-content ul ul ul {
+      list-style-type: square
+    }
+    
+    .markdown-content ol {
+      list-style-type: decimal
+    }
+    
+    .markdown-content ol ol {
+      list-style-type: lower-alpha;
+      margin-top: .5rem;
+      margin-bottom: .5rem
+    }
+    
+    .markdown-content ol ol ol {
+      list-style-type: lower-roman
+    }
+    
+    .markdown-content li {
+      margin-bottom: .5rem;
+      line-height: 1.7;
+      padding-left: .5rem
+    }
+    
+    .markdown-content li>p {
+      margin-bottom: .5rem
+    }
+    
+    .markdown-content li>ol,
+    .markdown-content li>ul {
+      margin-top: .5rem
+    }
+    
+    .markdown-content strong {
+      color: #ec4899;
+      font-weight: 600
+    }
+    
+    .markdown-content em {
+      color: #c084fc;
+      font-style: italic
+    }
+    
+    .markdown-content code {
+      background: rgba(139, 92, 246, .15);
+      padding: .2rem .5rem;
+      border-radius: 4px;
+      color: #8b5cf6;
+      font-family: 'Courier New', monospace;
+      font-size: .9em
+    }
+    
+    .markdown-content pre {
+      background: #1a1a1a;
+      padding: 1.5rem;
+      border-radius: 8px;
+      overflow-x: auto;
+      margin: 1.5rem 0;
+      border: 1px solid rgba(139, 92, 246, .2)
+    }
+    
+    .markdown-content pre code {
+      background: 0 0;
+      padding: 0;
+      color: #e0e0e0
+    }
+    
+    .markdown-content blockquote {
+      border-left: 4px solid #8b5cf6;
+      padding: 1rem 1.5rem;
+      margin: 1.5rem 0;
+      font-style: italic;
+      color: #ccc;
+      background: rgba(139, 92, 246, .05);
+      border-radius: 4px
+    }
+    
+    .markdown-content a {
+      color: #8b5cf6;
+      text-decoration: underline;
+      transition: color .2s
+    }
+    
+    .markdown-content a:hover {
+      color: #ec4899
+    }
+    
+    .markdown-content table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1.5rem 0;
+      border: 1px solid rgba(139, 92, 246, .3);
+      border-radius: 8px;
+      overflow: hidden
+    }
+    
+    .markdown-content td,
+    .markdown-content th {
+      border: 1px solid rgba(139, 92, 246, .3);
+      padding: .75rem;
+      text-align: left
+    }
+    
+    .markdown-content th {
+      background: rgba(139, 92, 246, .2);
+      color: #8b5cf6;
+      font-weight: 600
+    }
+    
+    .markdown-content tr:nth-child(2n) {
+      background: rgba(139, 92, 246, .05)
+    }
+    
+    .markdown-content hr {
+      border: none;
+      border-top: 2px solid rgba(139, 92, 246, .3);
+      margin: 2.5rem 0
+    }
+    
+    .markdown-content img {
+      max-width: 100%;
+      height: auto;
+      border-radius: 8px;
+      margin: 1.5rem 0
+    }
+    
+    .stat-card {
+      background: linear-gradient(135deg, rgba(139, 92, 246, .1), rgba(236, 72, 153, .1));
+      border: 1px solid rgba(139, 92, 246, .3);
+      border-radius: 8px;
+      padding: 1rem;
+      transition: all .3s cubic-bezier(.4, 0, .2, 1)
+    }
+    
+    .stat-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(139, 92, 246, .2);
+      border-color: #8b5cf6
+    }
+    
+    .html-code {
+      background: #0d1117;
+      color: #c9d1d9;
+      font-family: 'Courier New', monospace;
+      font-size: .875rem;
+      line-height: 1.6;
+      padding: 1.5rem;
+      border-radius: 8px;
+      overflow-x: auto
+    }
+    
+    .formatting-controls {
+      display: flex;
+      gap: .5rem;
+      padding: .75rem;
+      background: #1a1a1a;
+      border-bottom: 1px solid rgba(139, 92, 246, .2);
+      flex-wrap: wrap;
+      align-items: center
+    }
+    
+    .format-btn {
+      background: rgba(139, 92, 246, .2);
+      border: 1px solid rgba(139, 92, 246, .3);
+      padding: .5rem .75rem;
+      border-radius: 6px;
+      font-size: .75rem;
+      transition: all .2s;
+      cursor: pointer;
+      color: #fff
+    }
+    
+    .format-btn:hover {
+      background: rgba(139, 92, 246, .4);
+      border-color: #8b5cf6
+    }
+    
+    .format-btn.active {
+      background: #8b5cf6;
+      color: #000
+    }
+    
+    .autosave-indicator {
+      display: flex;
+      align-items: center;
+      gap: .5rem;
+      font-size: .75rem;
+      color: #888;
+      margin-left: auto
+    }
+    
+    .autosave-indicator.saving {
+      color: #f59e0b
+    }
+    
+    .autosave-indicator.saved {
+      color: #22c55e
+    }
+    
+    @media (max-width:768px) {
+      .hide-text-mobile span {
+        display: none
+      }
+      
+      .hide-text-mobile {
+        padding: .5rem 1rem !important
+      }
+      
+      .stat-grid {
+        grid-template-columns: repeat(2, 1fr) !important
+      }
+      
+      .markdown-content h1 {
+        font-size: 1.75rem
+      }
+      
+      .markdown-content h2 {
+        font-size: 1.5rem
+      }
+      
+      .markdown-content h3 {
+        font-size: 1.25rem
+      }
+      
+      .formatting-controls {
+        flex-wrap: wrap
+      }
+      
+      .format-btn {
+        padding: .4rem .6rem;
+        font-size: .7rem
+      }
+    }
+  </style>
+</head>
+
+<body class=min-h-screen>
+  <header
+    class="flex items-center justify-between border-b border-gray-700 pb-4 fade-in px-4 py-4">
+    <div
+      class="flex items-center space-x-3">
+      <div
+        class="w-10 h-10 bg-gradient-to-br from-purple-500 to-pink-500 rounded-lg flex items-center justify-center shadow-lg">
+        <svg width=24 height=24
+          viewBox="0 0 100 100"
+          xmlns=http://www.w3.org/2000/svg>
+          <defs>
+            <linearGradient
+              id=headerGrad x1=0% y1=0%
+              x2=100% y2=100%>
+              <stop offset=0%
+                stop-color=#ffffff
+                stop-opacity=0.9 />
+              <stop offset=100%
+                stop-color=#e5e7eb
+                stop-opacity=0.8 />
+            </linearGradient>
+          </defs>
+          <circle cx=50 cy=50 r=30
+            fill=url(#headerGrad) />
+          <path
+            d="M40 42h20v4h-20zm0 6h16v3h-16zm0 5h18v3h-18z"
+            fill=#8b5cf6 opacity=0.8 />
+          <path
+            d="M45 58h10l-3-2v1h-4v1z"
+            fill=#8b5cf6 />
+        </svg>
+      </div>
+      <h1
+        class="text-2xl font-bold text-white">
+        PurplePDF</h1>
+    </div>
+  </header>
+  <main
+    class="container mx-auto px-4 py-8 md:py-12">
+    <div id=uploadSection class=fade-in>
+      <div
+        class="text-center mb-8 md:mb-12">
+        <h2
+          class="text-3xl md:text-5xl font-bold mb-3 md:mb-4 gradient-text">
+          DocuMorph</h2>
+        <p
+          class="text-gray-400 text-base md:text-lg">
+          Advanced extraction with
+          powerful formatting algorithms
+        </p>
+      </div>
+      <div class="max-w-2xl mx-auto">
+        <div id=dropZone
+          class="upload-zone p-8 md:p-12 text-center cursor-pointer bg-gradient-to-br from-black to-gray-900"
+          tabindex=0 role=button
+          aria-label="Drop files here or click to browse">
+          <i
+            class="fas fa-cloud-upload-alt text-5xl md:text-6xl mb-4 md:mb-6 gradient-text"></i>
+          <h3
+            class="text-xl md:text-2xl font-semibold mb-2 md:mb-3">
+            Drop your document here</h3>
+          <p
+            class="text-gray-400 mb-4 md:mb-6 text-sm md:text-base">
+            or click to browse</p><input
+            type=file id=fileInput
+            class=hidden
+            aria-label="File upload input">
+        </div>
+        <div id=errorDisplay
+          class="hidden error-banner"
+          role=alert>
+          <div
+            class="flex items-start space-x-3">
+            <i
+              class="fas fa-exclamation-triangle text-red-400 text-xl mt-1"></i>
+            <div class=flex-1>
+              <h4
+                class="text-red-400 font-semibold mb-1">
+                Error</h4>
+              <p id=errorMessage
+                class="text-gray-300 text-sm">
+              </p>
+            </div><button
+              id=dismissError
+              class="text-gray-400 hover:text-white"
+              aria-label="Dismiss error"><i
+                class="fas fa-times"></i></button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div id=processingSection
+      class="hidden fade-in">
+      <div
+        class="max-w-2xl mx-auto text-center">
+        <button id=extractBtn
+          class="btn-primary px-6 md:px-8 py-3 md:py-4 text-base md:text-lg font-semibold mb-6 md:mb-8 shadow-lg"
+          aria-label="Start document extraction"><i
+            class="fas fa-magic mr-2 md:mr-3"></i>Start
+          Extraction</button>
+        <div id=loadingSection
+          class=hidden>
+          <div class=mb-4><i
+              class="fas fa-cog text-5xl md:text-6xl gradient-text animate-spin"
+              aria-hidden=true></i>
+          </div>
+          <h3
+            class="text-xl md:text-2xl font-semibold mb-4">
+            Processing Document...</h3>
+          <div id=progressText
+            class="text-sm text-gray-400 mb-2"
+            role=status
+            aria-live=polite>
+            Initializing...</div>
+          <div
+            class="progress-container mb-4"
+            role=progressbar
+            aria-valuemin=0
+            aria-valuemax=100
+            aria-valuenow=0>
+            <div id=progressBar
+              class=progress-bar
+              style=width:0%>0%</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div id=resultSection
+      class="hidden slide-up">
+      <div class="max-w-6xl mx-auto">
+        <div
+          class="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 mb-6 stat-grid">
+          <div class=stat-card>
+            <div
+              class="text-xs md:text-sm text-gray-400 mb-1">
+              Characters</div>
+            <div
+              class="text-xl md:text-2xl font-bold gradient-text"
+              id=charCount>0</div>
+          </div>
+          <div class=stat-card>
+            <div
+              class="text-xs md:text-sm text-gray-400 mb-1">
+              Words</div>
+            <div
+              class="text-xl md:text-2xl font-bold gradient-text"
+              id=wordCount>0</div>
+          </div>
+          <div class=stat-card>
+            <div
+              class="text-xs md:text-sm text-gray-400 mb-1">
+              Lines</div>
+            <div
+              class="text-xl md:text-2xl font-bold gradient-text"
+              id=lineCount>0</div>
+          </div>
+          <div class=stat-card>
+            <div
+              class="text-xs md:text-sm text-gray-400 mb-1">
+              Paragraphs</div>
+            <div
+              class="text-xl md:text-2xl font-bold gradient-text"
+              id=paraCount>0</div>
+          </div>
+        </div>
+        <div
+          class="flex flex-wrap justify-between items-center gap-3 md:gap-4 mb-4">
+          <h3
+            class="text-lg md:text-xl font-bold">
+            <i
+              class="fas fa-file-alt mr-2"></i><span
+              class="hidden md:inline">Formatted
+              Document</span><span
+              class=md:hidden>Result</span>
+          </h3>
+          <div class="flex gap-2"
+            role=group
+            aria-label="View mode toggle">
+            <button id=rawBtn
+              class="btn-toggle px-3 md:px-4 py-2 text-sm md:text-base font-semibold active hide-text-mobile"
+              aria-label="Show editable markdown"
+              aria-pressed=true><i
+                class="fas fa-edit"></i><span
+                class=ml-2>Edit</span></button><button
+              id=renderedBtn
+              class="btn-toggle px-3 md:px-4 py-2 text-sm md:text-base font-semibold hide-text-mobile"
+              aria-label="Show rendered view"
+              aria-pressed=false><i
+                class="fas fa-eye"></i><span
+                class=ml-2>Preview</span></button><button
+              id=htmlBtn
+              class="btn-toggle px-3 md:px-4 py-2 text-sm md:text-base font-semibold hide-text-mobile"
+              aria-label="Show HTML code"
+              aria-pressed=false><i
+                class="fab fa-html5"></i><span
+                class=ml-2>HTML</span></button>
+          </div>
+        </div>
+        <div id=autosaveNotification
+          class="hidden success-banner mb-4">
+          <div
+            class="flex items-center space-x-2">
+            <i
+              class="fas fa-check-circle text-green-400"></i><span
+              class=text-green-300>Changes
+              auto-saved</span>
+          </div>
+        </div>
+        <div id=contentDisplay
+          class="content-container mb-4 md:mb-6">
+          <div id=rawContainer>
+            <div
+              class=formatting-controls>
+              <button class=format-btn
+                id=preserveSpacesBtn
+                title="Preserve whitespace"><i
+                  class="fas fa-space-shuttle"></i>
+                Spaces</button><button
+                class=format-btn
+                id=preserveBreaksBtn
+                title="Preserve line breaks"><i
+                  class="fas fa-level-down-alt"></i>
+                Breaks</button><button
+                class=format-btn
+                id=trimLinesBtn
+                title="Trim line spaces"><i
+                  class="fas fa-compress-alt"></i>
+                Trim</button><button
+                class=format-btn
+                id=cleanupBtn
+                title="Cleanup formatting"><i
+                  class="fas fa-broom"></i>
+                Cleanup</button><button
+                class=format-btn
+                id=resetBtn
+                title="Reset to original"><i
+                  class="fas fa-undo"></i>
+                Reset</button>
+              <div
+                class=autosave-indicator
+                id=autosaveIndicator><i
+                  class="fas fa-circle"
+                  style=font-size:.5rem></i><span
+                  id=autosaveText>Auto-save
+                  ready</span></div>
+            </div><textarea
+              id=rawContent
+              class=markdown-editor
+              placeholder="Your extracted markdown will appear here..."
+              spellcheck=false></textarea>
+          </div>
+          <div id=renderedContent
+            class="hidden markdown-content text-sm md:text-base p-4 md:p-8">
+          </div>
+          <pre id=htmlContent
+            class="hidden html-code"></pre>
+        </div>
+        <div
+          class="flex gap-3 md:gap-4 justify-center flex-wrap">
+          <button id=copyBtn
+            class="btn-primary px-4 md:px-6 py-2 md:py-3 text-sm md:text-base font-semibold hide-text-mobile"
+            aria-label="Copy to clipboard"><i
+              class="fas fa-copy"></i><span
+              class=ml-2>Copy</span></button><button
+            id=downloadBtn
+            class="btn-primary px-4 md:px-6 py-2 md:py-3 text-sm md:text-base font-semibold hide-text-mobile"
+            aria-label="Download as markdown"><i
+              class="fas fa-download"></i><span
+              class=ml-2>Download</span></button><button
+            id=clearStorageBtn
+            class="btn-primary px-4 md:px-6 py-2 md:py-3 text-sm md:text-base font-semibold hide-text-mobile"
+            aria-label="Clear saved data"><i
+              class="fas fa-trash-alt"></i><span
+              class=ml-2>Clear</span></button>
+        </div>
+      </div>
+    </div>
+  </main>
+  <script>
+    "use strict";
+    "serviceWorker" in navigator &&
+      window.addEventListener("load", (
+        () => {})), pdfjsLib
+      .GlobalWorkerOptions.workerSrc =
+      "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js",
+      marked.setOptions({
+        sanitize: !1,
+        breaks: !0,
+        gfm: !0,
+        headerIds: !0,
+        mangle: !1,
+        pedantic: !1,
+        smartLists: !0,
+        smartypants: !0
+      });
+    const turndownService =
+      new TurndownService({
+        headingStyle: "atx",
+        codeBlockStyle: "fenced",
+        bulletListMarker: "-",
+        emDelimiter: "*",
+        strongDelimiter: "**"
+      });
+    let extractedText = "",
+      originalText = "",
+      generatedHTML = "",
+      fileName = "",
+      currentFile = null,
+      processingCancelled = !1,
+      autosaveTimeout = null,
+      formattingOptions = {
+        preserveSpaces:
+          !1,
+        preserveBreaks: !1,
+        trimLines: !1
+      };
+    const DOM = {
+        dropZone: document
+          .getElementById("dropZone"),
+        fileInput: document
+          .getElementById("fileInput"),
+        uploadSection: document
+          .getElementById(
+            "uploadSection"),
+        processingSection: document
+          .getElementById(
+            "processingSection"),
+        resultSection: document
+          .getElementById(
+            "resultSection"),
+        extractBtn: document
+          .getElementById("extractBtn"),
+        loadingSection: document
+          .getElementById(
+            "loadingSection"),
+        progressBar: document
+          .getElementById(
+            "progressBar"),
+        progressText: document
+          .getElementById(
+            "progressText"),
+        rawBtn: document.getElementById(
+          "rawBtn"),
+        renderedBtn: document
+          .getElementById(
+            "renderedBtn"),
+        htmlBtn: document
+          .getElementById("htmlBtn"),
+        rawContainer: document
+          .getElementById(
+            "rawContainer"),
+        rawContent: document
+          .getElementById("rawContent"),
+        renderedContent: document
+          .getElementById(
+            "renderedContent"),
+        htmlContent: document
+          .getElementById(
+            "htmlContent"),
+        copyBtn: document
+          .getElementById("copyBtn"),
+        downloadBtn: document
+          .getElementById(
+            "downloadBtn"),
+        clearStorageBtn: document
+          .getElementById(
+            "clearStorageBtn"),
+        charCount: document
+          .getElementById("charCount"),
+        wordCount: document
+          .getElementById("wordCount"),
+        lineCount: document
+          .getElementById("lineCount"),
+        paraCount: document
+          .getElementById("paraCount"),
+        errorDisplay: document
+          .getElementById(
+            "errorDisplay"),
+        errorMessage: document
+          .getElementById(
+            "errorMessage"),
+        dismissError: document
+          .getElementById(
+            "dismissError"),
+        autosaveNotification: document
+          .getElementById(
+            "autosaveNotification"),
+        autosaveIndicator: document
+          .getElementById(
+            "autosaveIndicator"),
+        autosaveText: document
+          .getElementById(
+            "autosaveText"),
+        preserveSpacesBtn: document
+          .getElementById(
+            "preserveSpacesBtn"),
+        preserveBreaksBtn: document
+          .getElementById(
+            "preserveBreaksBtn"),
+        trimLinesBtn: document
+          .getElementById(
+            "trimLinesBtn"),
+        cleanupBtn: document
+          .getElementById("cleanupBtn"),
+        resetBtn: document
+          .getElementById("resetBtn")
+      },
+      Storage = {
+        keys: {
+          content: "documorph_content",
+          filename: "documorph_filename",
+          timestamp: "documorph_timestamp",
+          options: "documorph_options"
+        },
+        save: function(e,
+          t) {
+          try {
+            return localStorage
+              .setItem(this.keys
+                .content, e),
+              localStorage.setItem(
+                this.keys.filename,
+                t || ""), localStorage
+              .setItem(this.keys
+                .timestamp, Date.now()
+                .toString()),
+              localStorage.setItem(
+                this.keys.options,
+                JSON.stringify(
+                  formattingOptions)),
+              !0
+          } catch (
+            e) {
+            return console.error(
+              "Storage save failed:",
+              e), !1
+          }
+        },
+        load: function() {
+          try {
+            const
+              e = localStorage
+              .getItem(this.keys
+                .content),
+              t = localStorage
+              .getItem(this.keys
+                .filename),
+              n = localStorage
+              .getItem(this.keys
+                .timestamp),
+              a = localStorage
+              .getItem(this.keys
+                .options);
+            return a &&
+              (formattingOptions =
+                JSON.parse(a)
+              ), {
+                content: e,
+                filename: t,
+                timestamp: n
+              }
+          } catch (
+            e) {
+            return console.error(
+              "Storage load failed:",
+              e), {
+              content: null,
+              filename: null,
+              timestamp: null
+            }
+          }
+        },
+        clear: function() {
+          try {
+            return Object
+              .values(this.keys)
+              .forEach((e =>
+                localStorage
+                .removeItem(e))), !
+              0
+          } catch (
+            e) {
+            return console.error(
+              "Storage clear failed:",
+              e), !1
+          }
+        },
+        hasData: function() {
+          return !!
+            localStorage.getItem(this
+              .keys.content)
+        }
+      },
+      FILE_SIGNATURES = {
+        pdf: [
+          [37, 80, 68, 70]
+        ],
+        zip: [
+          [80, 75, 3, 4],
+          [80, 75, 5, 6],
+          [80, 75, 7, 8]
+        ],
+        png: [
+          [137, 80, 78, 71]
+        ],
+        jpg: [
+          [255, 216, 255]
+        ],
+        gif: [
+          [71, 73, 70, 56]
+        ],
+        bmp: [
+          [66, 77]
+        ],
+        webp: [
+          [82, 73, 70, 70]
+        ],
+        mp3: [
+          [73, 68, 51],
+          [255, 251]
+        ],
+        wav: [
+          [82, 73, 70, 70]
+        ],
+        mp4: [
+          [0, 0, 0, 24, 102, 116, 121,
+            112
+          ],
+          [0, 0, 0, 28, 102, 116, 121,
+            112
+          ]
+        ],
+        avi: [
+          [82, 73, 70, 70]
+        ]
+      },
+      Utils = {
+        safeString: e => null ==
+          e ? "" : String(e),
+        sanitizeFilename: e => e
+          .replace(/[^a-zA-Z0-9._-]/g,
+            "_").substring(0, 255),
+        preserveWhitespace: e => (
+          formattingOptions
+          .preserveSpaces || (e = e
+            .replace(/[ \t]+/g, " ")),
+          e),
+        preserveLineBreaks: e =>
+          formattingOptions
+          .preserveBreaks ? e : e
+          .replace(/\n{3,}/g, "\n\n"),
+        trimLineSpaces: e =>
+          formattingOptions.trimLines ?
+          e.split("\n").map((e => e
+            .trim())).join("\n") : e,
+        cleanupFormatting: e => (e = (
+          e = (e = (e = (e = e
+              .replace(/\n{4,}/g,
+                "\n\n\n"))
+            .replace(
+              /(#{1,6}[^\n]+)\n{1}(?=[^\n#])/g,
+              "$1\n\n")).replace(
+            /([^\n])\n([\*\-\+]\s|\d+\.\s)/g,
+            "$1\n\n$2")).split("\n")
+          .map((e => e.trimEnd()))
+          .join("\n")).replace(
+          /(\|[^\n]+\|)\n(?!\|)/g,
+          "$1\n\n")).trim(),
+        applyFormatting: e => (e = Utils
+          .preserveWhitespace(e), e =
+          Utils.preserveLineBreaks(e),
+          e = Utils.trimLineSpaces(e)
+        ),
+        async validateFileSignature(e,
+          t) {
+          try {
+            const n = await e
+              .slice(0, 16)
+              .arrayBuffer(),
+              a = new Uint8Array(
+                n);
+            if (["docx", "doc",
+                "xlsx", "xls"
+              ].includes(
+                t)) {
+              return FILE_SIGNATURES
+                .zip.some((e => e
+                  .every(((e, t) =>
+                    a[t] === e))
+                ))
+            }
+            return !
+              FILE_SIGNATURES[t] ||
+              FILE_SIGNATURES[t].some(
+                (e => e.every(((e,
+                    t) => a[t] ===
+                  e
+                ))))
+          } catch (
+            e) {
+            return console.warn(
+              "Signature validation failed:",
+              e), !0
+          }
+        },
+        validateFile: async function(
+          e) {
+          if (!e) throw new Error(
+            "No file selected");
+          if (e
+            .size > 104857600)
+            throw new Error(
+              "File size exceeds 100MB limit"
+            );
+          if (0 === e.size)
+            throw new Error(
+              "File is empty");
+          const
+            t = e.name.split(".")
+            .pop().toLowerCase();
+          if (
+            !["pdf", "docx", "doc",
+              "txt", "xlsx", "xls",
+              "csv", "json", "xml",
+              "html", "md", "js",
+              "ts", "py", "java",
+              "cpp", "c", "cs", "php",
+              "rb", "go", "rs", "jsx",
+              "tsx", "vue", "css",
+              "scss", "sass", "sql",
+              "sh", "bat", "yaml",
+              "yml", "ini", "conf",
+              "log", "jpg", "jpeg",
+              "png", "gif", "bmp",
+              "webp", "svg", "ico",
+              "tiff", "tif", "mp3",
+              "wav", "ogg", "m4a",
+              "flac", "aac", "wma",
+              "opus", "mp4", "webm",
+              "ogv", "avi", "mov",
+              "mkv", "flv", "wmv",
+              "m4v"
+            ].includes(t))
+            throw new Error(
+              `Unsupported file type: .${t}`
+            );
+          if (["pdf", "docx",
+              "xlsx", "png", "jpg",
+              "jpeg", "gif", "mp3",
+              "mp4"
+            ].includes(t)) {
+            if (!
+              await this
+              .validateFileSignature(
+                e, t))
+              throw new Error(
+                `File signature validation failed for .${t} file`
+              )
+          }
+          return t
+        },
+        updateProgress: function(e,
+          t) {
+          try {
+            e = Math.max(0,
+                Math.min(100, e)), DOM
+              .progressBar.style
+              .width = `${e}%`, DOM
+              .progressBar
+              .textContent =
+              `${Math.round(e)}%`, DOM
+              .progressBar
+              .parentElement
+              .setAttribute(
+                "aria-valuenow", e),
+              t && (DOM.progressText
+                .textContent = t
+              )
+          } catch (
+            e) {
+            console.error(
+              "Progress update error:",
+              e)
+          }
+        },
+        showError: function(e, t =
+          "") {
+          DOM.errorMessage
+            .textContent = e + (t ?
+              `: ${t}` : ""), DOM
+            .errorDisplay.classList
+            .remove("hidden"), DOM
+            .errorDisplay.focus()
+        },
+        hideError: function() {
+          DOM
+            .errorDisplay.classList
+            .add("hidden")
+        },
+        showAutosaveNotification: function() {
+          DOM
+            .autosaveNotification
+            .classList.remove(
+              "hidden"), setTimeout((
+                () => {
+                  DOM
+                    .autosaveNotification
+                    .classList.add(
+                      "hidden")
+                }),
+              2e3)
+        },
+        updateAutosaveIndicator: function(
+          e) {
+          const t = DOM
+            .autosaveIndicator,
+            n = DOM.autosaveText;
+          t.classList.remove("saving",
+              "saved"), "saving" ===
+            e ? (t.classList.add(
+                "saving"), n
+              .textContent =
+              "Saving...") :
+            "saved" === e ? (t
+              .classList.add("saved"),
+              n.textContent = "Saved",
+              setTimeout((() => {
+                  t
+                    .classList
+                    .remove(
+                      "saved"), n
+                    .textContent =
+                    "Auto-save ready"
+                }),
+                2e3)) : n
+            .textContent =
+            "Auto-save ready"
+        },
+        delay: async e => new Promise((
+          t => setTimeout(t, e)))
+      },
+      ProgressManager = {
+        stages: {
+          init: {
+            start: 0,
+            end: 10
+          },
+          read: { start: 10, end: 30 },
+          extract: {
+            start: 30,
+            end: 70
+          },
+          format: {
+            start: 70,
+            end: 90
+          },
+          finalize: {
+            start: 90,
+            end: 100
+          }
+        },
+        update: function(e, t,
+          n) {
+          const a = this.stages[
+            e];
+          if (!a) return;
+          const
+            r = a.start + t * (a.end -
+              a.start);
+          Utils.updateProgress(r,
+            n)
+        }
+      },
+      Extractors = {
+        extractPDF: async function(
+          e) {
+          try {
+            ProgressManager
+              .update("read", 0,
+                "Loading PDF..."
+              );
+            const t = await e
+              .arrayBuffer(),
+              n = pdfjsLib
+              .getDocument({ data: t }),
+              a = await n.promise,
+              r = a.numPages;
+            let
+              s = [];
+            for (let e =
+                1; e <= r; e++) {
+              if (
+                processingCancelled)
+                throw new Error(
+                  "Processing cancelled"
+                );
+              const t = e / r;
+              ProgressManager.update(
+                "extract", t,
+                `Extracting page ${e} of ${r}...`
+              );
+              const n = await a
+                .getPage(e),
+                o = await n
+                .getTextContent(),
+                i = n
+                .getViewport({ scale: 1 }),
+                d = o.items.map((e =>
+                  ({
+                    text: Utils
+                      .safeString(
+                        e.str),
+                    x: e
+                      .transform[
+                        4],
+                    y: i
+                      .height - e
+                      .transform[
+                        5],
+                    height: e
+                      .transform[
+                        0],
+                    fontSize: Math
+                      .abs(e
+                        .transform[
+                          3]),
+                    fontName: e
+                      .fontName ||
+                      "",
+                    width: e
+                      .width ||
+                      0
+                  }))),
+                c = this
+                .groupIntoLines(d),
+                l = this
+                .linesToMarkdown(c);
+              s.push(l)
+            }
+            return s
+              .join(
+                "\n\n___\n\n")
+          } catch (
+            e) {
+            throw new Error(
+              `PDF extraction failed: ${e.message}`
+            )
+          }
+        },
+        groupIntoLines: function(
+          e) {
+          if (!e.length) return [];
+          e.sort(((e, t) => Math.abs(e
+              .y - t.y) < 5 ? e
+            .x - t.x : e.y - t.y
+          ));
+          const t = [];
+          let n =
+            null;
+          return e.forEach((
+              e => {
+                if (e.text
+                  .trim())
+                  if (!n || Math
+                    .abs(e.y - n
+                      .y) > 5) n &&
+                    t
+                    .push(n),
+                    n = {
+                      text: e
+                        .text,
+                      y: e
+                        .y,
+                      x: e.x,
+                      fontSize: e
+                        .fontSize,
+                      fontName: e
+                        .fontName,
+                      items: [e]
+                    };
+                  else {
+                    const t = n
+                      .items[n.items
+                        .length - 1
+                      ];
+                    e.x - (t.x + t
+                        .width) >
+                      .3 * t
+                      .fontSize && (
+                        n.text +=
+                        " "), n
+                      .text += e
+                      .text, n.items
+                      .push(e), n
+                      .fontSize =
+                      Math.max(n
+                        .fontSize, e
+                        .fontSize
+                      )
+                  }
+              })), n &&
+            t.push(n), t
+        },
+        linesToMarkdown: function(
+          e) {
+          if (!e.length)
+            return "";
+          const t = e.map((
+              e => e.fontSize)),
+            n = t.reduce(((e, t) =>
+              e + t), 0) / t
+            .length;
+          let a = "",
+            r = !1;
+          return e.forEach((
+              (t, s) => {
+                const o =
+                  t.text
+                  .trim();
+                if (!o)
+                  return void(r || (
+                    a += "\n"
+                  ));
+                const i = t
+                  .fontSize / n;
+                let
+                  d = 0;
+                i > 1.5 ? d = 1 :
+                  i > 1.3 ? d = 2 :
+                  i > 1.15 && (d =
+                    3);
+                t.fontName
+                  .toLowerCase()
+                  .includes(
+                    "bold") && i >
+                  1.1 && o.length <
+                  100 && (d || (d =
+                    3));
+                const c = o
+                  .match(
+                    /^([•\-*]|\d+[.)]|[a-z][.)])\s+(.+)$/i
+                  );
+                if (c &&
+                  0 === d) return !
+                  r && a && (a +=
+                    "\n"), a +=
+                  "- " + c[2] +
+                  "\n", void(r = !
+                    0);
+                if (r = !1,
+                  d > 0) a && (a +=
+                    "\n"), a += "#"
+                  .repeat(d) + " " +
+                  o + "\n\n";
+                else {
+                  a && !a
+                    .endsWith(
+                      "\n\n") && (
+                      a += " "),
+                    a += o;
+                  const
+                    n = e[s + 1];
+                  (!n || Math.abs(n
+                      .y - t.y) >
+                    1.5 * t.fontSize
+                  ) && (a +=
+                    "\n\n")
+                }
+              })), a
+            .trim()
+        },
+        extractDOCX: async function(
+          e) {
+          try {
+            ProgressManager
+              .update("read", .3,
+                "Reading Word document..."
+              );
+            const t = await e
+              .arrayBuffer();
+            ProgressManager.update(
+              "read", .7,
+              "Converting to HTML..."
+            );
+            const n =
+              await mammoth
+              .convertToHtml({
+                arrayBuffer: t,
+                styleMap: [
+                  "p[style-name='Heading 1'] => h1:fresh",
+                  "p[style-name='Heading 2'] => h2:fresh",
+                  "p[style-name='Heading 3'] => h3:fresh",
+                  "p[style-name='Heading 4'] => h4:fresh",
+                  "p[style-name='Heading 5'] => h5:fresh",
+                  "p[style-name='Heading 6'] => h6:fresh"
+                ]
+              });
+            ProgressManager.update(
+              "extract", .5,
+              "Converting HTML to Markdown..."
+            );
+            let a =
+              turndownService
+              .turndown(n
+                .value);
+            return a = this
+              .cleanMarkdown(a),
+              ProgressManager.update(
+                "extract", 1,
+                "Word document extracted"
+              ), a
+          } catch (
+            e) {
+            throw new Error(
+              `DOCX extraction failed: ${e.message}`
+            )
+          }
+        },
+        cleanMarkdown: function(
+          e) {
+          return (e = (e = (e = (
+                e = e.replace(
+                  /\n{4,}/g,
+                  "\n\n\n"))
+              .replace(
+                /(#{1,6}[^\n]+)\n{1}(?=[^\n#])/g,
+                "$1\n\n"))
+            .replace(
+              /([^\n])\n([\*\-]\s)/g,
+              "$1\n\n$2")).split(
+            "\n").map((e => e
+            .trimEnd())).join(
+            "\n")).trim()
+        },
+        extractTXT: async function(
+          e) {
+          try {
+            ProgressManager
+              .update("read", .5,
+                "Reading text file..."
+              );
+            const t = await e
+              .text();
+            return ProgressManager
+              .update("extract", 1,
+                "Text file loaded"),
+              Utils.safeString(
+                t)
+          } catch (
+            e) {
+            throw new Error(
+              `Text extraction failed: ${e.message}`
+            )
+          }
+        },
+        extractJSON: async function(
+          e) {
+          try {
+            ProgressManager
+              .update("read", .3,
+                "Reading JSON file..."
+              );
+            const t = await e
+              .text();
+            ProgressManager.update(
+              "read", .7,
+              "Parsing JSON..."
+            );
+            try {
+              const e = JSON
+                .parse(t),
+                n = JSON.stringify(e,
+                  null, 2
+                );
+              return ProgressManager
+                .update("extract", 1,
+                  "JSON parsed successfully"
+                ), "```json\n" + n +
+                "\n```"
+            } catch (
+              e) {
+              return ProgressManager
+                .update("extract", 1,
+                  "JSON parsing failed, using raw text"
+                ), "```json\n" + t +
+                "\n```"
+            }
+          } catch (
+            e) {
+            throw new Error(
+              `JSON extraction failed: ${e.message}`
+            )
+          }
+        },
+        extractXMLHTML: async function(
+          e) {
+          try {
+            const t =
+              fileName.split(".")
+              .pop().toLowerCase();
+            ProgressManager.update(
+              "read", .5,
+              `Reading ${t.toUpperCase()} file...`
+            );
+            const n = await e
+              .text(),
+              a = "xml" === t ?
+              "xml" :
+              "html";
+            return ProgressManager
+              .update("extract", 1,
+                `${t.toUpperCase()} extracted`
+              ), "```" + a + "\n" +
+              Utils.safeString(n) +
+              "\n```"
+          } catch (
+            e) {
+            throw new Error(
+              `${ext.toUpperCase()} extraction failed: ${e.message}`
+            )
+          }
+        },
+        extractCode: async function(
+          e) {
+          try {
+            const t = fileName
+              .split(".").pop()
+              .toLowerCase();
+            ProgressManager.update(
+              "read", .5,
+              "Reading code file..."
+            );
+            const n = await e
+              .text(),
+              a = {
+                js: "javascript",
+                ts: "typescript",
+                py: "python",
+                java: "java",
+                cpp: "cpp",
+                c: "c",
+                cs: "csharp",
+                php: "php",
+                rb: "ruby",
+                go: "go",
+                rs: "rust",
+                jsx: "jsx",
+                tsx: "tsx",
+                vue: "vue",
+                css: "css",
+                scss: "scss",
+                sass: "sass",
+                sql: "sql",
+                sh: "bash",
+                bat: "batch",
+                yaml: "yaml",
+                yml: "yaml",
+                md: "markdown"
+              } [
+                t
+              ] ||
+              t;
+            return ProgressManager
+              .update("extract", 1,
+                "Code file extracted"
+              ), "```" + a + "\n" +
+              Utils.safeString(n) +
+              "\n```"
+          } catch (
+            e) {
+            throw new Error(
+              `Code extraction failed: ${e.message}`
+            )
+          }
+        },
+        extractExcel: async function(
+          e) {
+          try {
+            ProgressManager
+              .update("read", .3,
+                "Loading Excel file..."
+              );
+            const t = await e
+              .arrayBuffer(),
+              n = XLSX.read(
+                t, {
+                  type: "array",
+                  cellDates: !0,
+                  cellStyles: !0,
+                  cellHTML: !0,
+                  cellFormula: !1
+                }),
+              a = n.SheetNames
+              .length;
+            let r =
+              "";
+            for (let e = 0; e <
+              a; e++) {
+              const t = n
+                .SheetNames[e],
+                s = (e + 1) / a;
+              ProgressManager.update(
+                "extract", s,
+                `Processing sheet ${e+1} of ${a}...`
+              );
+              const o = n.Sheets[
+                t];
+              if (e > 0 && (r +=
+                  "\n___\n\n"), r +=
+                `# ${t}\n\n`, o[
+                  "!ref"]) try {
+                const
+                  e = XLSX.utils
+                  .decode_range(o[
+                    "!ref"]);
+                let
+                  t = [],
+                  n = [],
+                  a = [];
+                for (let
+                    t = e.s.c; t <=
+                  e.e.c; t++
+                ) {
+                  const n = o[
+                    XLSX.utils
+                    .encode_cell({
+                      r: e
+                        .s.r,
+                      c: t
+                    })];
+                  if (
+                    n && void 0 !==
+                    n.v) {
+                    let e =
+                      Utils
+                      .safeString(n
+                        .v).trim();
+                    n.s && n.s
+                      .font && n.s
+                      .font.bold &&
+                      (e = "**" +
+                        e + "**"), a
+                      .push(
+                        e)
+                  } else a
+                    .push("")
+                }
+                t =
+                  a;
+                for (let t = e
+                    .s.r + 1; t <= e
+                  .e.r; t++) {
+                  let
+                    a = [],
+                    r = !1;
+                  for (let
+                      n = e.s
+                      .c; n <= e.e
+                    .c; n++) {
+                    const
+                      e = o[XLSX
+                        .utils
+                        .encode_cell({
+                          r: t,
+                          c: n
+                        })
+                      ];
+                    if (e &&
+                      void 0 !== e.v
+                    ) {
+                      let t =
+                        Utils
+                        .safeString(
+                          e.v)
+                        .trim();
+                      e.s && e.s
+                        .font && (e
+                          .s.font
+                          .bold && (
+                            t =
+                            "**" +
+                            t + "**"
+                          ), e.s
+                          .font
+                          .italic &&
+                          (t = "*" +
+                            t + "*")
+                        ), a.push(
+                          t), t && (
+                          r = !0
+                        )
+                    } else a
+                      .push("")
+                  }
+                  r
+                    &&
+                    n.push(a)
+                }
+                t
+                  .some((e => e)) &&
+                  n.length > 0 ? (
+                    r += "| " + t
+                    .join(" | ") +
+                    " |\n", r +=
+                    "| " + t.map((
+                        () => "---"
+                        ))
+                    .join(" | ") +
+                    " |\n", n
+                    .forEach((
+                      e => {
+                        r +=
+                          "| " + e
+                          .join(
+                            " | "
+                          ) +
+                          " |\n"
+                      }))
+                  ) : r +=
+                  "*No data found*\n",
+                  r +=
+                  "\n"
+              } catch (
+                e) {
+                r +=
+                  `*Error reading sheet: ${e.message}*\n\n`
+              } else
+                r +=
+                "*Empty sheet*\n\n"
+            }
+            return r
+          } catch (
+            e) {
+            throw new Error(
+              `Excel extraction failed: ${e.message}`
+            )
+          }
+        },
+        extractImage: async function(
+          e) {
+          try {
+            ProgressManager
+              .update("read", .3,
+                "Reading image file..."
+              );
+            const t = await e
+              .arrayBuffer(),
+              n = new Blob([
+                t
+              ], { type: e.type }),
+              a = URL.createObjectURL(
+                n);
+            ProgressManager.update(
+              "extract", .7,
+              "Processing image metadata..."
+            );
+            const r = new Image;
+            await new Promise(((e,
+              t) => {
+              r.onload =
+                e, r.onerror =
+                t, r.src = a
+            }));
+            const s = fileName
+              .split(".").pop()
+              .toLowerCase(),
+              o = (e.size / 1024)
+              .toFixed(2);
+            ProgressManager.update(
+              "extract", 1,
+              "Image processed");
+            let
+              i =
+              `# Image: ${fileName}\n\n`;
+            return i +=
+              "## Metadata\n\n", i +=
+              `- **Format**: ${s.toUpperCase()}\n`,
+              i +=
+              `- **Dimensions**: ${r.width} × ${r.height} px\n`,
+              i +=
+              `- **File Size**: ${o} KB\n`,
+              i +=
+              `- **Aspect Ratio**: ${(r.width/r.height).toFixed(2)}:1\n\n`,
+              i +=
+              "## Image Data\n\n",
+              i +=
+              `![${fileName}](${a})\n\n`,
+              i +=
+              "*Note: Image is embedded as data URL for display purposes.*",
+              i
+          } catch (
+            e) {
+            throw new Error(
+              `Image extraction failed: ${e.message}`
+            )
+          }
+        },
+        extractAudio: async function(
+          e) {
+          try {
+            ProgressManager
+              .update("read", .3,
+                "Reading audio file..."
+              );
+            const t = await e
+              .arrayBuffer(),
+              n = new Blob([
+                t
+              ], { type: e.type }),
+              a = URL.createObjectURL(
+                n);
+            ProgressManager.update(
+              "extract", .7,
+              "Processing audio metadata..."
+            );
+            const r = new Audio(
+              a);
+            await new Promise(((e,
+              t) => {
+              r
+                .addEventListener(
+                  "loadedmetadata",
+                  e), r
+                .addEventListener(
+                  "error", t)
+            }));
+            const s = fileName
+              .split(".").pop()
+              .toLowerCase(),
+              o = (e.size / 1024 /
+                1024).toFixed(2),
+              i = r.duration,
+              d = Math.floor(i / 60),
+              c = Math.floor(i % 60);
+            ProgressManager.update(
+              "extract", 1,
+              "Audio processed");
+            let
+              l =
+              `# Audio: ${fileName}\n\n`;
+            return l +=
+              "## Metadata\n\n", l +=
+              `- **Format**: ${s.toUpperCase()}\n`,
+              l +=
+              `- **Duration**: ${d}:${c.toString().padStart(2,"0")}\n`,
+              l +=
+              `- **File Size**: ${o} MB\n\n`,
+              l +=
+              "## Audio Player\n\n",
+              l +=
+              `<audio controls src="${a}">\n`,
+              l +=
+              "Your browser does not support the audio element.\n",
+              l += "</audio>\n\n",
+              l +=
+              "*Note: Audio is embedded for playback.*",
+              l
+          } catch (
+            e) {
+            throw new Error(
+              `Audio extraction failed: ${e.message}`
+            )
+          }
+        },
+        extractVideo: async function(
+          e) {
+          try {
+            ProgressManager
+              .update("read", .3,
+                "Reading video file..."
+              );
+            const t = await e
+              .arrayBuffer(),
+              n = new Blob([
+                t
+              ], { type: e.type }),
+              a = URL.createObjectURL(
+                n);
+            ProgressManager.update(
+              "extract", .7,
+              "Processing video metadata..."
+            );
+            const r = document
+              .createElement("video");
+            r.preload = "metadata",
+              await new Promise(((e,
+                t) => {
+                r
+                  .addEventListener(
+                    "loadedmetadata",
+                    e), r
+                  .addEventListener(
+                    "error", t), r
+                  .src = a
+              }));
+            const
+              s = fileName.split(".")
+              .pop().toLowerCase(),
+              o = (e.size / 1024 /
+                1024).toFixed(2),
+              i = r.duration,
+              d = Math.floor(i / 60),
+              c = Math.floor(i % 60);
+            ProgressManager.update(
+              "extract", 1,
+              "Video processed");
+            let
+              l =
+              `# Video: ${fileName}\n\n`;
+            return l +=
+              "## Metadata\n\n", l +=
+              `- **Format**: ${s.toUpperCase()}\n`,
+              l +=
+              `- **Resolution**: ${r.videoWidth} × ${r.videoHeight} px\n`,
+              l +=
+              `- **Duration**: ${d}:${c.toString().padStart(2,"0")}\n`,
+              l +=
+              `- **File Size**: ${o} MB\n`,
+              l +=
+              `- **Aspect Ratio**: ${(r.videoWidth/r.videoHeight).toFixed(2)}:1\n\n`,
+              l +=
+              "## Video Player\n\n",
+              l +=
+              `<video controls width="100%" src="${a}">\n`,
+              l +=
+              "Your browser does not support the video element.\n",
+              l += "</video>\n\n",
+              l +=
+              "*Note: Video is embedded for playback.*",
+              l
+          } catch (
+            e) {
+            throw new Error(
+              `Video extraction failed: ${e.message}`
+            )
+          }
+        }
+      },
+      Stats = {
+        update: function(
+          e) {
+          try {
+            const t = e.length,
+              n = e.split(/\s+/)
+              .filter((e => e.length >
+                0)).length,
+              a = e.split("\n")
+              .length,
+              r = e.split(/\n\n+/)
+              .filter((e => e.trim()
+                .length > 0)).length;
+            DOM.charCount
+              .textContent = t
+              .toLocaleString(), DOM
+              .wordCount.textContent =
+              n.toLocaleString(), DOM
+              .lineCount.textContent =
+              a.toLocaleString(), DOM
+              .paraCount.textContent =
+              r
+              .toLocaleString()
+          } catch (
+            e) {
+            console.error(
+              "Stats update error:",
+              e)
+          }
+        }
+      },
+      AutoSave = {
+        save: function() {
+          autosaveTimeout
+            &&
+            clearTimeout(
+              autosaveTimeout),
+            autosaveTimeout =
+            setTimeout((() => {
+              Utils
+                .updateAutosaveIndicator(
+                  "saving");
+              const
+                e = DOM.rawContent
+                .value;
+              Storage.save(e,
+                fileName) && (
+                Utils
+                .updateAutosaveIndicator(
+                  "saved"),
+                Utils
+                .showAutosaveNotification()
+              )
+            }), 1e3)
+        }
+      };
+    async function processFile() {
+      processingCancelled
+        = !1, Utils
+        .hideError();
+      try {
+        const e =
+          await Utils.validateFile(
+            currentFile);
+        Utils.updateProgress(0,
+            "Initializing..."),
+          await Utils.delay(100);
+        let
+          t = "";
+        t = "pdf" === e ?
+          await Extractors.extractPDF(
+            currentFile) : ["docx",
+            "doc"
+          ].includes(e) ?
+          await Extractors
+          .extractDOCX(currentFile) :
+          ["txt", "md"].includes(e) ?
+          await Extractors.extractTXT(
+            currentFile) : ["xlsx",
+            "xls", "csv"
+          ].includes(e) ?
+          await Extractors
+          .extractExcel(currentFile) :
+          "json" === e ?
+          await Extractors
+          .extractJSON(currentFile) :
+          ["xml", "html"].includes(
+            e) ? await Extractors
+          .extractXMLHTML(
+            currentFile) : ["jpg",
+            "jpeg", "png", "gif",
+            "bmp", "webp", "svg",
+            "ico", "tiff", "tif"
+          ].includes(e) ?
+          await Extractors
+          .extractImage(currentFile) :
+          ["mp3", "wav", "ogg", "m4a",
+            "flac", "aac", "wma",
+            "opus"
+          ].includes(e) ?
+          await Extractors
+          .extractAudio(currentFile) :
+          ["mp4", "webm", "ogv",
+            "avi", "mov", "mkv",
+            "flv", "wmv", "m4v"
+          ].includes(e) ?
+          await Extractors
+          .extractVideo(currentFile) :
+          await Extractors
+          .extractCode(currentFile),
+          ProgressManager.update(
+            "format", .5,
+            "Applying formatting..."),
+          await Utils.delay(100), t =
+          Utils.applyFormatting(t),
+          extractedText = t,
+          originalText = t,
+          generatedHTML = marked
+          .parse(extractedText),
+          ProgressManager.update(
+            "finalize", .5,
+            "Calculating statistics..."
+          ), await Utils.delay(100),
+          Stats.update(extractedText),
+          Utils.updateProgress(100,
+            "Complete!"), await Utils
+          .delay(300), Storage.save(
+            extractedText, fileName),
+          showResults()
+      } catch (
+        e) {
+        console.error(
+            "Processing error:", e),
+          Utils.showError(
+            "Processing failed", e
+            .message),
+          resetToUpload()
+      }
+    }
+    
+    function handleFile(
+      e) {
+      try {
+        currentFile = e,
+          fileName = Utils
+          .sanitizeFilename(e.name), DOM
+          .uploadSection.classList.add(
+            "hidden"), DOM
+          .processingSection.classList
+          .remove("hidden")
+      } catch (
+        e) {
+        Utils.showError(
+          "File handling error", e
+          .message)
+      }
+    }
+    
+    function showResults() {
+      DOM
+        .processingSection.classList
+        .add("hidden"), DOM
+        .resultSection.classList.remove(
+          "hidden"), DOM.rawContent
+        .value = extractedText, DOM
+        .renderedContent.innerHTML =
+        generatedHTML, DOM.htmlContent
+        .textContent = generatedHTML,
+        "undefined" != typeof hljs &&
+        hljs.highlightElement(DOM
+          .htmlContent)
+    }
+    
+    function resetToUpload() {
+      DOM
+        .processingSection.classList
+        .add("hidden"), DOM
+        .loadingSection.classList.add(
+          "hidden"), DOM.uploadSection
+        .classList.remove("hidden"), DOM
+        .extractBtn.classList.remove(
+          "hidden"),
+        processingCancelled = !0
+    }
+    
+    function getActiveTabContent() {
+      return DOM
+        .rawContainer.classList
+        .contains("hidden") ? DOM
+        .renderedContent.classList
+        .contains("hidden") ? DOM
+        .htmlContent.classList.contains(
+          "hidden") ?
+        {
+          type: "markdown",
+          content: DOM
+            .rawContent.value
+        } :
+        {
+          type: "html-code",
+          content: generatedHTML
+        } :
+        {
+          type: "html-rendered",
+          content: generatedHTML
+        } :
+        {
+          type: "markdown",
+          content: DOM
+            .rawContent.value
+        }
+    }
+    
+    function updateFormattingButtons() {
+      DOM
+        .preserveSpacesBtn.classList
+        .toggle("active",
+          formattingOptions
+          .preserveSpaces), DOM
+        .preserveBreaksBtn.classList
+        .toggle("active",
+          formattingOptions
+          .preserveBreaks), DOM
+        .trimLinesBtn.classList.toggle(
+          "active", formattingOptions
+          .trimLines)
+    }
+    DOM.dropZone
+      .addEventListener("click", (() =>
+        DOM.fileInput.click())), DOM
+      .dropZone.addEventListener(
+        "keydown", (e => {
+          "Enter" !== e
+            .key && " " !== e.key || (
+              e.preventDefault(), DOM
+              .fileInput.click())
+        })),
+      DOM.dropZone.addEventListener(
+        "dragover", (e => {
+          e
+            .preventDefault(), DOM
+            .dropZone.classList.add(
+              "dragover")
+        })), DOM
+      .dropZone.addEventListener(
+        "dragleave", (() => {
+          DOM
+            .dropZone.classList
+            .remove("dragover")
+        })), DOM
+      .dropZone.addEventListener("drop",
+        (e => {
+          e.preventDefault(), DOM
+            .dropZone.classList
+            .remove("dragover"), e
+            .dataTransfer.files
+            .length && handleFile(e
+              .dataTransfer.files[0]
+            )
+        })), DOM.fileInput
+      .addEventListener("change", (
+        e => {
+          e.target.files
+            .length && handleFile(e
+              .target.files[0])
+        })), DOM
+      .extractBtn.addEventListener(
+        "click", (async () => {
+          DOM
+            .extractBtn.classList
+            .add("hidden"), DOM
+            .loadingSection
+            .classList.remove(
+              "hidden"),
+            await processFile()
+        })), DOM
+      .rawBtn.addEventListener("click",
+        (() => {
+          DOM.rawBtn.classList
+            .add("active"), DOM.rawBtn
+            .setAttribute(
+              "aria-pressed", "true"),
+            DOM.renderedBtn.classList
+            .remove("active"), DOM
+            .renderedBtn.setAttribute(
+              "aria-pressed", "false"
+            ), DOM.htmlBtn.classList
+            .remove("active"), DOM
+            .htmlBtn.setAttribute(
+              "aria-pressed", "false"
+            ), DOM.rawContainer
+            .classList.remove(
+              "hidden"), DOM
+            .renderedContent.classList
+            .add("hidden"), DOM
+            .htmlContent.classList
+            .add("hidden")
+        })), DOM
+      .renderedBtn.addEventListener(
+        "click", (() => {
+          DOM
+            .renderedBtn.classList
+            .add("active"), DOM
+            .renderedBtn.setAttribute(
+              "aria-pressed", "true"),
+            DOM.rawBtn.classList
+            .remove("active"), DOM
+            .rawBtn.setAttribute(
+              "aria-pressed", "false"
+            ), DOM.htmlBtn.classList
+            .remove("active"), DOM
+            .htmlBtn.setAttribute(
+              "aria-pressed", "false"
+            ), DOM.rawContainer
+            .classList.add("hidden"),
+            DOM.renderedContent
+            .classList.remove(
+              "hidden"), DOM
+            .htmlContent.classList
+            .add("hidden"),
+            generatedHTML = marked
+            .parse(DOM.rawContent
+              .value), DOM
+            .renderedContent
+            .innerHTML =
+            generatedHTML
+        })), DOM
+      .htmlBtn.addEventListener("click",
+        (() => {
+          DOM.htmlBtn.classList
+            .add("active"), DOM
+            .htmlBtn.setAttribute(
+              "aria-pressed", "true"),
+            DOM.rawBtn.classList
+            .remove("active"), DOM
+            .rawBtn.setAttribute(
+              "aria-pressed", "false"
+            ), DOM.renderedBtn
+            .classList.remove(
+              "active"), DOM
+            .renderedBtn.setAttribute(
+              "aria-pressed", "false"
+            ), DOM.rawContainer
+            .classList.add("hidden"),
+            DOM.renderedContent
+            .classList.add("hidden"),
+            DOM.htmlContent.classList
+            .remove("hidden"),
+            generatedHTML = marked
+            .parse(DOM.rawContent
+              .value), DOM.htmlContent
+            .textContent =
+            generatedHTML,
+            "undefined" !=
+            typeof hljs && hljs
+            .highlightElement(DOM
+              .htmlContent)
+        })), DOM
+      .rawContent.addEventListener(
+        "input", (() => {
+          extractedText
+            = DOM.rawContent.value,
+            Stats.update(
+              extractedText), AutoSave
+            .save()
+        })), DOM
+      .preserveSpacesBtn
+      .addEventListener("click", (
+        () => {
+          formattingOptions
+            .preserveSpaces = !
+            formattingOptions
+            .preserveSpaces,
+            updateFormattingButtons();
+          const
+            e = Utils.applyFormatting(
+              originalText);
+          DOM.rawContent.value = e,
+            extractedText = e,
+            AutoSave.save()
+        })), DOM
+      .preserveBreaksBtn
+      .addEventListener("click", (
+        () => {
+          formattingOptions
+            .preserveBreaks = !
+            formattingOptions
+            .preserveBreaks,
+            updateFormattingButtons();
+          const
+            e = Utils.applyFormatting(
+              originalText);
+          DOM.rawContent.value = e,
+            extractedText = e,
+            AutoSave.save()
+        })), DOM
+      .trimLinesBtn.addEventListener(
+        "click", (
+          () => {
+            formattingOptions
+              .trimLines = !
+              formattingOptions
+              .trimLines,
+              updateFormattingButtons();
+            const
+              e = Utils.applyFormatting(
+                originalText);
+            DOM.rawContent.value = e,
+              extractedText = e,
+              AutoSave.save()
+          })), DOM
+      .cleanupBtn.addEventListener(
+        "click", (() => {
+          const e =
+            Utils.cleanupFormatting(
+              DOM.rawContent.value);
+          DOM.rawContent.value = e,
+            extractedText = e,
+            AutoSave.save()
+        })), DOM
+      .resetBtn.addEventListener(
+        "click", (() => {
+          DOM.rawContent
+            .value = originalText,
+            extractedText =
+            originalText,
+            formattingOptions = {
+              preserveSpaces:
+                !1,
+              preserveBreaks: !
+                1,
+              trimLines: !1
+            },
+            updateFormattingButtons(),
+            AutoSave.save()
+        })), DOM
+      .copyBtn.addEventListener("click",
+        (() => {
+          const e =
+            getActiveTabContent(),
+            t = e.content;
+          navigator.clipboard
+            .writeText(t).then((
+              () => {
+                const t = DOM
+                  .copyBtn
+                  .querySelector(
+                    "i"),
+                  n = t.className;
+                t.className =
+                  "fas fa-check";
+                const
+                  a = DOM.copyBtn
+                  .querySelector(
+                    "span"),
+                  r = a ? a
+                  .textContent : "";
+                a && ("markdown" ===
+                    e.type ? a
+                    .textContent =
+                    "Copied!" : a
+                    .textContent =
+                    "Copied HTML!"),
+                  setTimeout((
+                      () => {
+                        t
+                          .className =
+                          n, a && (a
+                            .textContent =
+                            r)
+                      }),
+                    2e3)
+              })).catch((
+              e => {
+                Utils
+                  .showError(
+                    "Copy failed", e
+                    .message)
+              }))
+        })), DOM
+      .downloadBtn.addEventListener(
+        "click", (() => {
+          try {
+            let e,
+              t, n;
+            "markdown" ===
+            getActiveTabContent()
+              .type ? (e = DOM
+                .rawContent.value, t =
+                ".md", n =
+                "text/markdown") : (
+                e = generatedHTML, t =
+                ".html", n =
+                "text/html");
+            const
+              a = new Blob([
+                e
+              ], { type: n }),
+              r = URL.createObjectURL(
+                a),
+              s = document
+              .createElement("a"),
+              o = Utils
+              .sanitizeFilename(
+                fileName.replace(
+                  /\.[^/.]+$/, "")) +
+              t;
+            s.href = r, s.download =
+              o, s.click(), URL
+              .revokeObjectURL(
+                r)
+          } catch (e) {
+            Utils
+              .showError(
+                "Download failed", e
+                .message)
+          }
+        })), DOM
+      .clearStorageBtn.addEventListener(
+        "click", (() => {
+          confirm(
+            "Clear all saved data? This cannot be undone."
+          ) && (Storage.clear(),
+            Utils
+            .showAutosaveNotification()
+          )
+        })), DOM.dismissError
+      .addEventListener("click", (
+        () => { Utils.hideError() })),
+      document.addEventListener(
+        "keydown", (e => {
+          (e.ctrlKey || e.metaKey) &&
+          ("c" !== e.key || DOM
+            .resultSection.classList
+            .contains("hidden") ?
+            "s" !== e.key || DOM
+            .resultSection.classList
+            .contains("hidden") || (e
+              .preventDefault(), DOM
+              .downloadBtn.click()) :
+            document.activeElement !==
+            DOM.rawContent && (e
+              .preventDefault(), DOM
+              .copyBtn.click()))
+        })),
+      window.addEventListener(
+        "DOMContentLoaded", (
+          () => {
+            if (Storage
+              .hasData()) {
+              const e =
+                Storage.load();
+              e.content && console.log(
+                "Saved data available from",
+                new Date(parseInt(e
+                  .timestamp)))
+            }
+          })),
+      window.addEventListener(
+        "beforeunload", (() => {
+          DOM
+            .rawContent && DOM
+            .rawContent.value &&
+            Storage.save(DOM
+              .rawContent.value,
+              fileName)
+        }))
+  </script>
+</body>
+
+</html>
