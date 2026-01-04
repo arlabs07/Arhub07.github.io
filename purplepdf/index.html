@@ -1,0 +1,1471 @@
+<!doctype html>
+<html lang="en" class="scroll-smooth">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport"
+    content="width=device-width, initial-scale=1">
+  <meta name="description"
+    content="PurplePDF - arlabs07">
+  <title>PurplePDF  - arlabs07</title>
+  
+  <!-- Preconnect for Performance -->
+  <link rel="preconnect"
+    href="https://cdn.tailwindcss.com">
+  <link rel="preconnect"
+    href="https://cdnjs.cloudflare.com">
+  <link rel="preconnect"
+    href="https://api.microlink.io">
+  <link rel="preconnect"
+    href="https://api.allorigins.win">
+  
+  <link rel="icon" type="image/svg+xml"
+    href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%238b5cf6'/%3E%3Cstop offset='50%25' stop-color='%23ec4899'/%3E%3Cstop offset='100%25' stop-color='%23f59e0b'/%3E%3C/linearGradient%3E%3C/defs%3E%3Ccircle cx='50' cy='50' r='45' fill='url(%23g)'/%3E%3Cpath d='M35 35h30v8h-30zm0 12h25v6h-25zm0 10h28v6h-28z' fill='white' opacity='0.9'/%3E%3Cpath d='M40 65h20l-5-5v3h-10v4z' fill='white'/%3E%3C/svg%3E">
+  <script
+    src="https://cdn.tailwindcss.com">
+  </script>
+  <link rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+  
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      background: #000;
+      color: #fff;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      overflow-x: hidden;
+    }
+    
+    /* Mobile Scaling: Reduce size to 90% on small screens */
+    @media (max-width: 640px) {
+      html {
+        font-size: 14.5px;
+        /* Approx 90% of standard 16px */
+      }
+    }
+    
+    .view-section {
+      display: none;
+      opacity: 0;
+      transition: opacity .5s ease;
+    }
+    
+    .view-section.active-view {
+      display: block;
+      opacity: 1;
+    }
+    
+    .gradient-text {
+      background: linear-gradient(45deg, #8b5cf6, #ec4899, #f59e0b);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      background-size: 200% auto;
+      animation: gradientShift 3s ease infinite;
+    }
+    
+    @keyframes gradientShift {
+      
+      0%,
+      100% {
+        background-position: 0 50%
+      }
+      
+      50% {
+        background-position: 100% 50%
+      }
+    }
+    
+    .reveal {
+      opacity: 0;
+      transform: translateY(40px);
+      transition: all 1s cubic-bezier(.2, .8, .2, 1);
+      will-change: opacity, transform;
+    }
+    
+    .reveal.active {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    
+    .app-card {
+      opacity: 0;
+      transform: translateY(30px) scale(.95);
+      animation: cardEntrance .6s cubic-bezier(.34, 1.56, .64, 1) forwards;
+    }
+    
+    @keyframes cardEntrance {
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1)
+      }
+    }
+    
+    .hover-trigger {
+      transition: all .4s cubic-bezier(.4, 0, .2, 1);
+    }
+    
+    .hover-trigger:hover {
+      transform: translateY(-8px) scale(1.02);
+      box-shadow: 0 20px 40px -10px rgba(139, 92, 246, .3);
+      z-index: 10;
+    }
+    
+    .hover-trigger:hover .card-icon {
+      transform: scale(1.1) rotate(5deg);
+    }
+    
+    .glass-panel {
+      background: rgba(255, 255, 255, .03);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, .05);
+    }
+    
+    .glass-card {
+      background: linear-gradient(145deg, rgba(255, 255, 255, .03) 0, rgba(255, 255, 255, .01) 100%);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, .05);
+      border-radius: 16px;
+    }
+    
+    .search-container {
+      background: rgba(255, 255, 255, .05);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(139, 92, 246, .2);
+      border-radius: 16px;
+      padding: .5rem 1rem;
+      transition: all .3s;
+    }
+    
+    .search-container:focus-within {
+      border-color: #8b5cf6;
+      background: rgba(255, 255, 255, .08);
+      box-shadow: 0 0 20px rgba(139, 92, 246, .2);
+    }
+    
+    .blob {
+      position: absolute;
+      filter: blur(80px);
+      opacity: .4;
+      z-index: -1;
+      animation: blobFloat 10s infinite alternate;
+    }
+    
+    @keyframes blobFloat {
+      0% {
+        transform: translate(0, 0)
+      }
+      
+      100% {
+        transform: translate(20px, 40px)
+      }
+    }
+    
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+    
+    ::-webkit-scrollbar-track {
+      background: #0a0a0a;
+    }
+    
+    ::-webkit-scrollbar-thumb {
+      background: #333;
+      border-radius: 4px;
+    }
+    
+    ::-webkit-scrollbar-thumb:hover {
+      background: #555;
+    }
+    
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border-width: 0;
+    }
+    
+    .cursor-pointer {
+      cursor: pointer;
+    }
+    
+    .btn-load-more {
+      background: linear-gradient(90deg, rgba(139, 92, 246, .1) 0, rgba(236, 72, 153, .1) 100%);
+      border: 1px solid rgba(255, 255, 255, .1);
+      color: #fff;
+      padding: 12px 30px;
+      border-radius: 9999px;
+      font-weight: 600;
+      transition: all .3s ease;
+      cursor: pointer;
+      backdrop-filter: blur(5px);
+    }
+    
+    .btn-load-more:hover {
+      background: linear-gradient(90deg, rgba(139, 92, 246, .3) 0, rgba(236, 72, 153, .3) 100%);
+      border-color: rgba(139, 92, 246, .5);
+      transform: translateY(-2px);
+      box-shadow: 0 10px 20px -5px rgba(139, 92, 246, .4);
+    }
+    
+    .workflow-visual {
+      position: relative;
+      height: 100%;
+      min-height: 350px;
+      perspective: 1000px;
+    }
+    
+    .browser-mockup {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) rotateX(10deg) scale(.9);
+      width: 80%;
+      height: 220px;
+      background: rgba(20, 20, 30, .9);
+      border: 1px solid rgba(255, 255, 255, .1);
+      border-radius: 12px;
+      box-shadow: 0 0 50px rgba(139, 92, 246, .15);
+      z-index: 10;
+      animation: browserFloat 6s ease-in-out infinite;
+      display: flex;
+      flex-direction: column;
+    }
+    
+    .browser-header {
+      height: 30px;
+      border-bottom: 1px solid rgba(255, 255, 255, .1);
+      display: flex;
+      align-items: center;
+      padding: 0 15px;
+      background: rgba(255, 255, 255, .05);
+    }
+    
+    .browser-dots {
+      display: flex;
+      gap: 6px;
+    }
+    
+    .browser-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+    }
+    
+    .dot-r {
+      background: #ff5f57;
+    }
+    
+    .dot-y {
+      background: #febc2e;
+    }
+    
+    .dot-g {
+      background: #28c840;
+    }
+    
+    .browser-body {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .floating-icon {
+      position: absolute;
+      width: 50px;
+      height: 50px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, rgba(255, 255, 255, .1), rgba(255, 255, 255, .05));
+      border: 1px solid rgba(255, 255, 255, .1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      backdrop-filter: blur(5px);
+      box-shadow: 0 10px 20px rgba(0, 0, 0, .3);
+      z-index: 20;
+      opacity: 0;
+    }
+    
+    .icon-1 {
+      top: 20%;
+      left: -10%;
+      color: #8b5cf6;
+      animation: iconPop 4s infinite 0s;
+    }
+    
+    .icon-2 {
+      top: 60%;
+      right: -10%;
+      color: #ec4899;
+      animation: iconPop 4s infinite 1.5s;
+    }
+    
+    .icon-3 {
+      top: -20%;
+      right: 20%;
+      color: #f59e0b;
+      animation: iconPop 4s infinite 2.5s;
+    }
+    
+    .cursor-pointer-anim {
+      position: absolute;
+      bottom: -20px;
+      right: -20px;
+      font-size: 32px;
+      color: #fff;
+      filter: drop-shadow(0 0 10px rgba(139, 92, 246, .5));
+      animation: cursorMove 4s ease-in-out infinite;
+      z-index: 30;
+    }
+    
+    @keyframes browserFloat {
+      
+      0%,
+      100% {
+        transform: translate(-50%, -50%) rotateX(5deg) scale(.95)
+      }
+      
+      50% {
+        transform: translate(-50%, -55%) rotateX(0) scale(1);
+        box-shadow: 0 20px 60px rgba(139, 92, 246, .25)
+      }
+    }
+    
+    @keyframes iconPop {
+      
+      0%,
+      100% {
+        transform: scale(0) translateY(-20px);
+        opacity: 0
+      }
+      
+      20%,
+      80% {
+        transform: scale(1) translateY(0);
+        opacity: 1
+      }
+    }
+    
+    @keyframes cursorMove {
+      0% {
+        transform: translate(40px, 40px);
+        opacity: 0
+      }
+      
+      20% {
+        transform: translate(10px, 10px);
+        opacity: 1
+      }
+      
+      40% {
+        transform: translate(0, 0) scale(.9)
+      }
+      
+      50% {
+        transform: translate(0, 0) scale(1)
+      }
+      
+      100% {
+        transform: translate(-20px, -20px);
+        opacity: 0
+      }
+    }
+    
+    .page-header {
+      background: linear-gradient(180deg, rgba(0, 0, 0, 0) 0, rgba(139, 92, 246, .1) 100%);
+      padding-top: 40px;
+      padding-bottom: 60px;
+      border-bottom: 1px solid rgba(255, 255, 255, .05);
+    }
+    
+    .accordion-content {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height .3s ease-out;
+    }
+    
+    .accordion-item.active .accordion-content {
+      max-height: 300px;
+    }
+    
+    .accordion-icon {
+      transition: transform .3s ease;
+    }
+    
+    .accordion-item.active .accordion-icon {
+      transform: rotate(180deg);
+    }
+  </style>
+</head>
+
+<body
+  class="min-h-screen bg-black selection:bg-purple-500 selection:text-white">
+  
+  <div
+    class="blob bg-purple-900 w-96 h-96 rounded-full top-0 left-0">
+  </div>
+  <div
+    class="blob bg-pink-900 w-80 h-80 rounded-full bottom-0 right-0">
+  </div>
+  
+  <header
+    class="fixed top-0 left-0 right-0 z-50 bg-black/80 backdrop-blur-md border-b border-gray-800 transition-all duration-300">
+    <div
+      class="container mx-auto px-4 h-20 flex items-center justify-between">
+      <a href="#"
+        onclick="router.navigate('home')"
+        class="flex items-center space-x-3 group cursor-pointer decoration-0"
+        aria-label="Go to Homepage">
+        <div
+          class="w-10 h-10 rounded-lg flex items-center justify-center shadow-lg hover:shadow-purple-500/50 transition-all duration-300 relative overflow-hidden">
+          <div
+            class="absolute inset-0 bg-gradient-to-br from-purple-600 to-pink-600 opacity-20 group-hover:opacity-40 transition-opacity">
+          </div>
+          <svg width="40" height="40"
+            viewBox="0 0 100 100"
+            xmlns="http://www.w3.org/2000/svg"
+            class="relative z-10">
+            <defs>
+              <linearGradient id='g2'
+                x1='0%' y1='0%'
+                x2='100%' y2='100%'>
+                <stop offset='0%'
+                  stop-color='#8b5cf6' />
+                <stop offset='50%'
+                  stop-color='#ec4899' />
+                <stop offset='100%'
+                  stop-color='#f59e0b' />
+              </linearGradient>
+            </defs>
+            <circle cx='50' cy='50'
+              r='45' fill='url(#g2)' />
+            <path
+              d='M35 35h30v8h-30zm0 12h25v6h-25zm0 10h28v6h-28z'
+              fill='white'
+              opacity='0.9' />
+            <path
+              d='M40 65h20l-5-5v3h-10v4z'
+              fill='white' />
+          </svg>
+        </div>
+        <h1
+          class="text-xl md:text-2xl font-bold text-white tracking-wide">
+          PurplePDF</h1>
+      </a>
+      <div id="header-action"
+        class="flex items-center space-x-4">
+        <span
+          class="text-xs md:text-sm font-semibold text-gray-400">by
+          arlabs07</span>
+      </div>
+    </div>
+  </header>
+  
+  <main
+    class="pt-32 pb-20 min-h-[80vh]">
+    <div id="view-home"
+      class="view-section active-view">
+      <section
+        class="container mx-auto px-4 mb-20 relative">
+        <div
+          class="text-center max-w-4xl mx-auto reveal active">
+          <div
+            class="inline-flex items-center px-3 py-1 rounded-full border border-purple-500/30 bg-purple-500/10 text-purple-300 text-xs font-medium mb-6 animate-pulse">
+            <span
+              class="w-2 h-2 rounded-full bg-purple-400 mr-2"></span>
+            Privacy Focused 
+          </div>
+          <h2
+            class="text-5xl md:text-7xl font-bold mb-6 tracking-tight leading-tight">
+            Instant PDF Tools <br><span
+              class="gradient-text">Directly
+              in Your Browser</span>
+          </h2>
+          <p
+            class="text-gray-400 text-lg md:text-xl mb-10 leading-relaxed max-w-2xl mx-auto">
+            Access a complete suite of
+            PDF utilities instantly.
+            Just click and use—no
+            installations, no sign-ups,
+            simply powerful web apps.
+          </p>
+          
+          <div
+            class="search-container flex items-center max-w-lg mx-auto shadow-2xl shadow-purple-900/20">
+            <i class="fas fa-search text-gray-500 mr-3"
+              aria-hidden="true"></i>
+            <label for="appSearch"
+              class="sr-only">Search web
+              tools</label>
+            <input type="text"
+              id="appSearch"
+              class="bg-transparent border-none text-white w-full focus:outline-none placeholder-gray-600 h-10"
+              placeholder="Search web tools (e.g., merge, split)..."
+              autocomplete="off">
+          </div>
+        </div>
+      </section>
+      
+      <section id="tool-directory"
+        class="container mx-auto px-4 mb-32 min-h-[400px]">
+        <div
+          class="flex justify-between items-end mb-8 border-b border-gray-800 pb-4">
+          <h3
+            class="text-2xl font-bold text-white">
+            Web Tools Library</h3>
+          <div
+            class="text-sm text-gray-500"
+            id="toolCount">Scanning
+            hub...</div>
+        </div>
+        <div id="appGrid"
+          class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        </div>
+        <div class="text-center mt-12">
+          <div id="loadingIndicator"
+            class="text-center py-4 opacity-0 transition-opacity duration-300 hidden">
+            <i
+              class="fas fa-circle-notch fa-spin text-purple-500 text-2xl"></i>
+            <p
+              class="text-gray-600 text-sm mt-2">
+              Discovering new tools...
+            </p>
+          </div>
+          <button id="loadMoreBtn"
+            class="btn-load-more hidden"
+            aria-label="Load more applications">Load
+            More Apps <i
+              class="fas fa-chevron-down ml-2"></i></button>
+        </div>
+      </section>
+      
+      <section
+        class="border-y border-gray-800 bg-white/5 backdrop-blur-sm py-16 mb-32 relative overflow-hidden">
+        <div
+          class="absolute inset-0 bg-gradient-to-r from-purple-900/10 to-pink-900/10">
+        </div>
+        <div
+          class="container mx-auto px-4 grid grid-cols-2 md:grid-cols-4 gap-8 text-center relative z-10 reveal">
+          <div class="p-4">
+            <div
+              class="text-4xl font-bold text-white mb-2">
+              client</div>
+            <div
+              class="text-gray-400 text-sm uppercase tracking-wider">
+              based</div>
+          </div>
+          <div class="p-4">
+            <div
+              class="text-4xl font-bold text-white mb-2">
+              24/7</div>
+            <div
+              class="text-gray-400 text-sm uppercase tracking-wider">
+              Uptime</div>
+          </div>
+          <div class="p-4">
+            <div
+              class="text-4xl font-bold text-white mb-2">
+              Instant</div>
+            <div
+              class="text-gray-400 text-sm uppercase tracking-wider">
+              Access</div>
+          </div>
+          <div class="p-4">
+            <div
+              class="text-4xl font-bold text-white mb-2">
+              100%</div>
+            <div
+              class="text-gray-400 text-sm uppercase tracking-wider">
+              Free</div>
+          </div>
+        </div>
+      </section>
+      
+      <section id="how-it-works"
+        class="container mx-auto px-4 mb-32 reveal">
+        <div
+          class="glass-card p-10 md:p-16 relative overflow-hidden">
+          <div
+            class="absolute -top-24 -right-24 w-64 h-64 bg-purple-600 rounded-full blur-[100px] opacity-20">
+          </div>
+          <div
+            class="relative z-10 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+            <div
+              class="order-2 lg:order-1">
+              <h2
+                class="text-3xl md:text-4xl font-bold mb-6">
+                Workflow Simplified</h2>
+              <p
+                class="text-gray-400 mb-8">
+                Forget about installing
+                bulky software. Our
+                platform lists
+                lightweight web apps
+                that run instantly in
+                your browser.</p>
+              <div class="space-y-8">
+                <div class="flex group">
+                  <div
+                    class="flex-shrink-0 mr-4">
+                    <div
+                      class="w-10 h-10 rounded-xl bg-purple-600/20 text-purple-400 border border-purple-600/50 flex items-center justify-center font-bold text-lg group-hover:bg-purple-600 group-hover:text-white transition-all">
+                      <i
+                        class="fas fa-search"></i>
+                    </div>
+                  </div>
+                  <div>
+                    <h4
+                      class="text-lg font-bold text-white group-hover:text-purple-400 transition-colors">
+                      Find Your Tool
+                    </h4>
+                    <p
+                      class="text-gray-400 text-sm mt-1">
+                      Browse our
+                      directory of
+                      specialized PDF
+                      web apps.</p>
+                  </div>
+                </div>
+                <div class="flex group">
+                  <div
+                    class="flex-shrink-0 mr-4">
+                    <div
+                      class="w-10 h-10 rounded-xl bg-pink-600/20 text-pink-400 border border-pink-600/50 flex items-center justify-center font-bold text-lg group-hover:bg-pink-600 group-hover:text-white transition-all">
+                      <i
+                        class="fas fa-mouse-pointer"></i>
+                    </div>
+                  </div>
+                  <div>
+                    <h4
+                      class="text-lg font-bold text-white group-hover:text-pink-400 transition-colors">
+                      One-Click Launch
+                    </h4>
+                    <p
+                      class="text-gray-400 text-sm mt-1">
+                      No download. Just
+                      press on it and
+                      you are in it.</p>
+                  </div>
+                </div>
+                <div class="flex group">
+                  <div
+                    class="flex-shrink-0 mr-4">
+                    <div
+                      class="w-10 h-10 rounded-xl bg-amber-600/20 text-amber-400 border border-amber-600/50 flex items-center justify-center font-bold text-lg group-hover:bg-amber-600 group-hover:text-white transition-all">
+                      <i
+                        class="fas fa-check-circle"></i>
+                    </div>
+                  </div>
+                  <div>
+                    <h4
+                      class="text-lg font-bold text-white group-hover:text-amber-400 transition-colors">
+                      Process & Go</h4>
+                    <p
+                      class="text-gray-400 text-sm mt-1">
+                      Edit your
+                      documents
+                      instantly and
+                      download the
+                      result.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div
+              class="order-1 lg:order-2 h-80 lg:h-96 relative">
+              <div
+                class="workflow-visual">
+                <div
+                  class="browser-mockup">
+                  <div
+                    class="browser-header">
+                    <div
+                      class="browser-dots">
+                      <div
+                        class="browser-dot dot-r">
+                      </div>
+                      <div
+                        class="browser-dot dot-y">
+                      </div>
+                      <div
+                        class="browser-dot dot-g">
+                      </div>
+                    </div>
+                  </div>
+                  <div
+                    class="browser-body">
+                    <div
+                      class="text-center">
+                      <div
+                        class="text-purple-500 text-4xl mb-2">
+                        <i
+                          class="fas fa-globe"></i>
+                      </div>
+                      <div
+                        class="text-gray-500 text-xs font-mono">
+                        Loading Web
+                        App...</div>
+                    </div>
+                    <div
+                      class="floating-icon icon-1">
+                      <i
+                        class="fas fa-file-pdf"></i>
+                    </div>
+                    <div
+                      class="floating-icon icon-2">
+                      <i
+                        class="fas fa-magic"></i>
+                    </div>
+                    <div
+                      class="floating-icon icon-3">
+                      <i
+                        class="fas fa-cloud"></i>
+                    </div>
+                    <div
+                      class="cursor-pointer-anim">
+                      <i
+                        class="fas fa-mouse-pointer"></i>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+      
+      <section id="faq"
+        class="container mx-auto px-4 mb-32 max-w-3xl reveal">
+        <h2
+          class="text-3xl md:text-4xl font-bold text-center mb-12">
+          Frequently Asked Questions
+        </h2>
+        <div class="space-y-4">
+          <div
+            class="accordion-item glass-panel rounded-lg overflow-hidden cursor-pointer"
+            onclick="toggleAccordion(this)"
+            role="button"
+            aria-expanded="false">
+            <div
+              class="p-5 flex justify-between items-center">
+              <h3
+                class="font-medium text-lg">
+                Do I need to download
+                anything?</h3>
+              <i
+                class="fas fa-chevron-down accordion-icon text-gray-400"></i>
+            </div>
+            <div
+              class="accordion-content bg-black/20">
+              <div
+                class="p-5 pt-0 text-gray-400 text-sm leading-relaxed">
+                No. Every tool listed
+                here is a web
+                application. You simply
+                click the card, and the
+                tool opens in your
+                browser ready to use.
+              </div>
+            </div>
+          </div>
+          <div
+            class="accordion-item glass-panel rounded-lg overflow-hidden cursor-pointer"
+            onclick="toggleAccordion(this)"
+            role="button"
+            aria-expanded="false">
+            <div
+              class="p-5 flex justify-between items-center">
+              <h3
+                class="font-medium text-lg">
+                Is it free?</h3>
+              <i
+                class="fas fa-chevron-down accordion-icon text-gray-400"></i>
+            </div>
+            <div
+              class="accordion-content bg-black/20">
+              <div
+                class="p-5 pt-0 text-gray-400 text-sm leading-relaxed">
+                Yes, all tools
+                discovered and listed by
+                PurplePDF are free to
+                use.</div>
+            </div>
+          </div>
+          <div
+            class="accordion-item glass-panel rounded-lg overflow-hidden cursor-pointer"
+            onclick="toggleAccordion(this)"
+            role="button"
+            aria-expanded="false">
+            <div
+              class="p-5 flex justify-between items-center">
+              <h3
+                class="font-medium text-lg">
+                Are my files secure?
+              </h3>
+              <i
+                class="fas fa-chevron-down accordion-icon text-gray-400"></i>
+            </div>
+            <div
+              class="accordion-content bg-black/20">
+              <div
+                class="p-5 pt-0 text-gray-400 text-sm leading-relaxed">
+                Most tools listed
+                process files entirely
+                within your browser
+                (client-side), meaning
+                your sensitive data
+                never leaves your
+                device. Always check the
+                individual tool's
+                privacy policy for
+                verification.</div>
+            </div>
+          </div>
+          <div
+            class="accordion-item glass-panel rounded-lg overflow-hidden cursor-pointer"
+            onclick="toggleAccordion(this)"
+            role="button"
+            aria-expanded="false">
+            <div
+              class="p-5 flex justify-between items-center">
+              <h3
+                class="font-medium text-lg">
+                Can I use this on
+                mobile?</h3>
+              <i
+                class="fas fa-chevron-down accordion-icon text-gray-400"></i>
+            </div>
+            <div
+              class="accordion-content bg-black/20">
+              <div
+                class="p-5 pt-0 text-gray-400 text-sm leading-relaxed">
+                Absolutely. Since these
+                are web-based tools,
+                they are compatible with
+                smartphones and tablets,
+                provided you have a
+                modern web browser
+                installed.</div>
+            </div>
+          </div>
+          <div
+            class="accordion-item glass-panel rounded-lg overflow-hidden cursor-pointer"
+            onclick="toggleAccordion(this)"
+            role="button"
+            aria-expanded="false">
+            <div
+              class="p-5 flex justify-between items-center">
+              <h3
+                class="font-medium text-lg">
+                Are there file size
+                limits?</h3>
+              <i
+                class="fas fa-chevron-down accordion-icon text-gray-400"></i>
+            </div>
+            <div
+              class="accordion-content bg-black/20">
+              <div
+                class="p-5 pt-0 text-gray-400 text-sm leading-relaxed">
+                This depends on your
+                browser's memory and the
+                specific tool you are
+                using. Generally,
+                client-side tools can
+                handle documents up to
+                several hundred
+                megabytes without
+                issues.</div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+    
+    <div id="view-privacy"
+      class="view-section">
+      <section
+        class="page-header text-center">
+        <h1
+          class="text-5xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-pink-400">
+          Privacy Policy</h1>
+        <p class="text-gray-400">Last
+          Updated: January 2026</p>
+      </section>
+      <section
+        class="container mx-auto px-4 max-w-4xl py-12">
+        <div
+          class="glass-panel p-10 rounded-2xl space-y-8 text-gray-300 leading-relaxed text-lg">
+          <p>Welcome to PurplePDF. We
+            prioritize your privacy in
+            this decentralized tool
+            ecosystem.</p>
+          <div>
+            <h3
+              class="text-2xl font-bold text-white mb-3">
+              1. Data Handling</h3>
+            <p>We do not store your
+              files. All operations
+              performed by the tools
+              listed here are generally
+              client-side (processed in
+              your browser).</p>
+          </div>
+          <div>
+            <h3
+              class="text-2xl font-bold text-white mb-3">
+              2. Third Party Tools</h3>
+            <p>When you click a tool,
+              you are accessing a web
+              application. While we
+              screen for quality, usage
+              is subject to the inherent
+              nature of the web.</p>
+          </div>
+        </div>
+      </section>
+    </div>
+    
+    <div id="view-terms"
+      class="view-section">
+      <section
+        class="page-header text-center">
+        <h1
+          class="text-5xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-pink-400">
+          Terms of Service</h1>
+      </section>
+      <section
+        class="container mx-auto px-4 max-w-4xl py-12">
+        <div
+          class="glass-panel p-10 rounded-2xl space-y-8 text-gray-300 leading-relaxed text-lg">
+          <div>
+            <h3
+              class="text-2xl font-bold text-white mb-3">
+              1. Acceptance</h3>
+            <p>By using PurplePDF, you
+              agree to these terms. The
+              service is a directory of
+              web-based PDF utilities.
+            </p>
+          </div>
+          <div>
+            <h3
+              class="text-2xl font-bold text-white mb-3">
+              2. Disclaimer</h3>
+            <p>Tools are provided "as
+              is". We are not
+              responsible for the output
+              of any specific tool found
+              through our discovery
+              engine.</p>
+          </div>
+        </div>
+      </section>
+    </div>
+    
+    <div id="view-cookies"
+      class="view-section">
+      <section
+        class="page-header text-center">
+        <h1
+          class="text-5xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-pink-400">
+          Cookie Policy</h1>
+      </section>
+      <section
+        class="container mx-auto px-4 max-w-4xl py-12">
+        <div
+          class="glass-panel p-10 rounded-2xl space-y-8 text-gray-300 leading-relaxed text-lg">
+          <p>We use minimal storage to
+            enhance your experience.</p>
+          <div>
+            <h3
+              class="text-2xl font-bold text-white mb-3">
+              Local Storage</h3>
+            <p>We use your browser's
+              Local Storage to remember
+              which tools have been
+              discovered, making the
+              site load faster on your
+              next visit.</p>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+  
+  <footer
+    class="border-t border-gray-800 bg-black pt-16 pb-8">
+    <div class="container mx-auto px-4">
+      <div
+        class="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
+        <div
+          class="col-span-1 md:col-span-2">
+          <div
+            class="flex items-center space-x-2 mb-4">
+            <div
+              class="w-8 h-8 rounded-lg flex items-center justify-center relative overflow-hidden">
+              <svg width="32"
+                height="32"
+                viewBox="0 0 100 100"
+                xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                  <linearGradient
+                    id='g3' x1='0%'
+                    y1='0%' x2='100%'
+                    y2='100%'>
+                    <stop offset='0%'
+                      stop-color='#8b5cf6' />
+                    <stop offset='50%'
+                      stop-color='#ec4899' />
+                    <stop offset='100%'
+                      stop-color='#f59e0b' />
+                  </linearGradient>
+                </defs>
+                <circle cx='50' cy='50'
+                  r='45'
+                  fill='url(#g3)' />
+                <path
+                  d='M35 35h30v8h-30zm0 12h25v6h-25zm0 10h28v6h-28z'
+                  fill='white'
+                  opacity='0.9' />
+                <path
+                  d='M40 65h20l-5-5v3h-10v4z'
+                  fill='white' />
+              </svg>
+            </div>
+            <span
+              class="text-xl font-bold">PurplePDF</span>
+          </div>
+          <p
+            class="text-gray-500 text-sm leading-relaxed max-w-sm">
+            The automated hub for
+            web-based PDF utilities.
+            Discover and launch tools
+            instantly.</p>
+        </div>
+        <div>
+          <h4
+            class="text-white font-bold mb-4">
+            Platform</h4>
+          <ul
+            class="space-y-2 text-sm text-gray-500">
+            <li><button
+                onclick="router.navigate('home')"
+                class="hover:text-purple-400 transition-colors text-left">Home</button>
+            </li>
+          </ul>
+        </div>
+        <div>
+          <h4
+            class="text-white font-bold mb-4">
+            Legal</h4>
+          <ul
+            class="space-y-2 text-sm text-gray-500">
+            <li><button
+                onclick="router.navigate('privacy')"
+                class="hover:text-purple-400 transition-colors text-left">Privacy
+                Policy</button></li>
+            <li><button
+                onclick="router.navigate('terms')"
+                class="hover:text-purple-400 transition-colors text-left">Terms
+                of Service</button></li>
+            <li><button
+                onclick="router.navigate('cookies')"
+                class="hover:text-purple-400 transition-colors text-left">Cookie
+                Policy</button></li>
+          </ul>
+        </div>
+      </div>
+      <div
+        class="border-t border-gray-800 pt-8 text-center md:text-left flex flex-col md:flex-row justify-between items-center">
+        <p
+          class="text-gray-600 text-xs">
+          © 2026 PurplePDF Hub. Crafted
+          by arlabs07.</p>
+        <div
+          class="flex items-center space-x-5 mt-4 md:mt-0">
+          <a href="https://arhub07.netlify.app"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="text-gray-500 hover:text-white transition-colors"
+            aria-label="ARHub"><img
+              src="https://arhub07.netlify.app/Images/logo-512.png"
+              alt="ARHub"
+              class="w-6 h-6 grayscale hover:grayscale-0"></a>
+          <a href="https://arlabs07.blogspot.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="text-gray-500 hover:text-orange-500 transition-colors"
+            aria-label="Blog"><i
+              class="fab fa-blogger text-xl"></i></a>
+          <a href="https://youtube.com/@arlabs07"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="text-gray-500 hover:text-red-600 transition-colors"
+            aria-label="YouTube"><i
+              class="fab fa-youtube text-xl"></i></a>
+        </div>
+      </div>
+    </div>
+  </footer>
+  
+  <script>
+    const router = {
+      navigate: e => {
+        document.querySelectorAll(
+            ".view-section")
+          .forEach(e => {
+            e
+              .classList.remove(
+                "active-view")
+          });
+        const t = document
+          .getElementById(
+            `view-${e}`) || document
+          .getElementById(
+            "view-home");
+        t.classList.add(
+            "active-view"), window
+          .scrollTo(0, 0);
+        const n = document
+          .getElementById(
+            "header-action");
+        "home" === e ? n.innerHTML =
+          '<span class="text-xs md:text-sm font-semibold text-gray-400">by arlabs07</span>' :
+          n.innerHTML =
+          `<button onclick="router.navigate('home')" class="text-xs md:text-sm font-bold text-white bg-white/10 hover:bg-white/20 px-4 py-1.5 rounded-full border border-white/10 transition-colors">Go Back to Home</button>`
+      }
+    };
+    
+    class AppScanner {
+      constructor() {
+        this.baseUrl =
+          "https://arhub07.netlify.app/purplepdf/app",
+          this.grid = document
+          .getElementById("appGrid"),
+          this.loadingIndicator =
+          document.getElementById(
+            "loadingIndicator"),
+          this.loadMoreBtn = document
+          .getElementById(
+            "loadMoreBtn"),
+          this.toolCountEl = document
+          .getElementById(
+            "toolCount"),
+          this.batchSize = 5,
+          this.currentId = 1,
+          this.isScanning = !1,
+          this
+          .stopScanningPermanently = !
+          1,
+          this.loadedIds = new Set,
+          this.storageKey =
+          "purplepdf_v4_cache",
+          this.cachedApps = [],
+          this.loadMoreBtn && this
+          .loadMoreBtn
+          .addEventListener("click", (
+            () => this
+            .scanNextBatch()))
+      }
+      
+      init() {
+        this.loadCache(), this
+          .cachedApps.length > 0 ? (
+            this.cachedApps.forEach((
+              e => this.addCard(e, !
+                1))), this.currentId =
+            this.cachedApps[this
+              .cachedApps.length - 1]
+            .id + 1, this
+            .updateCount(), this
+            .loadMoreBtn.classList
+            .remove("hidden")) : this
+          .scanNextBatch()
+      }
+      
+      loadCache() {
+        const e = localStorage
+          .getItem(this.storageKey);
+        if (e) try {
+          this.cachedApps =
+            JSON.parse(e)
+        } catch (
+          e) {
+          localStorage
+            .removeItem(this
+              .storageKey)
+        }
+      }
+      
+      saveCache() {
+        localStorage.setItem(this
+          .storageKey, JSON
+          .stringify(this
+            .cachedApps))
+      }
+      
+      async scanNextBatch() {
+        if (this.isScanning || this
+          .stopScanningPermanently)
+          return;
+        this.isScanning = !0, this
+          .loadingIndicator.classList
+          .remove("hidden"), this
+          .loadingIndicator.style
+          .opacity = "1", this
+          .loadMoreBtn.classList.add(
+            "hidden");
+        let e = 0;
+        for (let t = 0; t < this
+          .batchSize; t++) {
+          const n = this.currentId +
+            t,
+            o = await this.checkApp(
+              n);
+          if (null === o) {
+            this
+              .stopScanningPermanently = !
+              0;
+            break
+          }
+          this.loadedIds.has(o.id) ||
+            (this.addCard(o, !0), this
+              .cachedApps.push(o), e++
+            )
+        }
+        e > 0 && (this.saveCache(),
+            this.updateCount()), this
+          .stopScanningPermanently ?
+          this.loadMoreBtn.classList
+          .add("hidden") : (this
+            .currentId += this
+            .batchSize, this
+            .loadMoreBtn.classList
+            .remove("hidden")), this
+          .isScanning = !1, this
+          .loadingIndicator.style
+          .opacity = "0", setTimeout((
+            () => this
+            .loadingIndicator
+            .classList.add("hidden")
+          ), 300)
+      }
+      
+      // Optimized Hybrid Check: Fast API -> Fallback to AllOrigins
+      async checkApp(id) {
+        const targetUrl =
+          `${this.baseUrl}${id}`;
+        
+        // 1. Try Fast API (Microlink) first
+        // This API returns JSON directly, avoiding full page processing
+        try {
+          const fastApiUrl =
+            `https://api.microlink.io/?url=${encodeURIComponent(targetUrl)}`;
+          const response =
+            await fetch(fastApiUrl);
+          
+          if (response.ok) {
+            const json =
+              await response.json();
+            
+            if (json.status ===
+              'success' && json.data
+            ) {
+              const title = json.data
+                .title || "";
+              const desc = json.data
+                .description || "";
+              
+              // Validation: If title looks like a 404 or is empty, we don't trust it fully here,
+              // but if it looks valid, we return it immediately.
+              // "Page Not Found" is a common 404 title on Netlify
+              if (title && !title
+                .includes(
+                  "Page Not Found") &&
+                !title.includes(
+                  "Not Found - Netlify"
+                ) && title.length >
+                5) {
+                return {
+                  id: id,
+                  title: title
+                    .replace(
+                      "| PurplePDF",
+                      "").replace(
+                      "- PurplePDF",
+                      "").trim(),
+                  desc: desc,
+                  url: targetUrl
+                };
+              }
+            }
+          }
+        } catch (err) {
+          // If Fast API fails (network, rate limit, etc), just continue to fallback
+          // console.warn("Fast API failed, using fallback for #" + id);
+        }
+        
+        // 2. Fallback to AllOrigins (Slower but robust)
+        // This fetches the full HTML string
+        const proxyUrl =
+          `https://api.allorigins.win/get?url=${encodeURIComponent(targetUrl)}`;
+        try {
+          const o = await fetch(
+              proxyUrl),
+            i = await o.json();
+          if (!i.contents)
+            return null;
+          if (i.status && 404 === i
+            .status.http_code)
+            return null;
+          if (i.contents.includes(
+              "<title>Page Not Found</title>"
+            ) || i.contents
+            .includes(
+              "Not Found - Netlify"
+            ) || i.contents.length <
+            500) return null;
+          
+          const a = (new DOMParser)
+            .parseFromString(i
+              .contents, "text/html");
+          let s = a.querySelector(
+              "title")?.innerText ||
+            `Tool #${id}`;
+          s = s.replace("| PurplePDF",
+              "").replace(
+              "- PurplePDF", "")
+            .trim();
+          let r = a.querySelector(
+              'meta[name="description"]'
+            )?.content ||
+            "A useful PDF utility for your workflow.";
+          
+          return {
+            id: id,
+            title: s,
+            desc: r,
+            url: targetUrl
+          }
+        } catch (e) {
+          return null
+        }
+      }
+      
+      addCard(e, t) {
+        if (this.loadedIds.has(e.id))
+          return;
+        this.loadedIds.add(e.id);
+        const n = document
+          .createElement("a");
+        n.href = e.url, n.target =
+          "_blank", n.className =
+          "app-card hover-trigger glass-card p-6 flex flex-col justify-between h-52 relative overflow-hidden group no-underline block",
+          n.dataset.id = e.id, n
+          .dataset.title = e.title
+          .toLowerCase(), t ? n.style
+          .animationDelay =
+          `${e.id % 5 * .1}s` : (n
+            .style.animation = "none",
+            n.style.opacity = "1", n
+            .style.transform =
+            "translateY(0)"), n
+          .innerHTML =
+          `<div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity"><i class="fas fa-file-pdf text-6xl transform rotate-12"></i></div><div class="relative z-10"><div class="flex justify-between items-start mb-4"><div class="w-10 h-10 rounded-lg bg-gradient-to-br from-gray-800 to-black border border-gray-700 flex items-center justify-center card-icon transition-transform duration-300"><span class="font-bold text-white text-sm">#${e.id}</span></div></div><h3 class="text-xl font-bold text-white mb-2 leading-tight group-hover:text-purple-400 transition-colors line-clamp-2">${e.title}</h3><p class="text-sm text-gray-400 line-clamp-2">${e.desc}</p></div><div class="relative z-10 mt-auto flex items-center text-sm font-medium text-purple-400 group-hover:text-purple-300 transition-colors pt-4">Open App <i class="fas fa-external-link-alt ml-2 text-xs"></i></div>`,
+          this.grid.appendChild(n)
+      }
+      
+      updateCount() {
+        const e = this.loadedIds.size;
+        this.toolCountEl.innerText =
+          `${e} Web Tool${1 !== e ? "s" : ""} Available`
+      }
+    }
+    
+    function toggleAccordion(e) {
+      const t = e.classList.contains(
+        "active");
+      document.querySelectorAll(
+        ".accordion-item").forEach((
+        e => {
+          e.classList.remove(
+              "active"), e
+            .setAttribute(
+              "aria-expanded",
+              "false")
+        })), t || (e
+        .classList.add("active"), e
+        .setAttribute("aria-expanded",
+          "true"))
+    }
+    
+    document.getElementById("appSearch")
+      ?.addEventListener("input", (
+        e => {
+          const t = e.target.value
+            .toLowerCase().trim();
+          document.querySelectorAll(
+            ".app-card").forEach((
+            e => {
+              e.dataset.title
+                .includes(t) ? e
+                .style.display =
+                "flex" : e.style
+                .display =
+                "none"
+            }))
+        }));
+    
+    document.addEventListener(
+      "DOMContentLoaded", (() => {
+        // Fixed IntersectionObserver shadowing error
+        const observer =
+          new IntersectionObserver((
+            entries => {
+              entries.forEach((
+                entry => {
+                  if (entry
+                    .isIntersecting
+                  ) {
+                    entry
+                      .target
+                      .classList
+                      .add(
+                        "active"
+                      );
+                    observer
+                      .unobserve(
+                        entry
+                        .target
+                      );
+                  }
+                }))
+            }), { threshold: .1 });
+        
+        document.querySelectorAll(
+          ".reveal").forEach((
+          el => observer
+          .observe(el)));
+        const scanner =
+          new AppScanner;
+        setTimeout((() => scanner
+          .init()), 100)
+      }));
+  </script>
+</body>
+
+</html>
