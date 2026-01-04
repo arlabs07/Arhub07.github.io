@@ -1,0 +1,3938 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport"
+    content="width=device-width,initial-scale=1.0">
+  <meta name="description"
+    content="Purple Extractor - PurplePDF: Advanced PDF extraction tool with AI-powered text formatting and OCR capabilities for extracting and enhancing text and images from PDF documents.">
+  <meta name="keywords"
+    content="PDF extract, extract PDF text, extract PDF images, PDF parser, Purple Extractor, PurplePDF, AI text formatting, OCR">
+  <meta name="author"
+    content="PurplePDF Team">
+  <meta property="og:title"
+    content="Purple Extractor - PurplePDF">
+  <meta property="og:description"
+    content="Extract text and images from PDF documents with AI-powered formatting and OCR">
+  <meta property="og:type"
+    content="website">
+  <meta name="twitter:card"
+    content="summary_large_image">
+  <link rel="icon" type="image/svg+xml"
+    href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%238b5cf6'/%3E%3Cstop offset='50%25' stop-color='%23ec4899'/%3E%3Cstop offset='100%25' stop-color='%23f59e0b'/%3E%3C/linearGradient%3E%3C/defs%3E%3Ccircle cx='50' cy='50' r='45' fill='url(%23g)'/%3E%3Cpath d='M35 35h30v8h-30zm0 12h25v6h-25zm0 10h28v6h-28z' fill='white' opacity='0.9'/%3E%3Cpath d='M65 45l-10 5 10 5v-3h8v-4h-8z' fill='white'/%3E%3C/svg%3E">
+  <title>Purple Extractor - PurplePDF
+  </title>
+  <script
+    src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js">
+  </script>
+  <script
+    src="https://cdn.jsdelivr.net/npm/tesseract.js@5.1.0/dist/tesseract.min.js">
+  </script>
+  <link
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    rel="stylesheet">
+  <script
+    src="https://cdn.tailwindcss.com">
+  </script>
+  <style>
+    :root {
+      --primary-purple: #8b5cf6;
+      --primary-pink: #ec4899;
+      --primary-yellow: #f59e0b;
+      --bg-primary: #000;
+      --bg-secondary: #1f2937;
+      --bg-tertiary: #374151;
+      --text-primary: #fff;
+      --text-secondary: #d1d5db;
+      --text-muted: #9ca3af;
+      --border-color: #4b5563;
+      --success-color: #10b981;
+      --error-color: #ef4444;
+      --warning-color: #f59e0b;
+      --ai-color: #06b6d4
+    }
+    
+    * {
+      box-sizing: border-box
+    }
+    
+    body {
+      background: var(--bg-primary);
+      font-family: 'Inter', 'Segoe UI', sans-serif;
+      color: var(--text-primary);
+      overflow-x: hidden;
+      line-height: 1.6
+    }
+    
+    body.loading {
+      cursor: wait
+    }
+    
+    .gradient-text {
+      background: linear-gradient(45deg, var(--primary-purple), var(--primary-pink), var(--primary-yellow));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text
+    }
+    
+    .drag-over {
+      border-color: var(--primary-purple) !important;
+      background: rgba(139, 92, 246, 0.1) !important;
+      transform: scale(1.01);
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1)
+    }
+    
+    .overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.95);
+      z-index: 1000;
+      display: none;
+      backdrop-filter: blur(12px);
+      opacity: 0;
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1)
+    }
+    
+    .overlay.show {
+      opacity: 1
+    }
+    
+    .loading-bar {
+      width: 0;
+      height: 4px;
+      background: linear-gradient(90deg, var(--primary-purple), var(--primary-pink));
+      border-radius: 2px;
+      transition: width 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      box-shadow: 0 0 12px rgba(139, 92, 246, 0.5)
+    }
+    
+    .fade-in {
+      opacity: 0;
+      transform: translateY(20px);
+      animation: fadeInUp 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards
+    }
+    
+    .stagger-1 {
+      animation-delay: 0.1s
+    }
+    
+    .stagger-2 {
+      animation-delay: 0.2s
+    }
+    
+    .stagger-3 {
+      animation-delay: 0.3s
+    }
+    
+    .stagger-4 {
+      animation-delay: 0.4s
+    }
+    
+    .page-slider {
+      display: flex;
+      overflow-x: auto;
+      gap: 10px;
+      padding: 16px;
+      background: var(--bg-secondary);
+      border-radius: 12px;
+      scrollbar-width: thin;
+      scrollbar-color: var(--primary-purple) var(--bg-tertiary);
+      scroll-behavior: smooth
+    }
+    
+    .page-slider::-webkit-scrollbar {
+      height: 8px
+    }
+    
+    .page-slider::-webkit-scrollbar-track {
+      background: var(--bg-tertiary);
+      border-radius: 4px
+    }
+    
+    .page-slider::-webkit-scrollbar-thumb {
+      background: var(--primary-purple);
+      border-radius: 4px;
+      transition: background 0.3s
+    }
+    
+    .page-slider::-webkit-scrollbar-thumb:hover {
+      background: var(--primary-pink)
+    }
+    
+    .page-thumb {
+      min-width: 90px;
+      height: 110px;
+      background: var(--bg-tertiary);
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      border: 2px solid transparent;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      user-select: none
+    }
+    
+    .page-thumb:hover {
+      border-color: var(--primary-purple);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(139, 92, 246, 0.3)
+    }
+    
+    .page-thumb.active {
+      border-color: var(--primary-pink);
+      box-shadow: 0 8px 30px rgba(236, 72, 153, 0.4);
+      transform: translateY(-3px)
+    }
+    
+    .page-thumb img {
+      width: 100%;
+      height: 75px;
+      object-fit: cover;
+      border-radius: 6px
+    }
+    
+    .page-thumb .all-data-icon {
+      font-size: 28px;
+      color: var(--primary-purple);
+      margin-bottom: 6px;
+      transition: all 0.3s
+    }
+    
+    .page-thumb:hover .all-data-icon {
+      color: var(--primary-pink);
+      transform: scale(1.1)
+    }
+    
+    .text-block {
+      background: linear-gradient(135deg, #1a1a1a 0%, #262626 100%);
+      border-radius: 8px;
+      padding: 16px;
+      margin-bottom: 12px;
+      border-left: 4px solid var(--primary-purple);
+      position: relative;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3)
+    }
+    
+    .text-block:hover {
+      background: linear-gradient(135deg, #262626 0%, #2d2d2d 100%);
+      transform: translateX(4px);
+      box-shadow: 0 4px 15px rgba(139, 92, 246, 0.2)
+    }
+    
+    .copy-btn {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      background: var(--bg-tertiary);
+      color: var(--text-primary);
+      border: none;
+      padding: 6px 8px;
+      border-radius: 6px;
+      font-size: 11px;
+      cursor: pointer;
+      opacity: 0;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      z-index: 10
+    }
+    
+    .text-block:hover .copy-btn {
+      opacity: 1;
+      transform: translateY(-2px)
+    }
+    
+    .copy-btn:hover {
+      background: var(--primary-purple);
+      transform: translateY(-2px) scale(1.05)
+    }
+    
+    .copy-btn:active {
+      transform: scale(0.95)
+    }
+    
+    .image-item {
+      background: linear-gradient(135deg, #262626 0%, #303030 100%);
+      border-radius: 8px;
+      padding: 12px;
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      border: 1px solid var(--border-color);
+      overflow: hidden;
+      position: relative
+    }
+    
+    .image-item:hover {
+      border-color: var(--primary-purple);
+      transform: translateY(-4px);
+      box-shadow: 0 8px 25px rgba(139, 92, 246, 0.25)
+    }
+    
+    .image-item img {
+      transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      border-radius: 6px
+    }
+    
+    .image-item:hover img {
+      transform: scale(1.05)
+    }
+    
+    .stats-compact {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 16px;
+      margin-bottom: 24px
+    }
+    
+    .stat-card {
+      background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-tertiary) 100%);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 16px;
+      text-align: center;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      overflow: hidden
+    }
+    
+    .stat-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 2px;
+      background: linear-gradient(90deg, var(--primary-purple), var(--primary-pink));
+      transform: translateX(-100%);
+      transition: transform 0.3s
+    }
+    
+    .stat-card:hover::before {
+      transform: translateX(0)
+    }
+    
+    .stat-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3)
+    }
+    
+    .lazy-img {
+      opacity: 0;
+      transition: opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+      filter: blur(2px)
+    }
+    
+    .lazy-img.loaded {
+      opacity: 1;
+      filter: blur(0)
+    }
+    
+    .lazy-img.loading {
+      background: linear-gradient(90deg, #374151 25%, #4b5563 50%, #374151 75%);
+      background-size: 200% 100%;
+      animation: shimmer 2s infinite
+    }
+    
+    .page-section {
+      background: linear-gradient(135deg, #1a1a1a 0%, #242424 100%);
+      border-radius: 12px;
+      margin-bottom: 16px;
+      border: 1px solid #333;
+      overflow: hidden;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1)
+    }
+    
+    .page-section:hover {
+      border-color: var(--primary-purple)
+    }
+    
+    .page-section-header {
+      padding: 16px 20px;
+      background: linear-gradient(135deg, #262626 0%, #303030 100%);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid #333;
+      transition: all 0.3s
+    }
+    
+    .page-section-header:hover {
+      background: linear-gradient(135deg, #303030 0%, #383838 100%)
+    }
+    
+    .page-section-content {
+      padding: 20px;
+      max-height: 500px;
+      overflow-y: auto;
+      scrollbar-width: thin;
+      scrollbar-color: var(--primary-purple) transparent
+    }
+    
+    .page-section-content::-webkit-scrollbar {
+      width: 6px
+    }
+    
+    .page-section-content::-webkit-scrollbar-thumb {
+      background: var(--primary-purple);
+      border-radius: 3px
+    }
+    
+    .page-section.collapsed .page-section-content {
+      max-height: 0;
+      padding: 0;
+      overflow: hidden
+    }
+    
+    .compact-nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+      background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-tertiary) 100%);
+      padding: 12px 16px;
+      border-radius: 12px;
+      border: 1px solid var(--border-color)
+    }
+    
+    .nav-btn {
+      background: linear-gradient(135deg, var(--bg-tertiary) 0%, #4b5563 100%);
+      color: var(--text-primary);
+      border: none;
+      padding: 8px 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      font-size: 13px;
+      font-weight: 500
+    }
+    
+    .nav-btn:hover:not(:disabled) {
+      background: linear-gradient(135deg, var(--primary-purple) 0%, var(--primary-pink) 100%);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(139, 92, 246, 0.4)
+    }
+    
+    .nav-btn:active {
+      transform: translateY(0)
+    }
+    
+    .nav-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed
+    }
+    
+    .search-compact {
+      background: linear-gradient(135deg, #262626 0%, #303030 100%);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 10px 12px;
+      color: var(--text-primary);
+      width: 100%;
+      font-size: 14px;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1)
+    }
+    
+    .search-compact:focus {
+      outline: none;
+      border-color: var(--primary-purple);
+      box-shadow: 0 0 15px rgba(139, 92, 246, 0.3)
+    }
+    
+    .search-compact::placeholder {
+      color: var(--text-muted)
+    }
+    
+    .highlight {
+      background: linear-gradient(135deg, rgba(236, 72, 153, 0.4), rgba(139, 92, 246, 0.4));
+      padding: 2px 4px;
+      border-radius: 4px;
+      font-weight: 600
+    }
+    
+    .content-grid {
+      display: grid;
+      gap: 20px
+    }
+    
+    .desktop-layout {
+      grid-template-columns: 1fr
+    }
+    
+    .mobile-icon-only {
+      display: none
+    }
+    
+    .font-status {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: linear-gradient(135deg, var(--bg-secondary), var(--bg-tertiary));
+      color: var(--primary-purple);
+      padding: 8px 12px;
+      border-radius: 8px;
+      font-size: 12px;
+      z-index: 100;
+      opacity: 0;
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      border: 1px solid var(--border-color);
+      backdrop-filter: blur(10px)
+    }
+    
+    .font-status.show {
+      opacity: 1;
+      transform: translateY(0)
+    }
+    
+    .font-status.error {
+      color: var(--error-color);
+      border-color: var(--error-color)
+    }
+    
+    .font-status.success {
+      color: var(--success-color);
+      border-color: var(--success-color)
+    }
+    
+    .ai-panel {
+      background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 16px;
+      border: 2px solid var(--ai-color);
+      box-shadow: 0 8px 25px rgba(6, 182, 212, 0.15);
+      position: relative;
+      overflow: hidden
+    }
+    
+    .ai-panel::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 2px;
+      background: linear-gradient(90deg, var(--ai-color), #0891b2);
+      animation: aiGlow 2s ease-in-out infinite alternate
+    }
+    
+    .ai-panel-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px
+    }
+    
+    .ai-title {
+      color: var(--ai-color);
+      font-weight: 700;
+      font-size: 18px;
+      display: flex;
+      align-items: center
+    }
+    
+    .ai-title .ai-icon {
+      margin-right: 8px;
+      font-size: 20px
+    }
+    
+    .ai-generate-btn {
+      background: linear-gradient(135deg, var(--ai-color), #0891b2);
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      font-weight: 600;
+      font-size: 14px
+    }
+    
+    .ai-generate-btn:hover {
+      background: linear-gradient(135deg, #0891b2, #0e7490);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(6, 182, 212, 0.4)
+    }
+    
+    .ai-generate-btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none
+    }
+    
+    .ai-content {
+      background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+      border-radius: 8px;
+      padding: 16px;
+      border: 1px solid #475569;
+      min-height: 120px;
+      position: relative;
+      max-height: 300px;
+      overflow-y: auto
+    }
+    
+    .ai-content.loading {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--ai-color)
+    }
+    
+    .ai-loading-spinner {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border: 3px solid rgba(6, 182, 212, 0.3);
+      border-radius: 50%;
+      border-top-color: var(--ai-color);
+      animation: spin 1s ease-in-out infinite;
+      margin-right: 12px
+    }
+    
+    .ai-formatted-text {
+      color: #e2e8f0;
+      line-height: 1.7;
+      font-size: 14px;
+      white-space: pre-wrap
+    }
+    
+    .ai-formatted-text h1,
+    .ai-formatted-text h2,
+    .ai-formatted-text h3 {
+      color: var(--ai-color);
+      margin: 16px 0 8px 0;
+      font-weight: 600
+    }
+    
+    .ai-formatted-text p {
+      margin-bottom: 12px
+    }
+    
+    .ai-formatted-text ul,
+    .ai-formatted-text ol {
+      margin: 12px 0;
+      padding-left: 20px
+    }
+    
+    .ai-formatted-text li {
+      margin-bottom: 4px
+    }
+    
+    .ai-error {
+      color: var(--error-color);
+      text-align: center;
+      padding: 20px
+    }
+    
+    .ai-copy-btn {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      background: var(--ai-color);
+      color: white;
+      border: none;
+      padding: 6px 10px;
+      border-radius: 6px;
+      font-size: 11px;
+      cursor: pointer;
+      opacity: 0;
+      transition: all 0.3s
+    }
+    
+    .ai-content:hover .ai-copy-btn {
+      opacity: 1
+    }
+    
+    .ai-copy-btn:hover {
+      background: #0891b2;
+      transform: scale(1.05)
+    }
+    
+    .char-counter {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 8px
+    }
+    
+    .char-counter.warning {
+      color: var(--warning-color)
+    }
+    
+    .char-counter.error {
+      color: var(--error-color)
+    }
+    
+    .text-container {
+      background: linear-gradient(135deg, #1f2937 0%, #374151 100%);
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 16px;
+      border: 1px solid var(--border-color);
+      max-height: 400px;
+      overflow-y: auto;
+      
+    }
+    
+    .text-container::-webkit-scrollbar {
+      width: 8px
+    }
+    
+    .text-container::-webkit-scrollbar-track {
+      background: #374151;
+      border-radius: 4px
+    }
+    
+    .text-container::-webkit-scrollbar-thumb {
+      background: var(--primary-purple);
+      border-radius: 4px
+    }
+    
+    .image-container {
+      background: linear-gradient(135deg, #1f2937 0%, #374151 100%);
+      border-radius: 12px;
+      padding: 20px;
+      border: 1px solid var(--border-color)
+    }
+    
+    .image-grid {
+      display: grid;
+      gap: 16px
+    }
+    
+    .image-grid.single {
+      grid-template-columns: 1fr;
+      max-width: 400px;
+      margin: 0 auto
+    }
+    
+    .image-grid.double {
+      grid-template-columns: repeat(2, 1fr)
+    }
+    
+    .image-grid.multiple {
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr))
+    }
+    
+    .image-preview-overlay {
+      background: rgba(0, 0, 0, 0.95);
+      backdrop-filter: blur(15px)
+      
+    }
+    
+    .image-preview-content {
+      background: linear-gradient(135deg, #1f2937, #374151);
+      border-radius: 16px;
+      max-width: 90vw;
+      max-height: 90vh;
+      overflow: auto;
+      position: relative;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8)
+    }
+    
+    .image-preview-header {
+      background: linear-gradient(135deg, #374151, #4b5563);
+      padding: 16px 20px;
+      border-radius: 16px 16px 0 0;
+      border-bottom: 1px solid #4b5563;
+      display: flex;
+      align-items: center;
+      justify-content: space-between
+    }
+    
+    .image-preview-body {
+      padding: 20px;
+      text-align: center
+    }
+    
+    .preview-image {
+      max-width: 100%;
+      max-height: 70vh;
+      border-radius: 8px;
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.5);
+      object-fit: contain
+    }
+    
+    .preview-info {
+      margin-top: 16px;
+      color: var(--text-secondary);
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      justify-content: center;
+      align-items: center
+    }
+    
+    .close-btn {
+      background: var(--error-color);
+      color: white;
+      border: none;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      cursor: pointer;
+      transition: all 0.3s;
+      display: flex;
+      align-items: center;
+      justify-content: center
+    }
+    
+    .close-btn:hover {
+      background: #dc2626;
+      transform: scale(1.1)
+    }
+    
+    .download-btn {
+      background: linear-gradient(135deg, var(--primary-purple), var(--primary-pink));
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.3s;
+      font-weight: 600
+    }
+    
+    .download-btn:hover {
+      background: linear-gradient(135deg, var(--primary-pink), var(--primary-yellow));
+      transform: translateY(-2px)
+    }
+    
+    .ocr-indicator {
+      position: absolute;
+      top: 8px;
+      left: 8px;
+      background: linear-gradient(135deg, var(--warning-color), #f97316);
+      color: white;
+      font-size: 10px;
+      padding: 4px 8px;
+      border-radius: 12px;
+      font-weight: 600
+    }
+    
+    .loading-skeleton {
+      background: linear-gradient(90deg, #374151 25%, #4b5563 50%, #374151 75%);
+      background-size: 200% 100%;
+      animation: shimmer 2s infinite;
+      border-radius: 6px
+    }
+    
+    .toast {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: linear-gradient(135deg, var(--success-color), #059669);
+      color: white;
+      padding: 12px 16px;
+      border-radius: 8px;
+      box-shadow: 0 8px 25px rgba(16, 185, 129, 0.4);
+      z-index: 1001;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1)
+    }
+    
+    .toast.show {
+      opacity: 1;
+      transform: translateY(0)
+    }
+    
+    .toast.error {
+      background: linear-gradient(135deg, var(--error-color), #dc2626)
+    }
+    
+    .section-toggle {
+      transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1)
+    }
+    
+    .section-toggle.expanded {
+      transform: rotate(90deg)
+    }
+    
+    .skip-link {
+      position: absolute;
+      left: -9999px;
+      z-index: 999;
+      padding: 8px;
+      background: var(--bg-secondary);
+      color: var(--text-primary);
+      text-decoration: none
+    }
+    
+    .skip-link:focus {
+      left: 6px;
+      top: 6px
+    }
+    
+    .password-overlay {
+      background: rgba(0, 0, 0, 0.98)
+    }
+    
+    .password-content {
+      background: linear-gradient(135deg, var(--bg-secondary), var(--bg-tertiary));
+      border: 2px solid var(--primary-purple);
+      box-shadow: 0 20px 50px rgba(139, 92, 246, 0.3)
+    }
+    
+    .password-input {
+      background: linear-gradient(135deg, #374151, #4b5563);
+      border: 2px solid #6b7280;
+      transition: all 0.3s
+    }
+    
+    .password-input:focus {
+      border-color: var(--primary-purple);
+      box-shadow: 0 0 20px rgba(139, 92, 246, 0.3)
+    }
+    
+    @keyframes fadeInUp {
+      to {
+        opacity: 1;
+        transform: translateY(0)
+      }
+    }
+    
+    @keyframes shimmer {
+      0% {
+        background-position: 200% 0
+      }
+      
+      100% {
+        background-position: -200% 0
+      }
+    }
+    
+    @keyframes aiGlow {
+      0% {
+        opacity: 0.5
+      }
+      
+      100% {
+        opacity: 1
+      }
+    }
+    
+    @keyframes spin {
+      to {
+        transform: rotate(360deg)
+      }
+    }
+    
+    @media (max-width:768px) {
+      .container {
+        padding: 12px !important
+      }
+      
+      .text-4xl {
+        font-size: 2.25rem !important
+      }
+      
+      .text-5xl {
+        font-size: 2.75rem !important
+      }
+      
+      .stats-compact {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px
+      }
+      
+      .page-thumb {
+        min-width: 80px;
+        height: 100px
+      }
+      
+      .text-block {
+        padding: 12px
+      }
+      
+      .nav-btn {
+        padding: 6px 10px;
+        font-size: 12px
+      }
+      
+      .mobile-icon-only {
+        display: inline
+      }
+      
+      .mobile-text-hide {
+        display: none
+      }
+      
+      .content-grid {
+        grid-template-columns: 1fr !important
+      }
+      
+      .image-item {
+        padding: 8px
+      }
+      
+      .stat-card {
+        padding: 12px
+      }
+      
+      .compact-nav {
+        padding: 8px 12px
+      }
+      
+      .font-status {
+        top: 10px;
+        right: 10px;
+        padding: 6px 8px
+      }
+      
+      .ai-panel {
+        padding: 16px
+      }
+      
+      .ai-generate-btn {
+        padding: 8px 16px;
+        font-size: 13px
+      }
+      
+      .image-grid.double,
+      .image-grid.multiple {
+        grid-template-columns: repeat(2, 1fr)
+      }
+      
+      .text-container,
+      .ai-content {
+        max-height: 250px
+      }
+      
+      .image-preview-content {
+        max-width: 95vw;
+        max-height: 95vh
+      }
+    }
+    
+    @media (min-width:768px) {
+      .desktop-layout {
+        grid-template-columns: 1fr
+      }
+      
+      .desktop-text {
+        display: inline
+      }
+      
+      .mobile-icon-only {
+        display: none
+      }
+      
+      .image-grid.single {
+        max-width: 300px
+      }
+      
+      .image-grid.double {
+        grid-template-columns: repeat(2, 1fr)
+      }
+      
+      .image-grid.multiple {
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr))
+      }
+    }
+    
+    @media (min-width:1024px) {
+      .desktop-layout {
+        grid-template-columns: 1fr
+      }
+      
+      .image-grid.multiple {
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr))
+      }
+    }
+    
+    @media (min-width:1280px) {
+      .desktop-layout {
+        grid-template-columns: 1fr
+      }
+      
+      .image-grid.multiple {
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr))
+      }
+    }
+    
+    .heading-text {
+      color: #c4b5fd;
+      font-weight: 700;
+      font-size: 17px;
+      margin-bottom: 10px;
+      line-height: 1.4
+    }
+    
+    .paragraph-text {
+      color: var(--text-secondary);
+      line-height: 1.6;
+      font-size: 14px;
+      margin-bottom: 8px
+    }
+    
+    .list-text {
+      color: var(--text-secondary);
+      line-height: 1.5;
+      font-size: 13px;
+      padding-left: 16px;
+      margin-bottom: 6px
+    }
+    
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0
+    }
+    
+    @media (prefers-reduced-motion:reduce) {
+      * {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important
+      }
+    }
+  </style>
+</head>
+
+<body
+  class="min-h-screen bg-black text-white">
+  <a href="#main-content"
+    class="skip-link">Skip to main
+    content</a>
+  <div id="fontStatus"
+    class="font-status" role="status"
+    aria-live="polite">Loading fonts...
+  </div>
+  <div
+    class="container mx-auto px-4 py-6">
+    <header
+      class="flex items-center justify-start mb-6 border-b border-gray-700 pb-4 fade-in">
+      <div
+        class="flex items-center space-x-3">
+        <div
+          class="w-10 h-10 bg-gradient-to-br from-purple-500 to-pink-500 rounded-lg flex items-center justify-center shadow-lg"
+          role="img"
+          aria-label="PurplePDF Logo">
+          <svg width="20" height="20"
+            viewBox="0 0 100 100"
+            xmlns="http://www.w3.org/2000/svg"
+            aria-hidden="true">
+            <defs>
+              <linearGradient
+                id="headerGrad" x1="0%"
+                y1="0%" x2="100%"
+                y2="100%">
+                <stop offset="0%"
+                  stop-color="#ffffff"
+                  stop-opacity="0.9" />
+                <stop offset="100%"
+                  stop-color="#e5e7eb"
+                  stop-opacity="0.8" />
+              </linearGradient>
+            </defs>
+            <circle cx="50" cy="50"
+              r="30"
+              fill="url(#headerGrad)" />
+            <path
+              d="M40 42h20v4h-20zm0 6h16v3h-16zm0 5h18v3h-18z"
+              fill="#8b5cf6"
+              opacity="0.8" />
+            <path
+              d="M62 48l-8 4 8 4v-2h6v-4h-6z"
+              fill="#8b5cf6" />
+          </svg>
+        </div>
+        <h1
+          class="text-2xl font-bold text-white">
+          PurplePDF</h1>
+      </div>
+    </header>
+    <main id="main-content"
+      class="text-center mb-8 fade-in"
+      tabindex="-1">
+      <h2
+        class="text-4xl md:text-5xl font-bold gradient-text mb-3">
+        Purple Extractor</h2>
+      <p
+        class="text-gray-400 text-base md:text-lg mb-6">
+        Extract text and images from PDF
+        documents with AI-powered
+        formatting and OCR</p>
+      <div id="dropZone"
+        class="border-2 border-dashed border-gray-600 rounded-xl p-8 md:p-12 mb-6 transition-all duration-300 hover:border-purple-500 cursor-pointer focus:outline-none focus:ring-2 focus:ring-purple-500"
+        tabindex="0" role="button"
+        aria-label="Upload PDF file area. Click or drop files here">
+        <div
+          class="flex flex-col items-center space-y-4">
+          <i class="fas fa-file-export text-5xl md:text-6xl text-purple-500"
+            aria-hidden="true"></i>
+          <h3
+            class="text-lg md:text-xl font-semibold">
+            Drop PDF file here</h3>
+          <p
+            class="text-gray-400 text-sm md:text-base">
+            or click to browse files</p>
+          <button id="uploadBtn"
+            class="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-semibold py-2 px-4 md:py-3 md:px-6 rounded-lg transition-all duration-300 transform hover:scale-105 shadow-lg text-sm md:text-base focus:outline-none focus:ring-2 focus:ring-purple-500"
+            aria-label="Choose PDF file"><i
+              class="fas fa-upload mr-2"
+              aria-hidden="true"></i>Choose
+            File</button>
+        </div>
+      </div><input type="file"
+        id="fileInput" accept=".pdf"
+        class="sr-only"
+        aria-label="PDF file input">
+      <div id="loadingContainer"
+        class="hidden mb-6 fade-in"
+        role="status"
+        aria-live="polite">
+        <div
+          class="bg-gray-800 rounded-lg p-3 border border-gray-700">
+          <div
+            class="flex items-center justify-between mb-2">
+            <span
+              class="text-xs md:text-sm text-gray-300"
+              id="loadingText">Processing
+              PDF...</span><span
+              id="loadingProgress"
+              class="text-xs md:text-sm text-purple-400 font-medium">0%</span>
+          </div>
+          <div
+            class="w-full bg-gray-700 rounded-full h-1 md:h-2 overflow-hidden"
+            role="progressbar"
+            aria-valuenow="0"
+            aria-valuemin="0"
+            aria-valuemax="100">
+            <div id="loadingBar"
+              class="loading-bar h-full">
+            </div>
+          </div>
+        </div>
+      </div>
+      <div id="extractBtn"
+        class="hidden mb-6"><button
+          class="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-bold py-3 px-6 md:py-4 md:px-8 rounded-xl transition-all duration-300 transform hover:scale-105 shadow-xl text-sm md:text-base focus:outline-none focus:ring-2 focus:ring-purple-500"
+          onclick="startExtraction()"
+          aria-label="Start PDF content extraction"><i
+            class="fas fa-magic mr-2"
+            aria-hidden="true"></i>Start
+          Extraction</button></div>
+      <div id="resultsContainer"
+        class="hidden text-left"
+        role="main"
+        aria-label="Extraction results">
+        <div id="statsRow"
+          class="stats-compact"></div>
+        <div id="pageSlider"
+          class="page-slider mb-4"
+          role="tablist"
+          aria-label="PDF pages navigation">
+        </div>
+        <div class="compact-nav">
+          <div
+            class="flex items-center space-x-2">
+            <button id="prevBtn"
+              class="nav-btn focus:outline-none focus:ring-2 focus:ring-purple-500"
+              onclick="previousPage()"
+              aria-label="Previous page"><i
+                class="fas fa-chevron-left"
+                aria-hidden="true"></i><span
+                class="mobile-text-hide ml-1">Prev</span></button><button
+              id="nextBtn"
+              class="nav-btn focus:outline-none focus:ring-2 focus:ring-purple-500"
+              onclick="nextPage()"
+              aria-label="Next page"><span
+                class="mobile-text-hide mr-1">Next</span><i
+                class="fas fa-chevron-right"
+                aria-hidden="true"></i></button>
+          </div><span id="pageIndicator"
+            class="text-gray-300 font-medium text-xs md:text-sm"
+            aria-live="polite">Page 1 of
+            1</span><label
+            for="searchBox"
+            class="sr-only">Search
+            extracted text</label><input
+            type="text" id="searchBox"
+            class="search-compact w-32 md:w-48"
+            placeholder="Search..."
+            aria-label="Search in extracted content">
+        </div>
+        <div id="pagesContainer"
+          class="content-grid desktop-layout">
+        </div>
+      </div>
+    </main>
+  </div>
+  <div id="passwordOverlay"
+    class="overlay password-overlay"
+    role="dialog"
+    aria-labelledby="password-title"
+    aria-modal="true">
+    <div
+      class="flex items-center justify-center h-full p-4">
+      <div
+        class="password-content rounded-xl p-8 max-w-md w-full mx-4 shadow-2xl">
+        <div class="text-center mb-6">
+          <div
+            class="w-16 h-16 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full flex items-center justify-content-center mx-auto mb-4">
+            <i
+              class="fas fa-lock text-2xl text-white"></i>
+          </div>
+          <h3 id="password-title"
+            class="text-2xl font-bold text-white">
+            Protected PDF</h3>
+          <p class="text-gray-300 mt-2">
+            This document requires a
+            password to access</p>
+        </div>
+        <div class="space-y-4"><label
+            for="passwordInput"
+            class="block text-sm font-medium text-gray-300">Enter
+            Password</label><input
+            type="password"
+            id="passwordInput"
+            placeholder="••••••••"
+            class="password-input w-full text-white rounded-lg px-4 py-3 focus:outline-none transition-all"
+            aria-describedby="password-help">
+          <div id="password-help"
+            class="text-xs text-gray-400">
+            Enter the password provided
+            by the document owner</div>
+        </div>
+        <div
+          class="flex space-x-3 mt-6">
+          <button id="passwordCancel"
+            class="flex-1 bg-gray-600 hover:bg-gray-700 text-white py-3 rounded-lg transition-all font-medium focus:outline-none focus:ring-2 focus:ring-gray-500">Cancel</button><button
+            id="passwordSubmit"
+            class="flex-1 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white py-3 rounded-lg transition-all font-medium focus:outline-none focus:ring-2 focus:ring-purple-500">Unlock</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div id="imagePreviewOverlay"
+    class="overlay image-preview-overlay"
+    role="dialog"
+    aria-labelledby="image-preview-title"
+    aria-modal="true">
+    <div
+      class="flex items-center justify-center h-full p-4">
+      <div
+        class="image-preview-content relative">
+        <div
+          class="image-preview-header">
+          <h3 id="image-preview-title"
+            class="text-lg font-bold text-white">
+            Image Preview</h3><button
+            id="closeImagePreview"
+            class="close-btn focus:outline-none focus:ring-2 focus:ring-red-500"
+            aria-label="Close image preview"><i
+              class="fas fa-times"
+              aria-hidden="true"></i></button>
+        </div>
+        <div class="image-preview-body"
+          id="imagePreviewContent">
+        </div>
+      </div>
+    </div>
+  </div>
+  <script>
+    let APP_STATE, ELEMENTS,
+      tesseractWorker = null;
+    document.addEventListener(
+      'DOMContentLoaded',
+      async function() {
+        pdfjsLib
+          .GlobalWorkerOptions
+          .workerSrc =
+          'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+        APP_STATE = {
+          pdf: null,
+          pages: [],
+          fileName: 'document',
+          currentPage: 0,
+          searchTerm: '',
+          fonts: new Set(),
+          isProcessing: false,
+          aiData: new Map(),
+          ocrData: new Map(),
+          observers: {
+            intersection: null,
+            mutation: null
+          }
+        };
+        ELEMENTS
+          = {
+            dropZone: document
+              .getElementById(
+                'dropZone'),
+            fileInput: document
+              .getElementById(
+                'fileInput'),
+            uploadBtn: document
+              .getElementById(
+                'uploadBtn'),
+            loadingContainer: document
+              .getElementById(
+                'loadingContainer'),
+            loadingBar: document
+              .getElementById(
+                'loadingBar'),
+            loadingProgress: document
+              .getElementById(
+                'loadingProgress'),
+            loadingText: document
+              .getElementById(
+                'loadingText'),
+            extractBtn: document
+              .getElementById(
+                'extractBtn'),
+            resultsContainer: document
+              .getElementById(
+                'resultsContainer'),
+            statsRow: document
+              .getElementById(
+                'statsRow'),
+            pageSlider: document
+              .getElementById(
+                'pageSlider'),
+            pagesContainer: document
+              .getElementById(
+                'pagesContainer'),
+            pageIndicator: document
+              .getElementById(
+                'pageIndicator'),
+            prevBtn: document
+              .getElementById(
+                'prevBtn'),
+            nextBtn: document
+              .getElementById(
+                'nextBtn'),
+            searchBox: document
+              .getElementById(
+                'searchBox'),
+            passwordOverlay: document
+              .getElementById(
+                'passwordOverlay'),
+            passwordInput: document
+              .getElementById(
+                'passwordInput'),
+            passwordCancel: document
+              .getElementById(
+                'passwordCancel'),
+            passwordSubmit: document
+              .getElementById(
+                'passwordSubmit'),
+            imagePreviewOverlay: document
+              .getElementById(
+                'imagePreviewOverlay'
+              ),
+            imagePreviewContent: document
+              .getElementById(
+                'imagePreviewContent'
+              ),
+            closeImagePreview: document
+              .getElementById(
+                'closeImagePreview'
+              ),
+            fontStatus: document
+              .getElementById(
+                'fontStatus')
+          };
+        const
+          DEBOUNCE_DELAY = 300,
+          AI_API_URL =
+          'https://text.pollinations.ai/',
+          MAX_CHARS = 3800;
+        let
+          searchTimeout = null;
+        
+        function safeExecute(fn,
+          errorMsg =
+          'Operation failed'
+        ) {
+          try { return fn() } catch (
+            error) {
+            console.error(
+              errorMsg, error);
+            showToast(errorMsg,
+              'error'
+            );
+            return null
+          }
+        }
+        async function safeExecuteAsync(
+          fn, errorMsg =
+          'Operation failed'
+        ) {
+          try { return await fn() } catch (
+            error) {
+            console
+              .error(errorMsg,
+                error);
+            showToast(errorMsg,
+              'error'
+            );
+            return null
+          }
+        }
+        async function initTesseract() {
+          try {
+            if (
+              !tesseractWorker
+            ) {
+              showFontStatus
+                ('Initializing OCR engine...',
+                  'info');
+              tesseractWorker =
+                await Tesseract
+                .createWorker(
+                  'eng',
+                  1, { logger: () => {} }
+                );
+              await tesseractWorker
+                .loadLanguage(
+                  'eng');
+              await tesseractWorker
+                .initialize(
+                  'eng');
+              showFontStatus(
+                'OCR engine ready',
+                'success'
+              )
+            }
+          } catch (
+            error) {
+            console
+              .error(
+                'Tesseract initialization error:',
+                error);
+            showFontStatus(
+              'OCR initialization failed',
+              'error')
+          }
+        }
+        
+        function truncateText(text,
+          maxLength = MAX_CHARS
+        ) {
+          if (!text || text
+            .length <= maxLength)
+            return text;
+          return text
+            .substring(0, maxLength)
+            .trim() + '...'
+        }
+        
+        function getCharacterCount(
+          text) {
+          return text ? text
+            .length : 0
+        }
+        
+        function getCharacterStatus(
+          count) {
+          if (count >
+            MAX_CHARS)
+            return 'error';
+          if (
+            count > MAX_CHARS * 0.9)
+            return 'warning';
+          return 'normal'
+        }
+        async function performOCR(
+          canvas, pageIndex
+        ) {
+          if (!
+            tesseractWorker)
+            await initTesseract();
+          if (
+            !tesseractWorker)
+            return null;
+          try {
+            showFontStatus
+              ('Performing OCR...',
+                'info'
+              );
+            const { data: { text } } =
+            await tesseractWorker
+              .recognize(canvas);
+            showFontStatus(
+              'OCR completed',
+              'success'
+            );
+            return text
+              .trim()
+          } catch (
+            error) {
+            console
+              .error('OCR error:',
+                error);
+            showFontStatus(
+              'OCR failed',
+              'error'
+            );
+            return null
+          }
+        }
+        async function generatePageImage(
+          page) {
+          try {
+            const
+              viewport = page
+              .getViewport({ scale: 2 });
+            const
+              canvas = document
+              .createElement(
+                'canvas');
+            const
+              context = canvas
+              .getContext('2d');
+            canvas.height =
+              viewport.height;
+            canvas.width =
+              viewport.width;
+            await page
+              .render({
+                canvasContext: context,
+                viewport
+              })
+              .promise;
+            return {
+              canvas,
+              dataURL: canvas
+                .toDataURL(
+                  'image/png',
+                  0.95
+                )
+            }
+          } catch (
+            error) {
+            console
+              .error(
+                'Page image generation error:',
+                error
+              );
+            return null
+          }
+        }
+        async function generateAIFormatting(
+          pageText, pageIndex
+        ) {
+          if (!pageText ||
+            pageText.trim()
+            .length < 10
+          ) {
+            showToast(
+              'No text content to format',
+              'error'
+            );
+            return null
+          }
+          const
+            truncatedText =
+            truncateText(
+              pageText);
+          const
+            prompt =
+            `Please format and improve the following extracted PDF text while keeping the original content intact. Fix grammatical errors, improve readability, add proper paragraph breaks, and format headings appropriately. Maintain all the original information but make it well-structured and professional:\n\n${truncatedText}`;
+          try {
+            const
+              controller =
+              new AbortController();
+            const
+              timeoutId =
+              setTimeout(() =>
+                controller
+                .abort(),
+                30000);
+            const
+              response =
+              await fetch(
+                AI_API_URL +
+                encodeURIComponent(
+                  prompt
+                ), {
+                  method: 'GET',
+                  headers: { 'Accept': 'text/plain', 'User-Agent': 'PurplePDF-Extractor/1.0' },
+                  signal: controller
+                    .signal
+                }
+              );
+            clearTimeout(
+              timeoutId);
+            if (
+              !response.ok)
+              throw new Error(
+                `API Error: ${response.status} - ${response.statusText}`
+              );
+            const
+              formattedText =
+              await response
+              .text();
+            if (!
+              formattedText ||
+              formattedText
+              .trim().length <
+              10)
+              throw new Error(
+                'Empty or invalid response from AI'
+              );
+            APP_STATE.aiData
+              .set(
+                pageIndex, {
+                  formatted: formattedText,
+                  timestamp: Date
+                    .now(),
+                  originalLength: pageText
+                    .length,
+                  formattedLength: formattedText
+                    .length
+                });
+            return formattedText
+          } catch (
+            error) {
+            console
+              .error(
+                'AI formatting error:',
+                error);
+            if (
+              error.name ===
+              'AbortError')
+              throw new Error(
+                'Request timeout - please try again'
+              );
+            throw new Error(
+              'Failed to format text: ' +
+              error.message
+            )
+          }
+        }
+        window
+          .generateAIForPage =
+          async function(
+            pageIndex) {
+            const
+              generateBtn =
+              document
+              .getElementById(
+                `ai-generate-${pageIndex}`
+              ),
+              aiContent =
+              document
+              .getElementById(
+                `ai-content-${pageIndex}`
+              );
+            if (!
+              generateBtn || !
+              aiContent)
+              return;
+            const
+              pageData =
+              APP_STATE.pages[
+                pageIndex
+              ];
+            if (!
+              pageData?.text
+              ?.length
+            ) {
+              showToast(
+                'No text content available for AI formatting',
+                'error'
+              );
+              return
+            }
+            const
+              allPageText =
+              pageData.text
+              .map(item =>
+                item.content)
+              .join('\n\n'),
+              charCount =
+              getCharacterCount(
+                allPageText
+              );
+            if (
+              charCount === 0
+            ) {
+              showToast(
+                'No text content to format',
+                'error'
+              );
+              return
+            }
+            generateBtn
+              .disabled =
+              true;
+            generateBtn
+              .innerHTML =
+              '<div class="ai-loading-spinner"></div>Generating...';
+            aiContent
+              .className =
+              'ai-content loading';
+            aiContent
+              .innerHTML =
+              '<div class="flex items-center justify-center"><div class="ai-loading-spinner"></div><span>AI is formatting your text...</span></div>';
+            try {
+              const
+                formattedText =
+                await generateAIFormatting(
+                  allPageText,
+                  pageIndex
+                );
+              if (
+                formattedText
+              ) {
+                requestAnimationFrame
+                  (() => {
+                    aiContent
+                      .className =
+                      'ai-content';
+                    aiContent
+                      .innerHTML =
+                      `<button class="ai-copy-btn" onclick="copyAIText(${pageIndex})" aria-label="Copy AI formatted text"><i class="fas fa-copy"></i></button><div class="ai-formatted-text">${escapeHtml(formattedText)}</div>`
+                  });
+                showToast(
+                  'Text formatted successfully!'
+                )
+              } else
+                throw new Error(
+                  'Failed to generate formatted text'
+                )
+            } catch (
+              error
+            ) {
+              requestAnimationFrame
+                (() => {
+                  aiContent
+                    .className =
+                    'ai-content';
+                  aiContent
+                    .innerHTML =
+                    `<div class="ai-error"><i class="fas fa-exclamation-triangle text-2xl mb-2"></i><p>AI formatting failed</p><p class="text-sm mt-2">${error.message}</p><button class="ai-generate-btn mt-3" onclick="generateAIForPage(${pageIndex})">Try Again</button></div>`
+                })
+            } finally {
+              generateBtn
+                .disabled =
+                false;
+              generateBtn
+                .innerHTML =
+                '<i class="fas fa-sparkles mr-2"></i>Generate AI Formatting'
+            }
+          };
+        window.copyAIText =
+          function(
+            pageIndex) {
+            const
+              aiData = APP_STATE
+              .aiData.get(
+                pageIndex);
+            if (aiData
+              ?.formatted
+            ) {
+              copyText(aiData
+                .formatted);
+              showToast(
+                'AI formatted text copied!'
+              )
+            }
+          };
+        
+        function createAIPanel(
+          pageData, pageIndex
+        ) {
+          const allPageText =
+            pageData.text?.map(
+              item => item.content)
+            .join('\n\n') || '',
+            charCount =
+            getCharacterCount(
+              allPageText),
+            charStatus =
+            getCharacterStatus(
+              charCount),
+            aiData = APP_STATE
+            .aiData.get(
+              pageIndex);
+          return `<div class="ai-panel fade-in" role="region" aria-labelledby="ai-title-${pageIndex}"><div class="ai-panel-header"><h3 id="ai-title-${pageIndex}" class="ai-title"><i class="fas fa-sparkles ai-icon" aria-hidden="true"></i>AI Text Enhancement</h3><button id="ai-generate-${pageIndex}" class="ai-generate-btn focus:outline-none focus:ring-2 focus:ring-cyan-500" onclick="generateAIForPage(${pageIndex})" aria-label="Generate AI formatted text for this page" ${charCount===0?'disabled':''}><i class="fas fa-sparkles mr-2" aria-hidden="true"></i>Generate AI Formatting</button></div><div id="ai-content-${pageIndex}" class="ai-content">${aiData?`<button class="ai-copy-btn" onclick="copyAIText(${pageIndex})" aria-label="Copy AI formatted text"><i class="fas fa-copy"></i></button><div class="ai-formatted-text">${escapeHtml(aiData.formatted)}</div>`:'<div class="text-center text-gray-400 py-8"><i class="fas fa-sparkles text-3xl mb-3 opacity-50"></i><p>Click "Generate AI Formatting" to enhance and format the extracted text</p><p class="text-sm mt-2 opacity-75">AI will improve grammar, structure, and readability</p></div>'}</div><div id="ai-char-counter-${pageIndex}" class="char-counter ${charStatus}">Text length: ${charCount.toLocaleString()} characters ${charCount>MAX_CHARS?`(truncated to ${MAX_CHARS.toLocaleString()})`:''}</div></div>`
+        }
+        
+        function showFontStatus(
+          message, type = 'info'
+        ) {
+          const status =
+            ELEMENTS
+            .fontStatus;
+          if (!
+            status) return;
+          safeExecute(() => {
+            status
+              .textContent =
+              message;
+            status.className =
+              `font-status show ${type}`;
+            setTimeout(() =>
+              status.classList
+              .remove('show'),
+              type ===
+              'error' ? 5000 :
+              3000
+            )
+          })
+        }
+        async function loadPDFFonts(
+          pdf) {
+          if (!pdf ||
+            typeof pdf
+            .numPages !== 'number'
+          )
+            return;
+          try {
+            showFontStatus
+              ('Loading PDF fonts...',
+                'info');
+            const
+              processedFonts =
+              new Set();
+            for (let
+                pageNum =
+                1; pageNum <= Math
+              .min(pdf.numPages,
+                10); pageNum++
+            ) {
+              try {
+                const
+                  page = await pdf
+                  .getPage(
+                    pageNum);
+                if (
+                  !page)
+                  continue;
+                const
+                  textContent =
+                  await page
+                  .getTextContent()
+                  .catch(() =>
+                    null);
+                if (
+                  textContent
+                  ?.items)
+                  textContent
+                  .items.forEach(
+                    item => {
+                      if (
+                        item
+                        ?.fontName &&
+                        typeof item
+                        .fontName ===
+                        'string')
+                        processedFonts
+                        .add(item
+                          .fontName
+                        )
+                    }
+                  )
+              } catch (
+                pageError
+              ) {
+                console.warn(
+                  `Font loading error on page ${pageNum}:`,
+                  pageError
+                )
+              }
+            }
+            APP_STATE
+              .fonts =
+              processedFonts;
+            showFontStatus(
+              `Found ${processedFonts.size} fonts`,
+              'success')
+          } catch (
+            error) {
+            console.warn(
+              'Font loading error:',
+              error);
+            showFontStatus(
+              'Font loading completed',
+              'error')
+          }
+        }
+        
+        function initIntersectionObserver() {
+          if (
+            APP_STATE.observers
+            .intersection) APP_STATE
+            .observers.intersection
+            .disconnect();
+          APP_STATE.observers
+            .intersection =
+            new IntersectionObserver(
+              entries => {
+                entries
+                  .forEach(
+                    entry => {
+                      if (
+                        entry
+                        .isIntersecting
+                      ) {
+                        const
+                          img =
+                          entry
+                          .target;
+                        if (
+                          img
+                          .dataset
+                          .src && !
+                          img.src
+                        ) {
+                          img
+                            .classList
+                            .add(
+                              'loading'
+                            );
+                          img.src =
+                            img
+                            .dataset
+                            .src;
+                          img
+                            .onload =
+                            () =>
+                            requestAnimationFrame(
+                              () => {
+                                img
+                                  .classList
+                                  .remove(
+                                    'loading'
+                                  );
+                                img
+                                  .classList
+                                  .add(
+                                    'loaded'
+                                  )
+                              }
+                            );
+                          img
+                            .onerror =
+                            () => {
+                              img
+                                .classList
+                                .remove(
+                                  'loading'
+                                );
+                              img
+                                .alt =
+                                'Failed to load image'
+                            };
+                          APP_STATE
+                            .observers
+                            .intersection
+                            .unobserve(
+                              img
+                            )
+                        }
+                      }
+                    })
+              }, {
+                threshold: 0.1,
+                rootMargin: '50px'
+              }
+            )
+        }
+        
+        function observeLazyImages() {
+          document
+            .querySelectorAll(
+              'img[data-src]')
+            .forEach(img =>
+              APP_STATE.observers
+              .intersection
+              ?.observe(img))
+        }
+        
+        function initEventListeners() {
+          const
+            addListener = (element,
+              event, handler,
+              options = {}
+            ) => {
+              if (element &&
+                typeof handler ===
+                'function') element
+                .addEventListener(
+                  event, handler,
+                  options)
+            };
+          addListener(ELEMENTS
+            .uploadBtn, 'click',
+            () => ELEMENTS
+            .fileInput?.click());
+          addListener(ELEMENTS
+            .fileInput, 'change',
+            handleFile);
+          addListener(ELEMENTS
+            .dropZone, 'click',
+            () => ELEMENTS
+            .fileInput
+            ?.click());
+          addListener(ELEMENTS
+            .dropZone, 'keydown',
+            e => {
+              if (e.key ===
+                'Enter' || e
+                .key === ' ') {
+                e
+                  .preventDefault();
+                ELEMENTS.fileInput
+                  ?.click()
+              }
+            });
+          addListener(ELEMENTS
+            .dropZone, 'dragover',
+            handleDragOver);
+          addListener(ELEMENTS
+            .dropZone,
+            'dragleave',
+            handleDragLeave);
+          addListener(ELEMENTS
+            .dropZone, 'drop',
+            handleDrop);
+          addListener(ELEMENTS
+            .passwordCancel,
+            'click', () =>
+            hideOverlay(ELEMENTS
+              .passwordOverlay));
+          addListener(ELEMENTS
+            .passwordSubmit,
+            'click',
+            handlePasswordSubmit);
+          addListener(ELEMENTS
+            .passwordInput,
+            'keydown', e => {
+              if (
+                e.key === 'Enter'
+              ) {
+                e
+                  .preventDefault();
+                handlePasswordSubmit
+                  ()
+              }
+            });
+          addListener(ELEMENTS
+            .closeImagePreview,
+            'click', () =>
+            hideOverlay(ELEMENTS
+              .imagePreviewOverlay
+            ));
+          addListener(ELEMENTS
+            .searchBox, 'input',
+            debounce(handleSearch,
+              DEBOUNCE_DELAY));
+          addListener(document,
+            'keydown',
+            handleGlobalKeydown);
+          addListener(window,
+            'beforeunload',
+            cleanup);
+          addListener(window,
+            'resize', debounce(
+              () => {
+                if (APP_STATE
+                  .currentPage <
+                  APP_STATE.pages
+                  .length)
+                  displayPage(
+                    APP_STATE
+                    .pages[
+                      APP_STATE
+                      .currentPage
+                    ])
+              }, 100))
+        }
+        
+        function handleDragOver(
+          e) {
+          e.preventDefault();
+          e.stopPropagation();
+          ELEMENTS.dropZone
+            ?.classList.add(
+              'drag-over')
+        }
+        
+        function handleDragLeave(
+          e) {
+          if (!ELEMENTS.dropZone
+            ?.contains(e
+              .relatedTarget))
+            ELEMENTS.dropZone
+            ?.classList.remove(
+              'drag-over')
+        }
+        
+        function handleDrop(e) {
+          e
+            .preventDefault();
+          e.stopPropagation();
+          ELEMENTS.dropZone
+            ?.classList.remove(
+              'drag-over');
+          if (e
+            .dataTransfer?.files
+            ?.length)
+            handleFile({
+              target: {
+                files: e
+                  .dataTransfer
+                  .files
+              }
+            })
+        }
+        
+        function handleGlobalKeydown(
+          e) {
+          if (e.target
+            ?.matches(
+              'input, textarea'))
+            return;
+          switch (e.key) {
+            case 'Escape':
+              hideAllOverlays
+                ();
+              break;
+            case 'ArrowLeft':
+              e.preventDefault();
+              previousPage();
+              break;
+            case 'ArrowRight':
+              e.preventDefault();
+              nextPage();
+              break
+          }
+        }
+        
+        function debounce(func,
+          delay) {
+          return function(
+            ...args
+          ) {
+            clearTimeout(
+              searchTimeout);
+            searchTimeout =
+              setTimeout(() =>
+                func.apply(this,
+                  args), delay)
+          }
+        }
+        
+        function handleSearch() {
+          APP_STATE
+            .searchTerm = ELEMENTS
+            .searchBox?.value
+            ?.toLowerCase()
+            ?.trim() || '';
+          if (
+            APP_STATE.currentPage <
+            APP_STATE.pages.length)
+            displayPage(APP_STATE
+              .pages[APP_STATE
+                .currentPage])
+        }
+        
+        function showOverlay(
+          overlay) {
+          if (!overlay)
+            return;
+          safeExecute(
+            () => {
+              overlay.style
+                .display = 'flex';
+              overlay
+                .setAttribute(
+                  'aria-hidden',
+                  'false');
+              requestAnimationFrame
+                (() => {
+                  overlay
+                    .classList
+                    .add(
+                      'show');
+                  overlay
+                    .querySelector(
+                      'button, input, [tabindex]:not([tabindex="-1"])'
+                    )
+                    ?.focus()
+                })
+            })
+        }
+        
+        function hideOverlay(
+          overlay) {
+          if (!overlay)
+            return;
+          safeExecute(
+            () => {
+              overlay
+                .classList.remove(
+                  'show');
+              overlay
+                .setAttribute(
+                  'aria-hidden',
+                  'true');
+              setTimeout(
+                () => {
+                  if (
+                    overlay
+                    .style
+                    .display !==
+                    'none')
+                    overlay
+                    .style
+                    .display =
+                    'none'
+                },
+                400)
+            })
+        }
+        
+        function hideAllOverlays() {
+          document
+            .querySelectorAll(
+              '.overlay').forEach(
+              hideOverlay
+            )
+        }
+        async function handleFile(
+          e) {
+          if (APP_STATE
+            .isProcessing)
+            return;
+          const file = e
+            ?.target?.files?.[
+              0
+            ];
+          if (!
+            file) {
+            showToast(
+              'Please select a PDF file',
+              'error'
+            );
+            return
+          }
+          if (file
+            .type !==
+            'application/pdf'
+          ) {
+            showToast(
+              'Please select a valid PDF file',
+              'error'
+            );
+            return
+          }
+          if (file
+            .size > 100 * 1024 *
+            1024) {
+            showToast(
+              'File too large. Please select a file smaller than 100MB',
+              'error'
+            );
+            return
+          }
+          APP_STATE
+            .fileName = file.name
+            .replace(/\.pdf$/i,
+              '');
+          APP_STATE.isProcessing =
+            true;
+          document.body.classList
+            .add(
+              'loading');
+          try {
+            const
+              arrayBuffer =
+              await file
+              .arrayBuffer();
+            APP_STATE.pdf =
+              await pdfjsLib
+              .getDocument({ data: arrayBuffer })
+              .promise;
+            await loadPDFFonts(
+              APP_STATE.pdf);
+            ELEMENTS.extractBtn
+              ?.classList.remove(
+                'hidden');
+            if (
+              ELEMENTS.dropZone)
+              ELEMENTS.dropZone
+              .style.display =
+              'none'
+          } catch (
+            error) {
+            if (error
+              .name ===
+              'PasswordException')
+              showOverlay(ELEMENTS
+                .passwordOverlay);
+            else showToast(
+              `Error loading PDF: ${error.message}`,
+              'error'
+            )
+          } finally {
+            APP_STATE
+              .isProcessing =
+              false;
+            document.body
+              .classList.remove(
+                'loading'
+              )
+          }
+        }
+        async function handlePasswordSubmit() {
+          const
+            password = ELEMENTS
+            .passwordInput
+            ?.value;
+          if (!
+            password
+          ) {
+            showToast(
+              'Please enter a password',
+              'error'
+            );
+            return
+          }
+          try {
+            const
+              file = ELEMENTS
+              .fileInput?.files
+              ?.[0];
+            if (!file)
+              throw new Error(
+                'No file selected'
+              );
+            const
+              arrayBuffer =
+              await file
+              .arrayBuffer();
+            APP_STATE.pdf =
+              await pdfjsLib
+              .getDocument({
+                data: arrayBuffer,
+                password
+              })
+              .promise;
+            await loadPDFFonts(
+              APP_STATE.pdf);
+            hideOverlay(ELEMENTS
+              .passwordOverlay
+            );
+            ELEMENTS.extractBtn
+              ?.classList
+              .remove(
+                'hidden');
+            if (
+              ELEMENTS.dropZone)
+              ELEMENTS.dropZone
+              .style.display =
+              'none';
+            ELEMENTS
+              .passwordInput
+              .value =
+              ''
+          } catch (
+            error) {
+            showToast(
+              'Invalid password or corrupted file',
+              'error'
+            )
+          }
+        }
+        window
+          .startExtraction =
+          async function() {
+            if (!
+              APP_STATE.pdf ||
+              APP_STATE
+              .isProcessing)
+              return;
+            APP_STATE
+              .isProcessing =
+              true;
+            document.body
+              .classList.add(
+                'loading');
+            ELEMENTS
+              .loadingContainer
+              ?.classList
+              .remove('hidden');
+            ELEMENTS.extractBtn
+              ?.classList.add(
+                'hidden');
+            APP_STATE
+              .pages = [];
+            APP_STATE.aiData
+              .clear();
+            APP_STATE.ocrData
+              .clear();
+            try {
+              await extractAllContent
+                ();
+              showResults
+                ()
+            } catch (
+              error) {
+              showToast(
+                `Extraction failed: ${error.message}`,
+                'error'
+              )
+            } finally {
+              APP_STATE
+                .isProcessing =
+                false;
+              document.body
+                .classList
+                .remove(
+                  'loading');
+              ELEMENTS
+                .loadingContainer
+                ?.classList.add(
+                  'hidden')
+            }
+          };
+        async function extractAllContent() {
+          if (
+            !APP_STATE.pdf)
+            return;
+          const numPages =
+            APP_STATE.pdf
+            .numPages;
+          updateProgress(0,
+            'Initializing extraction...'
+          );
+          for (let pageNum =
+              1; pageNum <=
+            numPages; pageNum++
+          ) {
+            const progress = (
+              pageNum / numPages
+            ) * 100;
+            updateProgress(
+              progress,
+              `Extracting page ${pageNum} of ${numPages}...`
+            );
+            const pageData =
+              await safeExecuteAsync(
+                () =>
+                extractPageContent(
+                  pageNum),
+                `Failed to extract page ${pageNum}`
+              );
+            if (pageData)
+              APP_STATE.pages
+              .push(pageData);
+            await new Promise(
+              resolve =>
+              setTimeout(
+                resolve, 20)
+            )
+          }
+          await createAllDataPage
+            ()
+        }
+        async function extractPageContent(
+          pageNum) {
+          const
+            page =
+            await APP_STATE.pdf
+            .getPage(pageNum),
+            pageData = {
+              pageNum,
+              text: [],
+              images: [],
+              thumbnail: null,
+              fullPageImage: null,
+              hasOCRText: false
+            };
+          const [, ,
+            pageImage
+          ] = await Promise.all(
+            [extractAdvancedText(
+                page, pageData
+              ),
+              extractImages(
+                page, pageData
+              ),
+              generatePageImage(
+                page)
+            ]);
+          if (pageImage)
+            pageData
+            .fullPageImage =
+            pageImage
+            .dataURL;
+          if (
+            pageData.text
+            .length === 0 &&
+            pageImage)
+            await performOCROnPage(
+              pageImage.canvas,
+              pageData);
+          pageData.thumbnail =
+            await generateThumbnail(
+              page
+            );
+          return pageData
+        }
+        async function extractAdvancedText(
+          page, pageData
+        ) {
+          try {
+            const
+              textContent =
+              await page
+              .getTextContent();
+            if (
+              !textContent
+              ?.items?.length)
+              return;
+            const
+              viewport = page
+              .getViewport({ scale: 1 }),
+              items =
+              textContent
+              .items.map(
+                item => ({
+                  ...
+                  item,
+                  fontSize: item
+                    .height ||
+                    12,
+                  x: item
+                    .transform
+                    ?.[4] ||
+                    0,
+                  y: item
+                    .transform
+                    ?.[5] ||
+                    0
+                }))
+              .filter(item =>
+                item.str
+                ?.trim())
+              .sort((a,
+                b) => {
+                const
+                  yDiff =
+                  Math.abs(a
+                    .y - b.y
+                  );
+                return yDiff >
+                  5 ? b.y -
+                  a.y : a
+                  .x - b
+                  .x
+              });
+            let
+              blocks = [],
+              currentBlock = {
+                text: '',
+                fontSize: 12,
+                x: 0,
+                y: 0
+              };
+            items.forEach(
+              item => {
+                const
+                  text =
+                  item.str
+                  .trim(),
+                  isNewBlock =
+                  currentBlock
+                  .text && (
+                    Math
+                    .abs(
+                      item
+                      .y -
+                      currentBlock
+                      .y) >
+                    item
+                    .fontSize *
+                    0.7 ||
+                    Math
+                    .abs(
+                      item
+                      .x -
+                      currentBlock
+                      .x) >
+                    viewport
+                    .width *
+                    0.8
+                  );
+                if (
+                  isNewBlock &&
+                  currentBlock
+                  .text
+                  .length >
+                  2
+                ) {
+                  blocks
+                    .push({
+                      ...
+                      currentBlock,
+                      text: currentBlock
+                        .text
+                        .trim()
+                        .replace(
+                          /\s+/g,
+                          ' '
+                        )
+                    });
+                  currentBlock
+                    = {
+                      text: '',
+                      fontSize: 12,
+                      x: 0,
+                      y: 0
+                    }
+                }
+                if (
+                  !
+                  currentBlock
+                  .text)
+                  Object
+                  .assign(
+                    currentBlock, {
+                      x: item
+                        .x,
+                      y: item
+                        .y,
+                      fontSize: item
+                        .fontSize
+                    }
+                  );
+                currentBlock
+                  .text +=
+                  text +
+                  ' '
+              });
+            if (
+              currentBlock
+              .text.length > 2
+            ) blocks.push({
+              ...
+              currentBlock,
+              text: currentBlock
+                .text
+                .trim()
+                .replace(
+                  /\s+/g,
+                  ' ')
+            });
+            blocks.forEach(
+              block => {
+                const {
+                  text,
+                  fontSize
+                } =
+                block;
+                let
+                  type =
+                  'paragraph';
+                if (
+                  fontSize >
+                  16 ||
+                  /^[A-Z\s\-:]{5,50}$/
+                  .test(
+                    text) ||
+                  /^(Chapter|Section|CHAPTER|SECTION|\d+\.|\w+:)/
+                  .test(
+                    text) ||
+                  text
+                  .length <
+                  100 &&
+                  fontSize >
+                  14) type =
+                  'heading';
+                else if (
+                  /^[\-•\*◦▪▫‣⁃]\s/
+                  .test(
+                    text) ||
+                  /^\d+[\.\)]\s/
+                  .test(
+                    text))
+                  type =
+                  'list';
+                pageData
+                  .text
+                  .push({
+                    type,
+                    content: text,
+                    searchable: text
+                      .toLowerCase(),
+                    fontSize,
+                    x: block
+                      .x,
+                    y: block
+                      .y
+                  })
+              }
+            )
+          } catch (
+            error) {
+            console
+              .error(
+                `Text extraction error on page ${pageData.pageNum}:`,
+                error
+              )
+          }
+        }
+        async function performOCROnPage(
+          canvas, pageData
+        ) {
+          try {
+            const
+              ocrText =
+              await performOCR(
+                canvas,
+                pageData
+                .pageNum
+              );
+            if (
+              ocrText &&
+              ocrText
+              .length > 20
+            ) {
+              ocrText
+                .split('\n')
+                .filter(
+                  line =>
+                  line
+                  .trim()
+                  .length >
+                  2)
+                .forEach((
+                  line,
+                  index
+                ) => {
+                  const
+                    trimmedLine =
+                    line
+                    .trim();
+                  if (
+                    trimmedLine
+                  ) {
+                    let
+                      type =
+                      'paragraph';
+                    if (
+                      trimmedLine
+                      .length <
+                      60 &&
+                      (trimmedLine
+                        .match(
+                          /^[A-Z]/
+                        ) ||
+                        index ===
+                        0)
+                    )
+                      type =
+                      'heading';
+                    else if (
+                      trimmedLine
+                      .match(
+                        /^[\-•\*◦▪▫‣⁃]\s/
+                      ) ||
+                      trimmedLine
+                      .match(
+                        /^\d+[\.\)]\s/
+                      ))
+                      type =
+                      'list';
+                    pageData
+                      .text
+                      .push({
+                        type,
+                        content: trimmedLine,
+                        searchable: trimmedLine
+                          .toLowerCase(),
+                        fontSize: 14,
+                        x: 0,
+                        y: 0,
+                        isOCR: true
+                      })
+                  }
+                });
+              pageData
+                .hasOCRText =
+                true;
+              APP_STATE
+                .ocrData
+                .set(
+                  pageData
+                  .pageNum,
+                  ocrText
+                )
+            }
+          } catch (
+            error) {
+            console
+              .error(
+                'OCR error:',
+                error
+              )
+          }
+        }
+        async function extractImages(
+          page, pageData
+        ) {
+          try {
+            const
+              operatorList =
+              await page
+              .getOperatorList();
+            if (
+              !
+              operatorList
+              ?.fnArray)
+              return;
+            for (
+              let i =
+                0; i <
+              operatorList
+              .fnArray
+              .length; i++
+            ) {
+              if (
+                operatorList
+                .fnArray[
+                  i] ===
+                pdfjsLib
+                .OPS
+                .paintImageXObject
+              ) {
+                try {
+                  const
+                    imgName =
+                    operatorList
+                    .argsArray
+                    ?.[i]
+                    ?.[
+                      0
+                    ];
+                  if (
+                    !
+                    imgName
+                  )
+                    continue;
+                  const
+                    imgRef =
+                    page
+                    .objs
+                    .get(
+                      imgName
+                    );
+                  if (
+                    imgRef
+                    ?.width >
+                    50 &&
+                    imgRef
+                    ?.height >
+                    50
+                  ) {
+                    const
+                      canvas =
+                      document
+                      .createElement(
+                        'canvas'
+                      ),
+                      ctx =
+                      canvas
+                      .getContext(
+                        '2d'
+                      );
+                    canvas
+                      .width =
+                      imgRef
+                      .width;
+                    canvas
+                      .height =
+                      imgRef
+                      .height;
+                    if (
+                      imgRef
+                      .kind ===
+                      2 &&
+                      imgRef
+                      .data
+                    ) {
+                      const
+                        imgData =
+                        new ImageData(
+                          new Uint8ClampedArray(
+                            imgRef
+                            .data
+                          ),
+                          imgRef
+                          .width,
+                          imgRef
+                          .height
+                        );
+                      ctx
+                        .putImageData(
+                          imgData,
+                          0,
+                          0
+                        )
+                    } else if (
+                      imgRef
+                      .bitmap
+                    )
+                      ctx
+                      .drawImage(
+                        imgRef
+                        .bitmap,
+                        0,
+                        0
+                      );
+                    else
+                      continue;
+                    pageData
+                      .images
+                      .push({
+                        src: canvas
+                          .toDataURL(
+                            'image/png',
+                            0.9
+                          ),
+                        width: imgRef
+                          .width,
+                        height: imgRef
+                          .height,
+                        index: pageData
+                          .images
+                          .length +
+                          1
+                      })
+                  }
+                } catch (
+                  imgError
+                ) {
+                  console
+                    .warn(
+                      'Image extraction error:',
+                      imgError
+                    )
+                }
+              }
+            }
+          } catch (
+            error
+          ) {
+            console
+              .error(
+                `Image extraction error on page ${pageData.pageNum}:`,
+                error
+              )
+          }
+        }
+        async function generateThumbnail(
+          page
+        ) {
+          try {
+            const
+              viewport =
+              page
+              .getViewport({ scale: 0.25 }),
+              canvas =
+              document
+              .createElement(
+                'canvas'
+              ),
+              context =
+              canvas
+              .getContext(
+                '2d');
+            canvas
+              .height =
+              viewport
+              .height;
+            canvas
+              .width =
+              viewport
+              .width;
+            await page
+              .render({
+                canvasContext: context,
+                viewport
+              })
+              .promise;
+            return canvas
+              .toDataURL(
+                'image/jpeg',
+                0.6
+              )
+          } catch (
+            error
+          ) { return null }
+        }
+        async function createAllDataPage() {
+          APP_STATE
+            .pages
+            .push({
+              pageNum: 'All Data',
+              text: APP_STATE
+                .pages,
+              images: APP_STATE
+                .pages
+                .flatMap(
+                  page =>
+                  page
+                  .images
+                  ?.map(
+                    img =>
+                    ({
+                      ...
+                      img,
+                      page: page
+                        .pageNum
+                    })
+                  ) || []
+                ),
+              thumbnail: null,
+              isAllData: true
+            })
+        }
+        
+        function updateProgress(
+          percent, text
+        ) {
+          requestAnimationFrame(
+            () => {
+              if (ELEMENTS
+                .loadingBar
+              ) {
+                ELEMENTS
+                  .loadingBar
+                  .style.width =
+                  Math.min(Math
+                    .max(percent,
+                      0), 100) +
+                  '%';
+                ELEMENTS
+                  .loadingBar
+                  .setAttribute(
+                    'aria-valuenow',
+                    Math.round(
+                      percent)
+                  )
+              }
+              if (
+                ELEMENTS
+                .loadingProgress)
+                ELEMENTS
+                .loadingProgress
+                .textContent =
+                Math.round(
+                  percent) +
+                '%';
+              if (ELEMENTS
+                .loadingText &&
+                text) ELEMENTS
+                .loadingText
+                .textContent =
+                text
+            })
+        }
+        
+        function showResults() {
+          ELEMENTS
+            .resultsContainer
+            ?.classList.remove(
+              'hidden');
+          requestAnimationFrame(
+            () => {
+              showStats();
+              createPageSlider();
+              showPage(0);
+              ELEMENTS
+                .resultsContainer
+                ?.scrollIntoView({ behavior: 'smooth' });
+              initIntersectionObserver
+                ()
+            })
+        }
+        
+        function showStats() {
+          const
+            realPages = APP_STATE
+            .pages.slice(0, -1),
+            totalWords = realPages
+            .reduce((sum, page) =>
+              sum + (page.text
+                ?.reduce((pageSum,
+                    item) =>
+                  pageSum + (item
+                    .content?.split(
+                      /\s+/)
+                    ?.length || 0),
+                  0) || 0), 0),
+            totalChars = realPages
+            .reduce((sum, page) =>
+              sum + (page.text
+                ?.reduce((pageSum,
+                    item) =>
+                  pageSum + (item
+                    .content
+                    ?.length || 0),
+                  0) || 0), 0),
+            totalImages = realPages
+            .reduce((sum, page) =>
+              sum + (page.images
+                ?.length || 0), 0),
+            stats = [
+            {
+              value: totalWords
+                .toLocaleString(),
+              label: 'Words',
+              color: 'purple'
+            },
+            {
+              value: totalChars
+                .toLocaleString(),
+              label: 'Characters',
+              color: 'pink'
+            },
+            {
+              value: totalImages,
+              label: 'Images',
+              color: 'yellow'
+            },
+            {
+              value: realPages
+                .length,
+              label: 'Pages',
+              color: 'green'
+            }];
+          if (
+            ELEMENTS.statsRow)
+            ELEMENTS.statsRow
+            .innerHTML = stats.map((
+                stat, index) =>
+              `<div class="stat-card fade-in stagger-${index+1}" role="img" aria-label="${stat.value} ${stat.label}"><div class="text-lg md:text-2xl font-bold text-${stat.color}-400 mb-1">${stat.value}</div><div class="text-gray-300 text-xs">${stat.label}</div></div>`
+            ).join('')
+        }
+        
+        function createPageSlider() {
+          if (
+            !ELEMENTS.pageSlider)
+            return;
+          const pages =
+            APP_STATE.pages.map((
+              page, index
+            ) => {
+              const
+                isAllData = page
+                .isAllData,
+                content =
+                isAllData ?
+                `<div class="all-data-icon" role="img" aria-label="All data summary"><i class="fas fa-layer-group" aria-hidden="true"></i></div><div class="text-xs text-center text-gray-300 mt-1 font-medium">All Data</div>` :
+                `<img data-src="${page.thumbnail||''}" alt="Page ${page.pageNum} thumbnail" class="lazy-img" loading="lazy"><div class="text-xs text-center text-gray-300 mt-1 font-medium">P${page.pageNum}</div>`;
+              return `<div class="page-thumb ${index===0?'active':''}" role="tab" aria-selected="${index===0}" tabindex="${index===0?0:-1}" data-page="${index}" aria-label="${isAllData?'All data summary':`Page ${page.pageNum}`}">${content}</div>`
+            })
+            .join('');
+          ELEMENTS.pageSlider
+            .innerHTML = pages;
+          ELEMENTS.pageSlider
+            .querySelectorAll(
+              '.page-thumb')
+            .forEach((thumb,
+              index) => {
+              thumb
+                .addEventListener(
+                  'click', () =>
+                  showPage(index)
+                );
+              thumb
+                .addEventListener(
+                  'keydown',
+                  e => {
+                    if (e
+                      .key ===
+                      'Enter' || e
+                      .key === ' '
+                    ) {
+                      e
+                        .preventDefault();
+                      showPage(
+                        index)
+                    }
+                  }
+                )
+            });
+          requestAnimationFrame(
+            observeLazyImages
+          )
+        }
+        window.showPage =
+          function(index) {
+            if (
+              index < 0 || index >=
+              APP_STATE.pages.length
+            ) return;
+            APP_STATE.currentPage =
+              index;
+            requestAnimationFrame(
+              () => {
+                document
+                  .querySelectorAll(
+                    '.page-thumb')
+                  .forEach((thumb,
+                    i
+                  ) => {
+                    const
+                      isActive =
+                      i ===
+                      index;
+                    thumb
+                      .classList
+                      .toggle(
+                        'active',
+                        isActive
+                      );
+                    thumb
+                      .setAttribute(
+                        'aria-selected',
+                        isActive
+                      );
+                    thumb
+                      .setAttribute(
+                        'tabindex',
+                        isActive ?
+                        0 : -1
+                      )
+                  });
+                const
+                  pageData =
+                  APP_STATE.pages[
+                    index];
+                if (
+                  ELEMENTS
+                  .pageIndicator)
+                  ELEMENTS
+                  .pageIndicator
+                  .textContent =
+                  pageData
+                  .isAllData ?
+                  'All Data' :
+                  `Page ${pageData.pageNum} of ${APP_STATE.pages.length-1}`;
+                if (
+                  ELEMENTS.prevBtn
+                ) ELEMENTS
+                  .prevBtn
+                  .disabled =
+                  index ===
+                  0;
+                if (ELEMENTS
+                  .nextBtn)
+                  ELEMENTS.nextBtn
+                  .disabled =
+                  index ===
+                  APP_STATE.pages
+                  .length - 1;
+                displayPage(
+                  pageData);
+                document
+                  .querySelector(
+                    '.page-thumb.active'
+                  )
+                  ?.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'nearest',
+                    inline: 'center'
+                  })
+              }
+            )
+          };
+        
+        function displayPage(
+          pageData) {
+          if (!pageData)
+            return;
+          requestAnimationFrame(
+            () => {
+              if (pageData
+                .isAllData)
+                displayAllDataPage();
+              else
+                displaySinglePage(
+                  pageData);
+              observeLazyImages
+                ()
+            })
+        }
+        
+        function displaySinglePage(
+          pageData) {
+          const
+            aiPanel = createAIPanel(
+              pageData, APP_STATE
+              .currentPage),
+            textSection =
+            createTextSection(
+              pageData, APP_STATE
+              .currentPage),
+            imageSection =
+            createImageSection(
+              pageData, APP_STATE
+              .currentPage);
+          if (
+            ELEMENTS.pagesContainer)
+            ELEMENTS.pagesContainer
+            .innerHTML = aiPanel +
+            textSection +
+            imageSection
+        }
+        
+        function createTextSection(
+          pageData, pageIndex
+        ) {
+          if (!pageData.text
+            ?.length)
+            return `<div class="text-container text-center text-gray-500" role="status"><i class="fas fa-exclamation-circle text-2xl mb-2" aria-hidden="true"></i><p>No text found on this page</p></div>`;
+          const
+            hasOCRText = pageData
+            .text.some(item => item
+              .isOCR
+            );
+          return `<div class="text-container" role="region" aria-labelledby="text-section-${pageIndex}"><div class="flex items-center justify-between mb-4"><h3 id="text-section-${pageIndex}" class="text-lg font-bold text-white flex items-center"><i class="fas fa-file-text mr-2 text-purple-400" aria-hidden="true"></i><span class="mobile-text-hide">Page ${pageData.pageNum} - Text Content</span><span class="mobile-icon-only">Text</span>${hasOCRText?'<span class="ocr-indicator ml-2">OCR</span>':''}</h3><button class="bg-green-600 hover:bg-green-700 text-white px-3 py-2 rounded-lg text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-green-500" onclick="copyPageText(${pageIndex})" aria-label="Copy all text from this page"><i class="fas fa-copy mr-1" aria-hidden="true"></i><span class="mobile-text-hide">Copy All</span></button></div><div class="space-y-3">${pageData.text.map((textItem,index)=>createTextBlock(textItem,index)).join('')}</div></div>`
+        }
+        
+        function createTextBlock(
+          textItem, index) {
+          const
+            highlightedContent =
+            highlightSearch(
+              escapeHtml(textItem
+                .content)),
+            cssClass = textItem
+            .type === 'heading' ?
+            'heading-text' :
+            textItem.type ===
+            'list' ? 'list-text' :
+            'paragraph-text',
+            ocrIndicator = textItem
+            .isOCR ?
+            '<span class="ocr-indicator">OCR</span>' :
+            '';
+          return `<div class="text-block" role="article" aria-label="${textItem.type}${textItem.isOCR?' extracted via OCR':''}"><button class="copy-btn focus:outline-none focus:ring-2 focus:ring-purple-500" onclick="copyText('${escapeForAttribute(textItem.content)}')" aria-label="Copy this text block"><i class="fas fa-copy" aria-hidden="true"></i></button>${ocrIndicator}<div class="${cssClass}" role="${textItem.type==='heading'?'heading':'text'}">${highlightedContent}</div></div>`
+        }
+        
+        function createImageSection(
+          pageData, pageIndex
+        ) {
+          const allImages = [...
+            pageData.images
+          ];
+          if (pageData
+            .fullPageImage)
+            allImages
+            .unshift({
+              src: pageData
+                .fullPageImage,
+              width: 800,
+              height: 1200,
+              index: 0,
+              isFullPage: true
+            });
+          if (
+            !allImages.length)
+            return `<div class="image-container text-center text-gray-500" role="status"><i class="fas fa-image text-2xl mb-2" aria-hidden="true"></i><p>No images found on this page</p></div>`;
+          const
+            gridClass = allImages
+            .length === 1 ?
+            'single' : allImages
+            .length === 2 ?
+            'double' :
+            'multiple';
+          return `<div class="image-container" role="region" aria-labelledby="images-section-${pageIndex}"><div class="flex items-center justify-between mb-4"><h3 id="images-section-${pageIndex}" class="text-lg font-bold text-white flex items-center"><i class="fas fa-images mr-2 text-purple-400" aria-hidden="true"></i><span class="mobile-text-hide">Images (${allImages.length})</span><span class="mobile-icon-only">${allImages.length}</span></h3><button class="bg-green-600 hover:bg-green-700 text-white px-3 py-2 rounded-lg text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-green-500" onclick="downloadPageImages(${pageIndex})" aria-label="Download all images from this page"><i class="fas fa-download mr-1" aria-hidden="true"></i><span class="mobile-text-hide">Download All</span></button></div><div class="image-grid ${gridClass}" role="list">${allImages.map((img,imgIndex)=>createImageItem(img,pageIndex,imgIndex,pageData.pageNum)).join('')}</div></div>`
+        }
+        
+        function createImageItem(
+          img, pageIndex, imgIndex,
+          pageNum) {
+          const
+            isFullPage = img
+            .isFullPage,
+            label = isFullPage ?
+            'Full Page' : 'Image ' +
+            img
+            .index;
+          return `<div class="image-item" role="listitem"><img data-src="${img.src}" alt="${label} from page ${pageNum}" class="w-full ${isFullPage?'h-40':'h-32'} md:${isFullPage?'h-48':'h-40'} object-cover cursor-pointer lazy-img focus:outline-none focus:ring-2 focus:ring-purple-500" tabindex="0" onclick="previewImage(${pageIndex},${imgIndex})" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();previewImage(${pageIndex},${imgIndex})}" aria-label="Preview ${label.toLowerCase()}"><div class="flex items-center justify-between mt-3"><div class="text-xs text-gray-400"><div class="font-medium">${label}</div><div>${img.width}×${img.height}px</div></div><button class="bg-purple-600 hover:bg-purple-700 text-white px-3 py-1 rounded text-xs transition-colors focus:outline-none focus:ring-2 focus:ring-purple-500" onclick="event.stopPropagation();downloadImage(${pageIndex},${imgIndex})" aria-label="Download ${label.toLowerCase()}"><i class="fas fa-download" aria-hidden="true"></i></button></div></div>`
+        }
+        
+        function displayAllDataPage() {
+          const
+            aiPanel =
+            createAIPanel({
+                text: APP_STATE
+                  .pages.slice(0, -
+                    1)
+              }, APP_STATE
+              .pages.length - 1),
+            pageSections = APP_STATE
+            .pages.slice(0, -1).map(
+              (pageData, index) =>
+              createPageSection(
+                pageData, index))
+            .join('');
+          if (ELEMENTS
+            .pagesContainer)
+            ELEMENTS.pagesContainer
+            .innerHTML = aiPanel +
+            `<div class="text-container" role="region" aria-labelledby="all-data-title"><div class="flex items-center justify-between mb-4"><h3 id="all-data-title" class="text-xl font-bold text-white flex items-center"><i class="fas fa-layer-group mr-2 text-purple-400" aria-hidden="true"></i>Complete Document</h3><div class="flex space-x-2"><button class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded-lg text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500" onclick="expandAllSections()" aria-label="Expand all page sections"><i class="fas fa-expand-arrows-alt mr-1" aria-hidden="true"></i><span class="mobile-text-hide">Expand All</span></button><button class="bg-green-600 hover:bg-green-700 text-white px-3 py-2 rounded-lg text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-green-500" onclick="copyAllText()" aria-label="Copy all extracted text"><i class="fas fa-copy mr-1" aria-hidden="true"></i><span class="mobile-text-hide">Copy All</span></button></div></div>${pageSections}</div>`
+        }
+        
+        function createPageSection(
+          pageData, index) {
+          const
+            hasOCRText = pageData
+            .text?.some(item => item
+              .isOCR
+            );
+          return `<div class="page-section" role="region" aria-labelledby="section-header-${index}"><div class="page-section-header focus:outline-none focus:ring-2 focus:ring-purple-500" tabindex="0" onclick="toggleSection(${index})" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();toggleSection(${index})}" aria-expanded="false" aria-controls="content-${index}"><div class="flex items-center"><i class="fas fa-chevron-right section-toggle mr-2" id="toggle-${index}" aria-hidden="true"></i><h4 id="section-header-${index}" class="font-semibold text-white">Page ${pageData.pageNum}${hasOCRText?' (OCR)':''}</h4><span class="text-xs text-gray-400 ml-2" aria-label="Content summary">(${pageData.text?.length||0} text blocks, ${pageData.images?.length||0} images)</span></div></div><div class="page-section-content" id="content-${index}" aria-labelledby="section-header-${index}"><div class="space-y-3">${pageData.text?.map((textItem,textIndex)=>createTextBlock(textItem,textIndex)).join('')||''}</div>${pageData.images?.length?createPageImages(pageData,index):''}</div></div>`
+        }
+        
+        function createPageImages(
+          pageData, pageIndex
+        ) { return `<div class="mt-6" role="region" aria-label="Page images"><h5 class="text-purple-300 font-medium mb-3 flex items-center"><i class="fas fa-images mr-2" aria-hidden="true"></i>Images (${pageData.images.length})</h5><div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3" role="list">${pageData.images.map((img,imgIndex)=>`<div class="image-item" role="listitem"><img data-src="${img.src}" alt="Image ${img.index} from page ${pageData.pageNum}" class="w-full h-24 object-cover rounded cursor-pointer lazy-img focus:outline-none focus:ring-2 focus:ring-purple-500" tabindex="0" onclick="previewImageFromAll(${pageIndex},${imgIndex})" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();previewImageFromAll(${pageIndex},${imgIndex})}" aria-label="Preview image ${img.index}"><div class="flex items-center justify-between mt-2"><div class="text-xs text-gray-400">${img.width}×${img.height}</div><button class="bg-purple-600 hover:bg-purple-700 text-white px-2 py-1 rounded text-xs transition-colors focus:outline-none focus:ring-2 focus:ring-purple-500" onclick="event.stopPropagation();downloadImageFromAll(${pageIndex},${imgIndex})" aria-label="Download image ${img.index}"><i class="fas fa-download" aria-hidden="true"></i></button></div></div>`).join('')}</div></div>` } window
+          .toggleSection = function(
+            index) {
+            const content =
+              document
+              .getElementById(
+                `content-${index}`),
+              toggle = document
+              .getElementById(
+                `toggle-${index}`),
+              header = content
+              ?.parentElement
+              ?.querySelector(
+                '.page-section-header'
+              );
+            if (!content || !
+              toggle || !header)
+              return;
+            safeExecute(
+              () => {
+                const
+                  section =
+                  content
+                  .parentElement,
+                  isCollapsed =
+                  section
+                  .classList
+                  .contains(
+                    'collapsed');
+                section.classList
+                  .toggle(
+                    'collapsed');
+                toggle.classList
+                  .toggle(
+                    'expanded', !
+                    isCollapsed);
+                header
+                  .setAttribute(
+                    'aria-expanded',
+                    (!isCollapsed)
+                    .toString()
+                  )
+              })
+          };
+        window.expandAllSections =
+          function() {
+            safeExecute(
+              () => {
+                document
+                  .querySelectorAll(
+                    '.page-section'
+                  ).forEach(
+                    section =>
+                    section
+                    .classList
+                    .remove(
+                      'collapsed')
+                  );
+                document
+                  .querySelectorAll(
+                    '.section-toggle'
+                  ).forEach(
+                    toggle =>
+                    toggle
+                    .classList
+                    .add(
+                      'expanded')
+                  );
+                document
+                  .querySelectorAll(
+                    '.page-section-header'
+                  ).forEach(
+                    header =>
+                    header
+                    .setAttribute(
+                      'aria-expanded',
+                      'true'))
+              })
+          };
+        window.copyAllText =
+          function() {
+            const
+              allText = APP_STATE
+              .pages.slice(0, -1)
+              .map(page =>
+                `--- Page ${page.pageNum} ---\n${page.text?.map(item=>item.content).join('\n\n')||''}`
+              ).join('\n\n\n');
+            copyText(allText)
+          };
+        window.previousPage =
+          function() {
+            if (APP_STATE
+              .currentPage > 0)
+              showPage(APP_STATE
+                .currentPage - 1)
+          };
+        window.nextPage =
+          function() {
+            if (APP_STATE
+              .currentPage <
+              APP_STATE.pages
+              .length - 1) showPage(
+              APP_STATE
+              .currentPage + 1)
+          };
+        
+        function highlightSearch(
+          text) {
+          if (!APP_STATE
+            .searchTerm || !text)
+            return text;
+          try {
+            const
+              regex = new RegExp(
+                `(${escapeRegex(APP_STATE.searchTerm)})`,
+                'gi');
+            return text
+              .replace(regex,
+                '<mark class="highlight">$1</mark>'
+              )
+          } catch { return text }
+        }
+        
+        function escapeRegex(
+          string) {
+          return string
+            .replace(
+              /[.*+?^${}()|[\]\\]/g,
+              '\\$&')
+        }
+        window
+          .copyText = function(
+            text) {
+            if (!text)
+              return;
+            const
+              copyToClipboard =
+              async () => {
+                try {
+                  await navigator
+                    .clipboard
+                    .writeText(
+                      text);
+                  showToast(
+                    'Text copied to clipboard!'
+                  );
+                } catch {
+                  const
+                    textarea =
+                    document
+                    .createElement(
+                      'textarea');
+                  textarea.value =
+                    text;
+                  textarea.style
+                    .position =
+                    'fixed';
+                  textarea.style
+                    .opacity =
+                    '0';
+                  document.body
+                    .appendChild(
+                      textarea);
+                  textarea
+                    .select();
+                  document
+                    .execCommand(
+                      'copy');
+                  document.body
+                    .removeChild(
+                      textarea);
+                  showToast(
+                    'Text copied to clipboard!'
+                  );
+                }
+              };
+            copyToClipboard()
+          };
+        window.copyPageText =
+          function(
+            pageIndex) {
+            const
+              pageData = APP_STATE
+              .pages[
+                pageIndex];
+            if (!
+              pageData?.text)
+              return;
+            const allText =
+              pageData.text.map(
+                item => item.content
+              ).join('\n\n');
+            copyText(allText)
+          };
+        window.previewImage = window
+          .previewImageFromAll =
+          function(pageIndex,
+            imgIndex) {
+            const
+              pageData = APP_STATE
+              .pages[pageIndex],
+              allImages = [...
+                pageData.images ||
+                []
+              ];
+            if (pageData
+              .fullPageImage &&
+              pageIndex < APP_STATE
+              .pages.length - 1)
+              allImages
+              .unshift({
+                src: pageData
+                  .fullPageImage,
+                width: 800,
+                height: 1200,
+                index: 0,
+                isFullPage: true
+              });
+            const
+              img = allImages[
+                imgIndex];
+            if (!img)
+              return;
+            const
+              pageNum = pageData
+              .pageNum ||
+              pageIndex + 1,
+              imageTitle = img
+              .isFullPage ?
+              `Full Page ${pageNum}` :
+              `Image ${img.index} - Page ${pageNum}`;
+            if (
+              ELEMENTS
+              .imagePreviewContent
+            ) {
+              ELEMENTS
+                .imagePreviewContent
+                .innerHTML =
+                `<div class="flex flex-col items-center"><img src="${img.src}" alt="${imageTitle}" class="preview-image"><div class="preview-info mt-4"><div class="text-center"><h4 class="text-lg font-bold text-white mb-2">${imageTitle}</h4><div class="flex flex-wrap gap-4 items-center justify-center text-sm text-gray-400"><span><i class="fas fa-expand-arrows-alt mr-1"></i>${img.width} × ${img.height} pixels</span><span><i class="fas fa-file-image mr-1"></i>PNG Format</span></div></div></div><div class="mt-4 flex gap-3"><button class="download-btn focus:outline-none focus:ring-2 focus:ring-purple-500" onclick="downloadImage(${pageIndex},${imgIndex})" aria-label="Download this image"><i class="fas fa-download mr-2" aria-hidden="true"></i>Download Image</button></div></div>`;
+              const
+                header = ELEMENTS
+                .imagePreviewOverlay
+                .querySelector(
+                  '.image-preview-header h3'
+                );
+              if (header)
+                header.textContent =
+                imageTitle
+            }
+            showOverlay
+              (ELEMENTS
+                .imagePreviewOverlay
+              )
+          };
+        window.downloadImage =
+          window
+          .downloadImageFromAll =
+          function(pageIndex,
+            imgIndex) {
+            const
+              pageData = APP_STATE
+              .pages[pageIndex],
+              allImages = [...
+                pageData.images ||
+                []
+              ];
+            if (pageData
+              .fullPageImage &&
+              pageIndex < APP_STATE
+              .pages.length - 1)
+              allImages
+              .unshift({
+                src: pageData
+                  .fullPageImage,
+                width: 800,
+                height: 1200,
+                index: 0,
+                isFullPage: true
+              });
+            const
+              img = allImages[
+                imgIndex];
+            if (!img)
+              return;
+            safeExecute(
+              () => {
+                const a =
+                  document
+                  .createElement(
+                    'a');
+                a.href = img
+                  .src;
+                const
+                  suffix = img
+                  .isFullPage ?
+                  '_full_page' :
+                  `_image_${img.index}`;
+                a.download =
+                  `${APP_STATE.fileName}${suffix}_page_${pageData.pageNum||pageIndex+1}.png`;
+                document.body
+                  .appendChild(a);
+                a.click();
+                document.body
+                  .removeChild(a);
+                showToast(
+                  'Image download started'
+                )
+              })
+          };
+        window.downloadPageImages =
+          function(
+            pageIndex) {
+            const
+              pageData = APP_STATE
+              .pages[
+                pageIndex];
+            if (!
+              pageData?.images
+              ?.length) return;
+            pageData.images.forEach(
+              (img, index) =>
+              setTimeout(() =>
+                window
+                .downloadImage(
+                  pageIndex,
+                  index + (
+                    pageData
+                    .fullPageImage ?
+                    1 : 0)),
+                index * 300));
+            showToast(
+              `Downloading ${pageData.images.length} images...`
+            )
+          };
+        
+        function showToast(message,
+          type = 'success') {
+          const
+            toast = document
+            .createElement('div');
+          toast.className =
+            `toast ${type} show`;
+          toast.textContent =
+            message;
+          toast.setAttribute('role',
+            'status');
+          toast.setAttribute(
+            'aria-live', 'polite');
+          document.body.appendChild(
+            toast);
+          setTimeout(() => {
+              toast
+                .classList.remove(
+                  'show');
+              setTimeout(
+                () => {
+                  if (
+                    document
+                    .body
+                    .contains(
+                      toast))
+                    document
+                    .body
+                    .removeChild(
+                      toast)
+                },
+                400)
+            }, type ===
+            'error' ? 4000 : 2500)
+        }
+        
+        function escapeHtml(
+          text) {
+          const div = document
+            .createElement('div');
+          div.textContent =
+            text;
+          return div
+            .innerHTML
+        }
+        
+        function escapeForAttribute(
+          text) {
+          return text
+            .replace(/'/g, '&#39;')
+            .replace(/"/g, '&quot;')
+            .replace(/\n/g, '\\n')
+        }
+        
+        function cleanup() {
+          APP_STATE
+            .observers.intersection
+            ?.disconnect();
+          APP_STATE.observers
+            .mutation?.disconnect();
+          clearTimeout(
+            searchTimeout);
+          APP_STATE.aiData.clear();
+          APP_STATE.ocrData
+            .clear();
+          if (
+            tesseractWorker
+          ) {
+            tesseractWorker
+              .terminate();
+            tesseractWorker =
+              null
+          }
+        }
+        try {
+          initEventListeners
+            ();
+          initIntersectionObserver
+            ();
+          await initTesseract
+            ()
+        } catch (error) {
+          console
+            .error(
+              'Initialization error:',
+              error);
+          showToast(
+            'Application failed to initialize',
+            'error')
+        }
+      });
+  </script>
