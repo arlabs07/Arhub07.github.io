@@ -1,1 +1,1415 @@
+<!DOCTYPE html>
+<html lang="en">
 
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport"
+    content="width=device-width,initial-scale=1.0">
+  <meta name="description"
+    content="Purple Merge - PurplePDF: Advanced PDF merging tool with seamless file combination, password protection, and intelligent preview system.">
+  <meta name="keywords"
+    content="PDF merge, combine PDFs, merge multiple PDFs, PDF tools, Purple Merge, PurplePDF">
+  <meta name="author"
+    content="PurplePDF Team">
+  <meta property="og:title"
+    content="Purple Merge - PurplePDF">
+  <meta property="og:description"
+    content="Merge multiple PDF files into one seamlessly with our advanced PDF merging tool">
+  <meta property="og:type"
+    content="website">
+  <meta name="twitter:card"
+    content="summary_large_image">
+  <link rel="icon" type="image/svg+xml"
+    href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%238b5cf6'/%3E%3Cstop offset='50%25' stop-color='%23ec4899'/%3E%3Cstop offset='100%25' stop-color='%23f59e0b'/%3E%3C/linearGradient%3E%3C/defs%3E%3Ccircle cx='50' cy='50' r='45' fill='url(%23g)'/%3E%3Cpath d='M35 35h30v8h-30zm0 12h25v6h-25zm0 10h28v6h-28z' fill='white' opacity='0.9'/%3E%3Cpath d='M40 65h20l-5-5v3h-10v4z' fill='white'/%3E%3C/svg%3E">
+  <title>Purple Merge - PurplePDF
+  </title>
+  <script
+    src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"
+    defer></script>
+  <script
+    src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"
+    defer></script>
+  <link
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    rel="stylesheet">
+  <script
+    src="https://cdn.tailwindcss.com">
+  </script>
+  <style>
+    body {
+      background: #000;
+      font-family: 'Segoe UI', sans-serif
+    }
+    
+    * {
+      box-sizing: border-box
+    }
+    
+    .gradient-text {
+      background: linear-gradient(45deg, #8b5cf6, #ec4899, #f59e0b);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text
+    }
+    
+    .drag-over {
+      border-color: #8b5cf6 !important;
+      background: rgba(139, 92, 246, 0.1) !important;
+      transform: scale(1.01);
+      transition: all 0.3s ease
+    }
+    
+    .overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.85);
+      z-index: 1000;
+      display: none;
+      backdrop-filter: blur(5px);
+      opacity: 0;
+      transition: opacity 0.3s ease
+    }
+    
+    .overlay.show {
+      opacity: 1
+    }
+    
+    .pdf-preview {
+      max-width: 90vw;
+      max-height: 90vh;
+      overflow-y: auto;
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5)
+    }
+    
+    .loading-bar {
+      width: 0;
+      height: 6px;
+      background: linear-gradient(45deg, #8b5cf6, #ec4899);
+      border-radius: 3px;
+      transition: width 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      box-shadow: 0 0 8px rgba(139, 92, 246, 0.4)
+    }
+    
+    .menu-overlay {
+      position: absolute;
+      background: #1f2937;
+      border: 1px solid #374151;
+      border-radius: 8px;
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+      z-index: 100;
+      min-width: 150px;
+      opacity: 0;
+      transform: scale(0.95) translateY(-5px);
+      transition: all 0.2s ease;
+      backdrop-filter: blur(10px)
+    }
+    
+    .menu-overlay.show {
+      opacity: 1;
+      transform: scale(1) translateY(0)
+    }
+    
+    .menu-overlay button {
+      width: 100%;
+      text-align: left;
+      padding: 8px 12px;
+      color: #e5e7eb;
+      transition: all 0.2s ease;
+      border: none;
+      background: none
+    }
+    
+    .menu-overlay button:hover {
+      background: rgba(139, 92, 246, 0.1);
+      color: #8b5cf6
+    }
+    
+    canvas {
+      max-width: 100%;
+      height: auto;
+      border-radius: 6px
+    }
+    
+    .truncate-name {
+      max-width: 200px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis
+    }
+    
+    .fade-in {
+      opacity: 0;
+      transform: translateY(10px);
+      animation: fadeInUp 0.4s ease forwards
+    }
+    
+    .img-lazy {
+      opacity: 0;
+      transition: opacity 0.5s ease;
+      background: #374151;
+      border-radius: 6px
+    }
+    
+    .img-lazy.loaded {
+      opacity: 1
+    }
+    
+    .shimmer {
+      background: linear-gradient(90deg, #374151 25%, #4b5563 50%, #374151 75%);
+      background-size: 200% 100%;
+      animation: shimmer 1.8s infinite
+    }
+    
+    .preview-skeleton {
+      position: relative;
+      overflow: hidden
+    }
+    
+    .preview-skeleton::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.08), transparent);
+      animation: loading-wave 2s infinite
+    }
+    
+    @keyframes fadeInUp {
+      to {
+        opacity: 1;
+        transform: translateY(0)
+      }
+    }
+    
+    @keyframes shimmer {
+      0% {
+        background-position: 200% 0
+      }
+      
+      100% {
+        background-position: -200% 0
+      }
+    }
+    
+    @keyframes loading-wave {
+      0% {
+        transform: translateX(-100%)
+      }
+      
+      100% {
+        transform: translateX(100%)
+      }
+    }
+    
+    @media (max-width:768px) {
+      .container {
+        padding: 16px !important
+      }
+      
+      .text-5xl {
+        font-size: 2.5rem !important
+      }
+      
+      .text-6xl {
+        font-size: 3rem !important
+      }
+      
+      .p-12 {
+        padding: 2rem !important
+      }
+      
+      .space-x-4>*+* {
+        margin-left: 0.75rem !important
+      }
+      
+      .space-x-3>*+* {
+        margin-left: 0.5rem !important
+      }
+      
+      .truncate-name {
+        max-width: 150px
+      }
+      
+      .menu-overlay {
+        min-width: 140px
+      }
+      
+      .pdf-preview {
+        max-width: 95vw
+      }
+    }
+    
+    @media (max-width:480px) {
+      .text-5xl {
+        font-size: 2rem !important
+      }
+      
+      .text-2xl {
+        font-size: 1.5rem !important
+      }
+      
+      .p-12 {
+        padding: 1.5rem !important
+      }
+      
+      .py-4 {
+        padding-top: 0.75rem !important;
+        padding-bottom: 0.75rem !important
+      }
+      
+      .px-8 {
+        padding-left: 1.5rem !important;
+        padding-right: 1.5rem !important
+      }
+      
+      .truncate-name {
+        max-width: 120px
+      }
+    }
+  </style>
+</head>
+
+<body
+  class="min-h-screen bg-black text-white">
+  <div
+    class="container mx-auto px-4 py-6">
+    <header
+      class="flex items-center justify-between mb-8 border-b border-gray-700 pb-4 fade-in">
+      <div
+        class="flex items-center space-x-3">
+        <div
+          class="w-10 h-10 bg-gradient-to-br from-purple-500 to-pink-500 rounded-lg flex items-center justify-center shadow-lg">
+          <svg width="24" height="24"
+            viewBox="0 0 100 100"
+            xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient
+                id="headerGrad" x1="0%"
+                y1="0%" x2="100%"
+                y2="100%">
+                <stop offset="0%"
+                  stop-color="#ffffff"
+                  stop-opacity="0.9" />
+                <stop offset="100%"
+                  stop-color="#e5e7eb"
+                  stop-opacity="0.8" />
+              </linearGradient>
+            </defs>
+            <circle cx="50" cy="50"
+              r="30"
+              fill="url(#headerGrad)" />
+            <path
+              d="M40 42h20v4h-20zm0 6h16v3h-16zm0 5h18v3h-18z"
+              fill="#8b5cf6"
+              opacity="0.8" />
+            <path
+              d="M45 58h10l-3-2v1h-4v1z"
+              fill="#8b5cf6" />
+          </svg></div>
+        <h1
+          class="text-2xl font-bold text-white">
+          PurplePDF</h1>
+      </div>
+    </header>
+    <main
+      class="text-center mb-12 fade-in">
+      <h2
+        class="text-5xl font-bold gradient-text mb-4">
+        Purple Merge</h2>
+      <p
+        class="text-gray-400 text-lg mb-8">
+        Merge multiple PDF files into
+        one seamlessly</p>
+      <div id="dropZone"
+        class="border-2 border-dashed border-gray-600 rounded-xl p-12 mb-8 transition-all duration-300 hover:border-purple-500 cursor-pointer">
+        <div
+          class="flex flex-col items-center space-y-4">
+          <i
+            class="fas fa-cloud-upload-alt text-6xl text-purple-500"></i>
+          <h3
+            class="text-xl font-semibold">
+            Drop PDF files here</h3>
+          <p class="text-gray-400">or
+            click to browse files</p>
+          <button id="uploadBtn"
+            class="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-semibold py-3 px-6 rounded-lg transition-all duration-300 transform hover:scale-105 shadow-lg"><i
+              class="fas fa-upload mr-2"></i>Choose
+            Files</button>
+        </div>
+      </div><input type="file"
+        id="fileInput" accept=".pdf"
+        multiple class="hidden">
+      <div id="fileList"
+        class="space-y-4 mb-8"></div>
+      <div id="loadingContainer"
+        class="hidden mb-8 fade-in">
+        <div
+          class="bg-gray-800 rounded-lg p-4 border border-gray-700">
+          <div
+            class="flex items-center justify-between mb-2">
+            <span
+              class="text-sm text-gray-300">Merging
+              PDFs...</span><span
+              id="loadingProgress"
+              class="text-sm text-purple-400 font-medium">0%</span>
+          </div>
+          <div
+            class="w-full bg-gray-700 rounded-full h-2 overflow-hidden">
+            <div id="loadingBar"
+              class="loading-bar h-full">
+            </div>
+          </div>
+        </div>
+      </div><button id="mergeBtn"
+        class="hidden bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-bold py-4 px-8 rounded-xl transition-all duration-300 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed shadow-xl"><i
+          class="fas fa-compress-alt mr-2"></i>Start
+        Merging</button>
+    </main>
+  </div>
+  <div id="previewOverlay"
+    class="overlay">
+    <div
+      class="flex items-center justify-center h-full p-4">
+      <div class="pdf-preview relative">
+        <button id="closePreview"
+          class="absolute top-4 right-4 bg-red-500 hover:bg-red-600 text-white rounded-full w-10 h-10 flex items-center justify-center z-10 transition-all shadow-lg"><i
+            class="fas fa-times"></i></button>
+        <div id="previewContent"
+          class="p-4"></div>
+      </div>
+    </div>
+  </div>
+  <div id="passwordOverlay"
+    class="overlay">
+    <div
+      class="flex items-center justify-center h-full p-4">
+      <div
+        class="bg-gray-800 rounded-lg p-6 max-w-md w-full mx-4 border border-gray-600 shadow-2xl">
+        <h3
+          class="text-xl font-bold mb-4 text-white text-center">
+          Password Protected PDF</h3>
+        <p
+          class="text-gray-300 mb-4 text-center">
+          This PDF requires a password
+          to open:</p><input
+          type="password"
+          id="passwordInput"
+          placeholder="Enter password"
+          class="w-full bg-gray-700 text-white border border-gray-600 rounded-lg px-4 py-2 mb-4 focus:border-purple-500 focus:outline-none focus:ring-2 focus:ring-purple-500/20 transition-all">
+        <div class="flex space-x-3">
+          <button id="passwordCancel"
+            class="flex-1 bg-gray-600 hover:bg-gray-700 text-white py-2 rounded-lg transition-colors font-medium">Cancel</button><button
+            id="passwordSubmit"
+            class="flex-1 bg-purple-500 hover:bg-purple-600 text-white py-2 rounded-lg transition-colors font-medium">Open</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div id="renameOverlay"
+    class="overlay">
+    <div
+      class="flex items-center justify-center h-full p-4">
+      <div
+        class="bg-gray-800 rounded-lg p-6 max-w-md w-full mx-4 border border-gray-600 shadow-2xl">
+        <h3
+          class="text-xl font-bold mb-4 text-white text-center">
+          Rename File</h3><input
+          type="text" id="renameInput"
+          placeholder="Enter new filename"
+          class="w-full bg-gray-700 text-white border border-gray-600 rounded-lg px-4 py-2 mb-4 focus:border-purple-500 focus:outline-none focus:ring-2 focus:ring-purple-500/20 transition-all">
+        <div class="flex space-x-3">
+          <button id="renameCancel"
+            class="flex-1 bg-gray-600 hover:bg-gray-700 text-white py-2 rounded-lg transition-colors font-medium">Cancel</button><button
+            id="renameSave"
+            class="flex-1 bg-purple-500 hover:bg-purple-600 text-white py-2 rounded-lg transition-colors font-medium">Save</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div id="contextMenu"
+    class="menu-overlay hidden"><button
+      onclick="previewFile()"><i
+        class="fas fa-eye mr-2"></i>Preview</button><button
+      onclick="moveFileUp()"><i
+        class="fas fa-arrow-up mr-2"></i>Move
+      Up</button><button
+      onclick="moveFileDown()"><i
+        class="fas fa-arrow-down mr-2"></i>Move
+      Down</button><button
+      onclick="renameFile()"><i
+        class="fas fa-edit mr-2"></i>Rename</button><button
+      onclick="deleteFile()"><i
+        class="fas fa-trash mr-2"></i>Delete</button><button
+      onclick="downloadFile()"><i
+        class="fas fa-download mr-2"></i>Download</button>
+  </div>
+  <div id="mergedMenu"
+    class="menu-overlay hidden"><button
+      onclick="previewMergedFile()"><i
+        class="fas fa-eye mr-2"></i>Preview</button><button
+      onclick="downloadMergedFile()"><i
+        class="fas fa-download mr-2"></i>Download</button><button
+      onclick="renameMergedFile()"><i
+        class="fas fa-edit mr-2"></i>Rename</button>
+  </div>
+  <script>
+    document.addEventListener(
+      'DOMContentLoaded',
+      function() { pdfjsLib
+          .GlobalWorkerOptions
+          .workerSrc =
+          'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js'; let
+          files = [],
+          currentFileIndex = -1,
+          mergedPdfBlob = null,
+          currentPassword = '',
+          renameFileIndex = -1,
+          mergedFileName =
+          'merged-document.pdf',
+          previewCache = new Map(),
+          isProcessing = false; const
+          elements = { dropZone: document
+              .getElementById(
+                'dropZone'),
+            fileInput: document
+              .getElementById(
+                'fileInput'),
+            uploadBtn: document
+              .getElementById(
+                'uploadBtn'),
+            fileList: document
+              .getElementById(
+                'fileList'),
+            mergeBtn: document
+              .getElementById(
+                'mergeBtn'),
+            loadingContainer: document
+              .getElementById(
+                'loadingContainer'),
+            loadingBar: document
+              .getElementById(
+                'loadingBar'),
+            loadingProgress: document
+              .getElementById(
+                'loadingProgress'),
+            previewOverlay: document
+              .getElementById(
+                'previewOverlay'),
+            previewContent: document
+              .getElementById(
+                'previewContent'),
+            contextMenu: document
+              .getElementById(
+                'contextMenu'),
+            mergedMenu: document
+              .getElementById(
+                'mergedMenu'),
+            closePreview: document
+              .getElementById(
+                'closePreview'),
+            passwordOverlay: document
+              .getElementById(
+                'passwordOverlay'),
+            passwordInput: document
+              .getElementById(
+                'passwordInput'),
+            passwordCancel: document
+              .getElementById(
+                'passwordCancel'),
+            passwordSubmit: document
+              .getElementById(
+                'passwordSubmit'),
+            renameOverlay: document
+              .getElementById(
+                'renameOverlay'),
+            renameInput: document
+              .getElementById(
+                'renameInput'),
+            renameCancel: document
+              .getElementById(
+                'renameCancel'),
+            renameSave: document
+              .getElementById(
+                'renameSave') };
+        
+        function initEventListeners() { elements
+            .uploadBtn
+            .addEventListener('click',
+              () => elements.fileInput
+              .click());
+          elements.fileInput
+            .addEventListener(
+              'change', handleFiles);
+          elements.dropZone
+            .addEventListener('click',
+              () => elements.fileInput
+              .click());
+          elements.dropZone
+            .addEventListener(
+              'dragover', e => { e
+                  .preventDefault();
+                elements.dropZone
+                  .classList.add(
+                    'drag-over') });
+          elements.dropZone
+            .addEventListener(
+              'dragleave', e => { if (
+                  !elements.dropZone
+                  .contains(e
+                    .relatedTarget))
+                  elements.dropZone
+                  .classList.remove(
+                    'drag-over') });
+          elements.dropZone
+            .addEventListener('drop',
+              e => { e
+                .preventDefault();
+                elements.dropZone
+                  .classList.remove(
+                    'drag-over');
+                handleFiles
+              ({ target: { files: e
+                      .dataTransfer
+                      .files } }) });
+          elements.mergeBtn
+            .addEventListener('click',
+              mergePDFs);
+          elements.closePreview
+            .addEventListener('click',
+              () => hideOverlay(
+                elements
+                .previewOverlay));
+          elements.passwordCancel
+            .addEventListener('click',
+              () => hideOverlay(
+                elements
+                .passwordOverlay));
+          elements.passwordSubmit
+            .addEventListener('click',
+              handlePasswordSubmit);
+          elements.renameCancel
+            .addEventListener('click',
+              () => hideOverlay(
+                elements.renameOverlay
+                ));
+          elements.renameSave
+            .addEventListener('click',
+              handleRenameSave);
+          elements.passwordInput
+            .addEventListener(
+              'keypress', e => e
+              .key === 'Enter' &&
+              handlePasswordSubmit());
+          elements.renameInput
+            .addEventListener(
+              'keypress', e => e
+              .key === 'Enter' &&
+              handleRenameSave());
+          document.addEventListener(
+            'click', e => { if (!
+                elements.contextMenu
+                .contains(e.target))
+                hideMenu(elements
+                  .contextMenu
+                  ); if (!elements
+                .mergedMenu
+                .contains(e.target))
+                hideMenu(elements
+                  .mergedMenu) });
+          document.addEventListener(
+            'keydown', e => e
+            .key === 'Escape' &&
+            hideAllOverlays()) }
+        
+        function showOverlay(
+        overlay) { overlay.style
+            .display = 'block';
+          requestAnimationFrame(() =>
+            overlay.classList.add(
+              'show')) }
+        
+        function hideOverlay(
+        overlay) { overlay.classList
+            .remove('show');
+          setTimeout(() => overlay
+            .style.display = 'none',
+            300) }
+        
+        function showMenu(menu) { menu
+            .classList.remove(
+              'hidden');
+          requestAnimationFrame(() =>
+            menu.classList.add(
+              'show')) }
+        
+        function hideMenu(menu) { menu
+            .classList.remove('show');
+          setTimeout(() => menu
+            .classList.add(
+            'hidden'), 200) }
+        
+        function hideAllOverlays() { document
+            .querySelectorAll(
+              '.overlay').forEach(
+              hideOverlay);
+          hideMenu(elements
+            .contextMenu);
+          hideMenu(elements
+            .mergedMenu) } async function handleFiles(
+            e) { if (isProcessing)
+              return; const newFiles =
+              Array.from(e.target
+                .files).filter(f => f
+                .type ===
+                'application/pdf'
+                ); if (newFiles
+              .length === 0) return;
+            isProcessing = true; for (
+              let i = 0; i < newFiles
+              .length; i++) { const
+                file = newFiles[
+                i]; const
+              fileObj = { file,
+                preview: null,
+                id: Date.now() +
+                  Math.random() + i,
+                customName: file
+                  .name,
+                isLoading: true };
+              files.push(fileObj);
+              renderFileList
+            (); try { setTimeout(
+                async () => { const
+                      preview =
+                      await generatePreview(
+                        file);
+                    fileObj
+                      .preview =
+                      preview;
+                    fileObj
+                      .isLoading =
+                      false;
+                    renderFileList
+                      () }, i *
+                  200) } catch (
+              error) { console.error(
+                  'Error generating preview:',
+                  error);
+                fileObj.isLoading =
+                  false;
+                renderFileList
+              () } } updateMergeButton
+              ();
+            isProcessing =
+            false } async function generatePreview(
+            file, password = ''
+            ) { const cacheKey =
+              `${file.name}_${file.size}_${password}`; if (
+              previewCache.has(
+                cacheKey))
+            return previewCache
+              .get(
+              cacheKey); return new Promise(
+                async resolve => { try { const
+                      arrayBuffer =
+                      await file
+                      .arrayBuffer(); const
+                      loadingTask =
+                      pdfjsLib
+                      .getDocument({ data: arrayBuffer,
+                        password }); const
+                      pdf =
+                      await loadingTask
+                      .promise; const
+                      page =
+                      await pdf
+                      .getPage(
+                      1); const
+                      scale =
+                      0.4; const
+                      viewport =
+                      page
+                      .getViewport({ scale }); const
+                      canvas =
+                      document
+                      .createElement(
+                        'canvas'
+                        ); const
+                      context =
+                      canvas
+                      .getContext(
+                        '2d');
+                    canvas
+                      .height =
+                      viewport
+                      .height;
+                    canvas.width =
+                      viewport
+                      .width; const
+                      renderContext = { canvasContext: context,
+                        viewport: viewport };
+                    await page
+                      .render(
+                        renderContext
+                        )
+                      .promise; const
+                      dataURL =
+                      canvas
+                      .toDataURL(
+                        'image/jpeg',
+                        0.8);
+                    previewCache
+                      .set(
+                        cacheKey,
+                        dataURL);
+                    resolve(
+                      dataURL
+                      ) } catch (
+                    error) { if (
+                      error
+                      .name ===
+                      'PasswordException'
+                      ) { showOverlay
+                        (elements
+                          .passwordOverlay
+                          );
+                      elements
+                        .passwordInput
+                        .focus();
+                      elements
+                        .passwordSubmit
+                        .onclick =
+                        async () => { const
+                            password =
+                            elements
+                            .passwordInput
+                            .value;
+                          hideOverlay
+                            (elements
+                              .passwordOverlay
+                              ); const
+                            preview =
+                            await generatePreview(
+                              file,
+                              password
+                              ); const
+                            fileIndex =
+                            files
+                            .findIndex(
+                              f =>
+                              f
+                              .file ===
+                              file
+                              ); if (
+                            fileIndex !==
+                            -1
+                            ) { files
+                              [
+                                fileIndex]
+                              .preview =
+                              preview;
+                            files
+                              [
+                                fileIndex]
+                              .password =
+                              password;
+                            files
+                              [
+                                fileIndex]
+                              .isLoading =
+                              false;
+                            renderFileList
+                              () } }; return } const
+                      canvas =
+                      document
+                      .createElement(
+                        'canvas'
+                        ); const
+                      ctx = canvas
+                      .getContext(
+                        '2d');
+                    canvas.width =
+                      100;
+                    canvas
+                      .height =
+                      130;
+                    ctx
+                      .fillStyle =
+                      '#374151';
+                    ctx.fillRect(
+                      0, 0, 100,
+                      130);
+                    ctx
+                      .fillStyle =
+                      '#9CA3AF';
+                    ctx.font =
+                      '12px sans-serif';
+                    ctx
+                      .textAlign =
+                      'center';
+                    ctx.fillText(
+                      'PDF', 50,
+                      70);
+                    resolve(canvas
+                      .toDataURL()
+                      ) } }) }
+        
+        function renderFileList() { elements
+            .fileList.innerHTML =
+            ''; if (files.length ===
+            0) { elements.mergeBtn
+              .classList.add(
+              'hidden'); return } files
+            .forEach((fileObj,
+              index) => { const
+                  fileItem = document
+                  .createElement(
+                    'div');
+                fileItem.className =
+                  'bg-gray-800 rounded-lg p-4 flex items-center justify-between hover:bg-gray-700 transition-all duration-300 fade-in border border-gray-700/50';
+                fileItem.style
+                  .animationDelay =
+                  `${index*0.1}s`; const
+                  truncatedName =
+                  fileObj.customName
+                  .length > 25 ?
+                  fileObj.customName
+                  .substring(0, 25) +
+                  '...' : fileObj
+                  .customName; const
+                  previewHtml =
+                  fileObj.isLoading ?
+                  '<div class="w-12 h-16 bg-gray-700 rounded shimmer preview-skeleton"></div>' :
+                  fileObj.preview ?
+                  `<img src="${fileObj.preview}" alt="Preview" class="w-12 h-16 rounded bg-gray-700 object-cover img-lazy loaded shadow-sm" loading="lazy">` :
+                  '<div class="w-12 h-16 bg-gray-700 rounded flex items-center justify-center"><i class="fas fa-file-pdf text-gray-400"></i></div>';
+                fileItem.innerHTML =
+                  `<div class="flex items-center space-x-4"><div class="text-purple-400 text-lg font-bold">${index+1}.</div>${previewHtml}<div class="flex-1"><h4 class="font-semibold text-white truncate-name" title="${fileObj.customName}">${truncatedName}</h4><p class="text-sm text-gray-400">${(fileObj.file.size/1024/1024).toFixed(2)} MB</p></div></div><button class="text-gray-400 hover:text-purple-400 p-2 relative transition-colors" onclick="showContextMenu(event,${index})"><i class="fas fa-ellipsis-v"></i></button>`;
+                elements.fileList
+                  .appendChild(
+                    fileItem) }
+              ) } window
+          .showContextMenu = function(
+            e, index) { e
+              .stopPropagation();
+            currentFileIndex =
+            index; const rect = e
+              .target
+              .getBoundingClientRect(); const
+              menuWidth = 160; const
+              menuHeight = 220;
+            elements.contextMenu.style
+              .top = Math.min(rect
+                .bottom + 5, window
+                .innerHeight -
+                menuHeight) + 'px';
+            elements.contextMenu.style
+              .left = Math.min(rect
+                .left, window
+                .innerWidth -
+                menuWidth) + 'px';
+            showMenu(elements
+              .contextMenu) };
+        window.showMergedMenu =
+          function(e) { e
+              .stopPropagation(); const
+              rect = e.target
+              .getBoundingClientRect(); const
+              menuWidth = 160; const
+              menuHeight = 120;
+            elements.mergedMenu.style
+              .top = Math.min(rect
+                .bottom + 5, window
+                .innerHeight -
+                menuHeight) + 'px';
+            elements.mergedMenu.style
+              .left = Math.min(rect
+                .left, window
+                .innerWidth -
+                menuWidth) + 'px';
+            showMenu(elements
+              .mergedMenu) };
+        window.previewFile =
+        async function() { if (
+              currentFileIndex === -
+              1) return; const
+              fileObj = files[
+                currentFileIndex];
+            elements.previewContent
+              .innerHTML =
+              '<div class="text-center text-gray-600 py-8"><i class="fas fa-spinner fa-spin text-3xl mb-4 text-purple-500"></i><p>Loading preview...</p></div>';
+            showOverlay(elements
+              .previewOverlay
+              ); try { const
+                arrayBuffer =
+                await fileObj.file
+                .arrayBuffer(); const
+                loadingTask =
+                pdfjsLib
+                .getDocument({ data: arrayBuffer,
+                  password: fileObj
+                    .password ||
+                    '' }); const
+                pdf =
+                await loadingTask
+                .promise;
+              elements
+                .previewContent
+                .innerHTML =
+                `<h3 class="text-xl font-bold mb-4 text-gray-800 text-center">${fileObj.customName}</h3><div id="pageContainer"></div>`; const
+                pageContainer =
+                document
+                .getElementById(
+                  'pageContainer'
+                  ); const
+                maxPages = Math.min(
+                  pdf.numPages, 5
+                  ); for (let i =
+                1; i <=
+                maxPages; i++
+                ) { const pageDiv =
+                  document
+                  .createElement(
+                    'div');
+                pageDiv.className =
+                  'mb-4 text-center';
+                pageDiv.innerHTML =
+                  '<div class="inline-block bg-gray-200 rounded p-4 shimmer"><div class="w-32 h-40"></div></div>';
+                pageContainer
+                  .appendChild(
+                    pageDiv);
+                setTimeout(
+              async () => { try { const
+                        page =
+                        await pdf
+                        .getPage(
+                          i
+                          ); const
+                        scale =
+                        1.2; const
+                        viewport =
+                        page
+                        .getViewport({ scale }); const
+                        canvas =
+                        document
+                        .createElement(
+                          'canvas'
+                          ); const
+                        context =
+                        canvas
+                        .getContext(
+                          '2d');
+                      canvas
+                        .height =
+                        viewport
+                        .height;
+                      canvas
+                        .width =
+                        viewport
+                        .width;
+                      canvas
+                        .className =
+                        'mb-2 border rounded shadow-lg max-w-full h-auto'; const
+                        renderContext = { canvasContext: context,
+                          viewport: viewport };
+                      await page
+                        .render(
+                          renderContext
+                          )
+                        .promise;
+                      pageDiv
+                        .innerHTML =
+                        '';
+                      pageDiv
+                        .appendChild(
+                          canvas
+                          ) } catch (
+                      error
+                      ) { pageDiv
+                        .innerHTML =
+                        '<div class="text-red-500 p-4">Error loading page ' +
+                        i +
+                        '</div>' } },
+                  i * 300) } if (pdf
+                .numPages > maxPages
+                ) { const moreDiv =
+                  document
+                  .createElement(
+                    'div');
+                moreDiv.className =
+                  'text-center text-gray-600 mt-4 p-3 bg-gray-100 rounded';
+                moreDiv.innerHTML =
+                  `<p>... and ${pdf.numPages-maxPages} more pages</p>`;
+                pageContainer
+                  .appendChild(
+                    moreDiv
+                    ) } } catch (
+              error) { elements
+                .previewContent
+                .innerHTML =
+                `<div class="text-center text-red-600 py-8"><i class="fas fa-exclamation-triangle text-3xl mb-4"></i><p>Error: ${error.message}</p></div>` } hideMenu
+              (elements
+              .contextMenu) };
+        window.moveFileUp =
+      function() { if (
+            currentFileIndex > 0) {
+            [files[
+              currentFileIndex],
+              files[
+                currentFileIndex - 1
+                ]
+            ] = [files[
+              currentFileIndex - 1
+              ], files[
+              currentFileIndex]];
+            renderFileList
+          () } hideMenu(elements
+            .contextMenu) };
+        window.moveFileDown =
+          function() { if (
+              currentFileIndex < files
+              .length - 1) {
+              [files[
+                currentFileIndex],
+                files[
+                  currentFileIndex + 1
+                  ]
+              ] = [files[
+                currentFileIndex + 1
+                ], files[
+                currentFileIndex]];
+              renderFileList
+            () } hideMenu(elements
+              .contextMenu) };
+        window.renameFile =
+      function() { if (
+            currentFileIndex !== -1
+            ) { renameFileIndex =
+              currentFileIndex; const
+              currentName = files[
+                currentFileIndex]
+              .customName; const
+              nameWithoutExt =
+              currentName.replace(
+                /\.pdf$/i, '');
+            elements.renameInput
+              .value =
+              nameWithoutExt;
+            showOverlay(elements
+              .renameOverlay);
+            elements.renameInput
+              .focus() } hideMenu(
+            elements.contextMenu) };
+        window.renameMergedFile =
+          function() { renameFileIndex
+              = -2; const
+              nameWithoutExt =
+              mergedFileName.replace(
+                /\.pdf$/i, '');
+            elements.renameInput
+              .value = nameWithoutExt;
+            showOverlay(elements
+              .renameOverlay);
+            elements.renameInput
+              .focus();
+            hideMenu(elements
+              .mergedMenu) };
+        
+        function handleRenameSave() { const
+            newName = elements
+            .renameInput.value
+          .trim(); if (!newName)
+            return; const finalName =
+            newName.endsWith('.pdf') ?
+            newName : newName +
+            '.pdf'; if (
+            renameFileIndex === -2
+            ) { mergedFileName =
+              finalName;
+            showMergedFile
+          () } else if (
+            renameFileIndex !== -1
+            ) { files[renameFileIndex]
+              .customName = finalName;
+            renderFileList
+          () } hideOverlay(elements
+            .renameOverlay);
+          renameFileIndex = -
+          1 } window.deleteFile =
+          function() { if (
+              currentFileIndex !== -1
+              ) { files.splice(
+                currentFileIndex, 1);
+              renderFileList();
+              updateMergeButton
+            () } hideMenu(elements
+              .contextMenu) };
+        window.downloadFile =
+          function() { if (
+              currentFileIndex !== -1
+              ) { const fileObj =
+                files[
+                  currentFileIndex]; const
+                url = URL
+                .createObjectURL(
+                  fileObj.file); const
+                a = document
+                .createElement('a');
+              a.href = url;
+              a.download = fileObj
+                .customName;
+              document.body
+                .appendChild(a);
+              a.click();
+              document.body
+                .removeChild(a);
+              URL.revokeObjectURL(
+              url) } hideMenu(elements
+              .contextMenu) };
+        
+        function updateMergeButton() { files
+            .length >= 1 ? elements
+            .mergeBtn.classList
+            .remove('hidden') :
+            elements.mergeBtn
+            .classList.add(
+            'hidden') } async function handlePasswordSubmit() { const
+              password = elements
+              .passwordInput.value;
+            hideOverlay(elements
+              .passwordOverlay
+              ) } async function mergePDFs() { if (
+                files.length < 1 ||
+                isProcessing) return;
+              isProcessing = true;
+              elements
+                .loadingContainer
+                .classList.remove(
+                  'hidden');
+              elements.mergeBtn
+                .disabled =
+                true; try { const
+                  mergedPdf =
+                  await PDFLib
+                  .PDFDocument
+                  .create(); let
+                  progress = 0; const
+                  totalFiles = files
+                  .length; for (let
+                    i = 0; i < files
+                  .length; i++
+                  ) { const fileObj =
+                    files[i]; const
+                    arrayBuffer =
+                    await fileObj.file
+                    .arrayBuffer(); const
+                    pdf = await PDFLib
+                    .PDFDocument.load(
+                      arrayBuffer, { password: fileObj
+                          .password ||
+                          undefined }
+                      ); const
+                    copiedPages =
+                    await mergedPdf
+                    .copyPages(pdf,
+                      pdf
+                      .getPageIndices()
+                      );
+                  copiedPages.forEach(
+                    page =>
+                    mergedPdf
+                    .addPage(page));
+                  progress = ((i +
+                      1) / totalFiles
+                      ) * 100;
+                  elements.loadingBar
+                    .style.width =
+                    progress + '%';
+                  elements
+                    .loadingProgress
+                    .textContent =
+                    Math.round(
+                      progress) + '%';
+                  await new Promise(
+                    resolve =>
+                    setTimeout(
+                      resolve, 100)
+                    ) } const pdfBytes =
+                  await mergedPdf
+                  .save();
+                mergedPdfBlob =
+                  new Blob([
+                  pdfBytes], { type: 'application/pdf' });
+                showMergedFile
+              () } catch (
+              error) { alert(
+                  'Error merging PDFs: ' +
+                  error.message
+                  ) } finally { elements
+                  .loadingContainer
+                  .classList.add(
+                    'hidden');
+                elements.mergeBtn
+                  .disabled = false;
+                isProcessing =
+                false } }
+        
+        function showMergedFile() { const
+            truncatedName =
+            mergedFileName.length >
+            25 ? mergedFileName
+            .substring(0, 25) +
+            '...' :
+            mergedFileName; const
+            fileItem = document
+            .createElement('div');
+          fileItem.className =
+            'bg-green-800 rounded-lg p-4 flex items-center justify-between border-2 border-green-500 mb-4 fade-in shadow-lg';
+          fileItem.innerHTML =
+            `<div class="flex items-center space-x-4"><div class="text-green-400 text-lg font-bold"><i class="fas fa-check-circle"></i></div><div class="w-12 h-16 bg-green-600 rounded flex items-center justify-center shadow-sm"><i class="fas fa-file-pdf text-white"></i></div><div class="flex-1"><h4 class="font-semibold text-white truncate-name" title="${mergedFileName}">${truncatedName}</h4><p class="text-sm text-green-300">${(mergedPdfBlob.size/1024/1024).toFixed(2)} MB • Merged Successfully</p></div></div><button class="text-gray-300 hover:text-white p-2 relative transition-colors" onclick="showMergedMenu(event)"><i class="fas fa-ellipsis-v"></i></button>`;
+          elements.fileList
+            .insertBefore(fileItem,
+              elements.fileList
+              .firstChild) } window
+          .previewMergedFile =
+          async function() { try { elements
+                  .previewContent
+                  .innerHTML =
+                  '<div class="text-center text-gray-600 py-8"><i class="fas fa-spinner fa-spin text-3xl mb-4 text-purple-500"></i><p>Loading merged preview...</p></div>';
+                showOverlay(elements
+                  .previewOverlay
+                  ); const arrayBuffer =
+                  await mergedPdfBlob
+                  .arrayBuffer(); const
+                  loadingTask =
+                  pdfjsLib
+                  .getDocument({ data: arrayBuffer }); const
+                  pdf =
+                  await loadingTask
+                  .promise;
+                elements
+                  .previewContent
+                  .innerHTML =
+                  `<h3 class="text-xl font-bold mb-4 text-gray-800 text-center">${mergedFileName}</h3><div id="mergedPageContainer"></div>`; const
+                  pageContainer =
+                  document
+                  .getElementById(
+                    'mergedPageContainer'
+                    ); const
+                  maxPages = Math.min(
+                    pdf.numPages, 6
+                    ); for (let i =
+                  1; i <=
+                  maxPages; i++
+                  ) { const pageDiv =
+                    document
+                    .createElement(
+                      'div');
+                  pageDiv.className =
+                    'mb-4 text-center';
+                  pageDiv.innerHTML =
+                    '<div class="inline-block bg-gray-200 rounded p-4 shimmer"><div class="w-32 h-40"></div></div>';
+                  pageContainer
+                    .appendChild(
+                      pageDiv);
+                  setTimeout(
+                async () => { try { const
+                          page =
+                          await pdf
+                          .getPage(
+                            i
+                            ); const
+                          scale =
+                          1.1; const
+                          viewport =
+                          page
+                          .getViewport({ scale }); const
+                          canvas =
+                          document
+                          .createElement(
+                            'canvas'
+                            ); const
+                          context =
+                          canvas
+                          .getContext(
+                            '2d');
+                        canvas
+                          .height =
+                          viewport
+                          .height;
+                        canvas
+                          .width =
+                          viewport
+                          .width;
+                        canvas
+                          .className =
+                          'mb-2 border rounded shadow-lg max-w-full h-auto'; const
+                          renderContext = { canvasContext: context,
+                            viewport: viewport };
+                        await page
+                          .render(
+                            renderContext
+                            )
+                          .promise;
+                        pageDiv
+                          .innerHTML =
+                          '';
+                        pageDiv
+                          .appendChild(
+                            canvas
+                            ) } catch (
+                        error
+                        ) { pageDiv
+                          .innerHTML =
+                          '<div class="text-red-500 p-4">Error loading page ' +
+                          i +
+                          '</div>' } },
+                    i * 250) } if (pdf
+                  .numPages > maxPages
+                  ) { const moreDiv =
+                    document
+                    .createElement(
+                      'div');
+                  moreDiv.className =
+                    'text-center text-gray-600 mt-4 p-3 bg-gray-100 rounded';
+                  moreDiv.innerHTML =
+                    `<p>... and ${pdf.numPages-maxPages} more pages</p>`;
+                  pageContainer
+                    .appendChild(
+                      moreDiv
+                      ) } } catch (
+                error) { elements
+                  .previewContent
+                  .innerHTML =
+                  `<div class="text-center text-red-600 py-8"><i class="fas fa-exclamation-triangle text-3xl mb-4"></i><p>Error: ${error.message}</p></div>` } hideMenu
+                (elements
+                .mergedMenu) };
+        window.downloadMergedFile =
+          function() { const url = URL
+              .createObjectURL(
+                mergedPdfBlob); const
+              a = document
+              .createElement('a');
+            a.href = url;
+            a.download =
+              mergedFileName;
+            document.body.appendChild(
+              a);
+            a.click();
+            document.body.removeChild(
+              a);
+            URL.revokeObjectURL(url);
+            hideMenu(elements
+              .mergedMenu) };
+        initEventListeners() });
+  </script>
+</body>
+
+</html>
