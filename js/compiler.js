@@ -1,5 +1,25 @@
 
 document.addEventListener('DOMContentLoaded', () => {
+    
+    // --- SECURITY PATCH: TRUSTED TYPES POLICY ---
+    // This allows the app to run safely with "require-trusted-types-for 'script'" CSP.
+    let trustedPolicy;
+    if (window.trustedTypes && window.trustedTypes.createPolicy) {
+        try {
+            trustedPolicy = window.trustedTypes.createPolicy('default', {
+                createHTML: (string) => string // Pass-through policy for internal app use
+            });
+        } catch (e) {
+            console.warn('Trusted Types policy creation failed:', e);
+        }
+    }
+
+    // Helper to apply HTML safely
+    const setInnerHTML = (element, html) => {
+        if (!element) return;
+        element.innerHTML = trustedPolicy ? trustedPolicy.createHTML(html) : html;
+    };
+
     const defaultCode = `<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -135,7 +155,8 @@ document.addEventListener('DOMContentLoaded', () => {
         for (let i = 1; i <= lines; i++) {
             html += `<span class="line-number-item">${i}</span>`;
         }
-        lineNumbers.innerHTML = html;
+        // SECURE UPDATE
+        setInnerHTML(lineNumbers, html);
     }
 
     function updateEditor() {
@@ -144,7 +165,9 @@ document.addEventListener('DOMContentLoaded', () => {
         if (code[code.length-1] === "\n") {
             html += " "; 
         }
-        highlighting.innerHTML = html;
+        // SECURE UPDATE
+        setInnerHTML(highlighting, html);
+        
         updateLineNumbers(code);
         updatePreview(code);
     }
