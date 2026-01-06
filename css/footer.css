@@ -51,7 +51,7 @@
 }
 
 .footer-brand p {
-    color: #888;
+    color: #aaa; /* ACCESSIBILITY: Improved Contrast from #888 */
     line-height: 1.6;
     max-width: 300px;
     margin-bottom: 25px;
@@ -79,6 +79,8 @@
     transform: translateY(-3px);
 }
 
+/* Updated selector to match new H3 tag, kept style consistent */
+.footer-links .footer-heading,
 .footer-links h4 {
     color: #fff;
     font-size: 1rem;
@@ -95,7 +97,7 @@
 }
 
 .footer-links a {
-    color: #888;
+    color: #aaa; /* ACCESSIBILITY: Improved Contrast from #888 */
     text-decoration: none;
     transition: color 0.2s;
 }
@@ -110,7 +112,7 @@
     align-items: center;
     gap: 15px;
     text-align: center;
-    color: #555;
+    color: #999; /* ACCESSIBILITY: Improved Contrast from #555 to #999 (Passes AA) */
     font-size: 0.85rem;
 }
 
