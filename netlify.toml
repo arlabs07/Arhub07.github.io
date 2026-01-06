@@ -1,0 +1,46 @@
+
+# Netlify Configuration File
+# Implements robust server-side security headers that cannot be set via <meta> tags.
+
+[build]
+  publish = "."
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    # 1. PREVENT CLICKJACKING (Fixes "No frame control policy")
+    X-Frame-Options = "DENY"
+
+    # 2. MIME TYPE SNIFFING PROTECTION
+    X-Content-Type-Options = "nosniff"
+
+    # 3. REFERRER POLICY
+    Referrer-Policy = "strict-origin-when-cross-origin"
+
+    # 4. PERMISSIONS POLICY (Replaces Feature-Policy)
+    # Disables sensitive features not used by the site to reduce attack surface.
+    Permissions-Policy = "camera=(), microphone=(), geolocation=(), payment=(), usb=(), vr=(), accelerometer=(), gyroscope=()"
+
+    # 5. CROSS-ORIGIN POLICIES (Fixes "No COOP header")
+    Cross-Origin-Opener-Policy = "same-origin"
+    # Note: COEP is omitted intentionally to allow loading external images (like GitHub avatars) without breaking.
+
+    # 6. CONTENT SECURITY POLICY (CSP)
+    # - object-src 'none': Fixes plugin injection vulnerability.
+    # - frame-ancestors 'none': Fixes "ignored via <meta>" error.
+    # - require-trusted-types-for 'script': Mitigates DOM XSS (Requires JS policy in compiler.js).
+    # - script-src: Strict allowlist. 'unsafe-eval' is REQUIRED for the Live Compiler to work.
+    Content-Security-Policy = '''
+      default-src 'self';
+      script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdnjs.cloudflare.com https://cdn.jsdelivr.net;
+      style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com;
+      img-src 'self' https: data: blob:;
+      font-src 'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com;
+      connect-src 'self' https:;
+      object-src 'none';
+      base-uri 'self';
+      form-action 'self';
+      frame-ancestors 'none';
+      require-trusted-types-for 'script';
+      upgrade-insecure-requests;
+    '''
