@@ -1,671 +1,1732 @@
-
 <!DOCTYPE html>
-<html lang="en-IN">
+<html lang="en">
 <head>
-    <!-- 
-        =======================================================================
-        ARhub CORE METADATA & SECURITY CONFIGURATION
-        Generated for: arlabs07 | Region: India
-        Standards: HTML5, Schema.org JSON-LD, Open Graph, Twitter Cards, WCAG
-        Security: CSP Strict, Trusted Types, COOP/XFO (via Headers)
-        =======================================================================
-    -->
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    
-    <!-- 
-        SECURITY: Content Security Policy (Fallback)
-        Note: Primary security headers (X-Frame-Options, Frame-Ancestors, COOP) 
-        are handled in 'netlify.toml' for full compliance.
-    -->
-    <meta http-equiv="Content-Security-Policy" content="
-        default-src 'self'; 
-        img-src 'self' https: data: blob:; 
-        style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com; 
-        script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; 
-        font-src 'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com; 
-        connect-src 'self' https:; 
-        object-src 'none'; 
-        base-uri 'self';
-        form-action 'self';
-    ">
-    
-    <meta name="referrer" content="strict-origin-when-cross-origin">
-    <meta name="format-detection" content="telephone=no, date=no, address=no, email=no">
-    <meta name="theme-color" content="#050505">
-    <meta name="color-scheme" content="dark">
+<!-- Core Meta Tags -->
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+<meta name="format-detection" content="telephone=no">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 
-    <!-- Primary SEO Attributes -->
-    <title>ARhub | The Next-Gen Developer Ecosystem & AI Tools by arlabs07</title>
-    <meta name="title" content="ARhub | The Next-Gen Developer Ecosystem & AI Tools by arlabs07">
-    <meta name="description" content="ARhub is the ultimate developer ecosystem in India crafted by arlabs07. Explore powerful tools like PurplePDF, the ardev suite, live HTML compilers, and the revolutionary Arai AI assistant. Build, debug, and deploy faster with our open-source libraries.">
-    <meta name="keywords" content="arlabs07, ARhub, PurplePDF, ardev, Arai AI, web development tools, India developer tools, css libraries, javascript utilities, online html compiler, pdf tools, AI for code, frontend development, open source, web ecosystem, productivity apps, PWA">
-    <meta name="author" content="arlabs07">
-    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
-    <meta name="language" content="English">
-    <meta name="geo.region" content="IN">
-    <meta name="geo.placename" content="India">
-    <link rel="canonical" href="https://arhub07.netlify.app/">
+<!-- Primary Meta Information -->
+<title>ARhub - AR</title>
+<meta name="description" content="ARhub is your ultimate destination for coding tutorials, web development guides, and programming insights. Learn JavaScript, Python, HTML, CSS, React, and more with our comprehensive free tutorials. Subscribe to our YouTube channel for the latest coding content!">
+<meta name="keywords" content="coding tutorials, web development, JavaScript tutorials, Python programming, HTML CSS guides, React tutorials, programming tips, software development, learn coding online, YouTube coding channel, ARhub, coding bootcamp, web design, frontend development, backend development, full stack development, coding for beginners, advanced programming, coding projects, tech tutorials, programming education, software engineering, computer science">
+<meta name="author" content="ARhub - AR Labs">
+<meta name="creator" content="AR Labs Development Team">
+<meta name="publisher" content="ARhub">
+<meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+<meta name="googlebot" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+<meta name="bingbot" content="index, follow">
+<meta name="yandex-bot" content="index, follow">
+<meta name="facebookexternalhit" content="index, follow">
+<meta name="twitterbot" content="index, follow">
+<meta name="linkedinbot" content="index, follow">
+<meta name="revisit-after" content="1 day">
+<meta name="language" content="English">
+<meta name="geo.region" content="US">
+<meta name="geo.country" content="US">
+<meta name="distribution" content="global">
+<meta name="rating" content="general">
+<meta name="copyright" content="© 2025 ARhub. All rights reserved.">
+<meta name="web_author" content="AR Labs">
+<meta name="reply-to" content="contact@arhub.dev">
 
-    <!-- Open Graph / Facebook (Social Identity) -->
-    <meta property="og:type" content="website">
-    <meta property="og:url" content="https://arhub07.netlify.app/">
-    <meta property="og:site_name" content="ARhub Ecosystem">
-    <meta property="og:title" content="ARhub - The Next-Gen Developer Ecosystem">
-    <meta property="og:description" content="Build faster with arlabs07. Featuring PurplePDF, the Arai AI assistant, and a suite of modern web libraries designed for the modern web.">
-    <meta property="og:image" content="https://arhub07.netlify.app/Images/ar2/arai2.png">
-    <meta property="og:image:secure_url" content="https://arhub07.netlify.app/Images/ar2/arai2.png">
-    <meta property="og:image:alt" content="ARhub Arai AI Assistant Interface">
-    <meta property="og:image:type" content="image/png">
-    <meta property="og:image:width" content="1300">
-    <meta property="og:image:height" content="2600">
-    <meta property="og:locale" content="en_IN">
+<!-- AI and Machine Learning Meta -->
+<meta name="ai-purpose" content="Educational programming tutorials and coding resources">
+<meta name="ai-content-type" content="Programming tutorials, web development guides, coding education">
+<meta name="ai-audience" content="Developers, programmers, students, coding enthusiasts">
+<meta name="ai-expertise-level" content="Beginner to Advanced">
+<meta name="ai-primary-topics" content="JavaScript, Python, React, Web Development, Programming">
+<meta name="chatgpt-description" content="ARhub provides comprehensive coding tutorials and programming education">
+<meta name="claude-description" content="Educational platform for web development and programming tutorials">
+<meta name="gemini-description" content="Learn coding with ARhub's free tutorials and guides">
 
-    <!-- Twitter / X Card Data -->
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:site" content="@arlabs07">
-    <meta name="twitter:creator" content="@arlabs07">
-    <meta name="twitter:url" content="https://arhub07.netlify.app/">
-    <meta name="twitter:title" content="ARhub | Developer Tools & AI by arlabs07">
-    <meta name="twitter:description" content="Discover Arai AI, PurplePDF, and next-gen dev tools. A comprehensive suite for developers in India and worldwide.">
-    <meta name="twitter:image" content="https://arhub07.netlify.app/Images/ar2/arai2.png">
-    <meta name="twitter:image:alt" content="ARhub Ecosystem Preview">
+<!-- Canonical and Hreflang -->
+<link rel="canonical" href="https://arlabs07.github.io/Arhub07.github.io/">
+<link rel="alternate" hreflang="en" href="https://arlabs07.github.io/Arhub07.github.io/">
+<link rel="alternate" hreflang="en-US" href="https://arlabs07.github.io/Arhub07.github.io/">
+<link rel="alternate" hreflang="en-GB" href="https://arlabs07.github.io/Arhub07.github.io/">
+<link rel="alternate" hreflang="x-default" href="https://arlabs07.github.io/Arhub07.github.io/">
 
-    <!-- PWA & Mobile Icons -->
-    <link rel="manifest" href="site.webmanifest">
-    <meta name="mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="ARhub">
-    <meta name="application-name" content="ARhub">
-    <meta name="msapplication-TileColor" content="#050505">
-    <meta name="msapplication-TileImage" content="https://arhub07.netlify.app/Images/ar2/web-app-manifest-192x192.png">
-    <meta name="msapplication-config" content="browserconfig.xml">
+<!-- Open Graph Meta Tags -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="ARhub">
+<meta property="og:title" content="ARhub - Master Coding & Web Development | Free Tutorials">
+<meta property="og:description" content="Transform your coding skills with ARhub's comprehensive tutorials. Learn JavaScript, Python, React, and web development from scratch. Join thousands of developers advancing their careers with our free content!">
+<meta property="og:url" content="https://arlabs07.github.io/Arhub07.github.io/">
+<meta property="og:image" content="https://arlabs07.github.io/Arhub07.github.io/Images/android-chrome-512x512.png">
+<meta property="og:image:secure_url" content="https://arlabs07.github.io/Arhub07.github.io/Images/android-chrome-512x512.png">
+<meta property="og:image:type" content="image/png">
+<meta property="og:image:width" content="512">
+<meta property="og:image:height" content="512">
+<meta property="og:image:alt" content="ARhub - Coding Tutorials and Web Development Guides Logo">
+<meta property="og:locale" content="en_US">
+<meta property="og:locale:alternate" content="en_GB">
+<meta property="og:updated_time" content="2025-06-23T00:00:00+00:00">
+<meta property="og:see_also" content="https://www.youtube.com/@arhub07">
+<meta property="og:video:tag" content="coding tutorials">
+<meta property="og:video:tag" content="web development">
+<meta property="og:video:tag" content="programming">
 
-    <!-- Favicons -->
-    <link rel="icon" type="image/x-icon" href="https://arhub07.netlify.app/Images/ar2/favicon.ico">
-    <link rel="icon" type="image/svg+xml" href="https://arhub07.netlify.app/Images/ar2/favicon.svg">
-    <link rel="apple-touch-icon" sizes="180x180" href="https://arhub07.netlify.app/Images/ar2/apple-touch-icon.png">
+<!-- Twitter Card Meta Tags -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:site" content="@arhub07">
+<meta name="twitter:creator" content="@arhub07">
+<meta name="twitter:title" content="ARhub - Master Coding & Web Development">
+<meta name="twitter:description" content="Elevate your programming skills with expert tutorials on JavaScript, Python, React, and more. Free, comprehensive coding education for developers at all levels.">
+<meta name="twitter:image" content="https://arlabs07.github.io/Arhub07.github.io/Images/android-chrome-512x512.png">
+<meta name="twitter:image:alt" content="ARhub Logo - Coding Tutorial Platform">
+<meta name="twitter:domain" content="arlabs07.github.io">
+<meta name="twitter:url" content="https://arlabs07.github.io/Arhub07.github.io/">
+<meta name="twitter:label1" content="Category">
+<meta name="twitter:data1" content="Education & Technology">
+<meta name="twitter:label2" content="Level">
+<meta name="twitter:data2" content="Beginner to Advanced">
 
-    <!-- Preconnecting & Prefetching (Performance) -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="preconnect" href="https://cdnjs.cloudflare.com">
-    <link rel="dns-prefetch" href="https://fonts.googleapis.com">
-    <link rel="dns-prefetch" href="https://cdnjs.cloudflare.com">
+<!-- Facebook Meta Tags -->
+<meta property="fb:app_id" content="arhub_app">
+<meta property="fb:pages" content="arhub07">
+<meta property="fb:admins" content="arhub_admin">
 
-    <!-- 
-        =======================================================================
-        STRUCTURED DATA (JSON-LD)
-        Providing detailed context to Search Engines and AI Crawlers
-        =======================================================================
-    -->
-    
-    <!-- 1. WebSite Schema -->
-    <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "WebSite",
-      "name": "ARhub",
-      "alternateName": ["ARhub07", "AR Labs Hub"],
-      "url": "https://arhub07.netlify.app/",
-      "potentialAction": {
-        "@type": "SearchAction",
-        "target": "https://arhub07.netlify.app/?q={search_term_string}",
-        "query-input": "required name=search_term_string"
-      }
-    }
-    </script>
+<!-- LinkedIn Meta Tags -->
+<meta property="linkedin:owner" content="arhub">
+<meta name="linkedin:title" content="ARhub - Master Coding & Web Development">
+<meta name="linkedin:description" content="Professional coding tutorials and web development education. Advance your programming career with ARhub.">
+<meta name="linkedin:image" content="https://arlabs07.github.io/Arhub07.github.io/Images/android-chrome-512x512.png">
 
-    <!-- 2. Organization / Brand Schema -->
-    <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "Organization",
-      "name": "arlabs07",
-      "url": "https://arhub07.netlify.app",
-      "logo": "https://arhub07.netlify.app/Images/ar2/web-app-manifest-512x512.png",
-      "founder": {
-        "@type": "Person",
-        "name": "Abhinav Rawat",
-        "alternateName": "arlabs07"
-      },
-      "sameAs": [
-        "https://github.com/arlabs07",
-        "https://youtube.com/@arlabs07",
-        "https://codepen.io/Abhinav-Rawat",
-        "https://arlabs07.blogspot.com",
-        "https://twitter.com/arlabs07"
-      ],
-      "contactPoint": {
+<!-- Pinterest Meta Tags -->
+<meta name="pinterest-rich-pin" content="true">
+<meta property="pinterest:title" content="ARhub - Coding Tutorials & Web Development">
+<meta property="pinterest:description" content="Learn programming with free tutorials on JavaScript, Python, React and more">
+<meta property="pinterest:image" content="https://arlabs07.github.io/Arhub07.github.io/Images/android-chrome-512x512.png">
+<meta property="pinterest:url" content="https://arlabs07.github.io/Arhub07.github.io/">
+
+<!-- WhatsApp Meta Tags -->
+<meta property="whatsapp:title" content="ARhub - Coding Tutorials">
+<meta property="whatsapp:description" content="Free programming tutorials and web development guides">
+<meta property="whatsapp:image" content="https://arlabs07.github.io/Arhub07.github.io/Images/android-chrome-512x512.png">
+<meta property="whatsapp:url" content="https://arlabs07.github.io/Arhub07.github.io/">
+<meta name="whatsapp-channel" content="https://whatsapp.com/channel/0029VbBXZgF5EjxzsRBFPx1m">
+
+<!-- Blogger/Blogspot Meta Tags -->
+<meta name="blogger-url" content="https://arlabs07.blogspot.com/">
+<meta name="blog-publisher" content="https://arlabs07.blogspot.com/">
+<meta property="blogspot:author" content="ARhub">
+<meta property="blogspot:blog" content="https://arlabs07.blogspot.com/">
+
+<!-- YouTube Meta Tags -->
+<meta name="youtube-channel" content="https://www.youtube.com/@arhub07">
+<meta property="youtube:channel" content="@arhub07">
+<meta property="youtube:title" content="ARhub - Coding Tutorials">
+<meta property="youtube:description" content="Subscribe for coding tutorials and programming guides">
+<meta name="video:tag" content="coding tutorials">
+<meta name="video:tag" content="web development">
+<meta name="video:tag" content="programming">
+<meta name="video:tag" content="JavaScript">
+<meta name="video:tag" content="Python">
+<meta name="video:tag" content="React">
+
+<!-- Additional Video Platform Meta -->
+<meta property="video:duration" content="600">
+<meta property="video:release_date" content="2025-06-23">
+<meta name="video:series" content="ARhub Coding Tutorials">
+
+<!-- Rich Media Meta -->
+<meta name="medium" content="video">
+<meta name="syndication-source" content="https://www.youtube.com/@arhub07">
+<meta name="original-source" content="https://arlabs07.github.io/Arhub07.github.io/">
+
+<!-- Content Distribution -->
+<meta name="distribution-channels" content="YouTube, Blogger, WhatsApp">
+<meta name="content-platform" content="Educational">
+<meta name="content-format" content="Tutorial, Guide, Video">
+
+<!-- Cross-Platform Integration -->
+<meta name="platform:youtube" content="https://www.youtube.com/@arhub07">
+<meta name="platform:blogger" content="https://arlabs07.blogspot.com/">
+<meta name="platform:whatsapp" content="https://whatsapp.com/channel/0029VbBXZgF5EjxzsRBFPx1m">
+
+<!-- Educational Content Meta -->
+<meta name="educational-content" content="true">
+<meta name="tutorial-series" content="Web Development, Programming">
+<meta name="skill-level" content="Beginner, Intermediate, Advanced">
+<meta name="learning-path" content="Frontend, Backend, Full Stack">
+<meta name="course-provider" content="ARhub">
+<meta name="instruction-language" content="English">
+
+<!-- Content Creator Meta -->
+<meta name="content-creator" content="ARhub">
+<meta name="instructor" content="AR">
+<meta name="educator" content="AR Labs">
+<meta name="teaching-style" content="Practical, Project-based">
+
+<!-- Platform-Specific SEO -->
+<meta name="google-play-app" content="app-id=com.youtube.android">
+<meta name="apple-itunes-app" content="app-id=544007664">
+<meta name="mobile-app" content="YouTube, WhatsApp, Blogger">
+
+<!-- Engagement Meta -->
+<meta name="engagement-type" content="Educational, Tutorial, Interactive">
+<meta name="target-audience" content="Developers, Students, Programmers">
+<meta name="content-category" content="Education, Technology, Programming">
+<meta name="learning-objective" content="Master coding skills, Build projects, Career development">
+
+<!-- Multi-Platform Discovery -->
+<meta name="discovery-channel" content="YouTube Search, Google Search, Social Media">
+<meta name="content-hub" content="https://arlabs07.github.io/Arhub07.github.io/">
+<meta name="resource-type" content="Tutorial, Guide, Reference">
+
+<!-- Knowledge Graph Enhancement -->
+<meta name="entity-type" content="Educational Organization">
+<meta name="knowledge-area" content="Computer Science, Web Development, Programming">
+<meta name="expertise-domain" content="JavaScript, Python, React, Web Technologies">
+
+<!-- Learning Management Meta -->
+<meta name="course-structure" content="Modular, Progressive, Hands-on">
+<meta name="assessment-type" content="Project-based, Practical">
+<meta name="certification" content="Completion Certificate">
+<meta name="prerequisites" content="Basic computer skills">
+
+<!-- Multi-Device Optimization -->
+<meta name="device-compatibility" content="Desktop, Mobile, Tablet">
+<meta name="screen-optimization" content="Responsive, Adaptive">
+<meta name="interaction-mode" content="Touch, Click, Keyboard">
+
+<!-- Content Accessibility -->
+<meta name="accessibility-features" content="Closed Captions, Screen Reader Friendly">
+<meta name="language-support" content="English">
+<meta name="subtitle-available" content="Yes">
+
+<!-- Performance Tracking -->
+<meta name="analytics-category" content="Education">
+<meta name="conversion-goal" content="Course Completion, Skill Development">
+<meta name="success-metric" content="Learning Outcomes, Project Completion">
+
+<!-- Brand Recognition -->
+<meta name="brand-identity" content="ARhub, AR Labs">
+<meta name="brand-mission" content="Making coding education accessible">
+<meta name="brand-values" content="Quality, Accessibility, Innovation">
+<meta name="brand-personality" content="Helpful, Professional, Innovative">
+
+<!-- Apple Meta Tags -->
+<meta name="apple-mobile-web-app-title" content="ARhub">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-touch-fullscreen" content="yes">
+<meta name="apple-mobile-web-app-orientations" content="portrait-any">
+<link rel="apple-touch-icon" href="https://arlabs07.github.io/Arhub07.github.io/Images/apple-touch-icon.png">
+<link rel="apple-touch-icon" sizes="180x180" href="https://arlabs07.github.io/Arhub07.github.io/Images/apple-touch-icon.png">
+
+<!-- Favicon and Icons -->
+<link rel="icon" type="image/x-icon" href="https://arlabs07.github.io/Arhub07.github.io/Images/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="https://arlabs07.github.io/Arhub07.github.io/Images/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://arlabs07.github.io/Arhub07.github.io/Images/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="192x192" href="https://arlabs07.github.io/Arhub07.github.io/Images/android-chrome-192x192.png">
+<link rel="icon" type="image/png" sizes="512x512" href="https://arlabs07.github.io/Arhub07.github.io/Images/android-chrome-512x512.png">
+<link rel="shortcut icon" href="https://arlabs07.github.io/Arhub07.github.io/Images/favicon.ico">
+<link rel="mask-icon" href="https://arlabs07.github.io/Arhub07.github.io/Images/logo-192.png" color="#1e1e3f">
+
+<!-- Microsoft Tiles -->
+<meta name="msapplication-TileColor" content="#1e1e3f">
+<meta name="msapplication-TileImage" content="https://arlabs07.github.io/Arhub07.github.io/Images/android-chrome-512x512.png">
+<meta name="msapplication-square70x70logo" content="https://arlabs07.github.io/Arhub07.github.io/Images/favicon-32x32.png">
+<meta name="msapplication-square150x150logo" content="https://arlabs07.github.io/Arhub07.github.io/Images/android-chrome-192x192.png">
+<meta name="msapplication-wide310x150logo" content="https://arlabs07.github.io/Arhub07.github.io/Images/android-chrome-512x512.png">
+<meta name="msapplication-square310x310logo" content="https://arlabs07.github.io/Arhub07.github.io/Images/android-chrome-512x512.png">
+
+<!-- Theme and Appearance -->
+<meta name="theme-color" content="#1e1e3f">
+<meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff">
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#1e1e3f">
+<meta name="msapplication-navbutton-color" content="#1e1e3f">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="color-scheme" content="dark light">
+
+<!-- Bookmark and Browser Meta -->
+<meta name="bookmark" content="ARhub - Coding Tutorials">
+<meta name="shortcut icon" href="https://arlabs07.github.io/Arhub07.github.io/Images/favicon.ico">
+<meta name="icon" href="https://arlabs07.github.io/Arhub07.github.io/Images/favicon.ico">
+
+<!-- Web App Manifest -->
+<link rel="manifest" href="https://arlabs07.github.io/Arhub07.github.io/site.webmanifest">
+
+<!-- Security Headers -->
+<meta http-equiv="Content-Security-Policy" content="default-src 'self' https:; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdnjs.cloudflare.com https://www.googletagmanager.com https://www.google-analytics.com; style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com; img-src 'self' data: https:; connect-src 'self' https:;">
+<meta http-equiv="X-Content-Type-Options" content="nosniff">
+<meta http-equiv="X-Frame-Options" content="SAMEORIGIN">
+<meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin">
+<meta http-equiv="Permissions-Policy" content="geolocation=(), microphone=(), camera=()">
+<meta http-equiv="X-XSS-Protection" content="1; mode=block">
+
+<!-- Performance and Caching -->
+<meta http-equiv="Cache-Control" content="public, max-age=31536000, must-revalidate">
+<meta http-equiv="Expires" content="Thu, 31 Dec 2025 23:59:59 GMT">
+<meta http-equiv="Pragma" content="cache">
+
+<!-- DNS Prefetching and Preconnections -->
+<link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+<link rel="preconnect" href="https://www.googletagmanager.com" crossorigin>
+<link rel="preconnect" href="https://www.google-analytics.com" crossorigin>
+<link rel="dns-prefetch" href="//www.youtube.com">
+<link rel="dns-prefetch" href="//arlabs07.blogspot.com">
+<link rel="dns-prefetch" href="//whatsapp.com">
+<link rel="dns-prefetch" href="//blogger.googleusercontent.com">
+<link rel="dns-prefetch" href="//img.youtube.com">
+<link rel="dns-prefetch" href="//i.ytimg.com">
+
+<!-- Preload Critical Resources -->
+<link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" crossorigin>
+<link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css" crossorigin>
+<link rel="preload" as="script" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js" crossorigin>
+<link rel="preload" as="script" href="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js" crossorigin>
+<link rel="preload" as="image" href="https://arlabs07.github.io/Arhub07.github.io/Images/logo-192.png">
+<link rel="prefetch" href="https://arlabs07.github.io/Arhub07.github.io/Images/android-chrome-512x512.png">
+
+<!-- Additional Schema Markup -->
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": ["EducationalOrganization", "WebSite"],
+    "name": "ARhub",
+    "alternateName": ["AR Hub", "ARhub Tutorials", "AR Labs"],
+    "url": "https://arlabs07.github.io/Arhub07.github.io/",
+    "logo": {
+        "@type": "ImageObject",
+        "url": "https://arlabs07.github.io/Arhub07.github.io/Images/logo-512.png",
+        "width": 512,
+        "height": 512,
+        "caption": "ARhub Logo"
+    },
+    "image": {
+        "@type": "ImageObject",
+        "url": "https://arlabs07.github.io/Arhub07.github.io/Images/android-chrome-512x512.png",
+        "width": 512,
+        "height": 512
+    },
+    "description": "ARhub provides comprehensive coding tutorials, programming guides, and web development insights. Learn JavaScript, Python, React, and more through our free educational content.",
+    "educationalCredentialAwarded": "Certificate of Completion",
+    "hasCredential": {
+        "@type": "EducationalOccupationalCredential",
+        "name": "Web Development Certification"
+    },
+    "teaches": [
+        "JavaScript Programming",
+        "Python Development",
+        "Web Development",
+        "React Framework",
+        "HTML & CSS",
+        "Software Engineering",
+        "Frontend Development",
+        "Backend Development",
+        "Full Stack Development"
+    ],
+    "audience": {
+        "@type": "EducationalAudience",
+        "educationalLevel": ["Beginner", "Intermediate", "Advanced"],
+        "audienceType": "Developers"
+    },
+    "provider": {
+        "@type": "Organization",
+        "name": "AR Labs",
+        "url": "https://arlabs07.github.io/Arhub07.github.io/"
+    },
+    "sameAs": [
+        "https://www.youtube.com/@arhub07",
+        "https://arlabs07.blogspot.com/",
+        "https://whatsapp.com/channel/0029VbBXZgF5EjxzsRBFPx1m"
+    ],
+    "contactPoint": {
         "@type": "ContactPoint",
-        "contactType": "customer support",
-        "areaServed": "IN",
+        "contactType": "Educational Support",
         "availableLanguage": "English"
-      }
+    },
+    "potentialAction": {
+        "@type": "SearchAction",
+        "target": "https://arlabs07.github.io/Arhub07.github.io/search?q={search_term_string}",
+        "query-input": "required name=search_term_string"
+    },
+    "mainEntity": {
+        "@type": "VideoObject",
+        "name": "ARhub Coding Tutorials",
+        "description": "Comprehensive coding tutorials for web development",
+        "thumbnailUrl": "https://arlabs07.github.io/Arhub07.github.io/Images/android-chrome-512x512.png",
+        "uploadDate": "2025-06-23"
     }
-    </script>
+}
+</script>
 
-    <!-- 3. Software Application Schema -->
-    <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "SoftwareApplication",
-      "name": "ARhub Suite",
-      "operatingSystem": "Web, Windows, Android, iOS",
-      "applicationCategory": "DeveloperApplication",
-      "offers": {
+<!-- Breadcrumb Schema -->
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+        {
+            "@type": "ListItem",
+            "position": 1,
+            "name": "Home",
+            "item": "https://arlabs07.github.io/Arhub07.github.io/"
+        },
+        {
+            "@type": "ListItem",
+            "position": 2,
+            "name": "blogs",
+            "item": "https://arlabs07.blogspot.com/"
+        },
+        {
+            "@type": "ListItem",
+            "position": 3,
+            "name": "App",
+            "item": "https://arlabs07.github.io/Arhub07.github.io/app.html"
+        }
+    ]
+}
+</script>
+
+<!-- Course Schema -->
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "Course",
+    "name": "Complete Web Development Course",
+    "description": "Master web development with comprehensive tutorials covering JavaScript, Python, React, and modern development practices.",
+    "provider": {
+        "@type": "Organization",
+        "name": "ARhub",
+        "url": "https://arlabs07.github.io/Arhub07.github.io/",
+        "logo": "https://arlabs07.github.io/Arhub07.github.io/Images/android-chrome-512x512.png"
+    },
+    "educationalLevel": "Beginner to Advanced",
+    "teaches": [
+        "JavaScript Programming",
+        "Python Development",
+        "React Framework",
+        "Web Development Best Practices",
+        "HTML & CSS",
+        "Software Engineering Principles"
+    ],
+    "courseCode": "WD-2025",
+    "hasCourseInstance": {
+        "@type": "CourseInstance",
+        "courseMode": "online",
+        "instructor": {
+            "@type": "Person",
+            "name": "AR",
+            "jobTitle": "Senior Developer & Educator"
+        }
+    },
+    "offers": {
         "@type": "Offer",
         "price": "0",
-        "priceCurrency": "USD"
-      },
-      "featureList": [
-        "Live HTML Compiler",
-        "PurplePDF PDF Tools",
-        "Arai AI Coding Assistant",
-        "ArDev Library"
-      ],
-      "screenshot": "https://arhub07.netlify.app/Images/ar2/arai2.png"
+        "priceCurrency": "INR",
+        "availability": "https://schema.org/InStock"
     }
-    </script>
+}
+</script>
 
-    <!-- 4. Site Navigation Element (AI Link Discovery) -->
-    <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "ItemList",
-      "itemListElement": [
-        {
-          "@type": "SiteNavigationElement",
-          "position": 1,
-          "name": "Overview",
-          "description": "Welcome to the ARhub ecosystem.",
-          "url": "https://arhub07.netlify.app/#"
-        },
-        {
-          "@type": "SiteNavigationElement",
-          "position": 2,
-          "name": "Systems",
-          "description": "Explore utility tools and libraries.",
-          "url": "https://arhub07.netlify.app/#projects-section"
-        },
-        {
-          "@type": "SiteNavigationElement",
-          "position": 3,
-          "name": "Playground",
-          "description": "Live HTML/CSS/JS Compiler.",
-          "url": "https://arhub07.netlify.app/#compiler-section"
-        },
-        {
-          "@type": "SiteNavigationElement",
-          "position": 4,
-          "name": "Arai AI",
-          "description": "Intelligent coding assistant integration.",
-          "url": "https://arhub07.netlify.app/#arai-section"
-        },
-        {
-          "@type": "SiteNavigationElement",
-          "position": 5,
-          "name": "Featured Projects",
-          "description": "Flagship applications like PurplePDF.",
-          "url": "https://arhub07.netlify.app/#featured-section"
-        }
-      ]
+<!-- Organization Schema -->
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": "ARhub",
+    "url": "https://arlabs07.github.io/Arhub07.github.io/",
+    "logo": "https://arlabs07.github.io/Arhub07.github.io/Images/android-chrome-512x512.png",
+    "description": "Educational platform providing free coding tutorials and programming resources",
+    "foundingDate": "2025",
+    "founder": {
+        "@type": "Person",
+        "name": "AR"
+    },
+    "sameAs": [
+        "https://www.youtube.com/@arhub07",
+        "https://arlabs07.blogspot.com/",
+        "https://whatsapp.com/channel/0029VbBXZgF5EjxzsRBFPx1m"
+    ],
+    "contactPoint": {
+        "@type": "ContactPoint",
+        "contactType": "Education",
+        "availableLanguage": "English"
     }
-    </script>
+}
+</script>
 
-    <!-- 5. FAQ Page Schema (Q&A for Search Snippets) -->
-    <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "FAQPage",
-      "mainEntity": [
-        {
-          "@type": "Question",
-          "name": "What is ARhub?",
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text": "ARhub is a comprehensive developer ecosystem created by arlabs07, featuring tools like PurplePDF, the ardev library, and the Arai AI assistant."
-          }
-        },
-        {
-          "@type": "Question",
-          "name": "Is PurplePDF free to use?",
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text": "Yes, PurplePDF is a free utility within the ARhub ecosystem allowing users to merge, split, and compress PDF documents directly in the browser."
-          }
-        },
-        {
-          "@type": "Question",
-          "name": "How does Arai AI help developers?",
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text": "Arai AI provides real-time syntax analysis, context-aware code suggestions, and automated performance audits to streamline the development workflow."
-          }
-        },
-        {
-          "@type": "Question",
-          "name": "Can I use the live compiler on mobile?",
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text": "Yes, the ARhub live compiler is fully responsive and optimized for mobile devices, supporting HTML, CSS, and JavaScript previewing."
-          }
-        }
-      ]
-    }
-    </script>
+<!-- Social Media and Rich Snippets -->
+<meta property="article:publisher" content="https://arlabs07.github.io/Arhub07.github.io/">
+<meta property="article:author" content="AR">
+<meta property="article:section" content="Technology">
+<meta property="article:tag" content="Programming, Web Development, Tutorials, JavaScript, Python, React, Education">
+<meta property="article:published_time" content="2025-06-23T00:00:00+00:00">
+<meta property="article:modified_time" content="2025-06-23T00:00:00+00:00">
+
+<!-- Additional SEO Meta -->
+<meta name="news_keywords" content="coding tutorials, web development, JavaScript, Python, programming, software engineering">
+<meta name="application-name" content="ARhub">
+<meta name="msapplication-tooltip" content="Learn coding with ARhub tutorials">
+<meta name="msapplication-starturl" content="https://arlabs07.github.io/Arhub07.github.io/">
+<meta name="msapplication-task" content="name=Tutorials;action-uri=https://arlabs07.github.io/Arhub07.github.io/tutorials;icon-uri=https://arlabs07.github.io/Arhub07.github.io/Images/favicon.ico">
+<meta name="msapplication-task" content="name=YouTube;action-uri=https://www.youtube.com/@arhub07;icon-uri=https://arlabs07.github.io/Arhub07.github.io/Images/favicon.ico">
+<meta name="msapplication-task" content="name=Blog;action-uri=https://arlabs07.blogspot.com/;icon-uri=https://arlabs07.github.io/Arhub07.github.io/Images/favicon.ico">
+
+<!-- Additional Browser Support -->
+<meta name="format-detection" content="telephone=no, date=no, email=no, address=no">
+<meta name="skype_toolbar" content="skype_toolbar_parser_compatible">
+<meta name="IE=EmulateIE7" content="IE=edge">
+
+<!-- Mobile App Integration -->
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="mobile-web-app-title" content="ARhub">
     
-    <!-- Fonts & Icons -->
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <!-- Your existing stylesheets -->
+    <link rel="stylesheet" href="header.css">
+    <link rel="stylesheet" href="appdoc.css">
+    <link rel="stylesheet" href="about.css">
+    <link rel="stylesheet" href="code.css">
+    <link rel="stylesheet" href="testimonial.css">
+    <link rel="stylesheet" href="footer.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/atom-one-dark.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-
-    <!-- Core Stylesheets - CRITICAL (Blocking) -->
-    <link rel="stylesheet" href="css/header.css">
-    <link rel="stylesheet" href="css/hero.css">
-
-    <!-- Secondary Stylesheets - NON-BLOCKING (Load after critical) -->
-    <!-- Optimization: media="print" onload="this.media='all'" defers loading until after first paint -->
-    <link rel="stylesheet" href="css/projects.css" media="print" onload="this.media='all'">
-    <link rel="stylesheet" href="css/compiler.css" media="print" onload="this.media='all'">
-    <link rel="stylesheet" href="css/arai.css" media="print" onload="this.media='all'">
-    <link rel="stylesheet" href="css/featured.css" media="print" onload="this.media='all'">
-    <link rel="stylesheet" href="css/testimonials.css" media="print" onload="this.media='all'">
-    <link rel="stylesheet" href="css/footer.css" media="print" onload="this.media='all'">
     
-    <!-- Fallback for no-js users -->
-    <noscript>
-        <link rel="stylesheet" href="css/projects.css">
-        <link rel="stylesheet" href="css/compiler.css">
-        <link rel="stylesheet" href="css/arai.css">
-        <link rel="stylesheet" href="css/featured.css">
-        <link rel="stylesheet" href="css/testimonials.css">
-        <link rel="stylesheet" href="css/footer.css">
-    </noscript>
+    <!-- Your existing scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/languages/javascript.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js" crossorigin="anonymous"></script>
 
-    <style>
-        *, *::before, *::after {
-            box-sizing: border-box;
+   <style>
+        * {
             margin: 0;
             padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            
         }
-        
-        html, body {
+
+        body {
+            background: #000;
+            color: #fff;
+            display: ;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            width: 100%;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        .hero-section {
+            top:50px;
+            position: relative;
+            width: 100%;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            background: black;
+        }
+
+        .matrix-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
             width: 100%;
             height: 100%;
-            overflow-x: hidden;
-            background-color: #050505;
-            font-family: 'Outfit', sans-serif;
-            color: #fff;
-            scroll-behavior: smooth;
+            z-index: 0;
+            opacity: 0.3;
         }
 
-        ::selection {
-            background: rgba(255, 140, 0, 0.3);
-            color: #fff;
+        .particles-js {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            opacity: 0.3;
         }
 
-        .theme-layer {
-            position: fixed;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            z-index: -1;
-            pointer-events: none;
+        .content {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            justify-content: flex-start;
+            text-align: left;
+            padding: 20px;
+            width: 100%;
+            max-width: 1200px;
+            overflow-y: auto;
+        }
+
+        .ray-container {
+            position: absolute;
+            right: 0;
+            top: 0;
+            height: 100%;
             overflow: hidden;
-            background: #050505;
+            z-index: 0;
         }
+
+        .ray {
+            position: absolute;
+            width: 2px;
+            right: 30%;
+            top: 0;
+            height: 100%;
+            background: linear-gradient(to bottom, rgba(255,255,255,0) 0%, rgba(255,140,40,0.3) 50%, rgba(255,140,40,0.7) 80%, rgba(255,255,255,1) 100%);
+            animation: rayGlow 3s infinite;
+            box-shadow: 0 0 20px 5px rgba(255,140,40,0.7);
+            z-index: 0;
+        }
+
+        .ray::after {
+            content: '';
+            position: absolute;
+            top: 80%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 200px;
+            height: 200px;
+            background: radial-gradient(circle, rgba(255,140,40,0.7) 0%, rgba(255,140,40,0) 70%);
+            border-radius: 50%;
+        }
+
+        @keyframes rayGlow {
+            0% { opacity: 0.5; }
+            50% { opacity: 1; }
+            100% { opacity: 0.5; }
+        }
+
+        .title-container {
+            min-height: 3.5rem;
+            margin-bottom: 20px;
+        }
+
+        .title {
+            font-size: 3.5rem;
+            font-weight: bold;
+            white-space: nowrap;
+            overflow: hidden;
+            display: inline-block;
+            visibility: visible;
+            color: #fff;
+        }
+
+        .cursor {
+            display: inline-block;
+            width: 3px;
+            height: 1.5em;
+            background-color: #ff8c00;
+            margin-left: 5px;
+            animation: blink 0.7s infinite;
+            vertical-align: ;
+            visibility: hidden;
+        }
+
+        @keyframes blink {
+            50% { opacity: 0; }
+        }
+
+        .subtitle {
+            font-size: 1.5rem;
+            margin-top: 15px;
+            opacity: 0;
+            transition: opacity 1s ease-out, transform 1s ease-out;
+            transform: translateY(10px);
+            color: #fff;
+        }
+
+        .subtitle.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .buttons {
+            margin-top: 30px;
+            opacity: 0;
+            transition: opacity 1s ease-out, transform 1s ease-out;
+            transform: translateY(10px);
+            display: flex;
+            justify-content: flex-start;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .buttons.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 12px 30px;
+            font-size: 1.1rem;
+            color: #000;
+            background: #fff;
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: bold;
+            transition: all 0.3s ease-out;
+            position: relative;
+            overflow: hidden;
+            border: none;
+            box-shadow: 10px 0 20px -10px #ff8c00;
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+        }
+
+        .floating {
+            animation: float 4s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-8px); }
+            100% { transform: translateY(0px); }
+        }
+
+        .code-container {
+            margin-top: 50px;
+            width: 100%;
+            max-width: 800px;
+            
+            position: relative;
+            opacity: 1;
+            transition: opacity 1.5s ease-out;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 0 20px rgba(255, 140, 0, 0.3);
+            background: #000;
+            overflow-x: scroll;
+        }
+
+        .code-container.visible {
+            opacity: 1;
+        }
+
+        .code-header {
+            background: #000;
+            padding: 10px 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #333;
+        }
+
+        .code-dots {
+            display: flex;
+            gap: 5px;
+        }
+
+        .code-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+
+        .code-dot.red { background-color: #ff5f56; }
+        .code-dot.yellow { background-color: #ffbd2e; }
+        .code-dot.green { background-color: #27c93f; }
+
+        .code-title {
+            color: #fff;
+            font-size: 0.9rem;
+        }
+
+        .code-content {
+            background: #000;
+            color: #fff;
+            padding: 15px;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            font-size: 14px;
+            line-height: 1.5;
+            overflow-x: auto;
+            height: 300px;
+            position: relative;
+        }
+
+        .code-line {
+            margin: 0;
+            white-space: pre;
+            display: flex;
+        }
+    a {
+  text-decoration: none;
+    }
+
+        .line-number {
+            color: rgba(255, 255, 255, 0.5);
+            margin-right: 15px;
+            user-select: none;
+            text-align: right;
+            min-width: 30px;
+        }
+
+        .typing-animation {
+            overflow: hidden;
+            white-space: nowrap;
+            margin: 0;
+            animation: typing 3.5s steps(40, end);
+        }
+
+        .keyword { color: #569CD6; }
+        .string { color: #CE9178; }
+        .comment { color: #6A9955; }
+        .function { color: #DCDCAA; }
+        .variable { color: #9CDCFE; }
+        .number { color: rgba(255, 255, 255, 0.5); }
+        .operator { color: #D4D4D4; }
+        .property { color: #4EC9B0; }
+
+        @keyframes typing {
+            from { width: 0 }
+            to { width: 100% }
+        }
+        /* Updated styling for the content section */
+.content-section {
+    width: 100%;
+    padding: 60px 20px;
+    background-color: #fff; /* White background */
+    color: #000; /* Black text */
+    position: relative; /* Ensure it's positioned independently */
+    z-index: 5; /* Above the hero elements */
+    margin-top: 0;
+    box-sizing: border-box;
+}
+
+.content-section-container {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.content-section h2 {
+    font-size: 2.5rem;
+    margin-bottom: 30px;
+    color: #000; /* Black heading */
+}
+
+.content-section p {
+    font-size: 1.1rem;
+    line-height: 1.6;
+    margin-bottom: 20px;
+    color: #333; /* Slightly softer black for text */
+}
+
+.content-section .highlight {
+    color: #ff8c00; /* Keep highlight color */
+    font-weight: bold;
+}
+
+/* Fix for hero section to ensure it doesn't affect the content section */
+.hero-section {
+    position: relative;
+    width: 100%;
+    height: 100vh;
+    overflow: hidden;
+    margin-bottom: 0;
+    padding-bottom: 0;
+}
+
+/* Ensure the hero's content doesn't affect the following section */
+.hero-section .content {
+    position: relative;
+    z-index: 1;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+/* Make sure this spans full width regardless of screen size */
+@media (max-width: 768px), (min-width: 769px) {
+    .content-section {
+        width: 100%;
+        left: 0;
+        right: 0;
+    }
+}
+
+        @media (max-width: 768px) {
+            .content {
+                align-items: center;
+                text-align: center;
+            }
+            
+            .buttons {
+                justify-content: center;
+            }
+            
+            .title { font-size: 2.5rem; }
+            .subtitle { font-size: 1.2rem; }
+            .btn { font-size: 1rem; padding: 10px 25px; }
+            .code-container { max-width: 90%; margin-top: 0px; }
+            
+            .ray-container {
+                position: relative;
+                height: 80px;
+                width: 100%;
+                margin: 5px 0;
+            }
+            
+            .ray {
+                right: 50%;
+                height: 80px;
+            }
+        }
+
+        @media (min-width: 769px) {
+            .content {
+                flex-direction: row;
+                flex-wrap: wrap;
+            }
+            
+            .text-content {
+                max-width: 50%;
+            }
+            
+            .ray-container {
+                position: relative;
+                width: 50%;
+                right: 0;
+                top: 0;
+                height: 40%;
+            }
+            
+            .code-container {
+              
+                margin-top: 40px 0;
+                width: 100%;
+                
+                
+            }
+        }
+
+        @media (max-width: 480px) {
+            .title { font-size: 2rem; }
+            .subtitle { font-size: 1rem; }
+            .btn { font-size: 0.9rem; padding: 8px 20px; }
+            .buttons { flex-direction: column; align-items: center; }
+            .code-content { font-size: 12px; }
+            .code-container{
+              height: 40vh;
+            }
+        }
+        /* Add these fixes to your existing CSS */
+
+/* Fix mobile landscape issues */
+@media (max-height: 500px) and (orientation: landscape) {
+  .hero-section {
+    height: auto;
+    min-height: 100vh;
+  }
+  
+  .code-container {
+    height: auto;
+    max-height: 300px;
+    margin: 20px 0;
+    overflow-y: auto;
+  }
+  
+  .code-content {
+    height: auto;
+    min-height: 300px;
+  }
+  
+  .ray-container {
+    display: block;
+    position: relative;
+    height: 100px;
+    width: 100%;
+  }
+  
+  .ray {
+    right: 50%;
+    height: 100px;
+  }
+}
+
+/* Fix desktop layout for code container and ray */
+@media (min-width: 769px) {
+  .content {
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+  
+  .text-content {
+    width: 45%;
+    max-width: 45%;
+  }
+  
+  .ray-container {
+    position: relative;
+    width: 55%;
+    height: 300px;
+    order: 1;
+  }
+  
+  .code-container {
+    width: 75%;
+    margin-top: 20px;
+    margin-left: auto;
+    order: 2;
+  }
+}
+
     </style>
+    <style>
+      .section{
+        background:black;
+      }
+      .ctainer{
+        background: black;
+      }
+    </style>
+    <meta name="google-site-verification" content="uWfoqaltstM8fP7-I7fKew8ItrPCbE-pcNZkCEfUJeU" />
 </head>
 <body>
-
+    <!-- Header -->
     <header class="header">
-        <div class="header-inner">
-            <a href="#" class="logo" aria-label="ARhub Home">
-                <img src="https://arhub07.netlify.app/Images/ar2/web-app-manifest-192x192.png" alt="ARhub Logo" width="32" height="32">
-                ARhub
-            </a>
-            
-            <nav class="nav-links" aria-label="Desktop Navigation">
-                <a href="#" class="active">Overview</a>
-                <a href="#projects-section">Systems</a>
-                <a href="#compiler-section">Playground</a>
-                <a href="#arai-section">Arai AI</a>
-                <a href="#featured-section">Projects</a>
-            </nav>
-
-            <div class="header-actions">
-                <a href="https://github.com/arlabs07" target="_blank" class="icon-link" aria-label="Visit GitHub Profile"><i class="fab fa-github"></i></a>
-                <button class="menu-toggle" aria-label="Open Mobile Menu"><i class="fas fa-bars"></i></button>
-            </div>
-        </div>
+        <!-- For Desktop: Back Button, Title, Menu Options on the Right -->
+        <button class="back-btn" id="backBtn">◀</button>
+        <div class="headtitle">ARhub</div>
+        <nav class="desktop-menu">
+            <a href="index.html">Home</a>
+            <a href="about.html">About</a>
+            <a href="Arstore.html">App</a>
+            <a href="contact.html">Contact</a>
+        </nav>
+        <button class="menu-btn" onclick="toggleMenu()">☰</button>
     </header>
 
-    <!-- FIXED: Added aria-label for accessibility on dialog role -->
-    <div class="mobile-menu" aria-modal="true" role="dialog" aria-label="Mobile Navigation Menu">
-        <button class="close-menu" aria-label="Close Mobile Menu">&times;</button>
-        <div class="mm-content">
-            <a href="#">Overview</a>
-            <a href="#projects-section">Systems</a>
-            <a href="#compiler-section">Playground</a>
-            <a href="#arai-section">Arai AI</a>
-            <a href="#featured-section">Projects</a>
-            <a href="#testimonials-section">Community</a>
+    <!-- Fullscreen Mobile Menu -->
+    <nav class="menu" id="menu">
+        <button class="menu-btn" onclick="toggleMenu()">✖</button>
+        <div class="menu-container">
+            <a href="index.html">Home</a>
+            <a href="about.html">About</a>
+            <a href="Arstore.html">App</a>
+            <a href="contact.html">Contact</a>
+        </div>
+    </nav>
+
+    <div class="hero-section">
+        <canvas class="matrix-canvas"></canvas>
+        <div id="particles-js" class="particles-js"></div>
+        <div class="content">
+            <div class="text-content">
+                <div class="title-container">
+                    <span class="title"></span>
+                    <span class="cursor"></span>
+                </div>
+                <p class="subtitle">Learn | Code | Build</p>
+                <div class="buttons">
+                    <a href="project.html" class="btn">Explore Projects</a>
+                    <a href="#" class="btn">View Blogs</a>
+                </div>
+            </div>
+            
+            <div class="ray-container">
+                <div class="ray"></div>
+            </div>
+            
+            <div class="code-container">
+                <div class="code-header">
+                    <div class="code-dots">
+                        <div class="code-dot red"></div>
+                        <div class="code-dot yellow"></div>
+                        <div class="code-dot green"></div>
+                    </div>
+                    <div class="code-title">appreciation.jsx</div>
+                </div>
+                <div class="code-content">
+                    <!-- Code will be generated dynamically -->
+                </div>
+            </div>
         </div>
     </div>
+<section class="content-section">
+  <div class="content-section-container">
 
-    <main>
-        <!-- HERO SECTION -->
-        <section class="hero-section" aria-label="Hero Introduction">
-            <!-- Distinct Glow for Hero -->
-            <div class="hero-glow-bg"></div>
-            
-            <div class="hero-bg" aria-hidden="true">
-                <div class="stars"></div>
-                <div class="grid-overlay"></div>
+    <div class="container" id="about-section">
+
+    <div class="container" id="about-section">
+        <div class="about-container">
+            <div class="about-left">
+                <h1>About Me</h1>
+                <p>Hi, I'm <b>AR</b>, a passionate coder and YouTuber focused on making coding simple and fun. I love building projects and sharing knowledge.</p>
             </div>
 
-            <div class="hero-container">
-                <div class="hero-content">
-                    <div class="badge-pill">
-                        <span class="status-dot"></span> Arhub 2.0
+            <div class="about-right">
+                <h2 class="skills-title">Skills</h2>
+                <div class="skills">
+                    <div class="skill">
+                        <div class="skill-name">HTML & CSS</div>
+                        <div class="skill-bar"><div class="skill-fill" data-width="90%"></div></div>
                     </div>
-                    
-                    <h1 class="hero-title">
-                        Tools for the <br>
-                        <span class="gradient-text">Modern Web</span>
-                    </h1>
-                    
-                    <p class="hero-desc">
-                        Welcome to ARhub. The home of arlabs07's cutting-edge projects. 
-                        Explore libraries, developer tools like ardev, and productivity apps like PurplePDF.
-                    </p>
-
-                    <div class="hero-cta">
-                        <a href="#featured-section" class="btn btn-primary" aria-label="View Projects">
-                            <i class="fas fa-rocket"></i> Our Projects
-                        </a>
-                        <a href="#projects-section" class="btn btn-glass" aria-label="Explore Systems">
-                            <i class="fas fa-tools"></i> Tools
-                        </a>
+                    <div class="skill">
+                        <div class="skill-name">JavaScript</div>
+                        <div class="skill-bar"><div class="skill-fill" data-width="85%"></div></div>
+                    </div>
+                    <div class="skill">
+                        <div class="skill-name">Python</div>
+                        <div class="skill-bar"><div class="skill-fill" data-width="80%"></div></div>
+                    </div>
+                    <div class="skill">
+                        <div class="skill-name">C++</div>
+                        <div class="skill-bar"><div class="skill-fill" data-width="75%"></div></div>
                     </div>
                 </div>
-
-                <div class="hero-visual-wrapper" aria-hidden="true">
-                    <div class="glass-code-card">
-                        <div class="card-top-bar">
-                            <div class="traffic-lights">
-                                <div class="light red"></div>
-                                <div class="light yellow"></div>
-                                <div class="light green"></div>
-                            </div>
-                            <div class="tab-name">arlabs_core.js</div>
-                        </div>
-                        <div class="card-code-area">
-                            <div class="code-row">
-                                <span class="num">1</span>
-                                <span class="kwd">const</span> <span class="var">arlabs07</span> = {
-                            </div>
-                            <div class="code-row">
-                                <span class="num">2</span>
-                                <span class="indent">  mission: <span class="str">'Empower Developers'</span>,</span>
-                            </div>
-                            <div class="code-row">
-                                <span class="num">3</span>
-                                <span class="indent">  tools: [<span class="str">'PurplePDF'</span>, <span class="str">'ArDev'</span>],</span>
-                            </div>
-                            <div class="code-row">
-                                <span class="num">4</span>
-                                <span class="indent">  libraries: <span class="num-val">true</span></span>
-                            </div>
-                            <div class="code-row">
-                                <span class="num">5</span>
-                                };
-                            </div>
-                            <div class="code-row">
-                                <span class="num">6</span>
-                                <span class="func">launchEcosystem</span>(<span class="var">arlabs07</span>);
-                            </div>
-                        </div>
-                        <div class="compile-status">
-                            <i class="fas fa-check"></i> System Active
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- PROJECTS / SYSTEMS SECTION -->
-        <section id="projects-section" class="projects-section" aria-label="Project Systems Showcase">
-            <div class="projects-header-container">
-                <h2 class="section-title">Utility <span class="gradient-text">Systems</span></h2>
-                
-                <div class="search-wrapper">
-                    <label for="project-search" class="sr-only" style="display:none;">Search Systems</label>
-                    <input type="text" id="project-search" class="search-input" placeholder="Search libraries & tools..." aria-label="Search available systems">
-                    <i class="fas fa-search search-icon" aria-hidden="true"></i>
-                </div>
-            </div>
-
-            <div id="projects-grid" class="projects-grid">
-                <!-- Populated by js/projects.js -->
-            </div>
-
-            <div class="load-more-wrapper">
-                <div id="loader-spinner" class="loader-spinner"></div>
-                <button id="load-more-btn" class="btn btn-glass" aria-label="Load more projects">
-                    <i class="fas fa-sync-alt"></i> Load More
-                </button>
-            </div>
-        </section>
-
-        <!-- LIVE COMPILER SECTION -->
-        <section id="compiler-section" class="compiler-section" aria-label="Live HTML Compiler">
-            <div class="compiler-header-wrapper">
-                <h2 class="section-title">Life <span class="gradient-text">Playground</span></h2>
-            </div>
-            
-            <div class="ide-container">
-                <div class="ide-toolbar">
-                    <div class="ide-title">
-                        <div class="window-dots">
-                            <div class="dot d-red"></div>
-                            <div class="dot d-yellow"></div>
-                            <div class="dot d-green"></div>
-                        </div>
-                        <div class="filename"><i class="fab fa-html5"></i> index.html</div>
-                    </div>
-                    
-                    <div class="view-switcher">
-                        <button class="switch-btn active" data-view="code">CODE</button>
-                        <button class="switch-btn" data-view="preview">PREVIEW</button>
-                    </div>
-
-                    <div class="ide-controls">
-                        <span class="status-badge">● LIVE PREVIEW</span>
-                    </div>
-                </div>
-
-                <div class="workspace-area">
-                    <div class="pane editor-pane active" id="pane-code">
-                        <div class="line-numbers" id="line-numbers"></div>
-                        <div class="code-wrapper">
-                            <pre class="highlight-layer" aria-hidden="true"><code id="highlighting-content"></code></pre>
-                            <textarea id="code-editor" spellcheck="false" autocomplete="off" autocorrect="off" autocapitalize="off" aria-label="Code Editor"></textarea>
-                        </div>
-                    </div>
-
-                    <div class="pane preview-pane" id="pane-preview">
-                        <div class="preview-wrapper">
-                            <iframe id="live-preview" title="Live Result Preview" loading="lazy"></iframe>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- NEW ARAI AI SECTION -->
-        <section id="arai-section" class="arai-section" aria-label="Arai AI Assistant Showcase">
-            <div class="arai-container">
-                <div class="arai-content">
-                    <div class="arai-badge">
-                        <i class="fas fa-bolt"></i> Powered by <span class="brand-font">Arai</span>
-                    </div>
-                    <h2 class="arai-title">Meet <span class="gradient-arai">Arai Assistant</span></h2>
-                    <p class="arai-desc">
-                        The intelligent core of the arhub ecosystem. Arai utilizes advanced algorithms to optimize code, suggest refactors, and assist in debugging directly within your workflow.
-                    </p>
-                    
-                    <ul class="arai-features">
-                        <li><i class="fas fa-check-circle"></i> Real-time Syntax Analysis</li>
-                        <li><i class="fas fa-check-circle"></i> Context-Aware Code Suggestions</li>
-                        <li><i class="fas fa-check-circle"></i> Automated Performance Audits</li>
-                    </ul>
-
-                    <div class="arai-action">
-                        <button class="btn btn-primary" style="background: #ff2a6d; color: white; border: none; box-shadow: 0 4px 15px rgba(255, 42, 109, 0.4);">
-                            <i class="fas fa-robot"></i> Initialize Arai
-                        </button>
-                    </div>
-                </div>
-
-                <div class="arai-visual">
-                    <div class="arai-glow-fx"></div>
-                    <div class="arai-img-wrapper">
-                        <!-- Optimization: Added explicit width/height to prevent CLS, and lazy loading -->
-                        <img src="https://arhub07.netlify.app/Images/ar2/arai2.png" alt="Arai AI Visualization" class="arai-img" width="1300" height="2600" loading="lazy" decoding="async">
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- FEATURED PROJECTS SECTION -->
-        <section id="featured-section" class="featured-section" aria-label="Featured Projects">
-             <div class="featured-header">
-                 <h2 class="section-title">Flagship <span class="gradient-text">Projects</span></h2>
-                 <p class="featured-sub">Explore our dedicated platforms tailored for specific needs.</p>
-             </div>
-             
-             <div id="featured-container" class="featured-container">
-                 <!-- Populated by js/featured.js -->
-             </div>
-        </section>
-
-        <!-- TESTIMONIALS SECTION -->
-        <section id="testimonials-section" class="testimonials-section">
-            <div class="testimonials-header">
-                <h2 class="testimonials-title">What <span class="gradient-text">Users Say</span></h2>
-                <p class="testimonials-desc">Feedback from the developers and users utilizing arlabs07 tools and libraries.</p>
-            </div>
-
-            <div class="testimonials-grid">
-                <div class="t-card">
-                    <i class="fas fa-quote-left t-quote-icon"></i>
-                    <p class="t-text">"PurplePDF saved me so much time. The compression algorithm is top-notch and completely preserves document quality."</p>
-                    <div class="t-user">
-                        <div class="t-avatar">A</div>
-                        <div class="t-info">
-                            <span class="t-name">Ankit Verma</span>
-                            <span class="t-role">Student</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="t-card">
-                    <i class="fas fa-quote-left t-quote-icon"></i>
-                    <p class="t-text">"The ardev library is incredibly lightweight. It's refreshing to see tools that don't add bloat to my projects."</p>
-                    <div class="t-user">
-                        <div class="t-avatar">S</div>
-                        <div class="t-info">
-                            <span class="t-name">Sarah Jenkins</span>
-                            <span class="t-role">Frontend Dev</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="t-card">
-                    <i class="fas fa-quote-left t-quote-icon"></i>
-                    <p class="t-text">"ARhub is my go-to for finding quick utility scripts. The ecosystem arlabs07 is building is very promising."</p>
-                    <div class="t-user">
-                        <div class="t-avatar">M</div>
-                        <div class="t-info">
-                            <span class="t-name">Mike K.</span>
-                            <span class="t-role">Tech Lead</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="t-card">
-                    <i class="fas fa-quote-left t-quote-icon"></i>
-                    <p class="t-text">"Love the dark aesthetic and the PWA features. It works seamlessly on my mobile device."</p>
-                    <div class="t-user">
-                        <div class="t-avatar">E</div>
-                        <div class="t-info">
-                            <span class="t-name">Elena L.</span>
-                            <span class="t-role">Designer</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="rate-us-container">
-                <button class="btn-rate">
-                    <i class="fas fa-star"></i> Rate ARhub
-                </button>
-            </div>
-        </section>
-
-    </main>
-
-    <footer class="site-footer">
-        <div class="footer-container">
-            <div class="footer-brand">
-                <a href="#" class="f-logo">
-                    <img src="https://arhub07.netlify.app/Images/ar2/web-app-manifest-192x192.png" alt="ARhub" width="32" height="32" loading="lazy">
-                    ARhub
-                </a>
-                <p>Innovating with code. arlabs07 builds tools, libraries, and platforms like PurplePDF and ardev to empower the digital world.</p>
-                <div class="social-links">
-                    <a href="https://youtube.com/@arlabs07" target="_blank" class="social-btn" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
-                    <a href="https://codepen.io/Abhinav-Rawat" target="_blank" class="social-btn" aria-label="CodePen"><i class="fab fa-codepen"></i></a>
-                    <a href="https://arlabs07.blogspot.com" target="_blank" class="social-btn" aria-label="BlogSpot"><i class="fas fa-rss"></i></a>
-                </div>
-            </div>
-
-            <!-- FIXED: Changed headings to h3 for proper hierarchy (was h4) -->
-            <div class="footer-links">
-                <h3 class="footer-heading">Ecosystem</h3>
-                <ul>
-                    <li><a href="#featured-section">PurplePDF</a></li>
-                    <li><a href="#featured-section">ardev</a></li>
-                    <li><a href="#projects-section">Libraries</a></li>
-                    <li><a href="#compiler-section">Playground</a></li>
-                </ul>
-            </div>
-
-            <div class="footer-links">
-                <h3 class="footer-heading">More</h3>
-                <ul>
-                    <li><a href="https://arlabs07.blogspot.com">Blog</a></li>
-                    <li><a href="#">About arlabs07</a></li>
-                    <li><a href="#">Privacy Policy</a></li>
-                    <li><a href="#">Contact</a></li>
-                </ul>
             </div>
         </div>
 
-        <div class="footer-bottom">
-            <span>&copy; 2026 arlabs07. All rights reserved.</span>
-            <span>design by Arvia</span>
+        <div class="tech-stack-container">
+            <div class="tech-stack-wrapper" id="tech-stack">
+                <!-- Duplicate logos for infinite effect -->
+            </div>
         </div>
-    </footer>
+    </div>
+</section>
+<div class="section">
+    <div class="ctainer">
+        <h2 class="ttitle">My Projects</h2>
 
-    <!-- Scripts are deferred (non-blocking) -->
-    <script src="js/header.js" defer></script>
-    <script src="js/hero.js" defer></script>
-    <script src="js/projects.js" defer></script>
-    <script src="js/featured.js" defer></script>
-    <script src="js/compiler.js" defer></script>
+        <div class="showcase-wrapper">
+            <div class="projects-container"><!-- Left Button -->
+<button class="slider-btn left-btn" onclick="scrollProjects(-1)" aria-label="Scroll left">
+    ◀
+</button>
 
-</body>
-</html>
+                </button>
+                <div class="projects-wrapper">
+                    <div class="projects-wrapper">
+          <div class="project-card" onclick="showButton(this)">
+                <i class="fa-solid fa-heart-pulse overlay-icon"></i>
+                <h3 class="project-title">QptiFit</h3>
+                <a href="App/app1.html" class="view-button">View Project</a>
+            </div>
+                     <div class="project-card" onclick="showButton(this)">
+                <i class="fa-solid fas fa-database overlay-icon"></i>
+                <h3 class="project-title">DataConvertX</h3>
+                <a href="App/app2.html" class="view-button">View Project</a>
+            </div>
+                 <div class="project-card" onclick="showButton(this)">
+                <i class="fa-solid fa-chart-area overlay-icon"></i>
+                <h3 class="project-title">TerraCalc</h3>
+                <a href="App/app3.html" class="view-button">View Project</a>
+            </div>  
+                        <div class="project-card" onclick="showButton(this)">
+                <i class="fa-solid fa-arrows-left-right overlay-icon"></i>
+                <h3 class="project-title">LengthXpert</h3>
+                <a href="App/app4.html" class="view-button">View Project</a>
+            </div>
+                       <div class="project-card" onclick="showButton(this)">
+                <i class="fa-solid fa-balance-scale overlay-icon"></i>
+                <h3 class="project-title">WeighWise</h3>
+                <a href="App/app5.html" class="view-button">View Project</a>
+            </div>
+                         <div class="project-card" onclick="showButton(this)">
+                <i class="fa-solid fa-user-secret overlay-icon"></i>
+                <h3 class="project-title">Quantum Cipher Nexus</h3>
+                <a href="App/app6.html" class="view-button">View Project</a>
+                         </div>
+                         <div class="project-card" onclick="showButton(this)">
+                <i class="fa-solid fa-chart-line overlay-icon"></i>
+                <h3 class="project-title"> Quadratic chart </h3>
+                <a href="App/app9.html" class="view-button">View Project</a>
+                         </div>
+                        
+                                        </div>
+<button class="slider-btn right-btn" onclick="scrollProjects(1)" aria-label="Scroll right">
+    ▶
+</button>
+                </button>
+            </div>
+            <div class="dots"></div>
+        </div>
+    </div>
+    
+    </div>
+    
+    
+<section class="content-section">
+  <div class="content-section-container">
+    
+<div class="productivity-heading">
+  <h2 class="unmatch-title">Autonomous Agents in Action</h2>
+  <p class="platform-desc"></p>Harness the power of intelligent automation to orchestrate complex workflows, adapt in real time, and act decisively on your behalf.<br>From data ingestion to decision execution, our platform empowers you with agent-driven autonomy—so you can focus on strategy while our agents handle the rest.</p>
+</div>
+
+    <div class="editors-container">
+        <!-- HTML Editor Container -->
+        <div class="editor-container">
+            <div class="navbar">
+                <div class="editor-title">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
+                    HTML
+                </div>
+                <div class="tab-buttons">
+                    <button class="nav-btn active" onclick="toggleSection('html-code')">Code</button>
+                    <button class="nav-btn" onclick="toggleSection('html-preview')">Preview</button>
+                </div>
+            </div>
+
+            <div class="code-box code-visible" id="html-code-box">
+                <pre class="code-editor"><code class="html" id="htmlCodeContent"></code></pre>
+            </div>
+
+            <div class="preview-box" id="html-preview-box">
+                <div class="preview-content" id="htmlPreviewDisplay"></div>
+            </div>
+        </div>
+
+        <!-- JavaScript Editor Container -->
+        <div class="editor-container">
+            <div class="navbar">
+                <div class="editor-title">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                    </svg>
+                    JavaScript
+                </div>
+                <div class="tab-buttons">
+                    <button class="nav-btn active" onclick="toggleSection('js-code')">Code</button>
+                    <button class="nav-btn" onclick="toggleSection('js-preview')">Console</button>
+                </div>
+            </div>
+
+            <div class="code-box code-visible" id="js-code-box">
+                <pre class="code-editor"><code class="javascript" id="jsCodeContent"></code></pre>
+            </div>
+
+            <div class="preview-box" id="js-preview-box">
+                <div class="console-output" id="jsPreviewDisplay"></div>
+            </div>
+        </div>
+    </div>
+  </div>
+</section>
+  <div class="bodyy">
+  <div class="testimonial-container">
+    <div class="testimonial-wrapper">
+      <!-- Testimonial cards hard-coded instead of using JavaScript -->
+      <div class="testimonial-card" style="--glow-color: 79, 70, 229;">
+        <div class="message-box">
+      
+            <div class="glow"></div>
+          <div class="hheader">
+            <span class="name">Sarah Johnson</span>
+            <span class="rating">★★★★★</span>
+          </div>
+          <p class="message">Absolutely love this platform! The user interface is intuitive and the features are exactly what I needed. Customer support has been exceptional.</p>
+        </div>
+      </div>
+      
+      <div class="testimonial-card" style="--glow-color: 147, 51, 234;">
+        <div class="message-box">
+          <div class="glow"></div>
+          <div class="hheader">
+            <span class="name">Michael Chen</span>
+            <span class="rating">★★★★★</span>
+          </div>
+          <p class="message">This platform has transformed how I work. The attention to detail and constant updates show they really care about user experience.</p>
+        </div>
+      </div>
+      
+      <div class="testimonial-card" style="--glow-color: 16, 185, 129;">
+        <div class="message-box">
+          <div class="glow"></div>
+          <div class="hheader">
+            <span class="name">Emma Williams</span>
+            <span class="rating">★★★★☆</span>
+          </div>
+          <p class="message">Great value for money! The tools provided have helped streamline my workflow significantly. Would highly recommend to anyone.</p>
+        </div>
+      </div>
+      
+      <div class="testimonial-card" style="--glow-color: 244, 63, 94;">
+        <div class="message-box">
+          <div class="glow"></div>
+          <div class="hheader">
+            <span class="name">David Martinez</span>
+            <span class="rating">★★★★★</span>
+          </div>
+          <p class="message">Been using this for 6 months now and I'm impressed with how reliable and feature-rich it is. The recent updates have made it even better.</p>
+        </div>
+      </div>
+      
+      <div class="testimonial-card" style="--glow-color: 234, 179, 8;">
+        <div class="message-box">
+          <div class="glow"></div>
+          <div class="hheader">
+            <span class="name">Alex Thompson</span>
+            <span class="rating">★★★★★</span>
+          </div>
+          <p class="message">The collaboration features are fantastic. Our team productivity has increased by 40% since we started using it. Worth every penny.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <div class="button-container">
+    <a href="testimonial.html" class="rate-us-button">Rate Us</a>
+  </div>
+  </div>
+  
+  <div class="footerwrapper">
+    <div class="footer-container">
+        <div class="movement-text">
+            <h1>Join the<br>Movement</h1>
+            <p>Unlock the future of productivity with ARhub.</p>
+            <p>Remember, this journey is just getting started.</p>
+        </div>
+        
+        <div class="button-container">
+            <a href="index.html" class="start-button">START NOW</a>
+        </div>
+        
+        <div class="social-links">
+            <a href="#" aria-label="Twitter/X"><i class="fab fa-x-twitter"></i></a>
+            <a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin"></i></a>
+            <a href="#" aria-label="GitHub"><i class="fab fa-github"></i></a>
+            <a href="#" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
+            <a href="#" aria-label="Discord"><i class="fab fa-discord"></i></a>
+            <a href="#" aria-label="Website"><i class="fas fa-globe"></i></a>
+        </div>
+        
+        <div class="legal-links">
+            <a href="#">Terms of Service</a>
+            <a href="#">Privacy Policy</a>
+        </div>
+        
+        <div class="copyright">
+            Copyright © 2025 ARhub Labs. All rights reserved.
+        </div>
+        
+        <div class="made-with">
+            <div class="heart-container">
+                <div class="heart-icon"></div>
+            </div>
+            <div class="made-with-text">
+                <span>Made with</span> <span>passion and AR</span>
+            </div>
+        </div>
+    </div>
+  </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/particles.js/2.0.0/particles.min.js"></script>
+    
+    <script>
+      // Matrix Effect
+const canvas = document.querySelector('.matrix-canvas');
+const ctx = canvas.getContext('2d');
+
+function resizeCanvas() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+}
+
+window.addEventListener('resize', resizeCanvas);
+resizeCanvas();
+
+const letters = "0123456789ABCDEF";
+const matrix = letters.split("");
+const fontSize = 14;
+let columns = Math.floor(canvas.width / fontSize);
+let drops = Array(columns).fill(1);
+
+function drawMatrix() {
+    ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    
+    // White with 50% opacity as requested
+    ctx.fillStyle = "rgba(255, 255, 255, 0.5)";
+    ctx.font = fontSize + "px Courier New";
+
+    drops.forEach((y, i) => {
+        const text = matrix[Math.floor(Math.random() * matrix.length)];
+        const x = i * fontSize;
+        ctx.fillText(text, x, y * fontSize);
+
+        if (y * fontSize > canvas.height && Math.random() > 0.975) {
+            drops[i] = 0;
+        }
+        drops[i]++;
+    });
+
+    requestAnimationFrame(drawMatrix);
+}
+
+drawMatrix();
+
+// Initialize particles.js
+particlesJS('particles-js', {
+    "particles": {
+        "number": {
+            "value": 80,
+            "density": {
+                "enable": true,
+                "value_area": 800
+            }
+        },
+        "color": {
+            "value": "#ff8c00"
+        },
+        "shape": {
+            "type": "circle",
+            "stroke": {
+                "width": 0,
+                "color": "#000000"
+            },
+            "polygon": {
+                "nb_sides": 5
+            }
+        },
+        "opacity": {
+            "value": 0.3,
+            "random": false,
+            "anim": {
+                "enable": false,
+                "speed": 1,
+                "opacity_min": 0.1,
+                "sync": false
+            }
+        },
+        "size": {
+            "value": 3,
+            "random": true,
+            "anim": {
+                "enable": false,
+                "speed": 40,
+                "size_min": 0.1,
+                "sync": false
+            }
+        },
+        "line_linked": {
+            "enable": true,
+            "distance": 150,
+            "color": "#ffffff",
+            "opacity": 0.3,
+            "width": 1
+        },
+        "move": {
+            "enable": true,
+            "speed": 2,
+            "direction": "none",
+            "random": false,
+            "straight": false,
+            "out_mode": "out",
+            "bounce": false,
+            "attract": {
+                "enable": false,
+                "rotateX": 600,
+                "rotateY": 1200
+            }
+        }
+    },
+    "interactivity": {
+        "detect_on": "canvas",
+        "events": {
+            "onhover": {
+                "enable": true,
+                "mode": "grab"
+            },
+            "onclick": {
+                "enable": true,
+                "mode": "push"
+            },
+            "resize": true
+        },
+        "modes": {
+            "grab": {
+                "distance": 140,
+                "line_linked": {
+                    "opacity": 1
+                }
+            },
+            "bubble": {
+                "distance": 400,
+                "size": 40,
+                "duration": 2,
+                "opacity": 8,
+                "speed": 3
+            },
+            "repulse": {
+                "distance": 200,
+                "duration": 0.4
+            },
+            "push": {
+                "particles_nb": 4
+            },
+            "remove": {
+                "particles_nb": 2
+            }
+        }
+    },
+    "retina_detect": true
+});
+
+// Add mouse follow effect with parallax
+document.addEventListener('mousemove', function(e) {
+    const contentElement = document.querySelector('.content');
+    const xAxis = (window.innerWidth / 2 - e.pageX) / 30;
+    const yAxis = (window.innerHeight / 2 - e.pageY) / 30;
+    
+    contentElement.style.transform = `translateX(${xAxis}px) translateY(${yAxis}px)`;
+});
+
+// Reset position when mouse leaves
+document.addEventListener('mouseleave', function() {
+    const contentElement = document.querySelector('.content');
+    contentElement.style.transform = 'translateX(0px) translateY(0px)';
+});
+
+// Generate code content with syntax highlighting
+function generateCodeContent() {
+    const codeContent = document.querySelector('.code-content');
+    
+    const codeLines = [
+        { num: 1, code: 'import React, { useState, useEffect } from "react";', classes: ['keyword', 'variable', 'string'] },
+        { num: 2, code: 'import axios from "axios";', classes: ['keyword', 'variable'] },
+        { num: 3, code: '', classes: [] },
+        { num: 4, code: '// Project component with cool animations', classes: ['comment'] },
+        { num: 5, code: 'const ProjectShowcase = () => {', classes: ['keyword', 'variable', 'function'] },
+        { num: 6, code: '  const [projects, setProjects] = useState([]);', classes: ['keyword', 'variable', 'function'] },
+        { num: 7, code: '  const [loading, setLoading] = useState(true);', classes: ['keyword', 'variable', 'function'] },
+        { num: 8, code: '', classes: [] },
+        { num: 9, code: '  useEffect(() => {', classes: ['function'] },
+        { num: 10, code: '    const fetchProjects = async () => {', classes: ['keyword', 'variable', 'function'] },
+        { num: 11, code: '      try {', classes: ['keyword'] },
+        { num: 12, code: '        setLoading(true);', classes: ['variable', 'function'] },
+        { num: 13, code: '        const response = await axios.get("/api/projects");', classes: ['keyword', 'variable', 'function'] },
+        { num: 14, code: '        setProjects(response.data);', classes: ['variable', 'property', 'function'] },
+        { num: 15, code: '      } catch (error) {', classes: ['keyword', 'variable'] },
+        { num: 16, code: '        console.error("Error fetching projects:", error);', classes: ['variable', 'function', 'string'] },
+        { num: 17, code: '      } finally {', classes: ['keyword'] },
+        { num: 18, code: '        setLoading(false);', classes: ['variable', 'function'] },
+        { num: 19, code: '      }', classes: [] },
+        { num: 20, code: '    };', classes: [] },
+        { num: 21, code: '', classes: [] },
+        { num: 22, code: '    fetchProjects();', classes: ['function'] },
+        { num: 23, code: '  }, []);', classes: ['operator'] },
+        { num: 24, code: '', classes: [] },
+        { num: 25, code: '  // Calculate project statistics', classes: ['comment'] },
+        { num: 26, code: '  const totalLikes = projects.reduce((sum, proj) => sum + proj.likes, 0);', classes: ['keyword', 'variable', 'function', 'property'] },
+        { num: 27, code: '  const avgRating = (', classes: ['keyword', 'variable'] },
+        { num: 28, code: '    projects.reduce((sum, proj) => sum + proj.rating, 0) / projects.length', classes: ['variable', 'function', 'property', 'operator'] },
+        { num: 29, code: '  ).toFixed(1);', classes: ['function'] },
+        { num: 30, code: '', classes: [] },
+        { num: 31, code: '  return (', classes: ['keyword'] },
+        { num: 32, code: '    <div className="project-showcase">', classes: ['variable', 'string'] },
+        { num: 33, code: '      <h2>Featured Projects</h2>', classes: [] },
+        { num: 34, code: '      {loading ? (', classes: ['variable'] },
+        { num: 35, code: '        <div className="loader">Loading amazing projects...</div>', classes: ['variable', 'string'] },
+        { num: 36, code: '      ) : (', classes: [] },
+        { num: 37, code: '        <div className="projects-grid">', classes: ['variable', 'string'] },
+        { num: 38, code: '          {projects.map((project) => (', classes: ['variable', 'function'] },
+        { num: 39, code: '            <ProjectCard key={project.id} project={project} />', classes: ['variable', 'property'] },
+        { num: 40, code: '          ))}', classes: [] },
+        { num: 41, code: '        </div>', classes: [] },
+        { num: 42, code: '      )}', classes: [] },
+        { num: 43, code: '    </div>', classes: [] },
+        { num: 44, code: '  );', classes: [] },
+        { num: 45, code: '};', classes: [] },
+        { num: 46, code: '', classes: [] },
+        { num: 47, code: 'export default ProjectShowcase;', classes: ['keyword', 'variable'] }
+    ];
+
+    codeContent.innerHTML = '';
+    
+    codeLines.forEach((line, index) => {
+        const lineDiv = document.createElement('div');
+        lineDiv.className = 'code-line';
+        
+        const lineNumber = document.createElement('span');
+        lineNumber.className = 'line-number';
+        lineNumber.textContent = line.num;
+        
+        const codePart = document.createElement('pre');
+        codePart.className = index < 5 ? 'typing-animation' : '';
+        
+        // Process the code to apply syntax highlighting
+        let codeHTML = line.code;
+        
+        // Apply syntax highlighting classes
+        if (line.classes.includes('keyword')) {
+            codeHTML = codeHTML.replace(/(import|from|const|let|var|function|return|if|else|try|catch|finally|async|await|export|default|useState|useEffect)/g, '<span class="keyword">$1</span>');
+        }
+        if (line.classes.includes('string')) {
+            codeHTML = codeHTML.replace(/"([^"]*)"/g, '<span class="string">"$1"</span>');
+        }
+        if (line.classes.includes('comment')) {
+            codeHTML = codeHTML.replace(/(\/\/.*)$/g, '<span class="comment">$1</span>');
+        }
+        if (line.classes.includes('function')) {
+            codeHTML = codeHTML.replace(/(\.|\b)(map|reduce|useState|useEffect|get|toFixed|error|log)(\(|\.)/g, '$1<span class="function">$2</span>$3');
+        }
+        if (line.classes.includes('variable')) {
+            codeHTML = codeHTML.replace(/\b(ProjectShowcase|projects|setProjects|loading|setLoading|fetchProjects|response|error|sum|proj|avgRating|totalLikes|className|key|project)\b(?!\()/g, '<span class="variable">$1</span>');
+        }
+        if (line.classes.includes('property')) {
+            codeHTML = codeHTML.replace(/\.(data|likes|rating|length|id)/g, '.<span class="property">$1</span>');
+        }
+        
+        codePart.innerHTML = codeHTML;
+        
+        lineDiv.appendChild(lineNumber);
+        lineDiv.appendChild(codePart);
+        codeContent.appendChild(lineDiv);
+    });
+}
+
+// Animation sequence
+document.addEventListener('DOMContentLoaded', function() {
+    const title = document.querySelector('.title');
+    const cursor = document.querySelector('.cursor');
+    const subtitle = document.querySelector('.subtitle');
+    const buttons = document.querySelector('.buttons');
+    const codeContainer = document.querySelector('.code-container');
+    
+    // Generate the code
+    generateCodeContent();
+    
+    // Animation sequence timing
+    setTimeout(() => {
+        // Start typing animation
+        startTyping();
+    }, 0000);
+    
+    setTimeout(() => {
+        // Show subtitle
+        subtitle.classList.add('visible');
+    }, 0000);
+    
+    setTimeout(() => {
+        // Show buttons
+        buttons.classList.add('visible');
+    }, 0000);
+    
+    setTimeout(() => {
+        // Show code container
+        codeContainer.classList.add('visible');
+    }, 0000);
+    
+    function startTyping() {
+        const titleText = "Welcome to ARhub";
+        title.style.visibility = 'visible';
+        cursor.style.visibility = 'visible';
+        
+        let i = 0;
+        function typeCharacter() {
+            if (i < titleText.length) {
+                title.textContent += titleText.charAt(i);
+                i++;
+                setTimeout(typeCharacter, 100);
+            }
+        }
+        typeCharacter();
+    }
+});
+// Add this function to your existing JavaScript to handle layout adjustments
+
+function adjustLayoutForOrientation() {
+  const isLandscape = window.innerWidth > window.innerHeight;
+  const isMobile = window.innerWidth < 768;
+  const codeContainer = document.querySelector('.code-container');
+  const rayContainer = document.querySelector('.ray-container');
+  
+  if (isMobile && isLandscape) {
+    // Fix for mobile landscape mode
+    document.body.classList.add('landscape-mobile');
+    
+    // Ensure code container is fully visible
+    if (codeContainer) {
+      codeContainer.style.height = 'auto';
+      const codeContent = codeContainer.querySelector('.code-content');
+      if (codeContent) {
+        codeContent.style.height = 'auto';
+        codeContent.style.maxHeight = '80vh';
+      }
+    }
+    
+    // Adjust ray visibility
+    if (rayContainer) {
+      rayContainer.style.height = '80px';
+      const ray = rayContainer.querySelector('.ray');
+      if (ray) {
+        ray.style.height = '80px';
+      }
+    }
+  } else {
+    document.body.classList.remove('landscape-mobile');
+    
+    // Reset code container
+    if (codeContainer && isMobile) {
+      codeContainer.style.height = '';
+      const codeContent = codeContainer.querySelector('.code-content');
+      if (codeContent) {
+        codeContent.style.height = '300px';
+      }
+    }
+    
+    // Reset ray container for desktop
+    if (rayContainer && !isMobile) {
+      rayContainer.style.height = '300px';
+      const ray = rayContainer.querySelector('.ray');
+      if (ray) {
+        ray.style.height = '100%';
+      }
+    }
+  }
+}
+
+// Call the function initially and on resize
+window.addEventListener('load', adjustLayoutForOrientation);
+window.addEventListener('resize', adjustLayoutForOrientation);
+window.addEventListener('orientationchange', adjustLayoutForOrientation);
+    </script>
+        
+                <script>
+                    const techLogos = [
+                        "html5", "css3", "javascript", "python",  "react",
+                        "nodejs", "mongodb", "git", "github"
+                    ];
+                    const wrapper = document.getElementById('tech-stack');
+
+                    function addLogos() {
+                        wrapper.innerHTML = "";
+                        for (let i = 0; i < 5; i++) {
+                            techLogos.forEach((tech, index) => {
+                                let img = document.createElement('img');
+                                img.src = `https://cdn.jsdelivr.net/gh/devicons/devicon/icons/${tech}/${tech}-original.svg`;
+                                img.alt = tech;
+                                let separator = document.createElement('span');
+                                separator.className = "separator";
+                                separator.textContent = "|";
+                                wrapper.appendChild(img);
+                                if (index < techLogos.length - 1) {
+                                    wrapper.appendChild(separator);
+                                }
+                            });
+                        }
+                        wrapper.style.animation = "techScroll 15s linear infinite";
+                    }
+
+                    addLogos();
+                </script>
+        <script src="header.js"></script>
+<script src="about.js"></script>
+<script src="appdoc.js"></script>
+<script src="code.js"></script>
+<script src="testimonial.js"></script>
+      
+       
+    </body>
+    </html> 
