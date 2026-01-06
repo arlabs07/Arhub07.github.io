@@ -58,7 +58,8 @@
     background-size: 200px 200px;
     opacity: 0.3;
     z-index: -2;
-    will-change: transform;
+    /* PERFORMANCE: Only apply will-change if strictly necessary to save RAM */
+    will-change: transform; 
 }
 
 .grid-overlay {
@@ -371,4 +372,3 @@
         transform: rotateY(-10deg) rotateX(5deg);
     }
 }
-</file>
