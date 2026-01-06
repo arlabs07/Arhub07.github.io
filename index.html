@@ -1,1213 +1,671 @@
-<!doctype html>
-<html lang=en-IN>
 
+<!DOCTYPE html>
+<html lang="en-IN">
 <head>
-    <meta
-        http-equiv=Content-Security-Policy
-        content="frame-ancestors *;">
-    <meta charset=UTF-8>
-    <meta name=viewport
-        content="width=device-width,initial-scale=1,maximum-scale=5,user-scalable=yes">
-    <meta http-equiv=X-UA-Compatible
-        content="IE=edge">
-    <meta name=referrer
-        content=strict-origin-when-cross-origin>
-    <meta name=format-detection
-        content="telephone=no,date=no,address=no,email=no">
-    <meta name=theme-color
-        content=#050505>
-    <meta name=color-scheme
-        content=dark>
-    <title>ARhub | Next-Gen Developer
-        Tools by arlabs07</title>
-    <meta name=title
-        content="ARhub | Next-Gen Developer Tools by arlabs07">
-    <meta name=description
-        content="ARhub: Ultimate developer ecosystem by arlabs07. Explore PurplePDF, ardev library, live HTML compiler & Arai AI assistant. Build, debug & deploy faster.">
-    <meta name=keywords
-        content="arlabs07,ARhub,PurplePDF,ardev,Arai AI,web development tools,India developer tools,css libraries,javascript utilities,online html compiler,pdf tools,AI for code,frontend development,open source,web ecosystem,productivity apps,PWA">
-    <meta name=author content=arlabs07>
-    <meta name=creator content=arlabs07>
-    <meta name=publisher
-        content=arlabs07>
-    <meta name=robots
-        content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
-    <meta name=googlebot
-        content="index,follow">
-    <meta name=language content=English>
-    <meta name=geo.region content=IN>
-    <meta name=geo.placename
-        content=India>
-    <meta name=generator
-        content="ARhub v2.0">
-    <meta name=version content="2.0">
-    <meta name=revised
-        content="2026-01-06">
-    <meta name=copyright
-        content="© 2026 arlabs07. All rights reserved.">
-    <meta name=rating content=general>
-    <meta name=distribution
-        content=global>
-    <meta name=target content=all>
-    <meta name=HandheldFriendly
-        content=true>
-    <meta name=accessibility
-        content="WCAG 2.1 Level AA">
-    <link rel=canonical
-        href=https://arhub07.netlify.app />
-    <link rel=alternate
-        href=https://arhub07.netlify.app/
-        hreflang=en-in>
-    <link rel=alternate
-        href=https://arhub07.netlify.app/
-        hreflang=x-default>
-    <meta property=og:type
-        content=website>
-    <meta property=og:url
-        content=https://arhub07.netlify.app />
-    <meta property=og:site_name
-        content="ARhub Ecosystem">
-    <meta property=og:title
-        content="ARhub | Next-Gen Developer Tools by arlabs07">
-    <meta property=og:description
-        content="Ultimate developer ecosystem featuring PurplePDF, Arai AI assistant & modern web libraries. Build faster with arlabs07 tools.">
-    <meta property=og:image
-        content=https://arhub07.netlify.app/Images/ar2/web-app-manifest-512x512.png>
-    <meta property=og:image:secure_url
-        content=https://arhub07.netlify.app/Images/ar2/web-app-manifest-512x512.png>
-    <meta property=og:image:alt
-        content="ARhub Developer Ecosystem Interface">
-    <meta property=og:image:type
-        content=image/png>
-    <meta property=og:image:width
-        content=512>
-    <meta property=og:image:height
-        content=512>
-    <meta property=og:locale
-        content=en_IN>
-    <meta property=og:updated_time
-        content=2026-01-06T00:00:00+05:30>
-    <meta property=og:rich_attachment
-        content=true>
-    <meta name=mobile-web-app-capable
-        content=yes>
-    <meta
-        name=apple-mobile-web-app-capable
-        content=yes>
-    <meta
-        name=apple-mobile-web-app-status-bar-style
-        content=black-translucent>
-    <meta
-        name=apple-mobile-web-app-title
-        content=ARhub>
-    <meta name=application-name
-        content=ARhub>
-    <meta name=msapplication-TileColor
-        content=#050505>
-    <meta name=msapplication-TileImage
-        content=https://arhub07.netlify.app/Images/ar2/web-app-manifest-192x192.png>
-    <meta name=msapplication-config
-        content=browserconfig.xml>
-    <meta name=msapplication-starturl
-        content=https://arhub07.netlify.app />
-    <meta name=msapplication-tooltip
-        content="ARhub Developer Tools">
-    <link rel=manifest
-        href=https://arhub07.netlify.app/Images/ar2/site.webmanifest>
-    <link rel=icon type=image/x-icon
-        href=https://arhub07.netlify.app/Images/ar2/favicon.ico>
-    <link rel=icon type=image/svg+xml
-        href=https://arhub07.netlify.app/Images/ar2/favicon.svg>
-    <link rel=icon type=image/png
-        sizes=16x16
-        href=https://arhub07.netlify.app/Images/ar2/favicon-16x16.png>
-    <link rel=icon type=image/png
-        sizes=32x32
-        href=https://arhub07.netlify.app/Images/ar2/favicon-32x32.png>
-    <link rel=apple-touch-icon
-        sizes=180x180
-        href=https://arhub07.netlify.app/Images/ar2/apple-touch-icon.png>
-    <link rel=me
-        href=https://github.com/arlabs07>
-    <link rel=me
-        href=https://youtube.com/@arlabs07>
-    <link rel=me
-        href=https://codepen.io/Abhinav-Rawat>
-    <link rel=me
-        href=https://arlabs07.blogspot.com>
-    <link rel=preconnect
-        href=https://fonts.googleapis.com>
-    <link rel=preconnect
-        href=https://fonts.gstatic.com
-        crossorigin>
-    <link rel=preconnect
-        href=https://cdnjs.cloudflare.com>
-    <link rel=dns-prefetch
-        href=https://fonts.googleapis.com>
-    <link rel=dns-prefetch
-        href=https://cdnjs.cloudflare.com>
-    <link rel=preload
-        href=https://arhub07.netlify.app/css/header.css
-        as=style>
-    <link rel=preload
-        href=https://arhub07.netlify.app/css/hero.css
-        as=style>
-    <link rel=preload
-        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap"
-        as=style>
-    <link rel=preload
-        href=https://arhub07.netlify.app/Images/ar2/web-app-manifest-512x512.avif
-        as=image type=image/avif>
-    <link rel=prefetch
-        href=https://arhub07.netlify.app/js/projects.js>
-    <link rel=prefetch
-        href=https://arhub07.netlify.app/js/compiler.js>
-    <link rel=prefetch
-        href=https://arhub07.netlify.app/js/featured.js>
-    <script type=application/ld+json>
+    <!-- 
+        =======================================================================
+        ARhub CORE METADATA & SECURITY CONFIGURATION
+        Generated for: arlabs07 | Region: India
+        Standards: HTML5, Schema.org JSON-LD, Open Graph, Twitter Cards, WCAG
+        Security: CSP Strict, Trusted Types, COOP/XFO (via Headers)
+        =======================================================================
+    -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    
+    <!-- 
+        SECURITY: Content Security Policy (Fallback)
+        Note: Primary security headers (X-Frame-Options, Frame-Ancestors, COOP) 
+        are handled in 'netlify.toml' for full compliance.
+    -->
+    <meta http-equiv="Content-Security-Policy" content="
+        default-src 'self'; 
+        img-src 'self' https: data: blob:; 
+        style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com; 
+        script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; 
+        font-src 'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com; 
+        connect-src 'self' https:; 
+        object-src 'none'; 
+        base-uri 'self';
+        form-action 'self';
+    ">
+    
+    <meta name="referrer" content="strict-origin-when-cross-origin">
+    <meta name="format-detection" content="telephone=no, date=no, address=no, email=no">
+    <meta name="theme-color" content="#050505">
+    <meta name="color-scheme" content="dark">
+
+    <!-- Primary SEO Attributes -->
+    <title>ARhub | The Next-Gen Developer Ecosystem & AI Tools by arlabs07</title>
+    <meta name="title" content="ARhub | The Next-Gen Developer Ecosystem & AI Tools by arlabs07">
+    <meta name="description" content="ARhub is the ultimate developer ecosystem in India crafted by arlabs07. Explore powerful tools like PurplePDF, the ardev suite, live HTML compilers, and the revolutionary Arai AI assistant. Build, debug, and deploy faster with our open-source libraries.">
+    <meta name="keywords" content="arlabs07, ARhub, PurplePDF, ardev, Arai AI, web development tools, India developer tools, css libraries, javascript utilities, online html compiler, pdf tools, AI for code, frontend development, open source, web ecosystem, productivity apps, PWA">
+    <meta name="author" content="arlabs07">
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+    <meta name="language" content="English">
+    <meta name="geo.region" content="IN">
+    <meta name="geo.placename" content="India">
+    <link rel="canonical" href="https://arhub07.netlify.app/">
+
+    <!-- Open Graph / Facebook (Social Identity) -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://arhub07.netlify.app/">
+    <meta property="og:site_name" content="ARhub Ecosystem">
+    <meta property="og:title" content="ARhub - The Next-Gen Developer Ecosystem">
+    <meta property="og:description" content="Build faster with arlabs07. Featuring PurplePDF, the Arai AI assistant, and a suite of modern web libraries designed for the modern web.">
+    <meta property="og:image" content="https://arhub07.netlify.app/Images/ar2/arai2.png">
+    <meta property="og:image:secure_url" content="https://arhub07.netlify.app/Images/ar2/arai2.png">
+    <meta property="og:image:alt" content="ARhub Arai AI Assistant Interface">
+    <meta property="og:image:type" content="image/png">
+    <meta property="og:image:width" content="1300">
+    <meta property="og:image:height" content="2600">
+    <meta property="og:locale" content="en_IN">
+
+    <!-- Twitter / X Card Data -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:site" content="@arlabs07">
+    <meta name="twitter:creator" content="@arlabs07">
+    <meta name="twitter:url" content="https://arhub07.netlify.app/">
+    <meta name="twitter:title" content="ARhub | Developer Tools & AI by arlabs07">
+    <meta name="twitter:description" content="Discover Arai AI, PurplePDF, and next-gen dev tools. A comprehensive suite for developers in India and worldwide.">
+    <meta name="twitter:image" content="https://arhub07.netlify.app/Images/ar2/arai2.png">
+    <meta name="twitter:image:alt" content="ARhub Ecosystem Preview">
+
+    <!-- PWA & Mobile Icons -->
+    <link rel="manifest" href="site.webmanifest">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="ARhub">
+    <meta name="application-name" content="ARhub">
+    <meta name="msapplication-TileColor" content="#050505">
+    <meta name="msapplication-TileImage" content="https://arhub07.netlify.app/Images/ar2/web-app-manifest-192x192.png">
+    <meta name="msapplication-config" content="browserconfig.xml">
+
+    <!-- Favicons -->
+    <link rel="icon" type="image/x-icon" href="https://arhub07.netlify.app/Images/ar2/favicon.ico">
+    <link rel="icon" type="image/svg+xml" href="https://arhub07.netlify.app/Images/ar2/favicon.svg">
+    <link rel="apple-touch-icon" sizes="180x180" href="https://arhub07.netlify.app/Images/ar2/apple-touch-icon.png">
+
+    <!-- Preconnecting & Prefetching (Performance) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com">
+    <link rel="dns-prefetch" href="https://fonts.googleapis.com">
+    <link rel="dns-prefetch" href="https://cdnjs.cloudflare.com">
+
+    <!-- 
+        =======================================================================
+        STRUCTURED DATA (JSON-LD)
+        Providing detailed context to Search Engines and AI Crawlers
+        =======================================================================
+    -->
+    
+    <!-- 1. WebSite Schema -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "name": "ARhub",
+      "alternateName": ["ARhub07", "AR Labs Hub"],
+      "url": "https://arhub07.netlify.app/",
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": "https://arhub07.netlify.app/?q={search_term_string}",
+        "query-input": "required name=search_term_string"
+      }
+    }
+    </script>
+
+    <!-- 2. Organization / Brand Schema -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "name": "arlabs07",
+      "url": "https://arhub07.netlify.app",
+      "logo": "https://arhub07.netlify.app/Images/ar2/web-app-manifest-512x512.png",
+      "founder": {
+        "@type": "Person",
+        "name": "Abhinav Rawat",
+        "alternateName": "arlabs07"
+      },
+      "sameAs": [
+        "https://github.com/arlabs07",
+        "https://youtube.com/@arlabs07",
+        "https://codepen.io/Abhinav-Rawat",
+        "https://arlabs07.blogspot.com",
+        "https://twitter.com/arlabs07"
+      ],
+      "contactPoint": {
+        "@type": "ContactPoint",
+        "contactType": "customer support",
+        "areaServed": "IN",
+        "availableLanguage": "English"
+      }
+    }
+    </script>
+
+    <!-- 3. Software Application Schema -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "SoftwareApplication",
+      "name": "ARhub Suite",
+      "operatingSystem": "Web, Windows, Android, iOS",
+      "applicationCategory": "DeveloperApplication",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      },
+      "featureList": [
+        "Live HTML Compiler",
+        "PurplePDF PDF Tools",
+        "Arai AI Coding Assistant",
+        "ArDev Library"
+      ],
+      "screenshot": "https://arhub07.netlify.app/Images/ar2/arai2.png"
+    }
+    </script>
+
+    <!-- 4. Site Navigation Element (AI Link Discovery) -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "ItemList",
+      "itemListElement": [
         {
-            "@context": "https://schema.org",
-            "@type": "WebSite",
-            "@id": "https://arhub07.netlify.app/",
-            "name": "ARhub",
-            "alternateName": [
-                "ARhub07",
-                "AR Labs Hub"
-            ],
-            "url": "https://arhub07.netlify.app/",
-            "description": "Ultimate developer ecosystem featuring powerful tools, libraries and AI assistant",
-            "inLanguage": "en-IN",
-            "publisher": { "@type": "Organization", "@id": "https://arhub07.netlify.app/organisation" },
-            "potentialAction": { "@type": "SearchAction", "target": "https://arhub07.netlify.app/?q={search_term_string}", "query-input": "required name=search_term_string" }
-        }
-    </script>
-    <script type=application/ld+json>
+          "@type": "SiteNavigationElement",
+          "position": 1,
+          "name": "Overview",
+          "description": "Welcome to the ARhub ecosystem.",
+          "url": "https://arhub07.netlify.app/#"
+        },
         {
-            "@context": "https://schema.org",
-            "@type": "Organization",
-            "@id": "https://arhub07.netlify.app/#organization",
-            "name": "arlabs07",
-            "legalName": "arlabs07",
-            "url": "https://arhub07.netlify.app",
-            "logo": "https://arhub07.netlify.app/Images/ar2/web-app-manifest-512x512.png",
-            "description": "Developer tools and libraries creator",
-            "foundingDate": "2024",
-            "sameAs": [
-                "https://github.com/arlabs07",
-                "https://youtube.com/@arlabs07",
-                "https://codepen.io/Abhinav-Rawat",
-                "https://arlabs07.blogspot.com"
-            ],
-            "contactPoint": { "@type": "ContactPoint", "contactType": "customer support", "areaServed": "IN", "availableLanguage": "English" }
-        }
-    </script>
-    <script type=application/ld+json>
-        { "@context": "https://schema.org", "@type": "WebPage", "@id": "https://arhub07.netlify.app/", "url": "https://arhub07.netlify.app/", "name": "ARhub | Next-Gen Developer Tools by arlabs07", "description": "ARhub: Ultimate developer ecosystem by arlabs07. Explore PurplePDF, ardev library, live HTML compiler & Arai AI assistant.", "inLanguage": "en-IN", "isPartOf": { "@type": "WebSite", "@id": "https://arhub07.netlify.app/" }, "about": { "@type": "Thing", "name": "Web Development Tools" }, "primaryImageOfPage": { "@type": "ImageObject", "url": "https://arhub07.netlify.app/Images/ar2/web-app-manifest-512x512.png", "width": 512, "height": 512 }, "datePublished": "2024-01-01", "dateModified": "2026-01-06" }
-    </script>
-    <script type=application/ld+json>
+          "@type": "SiteNavigationElement",
+          "position": 2,
+          "name": "Systems",
+          "description": "Explore utility tools and libraries.",
+          "url": "https://arhub07.netlify.app/#projects-section"
+        },
         {
-            "@context": "https://schema.org",
-            "@type": "BreadcrumbList",
-            "itemListElement": [
-                { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://arhub07.netlify.app/" },
-                { "@type": "ListItem", "position": 2, "name": "Systems", "item": "https://arhub07.netlify.app/#projects-section" },
-                { "@type": "ListItem", "position": 3, "name": "Playground", "item": "https://arhub07.netlify.app/#compiler-section" },
-                { "@type": "ListItem", "position": 4, "name": "Arai AI", "item": "https://arhub07.netlify.app/#arai-section" },
-                { "@type": "ListItem", "position": 5, "name": "Projects", "item": "https://arhub07.netlify.app/#featured-section" }
-            ]
-        }
-    </script>
-    <script type=application/ld+json>
+          "@type": "SiteNavigationElement",
+          "position": 3,
+          "name": "Playground",
+          "description": "Live HTML/CSS/JS Compiler.",
+          "url": "https://arhub07.netlify.app/#compiler-section"
+        },
         {
-            "@context": "https://schema.org",
-            "@type": "ItemList",
-            "name": "ARhub Navigation",
-            "itemListElement": [
-                { "@type": "SiteNavigationElement", "position": 1, "name": "Overview", "description": "Welcome to the ARhub ecosystem", "url": "https://arhub07.netlify.app/#" },
-                { "@type": "SiteNavigationElement", "position": 2, "name": "Systems", "description": "Explore utility tools and libraries", "url": "https://arhub07.netlify.app/#projects-section" },
-                { "@type": "SiteNavigationElement", "position": 3, "name": "Playground", "description": "Live HTML/CSS/JS Compiler", "url": "https://arhub07.netlify.app/#compiler-section" },
-                { "@type": "SiteNavigationElement", "position": 4, "name": "Arai AI", "description": "Intelligent coding assistant", "url": "https://arhub07.netlify.app/#arai-section" },
-                { "@type": "SiteNavigationElement", "position": 5, "name": "Featured Projects", "description": "Flagship applications", "url": "https://arhub07.netlify.app/#featured-section" }
-            ]
-        }
-    </script>
-    <script type=application/ld+json>
+          "@type": "SiteNavigationElement",
+          "position": 4,
+          "name": "Arai AI",
+          "description": "Intelligent coding assistant integration.",
+          "url": "https://arhub07.netlify.app/#arai-section"
+        },
         {
-            "@context": "https://schema.org",
-            "@type": "SoftwareApplication",
-            "@id": "https://arhub07.netlify.app/#purplepdf",
-            "name": "PurplePDF",
-            "applicationCategory": "UtilitiesApplication",
-            "operatingSystem": "Web, Windows, Android, iOS",
-            "description": "Free browser-based PDF utility for merging, splitting and compressing PDF documents with advanced algorithms",
-            "url": "https://arhub07.netlify.app/#featured-section",
-            "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
-            "featureList": [
-                "PDF Merge",
-                "PDF Split",
-                "PDF Compression",
-                "Browser-based Processing",
-                "No Upload Required",
-                "Privacy-focused"
-            ],
-            "aggregateRating": { "@type": "AggregateRating", "ratingValue": "4.8", "reviewCount": "250", "bestRating": "5", "worstRating": "1" },
-            "softwareVersion": "2.0",
-            "datePublished": "2024-06-01",
-            "screenshot": "https://arhub07.netlify.app/Images/ar2/screenshot.png"
+          "@type": "SiteNavigationElement",
+          "position": 5,
+          "name": "Featured Projects",
+          "description": "Flagship applications like PurplePDF.",
+          "url": "https://arhub07.netlify.app/#featured-section"
         }
+      ]
+    }
     </script>
-    <script type=application/ld+json>
-        { "@context": "https://schema.org", "@type": "SoftwareSourceCode", "@id": "https://arhub07.netlify.app/#ardev", "name": "ArDev Library", "description": "Lightweight JavaScript utility library for modern web development with zero dependencies", "codeRepository": "https://github.com/arlabs07/ardev", "programmingLanguage": "JavaScript", "runtimePlatform": "Web Browser", "license": "https://opensource.org/licenses/MIT", "keywords": "javascript, utilities, web development, library, frontend", "aggregateRating": { "@type": "AggregateRating", "ratingValue": "4.7", "reviewCount": "180", "bestRating": "5" }, "datePublished": "2024-03-01" }
-    </script>
-    <script type=application/ld+json>
+
+    <!-- 5. FAQ Page Schema (Q&A for Search Snippets) -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [
         {
-            "@context": "https://schema.org",
-            "@type": "SoftwareApplication",
-            "@id": "https://arhub07.netlify.app/#playground",
-            "name": "ARhub Live Playground",
-            "applicationCategory": "DeveloperApplication",
-            "description": "Real-time HTML, CSS and JavaScript compiler with live preview. Test and debug code instantly in browser",
-            "operatingSystem": "Web",
-            "url": "https://arhub07.netlify.app/#compiler-section",
-            "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
-            "featureList": [
-                "Live HTML Preview",
-                "Real-time Syntax Highlighting",
-                "Mobile Responsive",
-                "Zero Latency Compilation",
-                "Export Code"
-            ],
-            "screenshot": "https://arhub07.netlify.app/Images/ar2/screenshot.png"
-        }
-    </script>
-    <script type=application/ld+json>
+          "@type": "Question",
+          "name": "What is ARhub?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "ARhub is a comprehensive developer ecosystem created by arlabs07, featuring tools like PurplePDF, the ardev library, and the Arai AI assistant."
+          }
+        },
         {
-            "@context": "https://schema.org",
-            "@type": "SoftwareApplication",
-            "@id": "https://arhub07.netlify.app/#arai",
-            "name": "Arai AI Assistant",
-            "applicationCategory": "DeveloperApplication",
-            "description": "Intelligent AI-powered coding assistant providing real-time syntax analysis, code suggestions and automated performance audits",
-            "operatingSystem": "Web",
-            "url": "https://arhub07.netlify.app/#arai-section",
-            "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
-            "featureList": [
-                "Real-time Syntax Analysis",
-                "Context-Aware Code Suggestions",
-                "Automated Performance Audits",
-                "Code Refactoring Recommendations",
-                "Debugging Assistance"
-            ],
-            "screenshot": "https://arhub07.netlify.app/Images/ar2/arai2.avif"
-        }
-    </script>
-    <script type=application/ld+json>
+          "@type": "Question",
+          "name": "Is PurplePDF free to use?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes, PurplePDF is a free utility within the ARhub ecosystem allowing users to merge, split, and compress PDF documents directly in the browser."
+          }
+        },
         {
-            "@context": "https://schema.org",
-            "@type": "CollectionPage",
-            "name": "ARhub Systems & Tools",
-            "description": "Browse all available libraries, utilities and development tools in ARhub ecosystem",
-            "url": "https://arhub07.netlify.app/#projects-section",
-            "mainEntity": {
-                "@type": "ItemList",
-                "itemListElement": [
-                    { "@type": "ListItem", "position": 1, "item": { "@type": "SoftwareApplication", "name": "PurplePDF", "url": "https://arhub07.netlify.app/#featured-section" } },
-                    { "@type": "ListItem", "position": 2, "item": { "@type": "SoftwareSourceCode", "name": "ArDev Library", "url": "https://arhub07.netlify.app/#featured-section" } },
-                    { "@type": "ListItem", "position": 3, "item": { "@type": "SoftwareApplication", "name": "Arai AI", "url": "https://arhub07.netlify.app/#arai-section" } },
-                    { "@type": "ListItem", "position": 4, "item": { "@type": "SoftwareApplication", "name": "Live Playground", "url": "https://arhub07.netlify.app/#compiler-section" } }
-                ]
-            }
-        }
-    </script>
-    <script type=application/ld+json>
+          "@type": "Question",
+          "name": "How does Arai AI help developers?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Arai AI provides real-time syntax analysis, context-aware code suggestions, and automated performance audits to streamline the development workflow."
+          }
+        },
         {
-            "@context": "https://schema.org",
-            "@type": "FAQPage",
-            "mainEntity": [
-                { "@type": "Question", "name": "What is ARhub?", "acceptedAnswer": { "@type": "Answer", "text": "ARhub is a comprehensive developer ecosystem created by arlabs07, featuring tools like PurplePDF, the ardev library and the Arai AI assistant." } },
-                { "@type": "Question", "name": "Is PurplePDF free to use?", "acceptedAnswer": { "@type": "Answer", "text": "Yes, PurplePDF is a free utility within the ARhub ecosystem allowing users to merge, split and compress PDF documents directly in the browser." } },
-                { "@type": "Question", "name": "How does Arai AI help developers?", "acceptedAnswer": { "@type": "Answer", "text": "Arai AI provides real-time syntax analysis, context-aware code suggestions and automated performance audits to streamline the development workflow." } },
-                { "@type": "Question", "name": "Can I use the live compiler on mobile?", "acceptedAnswer": { "@type": "Answer", "text": "Yes, the ARhub live compiler is fully responsive and optimized for mobile devices, supporting HTML, CSS and JavaScript previewing." } },
-                { "@type": "Question", "name": "Is ARhub open source?", "acceptedAnswer": { "@type": "Answer", "text": "Yes, many ARhub tools including the ArDev library are open source and available on GitHub under the MIT license." } },
-                { "@type": "Question", "name": "Does ARhub work offline?", "acceptedAnswer": { "@type": "Answer", "text": "Yes, ARhub is a Progressive Web App (PWA) that supports offline functionality once installed on your device." } },
-                { "@type": "Question", "name": "What browsers support ARhub?", "acceptedAnswer": { "@type": "Answer", "text": "ARhub supports all modern browsers including Chrome, Firefox, Safari and Edge. Optimized for latest web standards." } },
-                { "@type": "Question", "name": "How do I contribute to ARhub?", "acceptedAnswer": { "@type": "Answer", "text": "Visit the GitHub repository at https://github.com/arlabs07 and submit pull requests or report issues." } }
-            ]
+          "@type": "Question",
+          "name": "Can I use the live compiler on mobile?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes, the ARhub live compiler is fully responsive and optimized for mobile devices, supporting HTML, CSS, and JavaScript previewing."
+          }
         }
+      ]
+    }
     </script>
-    <script type=application/ld+json>
-        { "@context": "https://schema.org", "@type": "Review", "itemReviewed": { "@type": "SoftwareApplication", "name": "PurplePDF" }, "author": { "@type": "Person", "name": "Ankit Verma" }, "reviewRating": { "@type": "Rating", "ratingValue": "5", "bestRating": "5" }, "reviewBody": "PurplePDF saved me so much time. The compression algorithm is top-notch and completely preserves document quality." }
-    </script>
-    <script type=application/ld+json>
-        { "@context": "https://schema.org", "@type": "Review", "itemReviewed": { "@type": "SoftwareApplication", "name": "ArDev Library" }, "author": { "@type": "Person", "name": "Sarah Jenkins" }, "reviewRating": { "@type": "Rating", "ratingValue": "5", "bestRating": "5" }, "reviewBody": "The ardev library is incredibly lightweight. It's refreshing to see tools that don't add bloat to my projects." }
-    </script>
-    <script type=application/ld+json>
-        { "@context": "https://schema.org", "@type": "Review", "itemReviewed": { "@type": "WebSite", "name": "ARhub" }, "author": { "@type": "Person", "name": "Mike K." }, "reviewRating": { "@type": "Rating", "ratingValue": "5", "bestRating": "5" }, "reviewBody": "ARhub is my go-to for finding quick utility scripts. The ecosystem arlabs07 is building is very promising." }
-    </script>
-    <script type=application/ld+json>
-        { "@context": "https://schema.org", "@type": "Review", "itemReviewed": { "@type": "WebSite", "name": "ARhub" }, "author": { "@type": "Person", "name": "Elena L." }, "reviewRating": { "@type": "Rating", "ratingValue": "5", "bestRating": "5" }, "reviewBody": "Love the dark aesthetic and the PWA features. It works seamlessly on my mobile device." }
-    </script>
-    <script type=application/ld+json>
-        { "@context": "https://schema.org", "@type": "Product", "name": "ARhub Ecosystem", "description": "Complete suite of web development tools, libraries and AI assistant", "brand": { "@type": "Organization", "name": "arlabs07" }, "aggregateRating": { "@type": "AggregateRating", "ratingValue": "4.8", "reviewCount": "450", "bestRating": "5", "worstRating": "1" }, "offers": { "@type": "AggregateOffer", "offerCount": "4", "lowPrice": "0", "highPrice": "0", "priceCurrency": "USD" } }
-    </script>
-    <script type=application/ld+json>
-        {
-            "@context": "https://schema.org",
-            "@type": "HowTo",
-            "name": "How to Use ARhub Live Playground",
-            "description": "Learn how to use the ARhub live HTML compiler to test and preview code in real-time",
-            "image": "https://arhub07.netlify.app/Images/ar2/screenshot.png",
-            "totalTime": "PT2M",
-            "step": [
-                { "@type": "HowToStep", "position": 1, "name": "Open Playground", "text": "Navigate to the Playground section on ARhub", "url": "https://arhub07.netlify.app/#compiler-section" },
-                { "@type": "HowToStep", "position": 2, "name": "Write Code", "text": "Enter your HTML, CSS and JavaScript code in the editor" },
-                { "@type": "HowToStep", "position": 3, "name": "View Live Preview", "text": "Click the PREVIEW button to see your code rendered in real-time" },
-                { "@type": "HowToStep", "position": 4, "name": "Export or Share", "text": "Export your code or share your creation" }
-            ]
-        }
-    </script>
-    <script type=application/ld+json>
-        { "@context": "https://schema.org", "@type": "TechArticle", "headline": "Getting Started with ARhub Development Tools", "description": "Complete guide to using ARhub suite of developer tools including PurplePDF, ArDev and Arai AI", "datePublished": "2024-01-01", "dateModified": "2026-01-06", "image": "https://arhub07.netlify.app/Images/ar2/web-app-manifest-512x512.png", "publisher": { "@type": "Organization", "name": "arlabs07", "logo": { "@type": "ImageObject", "url": "https://arhub07.netlify.app/Images/ar2/web-app-manifest-512x512.png" } } }
-    </script>
-    <script type=application/ld+json>
-        { "@context": "https://schema.org", "@type": "VideoObject", "name": "ARhub Tutorial Series", "description": "Complete tutorial series covering all ARhub tools and features", "thumbnailUrl": "https://arhub07.netlify.app/Images/ar2/web-app-manifest-512x512.png", "uploadDate": "2024-06-01", "contentUrl": "https://youtube.com/@arlabs07", "embedUrl": "https://youtube.com/@arlabs07", "publisher": { "@type": "Organization", "name": "arlabs07", "logo": { "@type": "ImageObject", "url": "https://arhub07.netlify.app/Images/ar2/web-app-manifest-512x512.png" } } }
-    </script>
-    <script type=application/ld+json>
-        { "@context": "https://schema.org", "@type": "Course", "name": "ARhub Development Fundamentals", "description": "Learn how to leverage ARhub tools for faster web development", "provider": { "@type": "Organization", "name": "arlabs07", "sameAs": "https://arhub07.netlify.app" }, "hasCourseInstance": { "@type": "CourseInstance", "courseMode": "online", "courseWorkload": "PT2H" } }
-    </script>
-    <script type=application/ld+json>
-        { "@context": "https://schema.org", "@type": "CreativeWork", "name": "ARhub Developer Ecosystem", "description": "Comprehensive suite of web development tools, libraries and AI-powered assistants for modern developers", "creator": { "@type": "Organization", "name": "arlabs07" }, "datePublished": "2024-01-01", "dateModified": "2026-01-06", "keywords": "web development, developer tools, pdf utilities, javascript libraries, ai assistant", "inLanguage": "en-IN", "isAccessibleForFree": true, "license": "https://opensource.org/licenses/MIT" }
-    </script>
-    <link
-        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap"
-        rel=stylesheet>
-    <link rel=stylesheet
-        href=https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css>
-    <link rel=stylesheet
-        href=https://arhub07.netlify.app/css/header.css>
-    <link rel=stylesheet
-        href=https://arhub07.netlify.app/css/hero.css>
-    <link rel=stylesheet
-        href=https://arhub07.netlify.app/css/projects.css
-        media=print
-        onload='this.media="all"'>
-    <link rel=stylesheet
-        href=https://arhub07.netlify.app/css/compiler.css
-        media=print
-        onload='this.media="all"'>
-    <link rel=stylesheet
-        href=https://arhub07.netlify.app/css/arai.css
-        media=print
-        onload='this.media="all"'>
-    <link rel=stylesheet
-        href=https://arhub07.netlify.app/css/featured.css
-        media=print
-        onload='this.media="all"'>
-    <link rel=stylesheet
-        href=https://arhub07.netlify.app/css/testimonials.css
-        media=print
-        onload='this.media="all"'>
-    <link rel=stylesheet
-        href=https://arhub07.netlify.app/css/footer.css
-        media=print
-        onload='this.media="all"'>
+    
+    <!-- Fonts & Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <!-- Core Stylesheets - CRITICAL (Blocking) -->
+    <link rel="stylesheet" href="css/header.css">
+    <link rel="stylesheet" href="css/hero.css">
+
+    <!-- Secondary Stylesheets - NON-BLOCKING (Load after critical) -->
+    <!-- Optimization: media="print" onload="this.media='all'" defers loading until after first paint -->
+    <link rel="stylesheet" href="css/projects.css" media="print" onload="this.media='all'">
+    <link rel="stylesheet" href="css/compiler.css" media="print" onload="this.media='all'">
+    <link rel="stylesheet" href="css/arai.css" media="print" onload="this.media='all'">
+    <link rel="stylesheet" href="css/featured.css" media="print" onload="this.media='all'">
+    <link rel="stylesheet" href="css/testimonials.css" media="print" onload="this.media='all'">
+    <link rel="stylesheet" href="css/footer.css" media="print" onload="this.media='all'">
+    
+    <!-- Fallback for no-js users -->
     <noscript>
-        <link rel=stylesheet
-            href=css/projects.css>
-        <link rel=stylesheet
-            href=css/compiler.css>
-        <link rel=stylesheet
-            href=css/arai.css>
-        <link rel=stylesheet
-            href=css/featured.css>
-        <link rel=stylesheet
-            href=css/testimonials.css>
-        <link rel=stylesheet
-            href=css/footer.css>
+        <link rel="stylesheet" href="css/projects.css">
+        <link rel="stylesheet" href="css/compiler.css">
+        <link rel="stylesheet" href="css/arai.css">
+        <link rel="stylesheet" href="css/featured.css">
+        <link rel="stylesheet" href="css/testimonials.css">
+        <link rel="stylesheet" href="css/footer.css">
     </noscript>
+
     <style>
-        *,
-        ::after,
-        ::before {
+        *, *::before, *::after {
             box-sizing: border-box;
             margin: 0;
-            padding: 0
+            padding: 0;
         }
         
-        body,
-        html {
+        html, body {
             width: 100%;
             height: 100%;
             overflow-x: hidden;
             background-color: #050505;
-            font-family: Outfit, sans-serif;
+            font-family: 'Outfit', sans-serif;
             color: #fff;
-            scroll-behavior: smooth
+            scroll-behavior: smooth;
         }
-        
+
         ::selection {
-            background: rgba(255, 140, 0, .3);
-            color: #fff
+            background: rgba(255, 140, 0, 0.3);
+            color: #fff;
         }
-        
+
         .theme-layer {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
             z-index: -1;
             pointer-events: none;
             overflow: hidden;
-            background: #050505
+            background: #050505;
         }
     </style>
 </head>
-
 <body>
-    
+
     <header class="header">
         <div class="header-inner">
-            <a href="https://arhub07.netlify.app/arlabs07#"
-                class="logo"
-                aria-label="ARhub Home">
-                <img src="https://arhub07.netlify.app/Images/ar2/web-app-manifest-512x512.avif"
-                    alt="ARhub Logo"
-                    width="32"
-                    height="32">
+            <a href="#" class="logo" aria-label="ARhub Home">
+                <img src="https://arhub07.netlify.app/Images/ar2/web-app-manifest-192x192.png" alt="ARhub Logo" width="32" height="32">
                 ARhub
             </a>
             
-            <nav class="nav-links"
-                aria-label="Desktop Navigation">
-                <a href="https://arhub07.netlify.app/arlabs07#"
-                    class="active">Overview</a>
-                <a
-                    href="https://arhub07.netlify.app/arlabs07#projects-section">Systems</a>
-                <a
-                    href="https://arhub07.netlify.app/arlabs07#compiler-section">Playground</a>
-                <a
-                    href="https://arhub07.netlify.app/arlabs07#arai-section">Arai
-                    AI</a>
-                <a
-                    href="https://arhub07.netlify.app/arlabs07#featured-section">Projects</a>
+            <nav class="nav-links" aria-label="Desktop Navigation">
+                <a href="#" class="active">Overview</a>
+                <a href="#projects-section">Systems</a>
+                <a href="#compiler-section">Playground</a>
+                <a href="#arai-section">Arai AI</a>
+                <a href="#featured-section">Projects</a>
             </nav>
-            
+
             <div class="header-actions">
-                <a href="https://github.com/arlabs07"
-                    target="_blank"
-                    class="icon-link"
-                    aria-label="Visit GitHub Profile"><i
-                        class="fab fa-github"></i></a>
-                <button
-                    class="menu-toggle"
-                    aria-label="Open Mobile Menu"><i
-                        class="fas fa-bars"></i></button>
+                <a href="https://github.com/arlabs07" target="_blank" class="icon-link" aria-label="Visit GitHub Profile"><i class="fab fa-github"></i></a>
+                <button class="menu-toggle" aria-label="Open Mobile Menu"><i class="fas fa-bars"></i></button>
             </div>
         </div>
     </header>
-    
+
     <!-- FIXED: Added aria-label for accessibility on dialog role -->
-    <div class="mobile-menu"
-        aria-modal="true" role="dialog"
-        aria-label="Mobile Navigation Menu">
-        <button class="close-menu"
-            aria-label="Close Mobile Menu">×</button>
+    <div class="mobile-menu" aria-modal="true" role="dialog" aria-label="Mobile Navigation Menu">
+        <button class="close-menu" aria-label="Close Mobile Menu">&times;</button>
         <div class="mm-content">
-            <a
-                href="https://arhub07.netlify.app/arlabs07#">Overview</a>
-            <a
-                href="https://arhub07.netlify.app/arlabs07#projects-section">Systems</a>
-            <a
-                href="https://arhub07.netlify.app/arlabs07#compiler-section">Playground</a>
-            <a
-                href="https://arhub07.netlify.app/arlabs07#arai-section">Arai
-                AI</a>
-            <a
-                href="https://arhub07.netlify.app/arlabs07#featured-section">Projects</a>
-            <a
-                href="https://arhub07.netlify.app/arlabs07#testimonials-section">Community</a>
+            <a href="#">Overview</a>
+            <a href="#projects-section">Systems</a>
+            <a href="#compiler-section">Playground</a>
+            <a href="#arai-section">Arai AI</a>
+            <a href="#featured-section">Projects</a>
+            <a href="#testimonials-section">Community</a>
         </div>
     </div>
-    
+
     <main>
         <!-- HERO SECTION -->
-        <section class="hero-section"
-            aria-label="Hero Introduction">
+        <section class="hero-section" aria-label="Hero Introduction">
             <!-- Distinct Glow for Hero -->
-            <div class="hero-glow-bg">
-            </div>
+            <div class="hero-glow-bg"></div>
             
-            <div class="hero-bg"
-                aria-hidden="true">
-                <div class="stars">
-                </div>
-                <div
-                    class="grid-overlay">
-                </div>
+            <div class="hero-bg" aria-hidden="true">
+                <div class="stars"></div>
+                <div class="grid-overlay"></div>
             </div>
-            
+
             <div class="hero-container">
-                <div
-                    class="hero-content">
-                    <div
-                        class="badge-pill">
-                        <span
-                            class="status-dot"></span>
-                        Arhub 2.0
+                <div class="hero-content">
+                    <div class="badge-pill">
+                        <span class="status-dot"></span> Arhub 2.0
                     </div>
                     
-                    <h1
-                        class="hero-title">
-                        Tools for the
-                        <br>
-                        <span
-                            class="gradient-text">Modern
-                            Web</span>
+                    <h1 class="hero-title">
+                        Tools for the <br>
+                        <span class="gradient-text">Modern Web</span>
                     </h1>
                     
-                    <p
-                        class="hero-desc">
-                        Welcome to
-                        ARhub. The home
-                        of arlabs07's
-                        cutting-edge
-                        projects.
-                        Explore
-                        libraries,
-                        developer tools
-                        like ardev, and
-                        productivity
-                        apps like
-                        PurplePDF.
+                    <p class="hero-desc">
+                        Welcome to ARhub. The home of arlabs07's cutting-edge projects. 
+                        Explore libraries, developer tools like ardev, and productivity apps like PurplePDF.
                     </p>
-                    
-                    <div
-                        class="hero-cta">
-                        <a href="https://arhub07.netlify.app/arlabs07#featured-section"
-                            class="btn btn-primary"
-                            aria-label="View Projects">
-                            <i
-                                class="fas fa-rocket"></i>
-                            Our Projects
+
+                    <div class="hero-cta">
+                        <a href="#featured-section" class="btn btn-primary" aria-label="View Projects">
+                            <i class="fas fa-rocket"></i> Our Projects
                         </a>
-                        <a href="https://arhub07.netlify.app/arlabs07#projects-section"
-                            class="btn btn-glass"
-                            aria-label="Explore Systems">
-                            <i
-                                class="fas fa-tools"></i>
-                            Tools
+                        <a href="#projects-section" class="btn btn-glass" aria-label="Explore Systems">
+                            <i class="fas fa-tools"></i> Tools
                         </a>
                     </div>
                 </div>
-                
-                <div class="hero-visual-wrapper"
-                    aria-hidden="true">
-                    <div
-                        class="glass-code-card">
-                        <div
-                            class="card-top-bar">
-                            <div
-                                class="traffic-lights">
-                                <div
-                                    class="light red">
-                                </div>
-                                <div
-                                    class="light yellow">
-                                </div>
-                                <div
-                                    class="light green">
-                                </div>
+
+                <div class="hero-visual-wrapper" aria-hidden="true">
+                    <div class="glass-code-card">
+                        <div class="card-top-bar">
+                            <div class="traffic-lights">
+                                <div class="light red"></div>
+                                <div class="light yellow"></div>
+                                <div class="light green"></div>
                             </div>
-                            <div
-                                class="tab-name">
-                                arlabs_core.js
-                            </div>
+                            <div class="tab-name">arlabs_core.js</div>
                         </div>
-                        <div
-                            class="card-code-area">
-                            <div
-                                class="code-row">
-                                <span
-                                    class="num">1</span>
-                                <span
-                                    class="kwd">const</span>
-                                <span
-                                    class="var">arlabs07</span>
-                                = {
+                        <div class="card-code-area">
+                            <div class="code-row">
+                                <span class="num">1</span>
+                                <span class="kwd">const</span> <span class="var">arlabs07</span> = {
                             </div>
-                            <div
-                                class="code-row">
-                                <span
-                                    class="num">2</span>
-                                <span
-                                    class="indent">
-                                    mission:
-                                    <span
-                                        class="str">'Empower
-                                        Developers'</span>,</span>
+                            <div class="code-row">
+                                <span class="num">2</span>
+                                <span class="indent">  mission: <span class="str">'Empower Developers'</span>,</span>
                             </div>
-                            <div
-                                class="code-row">
-                                <span
-                                    class="num">3</span>
-                                <span
-                                    class="indent">
-                                    tools:
-                                    [<span
-                                        class="str">'PurplePDF'</span>,
-                                    <span
-                                        class="str">'ArDev'</span>],</span>
+                            <div class="code-row">
+                                <span class="num">3</span>
+                                <span class="indent">  tools: [<span class="str">'PurplePDF'</span>, <span class="str">'ArDev'</span>],</span>
                             </div>
-                            <div
-                                class="code-row">
-                                <span
-                                    class="num">4</span>
-                                <span
-                                    class="indent">
-                                    libraries:
-                                    <span
-                                        class="num-val">true</span></span>
+                            <div class="code-row">
+                                <span class="num">4</span>
+                                <span class="indent">  libraries: <span class="num-val">true</span></span>
                             </div>
-                            <div
-                                class="code-row">
-                                <span
-                                    class="num">5</span>
+                            <div class="code-row">
+                                <span class="num">5</span>
                                 };
                             </div>
-                            <div
-                                class="code-row">
-                                <span
-                                    class="num">6</span>
-                                <span
-                                    class="func">launchEcosystem</span>(<span
-                                    class="var">arlabs07</span>);
+                            <div class="code-row">
+                                <span class="num">6</span>
+                                <span class="func">launchEcosystem</span>(<span class="var">arlabs07</span>);
                             </div>
                         </div>
-                        <div
-                            class="compile-status">
-                            <i
-                                class="fas fa-check"></i>
-                            System
-                            Active
+                        <div class="compile-status">
+                            <i class="fas fa-check"></i> System Active
                         </div>
                     </div>
                 </div>
             </div>
         </section>
-        
+
         <!-- PROJECTS / SYSTEMS SECTION -->
-        <section id="projects-section"
-            class="projects-section"
-            aria-label="Project Systems Showcase">
-            <div
-                class="projects-header-container">
-                <h2
-                    class="section-title">
-                    Utility <span
-                        class="gradient-text">Systems</span>
-                </h2>
+        <section id="projects-section" class="projects-section" aria-label="Project Systems Showcase">
+            <div class="projects-header-container">
+                <h2 class="section-title">Utility <span class="gradient-text">Systems</span></h2>
                 
-                <div
-                    class="search-wrapper">
-                    <label
-                        for="project-search"
-                        class="sr-only"
-                        style="display:none;">Search
-                        Systems</label>
-                    <input type="text"
-                        id="project-search"
-                        class="search-input"
-                        placeholder="Search libraries &amp; tools..."
-                        aria-label="Search available systems">
-                    <i class="fas fa-search search-icon"
-                        aria-hidden="true"></i>
+                <div class="search-wrapper">
+                    <label for="project-search" class="sr-only" style="display:none;">Search Systems</label>
+                    <input type="text" id="project-search" class="search-input" placeholder="Search libraries & tools..." aria-label="Search available systems">
+                    <i class="fas fa-search search-icon" aria-hidden="true"></i>
                 </div>
             </div>
-            
-            <div id="projects-grid"
-                class="projects-grid">
+
+            <div id="projects-grid" class="projects-grid">
                 <!-- Populated by js/projects.js -->
             </div>
-            
-            <div
-                class="load-more-wrapper">
-                <div id="loader-spinner"
-                    class="loader-spinner">
-                </div>
-                <button
-                    id="load-more-btn"
-                    class="btn btn-glass"
-                    aria-label="Load more projects">
-                    <i
-                        class="fas fa-sync-alt"></i>
-                    Load More
+
+            <div class="load-more-wrapper">
+                <div id="loader-spinner" class="loader-spinner"></div>
+                <button id="load-more-btn" class="btn btn-glass" aria-label="Load more projects">
+                    <i class="fas fa-sync-alt"></i> Load More
                 </button>
             </div>
         </section>
-        
+
         <!-- LIVE COMPILER SECTION -->
-        <section id="compiler-section"
-            class="compiler-section"
-            aria-label="Live HTML Compiler">
-            <div
-                class="compiler-header-wrapper">
-                <h2
-                    class="section-title">
-                    Life <span
-                        class="gradient-text">Playground</span>
-                </h2>
+        <section id="compiler-section" class="compiler-section" aria-label="Live HTML Compiler">
+            <div class="compiler-header-wrapper">
+                <h2 class="section-title">Life <span class="gradient-text">Playground</span></h2>
             </div>
             
             <div class="ide-container">
-                <div
-                    class="ide-toolbar">
-                    <div
-                        class="ide-title">
-                        <div
-                            class="window-dots">
-                            <div
-                                class="dot d-red">
-                            </div>
-                            <div
-                                class="dot d-yellow">
-                            </div>
-                            <div
-                                class="dot d-green">
-                            </div>
+                <div class="ide-toolbar">
+                    <div class="ide-title">
+                        <div class="window-dots">
+                            <div class="dot d-red"></div>
+                            <div class="dot d-yellow"></div>
+                            <div class="dot d-green"></div>
                         </div>
-                        <div
-                            class="filename">
-                            <i
-                                class="fab fa-html5"></i>
-                            index.html
-                        </div>
+                        <div class="filename"><i class="fab fa-html5"></i> index.html</div>
                     </div>
                     
-                    <div
-                        class="view-switcher">
-                        <button
-                            class="switch-btn active"
-                            data-view="code">CODE</button>
-                        <button
-                            class="switch-btn"
-                            data-view="preview">PREVIEW</button>
+                    <div class="view-switcher">
+                        <button class="switch-btn active" data-view="code">CODE</button>
+                        <button class="switch-btn" data-view="preview">PREVIEW</button>
                     </div>
-                    
-                    <div
-                        class="ide-controls">
-                        <span
-                            class="status-badge">●
-                            LIVE
-                            PREVIEW</span>
+
+                    <div class="ide-controls">
+                        <span class="status-badge">● LIVE PREVIEW</span>
                     </div>
                 </div>
-                
-                <div
-                    class="workspace-area">
-                    <div class="pane editor-pane active"
-                        id="pane-code">
-                        <div class="line-numbers"
-                            id="line-numbers">
-                        </div>
-                        <div
-                            class="code-wrapper">
-                            <pre class="highlight-layer"
-                                aria-hidden="true"><code id="highlighting-content"></code></pre>
-                            <textarea
-                                id="code-editor"
-                                spellcheck="false"
-                                autocomplete="off"
-                                autocorrect="off"
-                                autocapitalize="off"
-                                aria-label="Code Editor"></textarea>
+
+                <div class="workspace-area">
+                    <div class="pane editor-pane active" id="pane-code">
+                        <div class="line-numbers" id="line-numbers"></div>
+                        <div class="code-wrapper">
+                            <pre class="highlight-layer" aria-hidden="true"><code id="highlighting-content"></code></pre>
+                            <textarea id="code-editor" spellcheck="false" autocomplete="off" autocorrect="off" autocapitalize="off" aria-label="Code Editor"></textarea>
                         </div>
                     </div>
-                    
-                    <div class="pane preview-pane"
-                        id="pane-preview">
-                        <div
-                            class="preview-wrapper">
-                            <iframe
-                                id="live-preview"
-                                title="Live Result Preview"
-                                loading="lazy"></iframe>
+
+                    <div class="pane preview-pane" id="pane-preview">
+                        <div class="preview-wrapper">
+                            <iframe id="live-preview" title="Live Result Preview" loading="lazy"></iframe>
                         </div>
                     </div>
                 </div>
             </div>
         </section>
-        
+
         <!-- NEW ARAI AI SECTION -->
-        <section id="arai-section"
-            class="arai-section"
-            aria-label="Arai AI Assistant Showcase">
+        <section id="arai-section" class="arai-section" aria-label="Arai AI Assistant Showcase">
             <div class="arai-container">
-                <div
-                    class="arai-content">
-                    <div
-                        class="arai-badge">
-                        <i
-                            class="fas fa-bolt"></i>
-                        Powered by <span
-                            class="brand-font">Arai</span>
+                <div class="arai-content">
+                    <div class="arai-badge">
+                        <i class="fas fa-bolt"></i> Powered by <span class="brand-font">Arai</span>
                     </div>
-                    <h2
-                        class="arai-title">
-                        Meet <span
-                            class="gradient-arai">Arai
-                            Assistant</span>
-                    </h2>
-                    <p
-                        class="arai-desc">
-                        The intelligent
-                        core of the
-                        arhub ecosystem.
-                        Arai utilizes
-                        advanced
-                        algorithms to
-                        optimize code,
-                        suggest
-                        refactors, and
-                        assist in
-                        debugging
-                        directly within
-                        your workflow.
+                    <h2 class="arai-title">Meet <span class="gradient-arai">Arai Assistant</span></h2>
+                    <p class="arai-desc">
+                        The intelligent core of the arhub ecosystem. Arai utilizes advanced algorithms to optimize code, suggest refactors, and assist in debugging directly within your workflow.
                     </p>
                     
-                    <ul
-                        class="arai-features">
-                        <li><i
-                                class="fas fa-check-circle"></i>
-                            Real-time
-                            Syntax
-                            Analysis
-                        </li>
-                        <li><i
-                                class="fas fa-check-circle"></i>
-                            Context-Aware
-                            Code
-                            Suggestions
-                        </li>
-                        <li><i
-                                class="fas fa-check-circle"></i>
-                            Automated
-                            Performance
-                            Audits</li>
+                    <ul class="arai-features">
+                        <li><i class="fas fa-check-circle"></i> Real-time Syntax Analysis</li>
+                        <li><i class="fas fa-check-circle"></i> Context-Aware Code Suggestions</li>
+                        <li><i class="fas fa-check-circle"></i> Automated Performance Audits</li>
                     </ul>
-                    
-                    <div
-                        class="arai-action">
-                        <button
-                            class="btn btn-primary"
-                            style="background: #ff2a6d; color: white; border: none; box-shadow: 0 4px 15px rgba(255, 42, 109, 0.4);">
-                            <i
-                                class="fas fa-robot"></i>
-                            Initialize
-                            Arai
+
+                    <div class="arai-action">
+                        <button class="btn btn-primary" style="background: #ff2a6d; color: white; border: none; box-shadow: 0 4px 15px rgba(255, 42, 109, 0.4);">
+                            <i class="fas fa-robot"></i> Initialize Arai
                         </button>
                     </div>
                 </div>
-                
-                <div
-                    class="arai-visual">
-                    <div
-                        class="arai-glow-fx">
-                    </div>
-                    <div
-                        class="arai-img-wrapper">
+
+                <div class="arai-visual">
+                    <div class="arai-glow-fx"></div>
+                    <div class="arai-img-wrapper">
                         <!-- Optimization: Added explicit width/height to prevent CLS, and lazy loading -->
-                        <img src="https://arhub07.netlify.app/Images/ar2/arai2.avif"
-                            alt="Arai AI Visualization"
-                            class="arai-img"
-                            width="1300"
-                            height="2600"
-                            loading="lazy"
-                            decoding="async">
+                        <img src="https://arhub07.netlify.app/Images/ar2/arai2.png" alt="Arai AI Visualization" class="arai-img" width="1300" height="2600" loading="lazy" decoding="async">
                     </div>
                 </div>
             </div>
         </section>
-        
+
         <!-- FEATURED PROJECTS SECTION -->
-        <section id="featured-section"
-            class="featured-section"
-            aria-label="Featured Projects">
-            <div
-                class="featured-header">
-                <h2
-                    class="section-title">
-                    Flagship <span
-                        class="gradient-text">Projects</span>
-                </h2>
-                <p class="featured-sub">
-                    Explore our
-                    dedicated platforms
-                    tailored for
-                    specific needs.</p>
-            </div>
-            
-            <div id="featured-container"
-                class="featured-container">
-                <!-- Populated by js/featured.js -->
-            </div>
+        <section id="featured-section" class="featured-section" aria-label="Featured Projects">
+             <div class="featured-header">
+                 <h2 class="section-title">Flagship <span class="gradient-text">Projects</span></h2>
+                 <p class="featured-sub">Explore our dedicated platforms tailored for specific needs.</p>
+             </div>
+             
+             <div id="featured-container" class="featured-container">
+                 <!-- Populated by js/featured.js -->
+             </div>
         </section>
-        
+
         <!-- TESTIMONIALS SECTION -->
-        <section
-            id="testimonials-section"
-            class="testimonials-section">
-            <div
-                class="testimonials-header">
-                <h2
-                    class="testimonials-title">
-                    What <span
-                        class="gradient-text">Users
-                        Say</span></h2>
-                <p
-                    class="testimonials-desc">
-                    Feedback from the
-                    developers and users
-                    utilizing arlabs07
-                    tools and libraries.
-                </p>
+        <section id="testimonials-section" class="testimonials-section">
+            <div class="testimonials-header">
+                <h2 class="testimonials-title">What <span class="gradient-text">Users Say</span></h2>
+                <p class="testimonials-desc">Feedback from the developers and users utilizing arlabs07 tools and libraries.</p>
             </div>
-            
-            <div
-                class="testimonials-grid">
+
+            <div class="testimonials-grid">
                 <div class="t-card">
-                    <i
-                        class="fas fa-quote-left t-quote-icon"></i>
-                    <p class="t-text">
-                        "PurplePDF saved
-                        me so much time.
-                        The compression
-                        algorithm is
-                        top-notch and
-                        completely
-                        preserves
-                        document
-                        quality."</p>
+                    <i class="fas fa-quote-left t-quote-icon"></i>
+                    <p class="t-text">"PurplePDF saved me so much time. The compression algorithm is top-notch and completely preserves document quality."</p>
                     <div class="t-user">
-                        <div
-                            class="t-avatar">
-                            A</div>
-                        <div
-                            class="t-info">
-                            <span
-                                class="t-name">Ankit
-                                Verma</span>
-                            <span
-                                class="t-role">Student</span>
+                        <div class="t-avatar">A</div>
+                        <div class="t-info">
+                            <span class="t-name">Ankit Verma</span>
+                            <span class="t-role">Student</span>
                         </div>
                     </div>
                 </div>
-                
+
                 <div class="t-card">
-                    <i
-                        class="fas fa-quote-left t-quote-icon"></i>
-                    <p class="t-text">
-                        "The ardev
-                        library is
-                        incredibly
-                        lightweight.
-                        It's refreshing
-                        to see tools
-                        that don't add
-                        bloat to my
-                        projects."</p>
+                    <i class="fas fa-quote-left t-quote-icon"></i>
+                    <p class="t-text">"The ardev library is incredibly lightweight. It's refreshing to see tools that don't add bloat to my projects."</p>
                     <div class="t-user">
-                        <div
-                            class="t-avatar">
-                            S</div>
-                        <div
-                            class="t-info">
-                            <span
-                                class="t-name">Sarah
-                                Jenkins</span>
-                            <span
-                                class="t-role">Frontend
-                                Dev</span>
+                        <div class="t-avatar">S</div>
+                        <div class="t-info">
+                            <span class="t-name">Sarah Jenkins</span>
+                            <span class="t-role">Frontend Dev</span>
                         </div>
                     </div>
                 </div>
-                
+
                 <div class="t-card">
-                    <i
-                        class="fas fa-quote-left t-quote-icon"></i>
-                    <p class="t-text">
-                        "ARhub is my
-                        go-to for
-                        finding quick
-                        utility scripts.
-                        The ecosystem
-                        arlabs07 is
-                        building is very
-                        promising."</p>
+                    <i class="fas fa-quote-left t-quote-icon"></i>
+                    <p class="t-text">"ARhub is my go-to for finding quick utility scripts. The ecosystem arlabs07 is building is very promising."</p>
                     <div class="t-user">
-                        <div
-                            class="t-avatar">
-                            M</div>
-                        <div
-                            class="t-info">
-                            <span
-                                class="t-name">Mike
-                                K.</span>
-                            <span
-                                class="t-role">Tech
-                                Lead</span>
+                        <div class="t-avatar">M</div>
+                        <div class="t-info">
+                            <span class="t-name">Mike K.</span>
+                            <span class="t-role">Tech Lead</span>
                         </div>
                     </div>
                 </div>
-                
+
                 <div class="t-card">
-                    <i
-                        class="fas fa-quote-left t-quote-icon"></i>
-                    <p class="t-text">
-                        "Love the dark
-                        aesthetic and
-                        the PWA
-                        features. It
-                        works seamlessly
-                        on my mobile
-                        device."</p>
+                    <i class="fas fa-quote-left t-quote-icon"></i>
+                    <p class="t-text">"Love the dark aesthetic and the PWA features. It works seamlessly on my mobile device."</p>
                     <div class="t-user">
-                        <div
-                            class="t-avatar">
-                            E</div>
-                        <div
-                            class="t-info">
-                            <span
-                                class="t-name">Elena
-                                L.</span>
-                            <span
-                                class="t-role">Designer</span>
+                        <div class="t-avatar">E</div>
+                        <div class="t-info">
+                            <span class="t-name">Elena L.</span>
+                            <span class="t-role">Designer</span>
                         </div>
                     </div>
                 </div>
             </div>
-            
-            <div
-                class="rate-us-container">
-                <button
-                    class="btn-rate">
-                    <i
-                        class="fas fa-star"></i>
-                    Rate ARhub
+
+            <div class="rate-us-container">
+                <button class="btn-rate">
+                    <i class="fas fa-star"></i> Rate ARhub
                 </button>
             </div>
         </section>
-        
+
     </main>
-    
+
     <footer class="site-footer">
         <div class="footer-container">
             <div class="footer-brand">
-                <a href="https://arhub07.netlify.app/arlabs07#"
-                    class="f-logo">
-                    <img src="https://arhub07.netlify.app/Images/ar2/web-app-manifest-512x512.avif"
-                        alt="ARhub"
-                        width="32"
-                        height="32"
-                        loading="lazy">
+                <a href="#" class="f-logo">
+                    <img src="https://arhub07.netlify.app/Images/ar2/web-app-manifest-192x192.png" alt="ARhub" width="32" height="32" loading="lazy">
                     ARhub
                 </a>
-                <p>Innovating with code.
-                    arlabs07 builds
-                    tools, libraries,
-                    and platforms like
-                    PurplePDF and ardev
-                    to empower the
-                    digital world.</p>
-                <div
-                    class="social-links">
-                    <a href="https://youtube.com/@arlabs07"
-                        target="_blank"
-                        class="social-btn"
-                        aria-label="YouTube"><i
-                            class="fab fa-youtube"></i></a>
-                    <a href="https://codepen.io/Abhinav-Rawat"
-                        target="_blank"
-                        class="social-btn"
-                        aria-label="CodePen"><i
-                            class="fab fa-codepen"></i></a>
-                    <a href="https://arlabs07.blogspot.com"
-                        target="_blank"
-                        class="social-btn"
-                        aria-label="BlogSpot"><i
-                            class="fas fa-rss"></i></a>
+                <p>Innovating with code. arlabs07 builds tools, libraries, and platforms like PurplePDF and ardev to empower the digital world.</p>
+                <div class="social-links">
+                    <a href="https://youtube.com/@arlabs07" target="_blank" class="social-btn" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
+                    <a href="https://codepen.io/Abhinav-Rawat" target="_blank" class="social-btn" aria-label="CodePen"><i class="fab fa-codepen"></i></a>
+                    <a href="https://arlabs07.blogspot.com" target="_blank" class="social-btn" aria-label="BlogSpot"><i class="fas fa-rss"></i></a>
                 </div>
             </div>
-            
+
             <!-- FIXED: Changed headings to h3 for proper hierarchy (was h4) -->
             <div class="footer-links">
-                <h3
-                    class="footer-heading">
-                    Ecosystem</h3>
+                <h3 class="footer-heading">Ecosystem</h3>
                 <ul>
-                    <li><a
-                            href="https://arhub07.netlify.app/arlabs07#featured-section">PurplePDF</a>
-                    </li>
-                    <li><a
-                            href="https://arhub07.netlify.app/arlabs07#featured-section">ardev</a>
-                    </li>
-                    <li><a
-                            href="https://arhub07.netlify.app/arlabs07#projects-section">Libraries</a>
-                    </li>
-                    <li><a
-                            href="https://arhub07.netlify.app/arlabs07#compiler-section">Playground</a>
-                    </li>
+                    <li><a href="#featured-section">PurplePDF</a></li>
+                    <li><a href="#featured-section">ardev</a></li>
+                    <li><a href="#projects-section">Libraries</a></li>
+                    <li><a href="#compiler-section">Playground</a></li>
                 </ul>
             </div>
-            
+
             <div class="footer-links">
-                <h3
-                    class="footer-heading">
-                    More</h3>
+                <h3 class="footer-heading">More</h3>
                 <ul>
-                    <li><a
-                            href="https://arlabs07.blogspot.com">Blog</a>
-                    </li>
-                    <li><a
-                            href="https://arhub07.netlify.app/arlabs07#">About
-                            arlabs07</a>
-                    </li>
-                    <li><a
-                            href="https://arhub07.netlify.app/arlabs07#">Privacy
-                            Policy</a>
-                    </li>
-                    <li><a
-                            href="https://arhub07.netlify.app/arlabs07#">Contact</a>
-                    </li>
+                    <li><a href="https://arlabs07.blogspot.com">Blog</a></li>
+                    <li><a href="#">About arlabs07</a></li>
+                    <li><a href="#">Privacy Policy</a></li>
+                    <li><a href="#">Contact</a></li>
                 </ul>
             </div>
         </div>
-        
+
         <div class="footer-bottom">
-            <span>© 2026 arlabs07. All
-                rights reserved.</span>
+            <span>&copy; 2026 arlabs07. All rights reserved.</span>
             <span>design by Arvia</span>
         </div>
     </footer>
-    
-    <!-- Scripts are deferred (non-blocking) -->
-    <script
-        src="https://arhub07.netlify.app/js/header.js"
-        defer=""></script>
-    <script
-        src="https://arhub07.netlify.app/js/hero.js"
-        defer=""></script>
-    <script
-        src="https://arhub07.netlify.app/js/projects.js"
-        defer=""></script>
-    <script
-        src="https://arhub07.netlify.app/js/featured.js"
-        defer=""></script>
-    <script
-        src="https://arhub07.netlify.app/js/compiler.js"
-        defer=""></script>
-    
-    
-</body>
 
+    <!-- Scripts are deferred (non-blocking) -->
+    <script src="js/header.js" defer></script>
+    <script src="js/hero.js" defer></script>
+    <script src="js/projects.js" defer></script>
+    <script src="js/featured.js" defer></script>
+    <script src="js/compiler.js" defer></script>
+
+</body>
 </html>
