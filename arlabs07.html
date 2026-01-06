@@ -72,7 +72,7 @@
     <link rel="icon" type="image/svg+xml" href="https://arhub07.netlify.app/Images/ar2/favicon.svg">
     <link rel="apple-touch-icon" sizes="180x180" href="https://arhub07.netlify.app/Images/ar2/apple-touch-icon.png">
 
-    <!-- Preconnecting & Prefetching -->
+    <!-- Preconnecting & Prefetching (Performance) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="preconnect" href="https://cdnjs.cloudflare.com">
@@ -150,7 +150,7 @@
         "Arai AI Coding Assistant",
         "ArDev Library"
       ],
-      "screenshot": "https://arhub07.netlify.app/Images/ar2/arai2.png"
+      "screenshot": "https://arhub07.netlify.app/Images/ar2/screenshot.png"
     }
     </script>
 
@@ -245,15 +245,28 @@
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
-    <!-- Core Stylesheets -->
+    <!-- Core Stylesheets - CRITICAL (Blocking) -->
     <link rel="stylesheet" href="css/header.css">
     <link rel="stylesheet" href="css/hero.css">
-    <link rel="stylesheet" href="css/projects.css">
-    <link rel="stylesheet" href="css/compiler.css">
-    <link rel="stylesheet" href="css/arai.css">
-    <link rel="stylesheet" href="css/featured.css">
-    <link rel="stylesheet" href="css/testimonials.css">
-    <link rel="stylesheet" href="css/footer.css">
+
+    <!-- Secondary Stylesheets - NON-BLOCKING (Load after critical) -->
+    <!-- Optimization: media="print" onload="this.media='all'" defers loading until after first paint -->
+    <link rel="stylesheet" href="css/projects.css" media="print" onload="this.media='all'">
+    <link rel="stylesheet" href="css/compiler.css" media="print" onload="this.media='all'">
+    <link rel="stylesheet" href="css/arai.css" media="print" onload="this.media='all'">
+    <link rel="stylesheet" href="css/featured.css" media="print" onload="this.media='all'">
+    <link rel="stylesheet" href="css/testimonials.css" media="print" onload="this.media='all'">
+    <link rel="stylesheet" href="css/footer.css" media="print" onload="this.media='all'">
+    
+    <!-- Fallback for no-js users -->
+    <noscript>
+        <link rel="stylesheet" href="css/projects.css">
+        <link rel="stylesheet" href="css/compiler.css">
+        <link rel="stylesheet" href="css/arai.css">
+        <link rel="stylesheet" href="css/featured.css">
+        <link rel="stylesheet" href="css/testimonials.css">
+        <link rel="stylesheet" href="css/footer.css">
+    </noscript>
 
     <style>
         *, *::before, *::after {
@@ -277,7 +290,6 @@
             color: #fff;
         }
 
-        /* Subtle global layer, specific sections handle their own glows */
         .theme-layer {
             position: fixed;
             top: 0; left: 0;
@@ -294,7 +306,7 @@
     <header class="header">
         <div class="header-inner">
             <a href="#" class="logo" aria-label="ARhub Home">
-                <img src="https://arhub07.netlify.app/Images/ar2/web-app-manifest-192x192.png" alt="ARhub Logo">
+                <img src="https://arhub07.netlify.app/Images/ar2/web-app-manifest-192x192.png" alt="ARhub Logo" width="32" height="32">
                 ARhub
             </a>
             
@@ -313,7 +325,8 @@
         </div>
     </header>
 
-    <div class="mobile-menu" aria-modal="true" role="dialog">
+    <!-- FIXED: Added aria-label for accessibility on dialog role -->
+    <div class="mobile-menu" aria-modal="true" role="dialog" aria-label="Mobile Navigation Menu">
         <button class="close-menu" aria-label="Close Mobile Menu">&times;</button>
         <div class="mm-content">
             <a href="#">Overview</a>
@@ -493,7 +506,6 @@
                         <li><i class="fas fa-check-circle"></i> Automated Performance Audits</li>
                     </ul>
 
-                    <!-- Removed 'Coming Soon' as it is now integrated -->
                     <div class="arai-action">
                         <button class="btn btn-primary" style="background: #ff2a6d; color: white; border: none; box-shadow: 0 4px 15px rgba(255, 42, 109, 0.4);">
                             <i class="fas fa-robot"></i> Initialize Arai
@@ -504,8 +516,8 @@
                 <div class="arai-visual">
                     <div class="arai-glow-fx"></div>
                     <div class="arai-img-wrapper">
-                        <!-- Image is large (1300x2600), css will optimize -->
-                        <img src="https://arhub07.netlify.app/Images/ar2/arai2.png" alt="Arai AI Visualization" class="arai-img">
+                        <!-- Optimization: Added explicit width/height to prevent CLS, and lazy loading -->
+                        <img src="https://arhub07.netlify.app/Images/ar2/arai2.png" alt="Arai AI Visualization" class="arai-img" width="1300" height="2600" loading="lazy" decoding="async">
                     </div>
                 </div>
             </div>
@@ -593,7 +605,7 @@
         <div class="footer-container">
             <div class="footer-brand">
                 <a href="#" class="f-logo">
-                    <img src="https://arhub07.netlify.app/Images/ar2/web-app-manifest-192x192.png" alt="ARhub" loading="lazy">
+                    <img src="https://arhub07.netlify.app/Images/ar2/web-app-manifest-192x192.png" alt="ARhub" width="32" height="32" loading="lazy">
                     ARhub
                 </a>
                 <p>Innovating with code. arlabs07 builds tools, libraries, and platforms like PurplePDF and ardev to empower the digital world.</p>
@@ -604,8 +616,9 @@
                 </div>
             </div>
 
+            <!-- FIXED: Changed headings to h3 for proper hierarchy (was h4) -->
             <div class="footer-links">
-                <h4>Ecosystem</h4>
+                <h3 class="footer-heading">Ecosystem</h3>
                 <ul>
                     <li><a href="#featured-section">PurplePDF</a></li>
                     <li><a href="#featured-section">ardev</a></li>
@@ -615,7 +628,7 @@
             </div>
 
             <div class="footer-links">
-                <h4>More</h4>
+                <h3 class="footer-heading">More</h3>
                 <ul>
                     <li><a href="https://arlabs07.blogspot.com">Blog</a></li>
                     <li><a href="#">About arlabs07</a></li>
@@ -631,6 +644,7 @@
         </div>
     </footer>
 
+    <!-- Scripts are deferred (non-blocking) -->
     <script src="js/header.js" defer></script>
     <script src="js/hero.js" defer></script>
     <script src="js/projects.js" defer></script>
